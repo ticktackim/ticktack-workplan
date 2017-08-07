@@ -1,16 +1,15 @@
 const nest = require('depnest')
-const { h } = require('mutant')
-
 
 exports.gives = nest('app.html.app')
+
+exports.needs = nest({
+  'app.sync.goTo': 'first'
+})
 
 exports.create = (api) => {
   return nest('app.html.app', app)
 
   function app () {
-    return h('h1', 'Hello!')
-
-
+    return api.app.sync.goTo({ page: 'home' })
   }
 }
-
