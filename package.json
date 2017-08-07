@@ -1,0 +1,15 @@
+{
+  "name": "ticktack",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssb://%tkJPTTaxOzfLbsewZmgC9CslSER0ntjQOcyhIk6y/cQ=.sha256"
+  },
+  "author": "",
+  "license": "GPL-3.0"
+}
