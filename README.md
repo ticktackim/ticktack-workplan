@@ -11,7 +11,7 @@ Trello : https://trello.com/b/93eXDvVP/ticktack
 
 ### Repos 
 
-- `git@github.com:protozoa-nz/ticktack.git`
+- `git@github.com:ticktackim/ticktack-wp1.git`
 - `ssb://%tkJPTTaxOzfLbsewZmgC9CslSER0ntjQOcyhIk6y/cQ=.sha256`
 
 ### Install
