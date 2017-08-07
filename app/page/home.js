@@ -1,6 +1,8 @@
 const nest = require('depnest')
 const { h } = require('mutant')
 
+const dummyMsg = require('../../test/fixtures/thread')[0]
+
 exports.gives = nest('app.page.home')
 
 exports.needs = nest({
@@ -17,7 +19,8 @@ exports.create = (api) => {
     return h('div', [
       h('h1', 'Home'),
       h('div', { 'ev-click': () => goTo({ page: 'home' }) }, 'Home'),
-      h('div', { 'ev-click': () => goTo({ type: 'group', key: '%sadlkjas;lkdjas' }) }, 'Group')
+      h('div', { 'ev-click': () => goTo({ type: 'group', key: '%sadlkjas;lkdjas' }) }, 'Group'),
+      h('div', { 'ev-click': () => goTo(dummyMsg) }, 'Private message')
     ])
   }
 }
