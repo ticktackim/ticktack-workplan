@@ -1,6 +1,6 @@
 // an arrage of messages in a thread
 // can stream by making a source with pull.values()
-// If you assume you're Dominic, your key is : %IAkSWeMycouc4MM7eakTTIC+TITDNtvfpFp3Jgz4LiU=.sha256
+// If you assume you're Dominic, your key is : @EMovhfIrFk4NihAKnRNhrfRaqIhBv1Wj8pTxJNgvCCY=.ed25519
 
 module.exports = [{
   "key": "%fXXZgQrwnj7F+Y19H0IXxNriuvPFoahvusih3UzpkfA=.sha256",

@@ -1,5 +1,98 @@
 Thread {
-  background-color: lightgrey
+  background-color: #eee
   padding: 1rem
+  font-family: 'arial'
+
+  max-width: 1400px
+
+  display: flex
+  flex-direction: column
+
+  div.my-chunk {
+    $chunk
+
+    justify-content: space-between
+    
+    div.avatar {
+      visibility: hidden
+    }
+
+    div.msgs {
+      div.msg-row {
+        div.msg {
+          $primaryColor
+
+          border-bottom-left-radius: .7rem
+          border-top-left-radius: .7rem
+        }
+        :first-child {
+          div.msg {
+            border-top-right-radius: .7rem
+          }
+        }
+        :last-child {
+          div.msg {
+            border-bottom-right-radius: .7rem
+          }
+        }
+      }
+    }
+  }
+
+  div.other-chunk {
+    $chunk
+
+    div.msgs {
+
+      div.msg-row {
+        div.msg {
+          border-bottom-right-radius: .7rem
+          border-top-right-radius: .7rem
+        }
+        :first-child {
+          div.msg {
+            border-top-left-radius: .7rem
+          }
+        }
+        :last-child {
+          div.msg {
+            border-bottom-left-radius: .7rem
+          }
+        }
+      }
+    }
+  }
+}
+
+$chunk {
+  display: flex
+  margin-bottom: .5rem
+
+  div.avatar {
+    background-color: grey
+    width: 2rem
+    height: 2rem
+    border-radius: 1rem
+
+    margin-right: 1rem
+  }
+
+  div.msgs {
+    max-width: 80%
+    div.msg-row {
+      display: flex
+
+      div.msg {
+        line-height: 1.2rem
+        background-color: #fff
+        padding: .7rem
+        margin-bottom: .3rem 
+        border-radius: .3rem
+      }
+      div.msg-spacer {
+        flex-grow: grow
+      }
+    }
+  }
 }
 

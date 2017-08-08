@@ -16,6 +16,7 @@ exports.create = (api) => {
     const css = values(api.styles.css()).join('\n')
     insertCss(css)
 
-    return api.app.sync.goTo({ page: 'home' })
+    // return api.app.sync.goTo({ page: 'home' })
+    return api.app.sync.goTo({key: "%fXXZgQrwnj7F+Y19H0IXxNriuvPFoahvusih3UzpkfA=.sha256"})
   }
 }

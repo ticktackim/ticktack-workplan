@@ -10,12 +10,13 @@ exports.create = (api) => {
 }
 
 const mainMixins = `
-$colorPrimary {
-  color: green
+$primaryColor {
+  color: white
+  background-color: #3dc8c3
 }
 
 $colorSubtle {
-  color: gray
+  color: #222
 }
 
 $avatarSmall {

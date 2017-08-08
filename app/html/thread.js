@@ -1,8 +1,8 @@
 const nest = require('depnest')
-const { h, Array: MutantArray, map } = require('mutant')
+const { h, Array: MutantArray, map, computed, when } = require('mutant')
 const pull = require('pull-stream')
 const last = require('lodash/last')
-const get = require('lodash/last')
+const get = require('lodash/get')
 
 exports.gives = nest('app.html.thread')
 
@@ -18,20 +18,41 @@ exports.create = (api) => {
 
     const chunkedThread = buildChunkedThreadObs(source)
 
+    var myId = '@EMovhfIrFk4NihAKnRNhrfRaqIhBv1Wj8pTxJNgvCCY=.ed25519'
+    // TODO (mix) use keys.sync.id
+
     const { goTo } = api.app.sync
     const threadView = h('Thread', 
       map(chunkedThread, chunk => {
-        return h('div' , [
-          h('div', '---'),
 
-          map(chunk,  msg => {
-            return h('div', {style: { margin: '10px', background: 'white' }}, msg.value.content.text) // TODO (mix): use lodash/get
-          })
-        ])
+        return computed(chunk, chunk => get(chunk, '[0].value.author') === myId
+          ? h('div.my-chunk', [
+              h('div.avatar'),
+              h('div.msgs', map(chunk,  msg => {
+                return h('div.msg-row', [
+                  h('div.spacer'),
+                  h('div.msg', get(msg, 'value.content.text'))
+                ])
+              }))
+            ])
+          : h('div.other-chunk', [
+              h('div.avatar', 'other'),
+              h('div.msgs', map(chunk,  msg => {
+                return h('div.msg-row', [
+                  h('div.msg', get(msg, 'value.content.text')),
+                  h('div.spacer')
+                ])
+              }))
+            ])
+        )
       })
     )
 
     return threadView
+  }
+
+  function isByMe (msg) {
+    return msg && msg.value.author === myId
   }
 }
 
@@ -67,4 +88,5 @@ function isSameAuthor (msgA, msgB) {
   // TODO (mix) use lodash/get
   return msgA.value.author === msgB.value.author
 }
+
 
