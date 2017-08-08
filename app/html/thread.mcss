@@ -1,4 +1,5 @@
 Thread {
-  background-color: lightblue
+  background-color: lightgrey
+  padding: 1rem
 }
 

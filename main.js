@@ -13,7 +13,6 @@ const sockets = combine(
   ticktack,
   patchcore
 )
-debugger
 
 const api = entry(sockets, nest('app.html.app', 'first'))
 

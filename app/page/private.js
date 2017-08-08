@@ -1,6 +1,9 @@
 const nest = require('depnest')
 const { h } = require('mutant')
 
+const pull = require('pull-stream')
+const dummyThread = require('../../test/fixtures/thread') 
+
 exports.gives = nest('app.page.private')
 
 exports.needs = nest({
@@ -15,7 +18,9 @@ exports.create = (api) => {
     // location here can expected to be an ssb-message
     const { goTo } = api.app.sync
 
-    const thread = api.app.html.thread() 
+    // TODO (mix) : swap for actual source, derived from location
+    const source = pull.values(dummyThread)
+    const thread = api.app.html.thread(source)
 
     return h('div', [
       h('h1', 'Private message'),
