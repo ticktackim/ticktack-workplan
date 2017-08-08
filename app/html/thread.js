@@ -7,6 +7,7 @@ const get = require('lodash/get')
 exports.gives = nest('app.html.thread')
 
 exports.needs = nest({
+  'about.html.image': 'first',
   'app.sync.goTo': 'first',
   'message.html.markdown': 'first'
 })
@@ -26,8 +27,10 @@ exports.create = (api) => {
     const threadView = h('Thread', 
       map(chunkedThread, chunk => {
 
-        return computed(chunk, chunk => get(chunk, '[0].value.author') === myId
-          ? h('div.my-chunk', [
+        return computed(chunk, chunk => {
+          const author = get(chunk, '[0].value.author')
+          if (author === myId) {
+            return h('div.my-chunk', [
               h('div.avatar'),
               h('div.msgs', map(chunk,  msg => {
                 return h('div.msg-row', [
@@ -36,8 +39,9 @@ exports.create = (api) => {
                 ])
               }))
             ])
-          : h('div.other-chunk', [
-              h('div.avatar', 'other'),
+          } else {
+            return h('div.other-chunk', [
+              h('div.avatar', api.about.html.image(author)),
               h('div.msgs', map(chunk,  msg => {
                 return h('div.msg-row', [
                   message(msg),
@@ -45,7 +49,8 @@ exports.create = (api) => {
                 ])
               }))
             ])
-        )
+          }
+        })
       })
     )
 

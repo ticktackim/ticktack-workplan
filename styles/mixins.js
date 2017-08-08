@@ -19,14 +19,16 @@ $colorSubtle {
   color: #222
 }
 
-$avatarSmall {
-  width: 32px
-  height: 32px
+$smallAvatar {
+  width: 3rem
+  height: 3rem
+  border-radius: 1.5rem
 }
 
-$avatarLarge {
-  width: 56px
-  height: 56px
+$largeAvatar {
+  width: 6rem
+  height: 6rem
+  border-radius: 3rem
 }
 `
 

@@ -22,17 +22,17 @@ Thread {
         div.msg {
           $primaryColor
 
-          border-bottom-left-radius: .7rem
-          border-top-left-radius: .7rem
+          border-bottom-left-radius: .9rem
+          border-top-left-radius: .9rem
         }
         :first-child {
           div.msg {
-            border-top-right-radius: .7rem
+            border-top-right-radius: .9rem
           }
         }
         :last-child {
           div.msg {
-            border-bottom-right-radius: .7rem
+            border-bottom-right-radius: .9rem
           }
         }
       }
@@ -47,17 +47,17 @@ Thread {
       div.msg-row {
         div.msg {
           border: 1.5px #ddd solid
-          border-bottom-right-radius: .7rem
-          border-top-right-radius: .7rem
+          border-bottom-right-radius: .9rem
+          border-top-right-radius: .9rem
         }
         :first-child {
           div.msg {
-            border-top-left-radius: .7rem
+            border-top-left-radius: .9rem
           }
         }
         :last-child {
           div.msg {
-            border-bottom-left-radius: .7rem
+            border-bottom-left-radius: .9rem
           }
         }
       }
@@ -70,10 +70,12 @@ $chunk {
   margin-bottom: .5rem
 
   div.avatar {
-    background-color: grey
-    width: 2rem
-    height: 2rem
-    border-radius: 1rem
+    background-color: #333
+    $smallAvatar
+
+    img {
+      $smallAvatar
+    }
 
     margin-right: 1rem
   }
@@ -87,7 +89,7 @@ $chunk {
         line-height: 1.2rem
         background-color: #fff
         padding: 0 .7rem
-        margin-bottom: .3rem 
+        margin-bottom: .1rem 
         border-radius: .3rem
       }
       div.msg-spacer {
