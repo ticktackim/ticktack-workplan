@@ -7,7 +7,8 @@ const get = require('lodash/get')
 exports.gives = nest('app.html.thread')
 
 exports.needs = nest({
-  'app.sync.goTo': 'first'
+  'app.sync.goTo': 'first',
+  'message.html.markdown': 'first'
 })
 
 exports.create = (api) => {
@@ -31,7 +32,7 @@ exports.create = (api) => {
               h('div.msgs', map(chunk,  msg => {
                 return h('div.msg-row', [
                   h('div.spacer'),
-                  h('div.msg', get(msg, 'value.content.text'))
+                  message(msg)
                 ])
               }))
             ])
@@ -39,7 +40,7 @@ exports.create = (api) => {
               h('div.avatar', 'other'),
               h('div.msgs', map(chunk,  msg => {
                 return h('div.msg-row', [
-                  h('div.msg', get(msg, 'value.content.text')),
+                  message(msg),
                   h('div.spacer')
                 ])
               }))
@@ -48,11 +49,13 @@ exports.create = (api) => {
       })
     )
 
-    return threadView
-  }
+    function message (msg) {
+      const raw = get(msg, 'value.content.text')
 
-  function isByMe (msg) {
-    return msg && msg.value.author === myId
+      return h('div.msg', api.message.html.markdown(raw))
+    }
+
+    return threadView
   }
 }
 
