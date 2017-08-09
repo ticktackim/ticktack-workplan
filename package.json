@@ -20,6 +20,7 @@
     "depnest": "^1.3.0",
     "mutant": "^3.21.2",
     "patchcore": "^1.9.0",
-    "setimmediate": "^1.0.5"
+    "setimmediate": "^1.0.5",
+    "ssb-reduce-stream": "0.0.0"
   }
 }
