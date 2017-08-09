@@ -16,7 +16,7 @@ exports.create = (api) => {
 
     const { goTo } = api.app.sync
 
-    return h('div', [
+    return h('Page -group', [
       h('h1', 'Group'),
       h('a', { 'ev-click': () => goTo({ page: 'home' }) }, 'Home'),
       h('p', `key: ${location.key}`)

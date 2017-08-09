@@ -1,0 +1,7 @@
+Page {
+  h1, nav { 
+    margin-left: 1rem
+  }
+
+}
+
