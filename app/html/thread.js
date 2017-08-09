@@ -10,6 +10,7 @@ exports.needs = nest({
   'about.html.image': 'first',
   'app.sync.goTo': 'first',
   'feed.obs.thread': 'first',
+  'keys.sync.id': 'first',
   'message.html.markdown': 'first'
 })
 
@@ -20,8 +21,7 @@ exports.create = (api) => {
     // location here can expected to be: { page: 'home' }
 
 
-    var myId = '@EMovhfIrFk4NihAKnRNhrfRaqIhBv1Wj8pTxJNgvCCY=.ed25519'
-    // TODO (mix) use keys.sync.id
+    var myId = api.keys.sync.id()
 
     const thread = api.feed.obs.thread(id)
     const chunkedMessages = buildChunkedMessages(thread.messages)
@@ -29,9 +29,9 @@ exports.create = (api) => {
     const { goTo } = api.app.sync
     const threadView = h('Thread', 
       map(chunkedMessages, chunk => {
-        const author = get(chunk, '[0].value.author')
+        const author = computed([chunk], chunk => get(chunk, '[0].value.author'))
 
-        return author === myId
+        return author() === myId
           ? h('div.my-chunk', [
               h('div.avatar'),
               h('div.msgs', map(chunk,  msg => {
@@ -42,7 +42,7 @@ exports.create = (api) => {
               }))
             ])
           : h('div.other-chunk', [
-              h('div.avatar', when(author, api.about.html.image(author))),
+              h('div.avatar', when(author, api.about.html.image(author()))),
               h('div.msgs', map(chunk,  msg => {
                 return h('div.msg-row', [
                   message(msg),
