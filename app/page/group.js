@@ -4,7 +4,7 @@ const { h } = require('mutant')
 exports.gives = nest('app.page.group')
 
 exports.needs = nest({
-  'app.sync.goTo': 'first'
+  'app.html.nav': 'first'
 })
 
 exports.create = (api) => {
@@ -14,11 +14,9 @@ exports.create = (api) => {
     // location here can be the root message of a group : { type: 'group', key }
     // TODO show specific group index described by key
 
-    const { goTo } = api.app.sync
-
-    return h('div', [
+    return h('Page -group', [
       h('h1', 'Group'),
-      h('a', { 'ev-click': () => goTo({ page: 'home' }) }, 'Home'),
+      api.app.html.nav(),
       h('p', `key: ${location.key}`)
     ])
   }

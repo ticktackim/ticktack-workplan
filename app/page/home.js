@@ -6,8 +6,8 @@ const pull = require('pull-stream')
 exports.gives = nest('app.page.home')
 
 exports.needs = nest({
-  'app.sync.goTo': 'first',
-  'feed.pull.public': 'first'
+  'feed.pull.public': 'first',
+  'app.html.nav': 'first'
 })
 
 function firstLine (text) {
@@ -21,7 +21,6 @@ exports.create = (api) => {
 
   function home (location) {
     // location here can expected to be: { page: 'home' }
-    const { goTo } = api.app.sync
 
     var div = h('div', [])
 
@@ -58,13 +57,10 @@ exports.create = (api) => {
       })
     )
 
-    return div
-
-
-    return h('div', [
+    return h('Page -home', [
       h('h1', 'Home'),
-      h('div', { 'ev-click': () => goTo({ page: 'home' }) }, 'Home'),
-      h('div', { 'ev-click': () => goTo({ type: 'group', key: '%sadlkjas;lkdjas' }) }, 'Group')
+      api.app.html.nav(),
+      div
     ])
   }
 }

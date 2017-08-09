@@ -1,0 +1,101 @@
+Thread {
+  background-color: #f7f7f7
+  font-family: 'arial'
+  padding: 1rem
+
+  max-width: 1400px
+
+  display: flex
+  flex-direction: column
+
+  div.my-chunk {
+    $chunk
+
+    justify-content: space-between
+    
+    div.avatar {
+      visibility: hidden
+    }
+
+    div.msgs {
+      div.msg-row {
+        div.msg {
+          $primaryColor
+
+          border-bottom-left-radius: .9rem
+          border-top-left-radius: .9rem
+        }
+        :first-child {
+          div.msg {
+            border-top-right-radius: .9rem
+          }
+        }
+        :last-child {
+          div.msg {
+            border-bottom-right-radius: .9rem
+          }
+        }
+      }
+    }
+  }
+
+  div.other-chunk {
+    $chunk
+
+    div.msgs {
+
+      div.msg-row {
+        div.msg {
+          border: 1.5px #ddd solid
+          border-bottom-right-radius: .9rem
+          border-top-right-radius: .9rem
+        }
+        :first-child {
+          div.msg {
+            border-top-left-radius: .9rem
+          }
+        }
+        :last-child {
+          div.msg {
+            border-bottom-left-radius: .9rem
+          }
+        }
+      }
+    }
+  }
+}
+
+$chunk {
+  display: flex
+  margin-bottom: .5rem
+
+  div.avatar {
+    background-color: #333
+    $smallAvatar
+
+    img {
+      $smallAvatar
+    }
+
+    margin-right: 1rem
+  }
+
+  div.msgs {
+    max-width: 80%
+    div.msg-row {
+      display: flex
+
+      div.msg {
+        line-height: 1.2rem
+        background-color: #fff
+        padding: 0 .7rem
+        margin-bottom: .1rem 
+        border-radius: .3rem
+      }
+      div.msg-spacer {
+        flex-grow: grow
+      }
+    }
+  }
+}
+

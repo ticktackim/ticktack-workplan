@@ -1,6 +1,8 @@
 const ticktack = {
   app: require('./app'),
-  router: require('./router')
+  blob: require('./blob'),
+  router: require('./router'),
+  styles: require('./styles')
 }
 
 module.exports = ticktack
