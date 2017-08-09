@@ -9,28 +9,30 @@ exports.gives = nest('app.html.thread')
 exports.needs = nest({
   'about.html.image': 'first',
   'app.sync.goTo': 'first',
+  'feed.obs.thread': 'first',
   'message.html.markdown': 'first'
 })
 
 exports.create = (api) => {
   return nest('app.html.thread', thread)
 
-  function thread (source) {
+  function thread (id) {
     // location here can expected to be: { page: 'home' }
 
-    const chunkedThread = buildChunkedThreadObs(source)
 
     var myId = '@EMovhfIrFk4NihAKnRNhrfRaqIhBv1Wj8pTxJNgvCCY=.ed25519'
     // TODO (mix) use keys.sync.id
 
+    const thread = api.feed.obs.thread(id)
+    const chunkedMessages = buildChunkedMessages(thread.messages)
+
     const { goTo } = api.app.sync
     const threadView = h('Thread', 
-      map(chunkedThread, chunk => {
+      map(chunkedMessages, chunk => {
+        const author = get(chunk, '[0].value.author')
 
-        return computed(chunk, chunk => {
-          const author = get(chunk, '[0].value.author')
-          if (author === myId) {
-            return h('div.my-chunk', [
+        return author === myId
+          ? h('div.my-chunk', [
               h('div.avatar'),
               h('div.msgs', map(chunk,  msg => {
                 return h('div.msg-row', [
@@ -39,9 +41,8 @@ exports.create = (api) => {
                 ])
               }))
             ])
-          } else {
-            return h('div.other-chunk', [
-              h('div.avatar', api.about.html.image(author)),
+          : h('div.other-chunk', [
+              h('div.avatar', when(author, api.about.html.image(author))),
               h('div.msgs', map(chunk,  msg => {
                 return h('div.msg-row', [
                   message(msg),
@@ -49,8 +50,6 @@ exports.create = (api) => {
                 ])
               }))
             ])
-          }
-        })
       })
     )
 
@@ -64,15 +63,14 @@ exports.create = (api) => {
   }
 }
 
-function buildChunkedThreadObs (source) {
-  var chunkedThread = MutantArray()
+function buildChunkedMessages (messagesObs) {
+  return computed(messagesObs, msgs => {
+    var chunkedMessages = MutantArray()
 
-  var _chunk = null 
-  var _lastMsg = null
-  
-  pull(
-    source,
-    pull.drain(msg => {
+    var _chunk = null 
+    var _lastMsg = null
+    
+    msgs.forEach(msg => {
       if (!_lastMsg || !isSameAuthor(_lastMsg, msg))
         createNewChunk(msg)
       else 
@@ -80,16 +78,16 @@ function buildChunkedThreadObs (source) {
 
       _lastMsg = msg
     })
-  )
 
-  function createNewChunk (msg) {
-    const newChunk = MutantArray()
-    newChunk.push(msg)
-    chunkedThread.push(newChunk)
-    _chunk = newChunk
-  }
+    function createNewChunk (msg) {
+      const newChunk = MutantArray()
+      newChunk.push(msg)
+      chunkedMessages.push(newChunk)
+      _chunk = newChunk
+    }
 
-  return chunkedThread
+    return chunkedMessages
+  })
 }
 
 function isSameAuthor (msgA, msgB) {

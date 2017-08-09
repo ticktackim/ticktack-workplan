@@ -19,8 +19,9 @@ exports.create = (api) => {
     const { goTo } = api.app.sync
 
     // TODO (mix) : swap for actual source, derived from location
-    const source = pull.values(dummyThread)
-    const thread = api.app.html.thread(source)
+
+    const id = '%fXXZgQrwnj7F+Y19H0IXxNriuvPFoahvusih3UzpkfA=.sha256'
+    const thread = api.app.html.thread(id)
 
     return h('div', [
       h('h1', 'Private message'),
