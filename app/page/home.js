@@ -7,7 +7,8 @@ exports.gives = nest('app.page.home')
 
 exports.needs = nest({
   'feed.pull.public': 'first',
-  'app.html.nav': 'first'
+  'app.html.nav': 'first',
+  'history.sync.push': 'first',
 })
 
 function firstLine (text) {
@@ -28,13 +29,17 @@ exports.create = (api) => {
       return firstLine(msg.content.subject || msg.content.text)
     }
 
+    function link(location) {
+      return {'ev-click': () => api.history.sync.push(location)}
+    }
+
     function item (name, thread) {
       var reply = thread.replies && thread.replies[thread.replies.length-1]
       if(!thread.value) {
 
       }
       if(!thread.value) return
-      return h('div', [
+      return h('div.ThreadLink', link(thread), [
           h('h2', name),
           h('div.subject', [subject(thread.value)]),
           reply ? h('div.reply', [subject(reply.value)]) : null
@@ -64,4 +69,5 @@ exports.create = (api) => {
     ])
   }
 }
+
 
