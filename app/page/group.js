@@ -4,7 +4,7 @@ const { h } = require('mutant')
 exports.gives = nest('app.page.group')
 
 exports.needs = nest({
-  'app.sync.goTo': 'first'
+  'app.html.nav': 'first'
 })
 
 exports.create = (api) => {
@@ -18,7 +18,7 @@ exports.create = (api) => {
 
     return h('Page -group', [
       h('h1', 'Group'),
-      h('a', { 'ev-click': () => goTo({ page: 'home' }) }, 'Home'),
+      api.app.html.nav(),
       h('p', `key: ${location.key}`)
     ])
   }

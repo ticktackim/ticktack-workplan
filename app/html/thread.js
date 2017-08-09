@@ -8,7 +8,6 @@ exports.gives = nest('app.html.thread')
 
 exports.needs = nest({
   'about.html.image': 'first',
-  'app.sync.goTo': 'first',
   'feed.obs.thread': 'first',
   'keys.sync.id': 'first',
   'message.html.markdown': 'first'
@@ -26,7 +25,6 @@ exports.create = (api) => {
     const thread = api.feed.obs.thread(id)
     const chunkedMessages = buildChunkedMessages(thread.messages)
 
-    const { goTo } = api.app.sync
     const threadView = h('Thread', 
       map(chunkedMessages, chunk => {
         const author = computed([chunk], chunk => get(chunk, '[0].value.author'))
