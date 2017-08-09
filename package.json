@@ -23,6 +23,7 @@
     "lodash": "^4.17.4",
     "micro-css": "^2.0.1",
     "mutant": "^3.21.2",
+    "patch-history": "^1.0.0",
     "patchcore": "^1.9.0",
     "pull-stream": "^3.6.0",
     "read-directory": "^2.1.0",
