@@ -31,5 +31,3 @@ $largeAvatar {
   border-radius: 3rem
 }
 `
-
-

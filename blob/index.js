@@ -3,4 +3,3 @@ module.exports = {
     url: require('./sync/url')
   }
 }
-

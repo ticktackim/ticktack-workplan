@@ -1,5 +1,5 @@
 Page {
-  h1, nav { 
+  h1 { 
     margin-left: 1rem
   }
 
