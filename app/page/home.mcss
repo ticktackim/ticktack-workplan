@@ -1,0 +1,18 @@
+div.Recps {
+  img {
+    $smallAvatar
+  }
+}
+
+Home {
+  div.Group {
+    div.ThreadLink {
+    }
+  }
+}
+
+
+
+
+
+
