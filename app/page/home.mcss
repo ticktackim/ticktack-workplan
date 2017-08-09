@@ -1,18 +1,17 @@
-div.Recps {
-  img {
-    $smallAvatar
-  }
-}
+Page -home {
+  h1 {}
 
-Home {
-  div.Group {
-    div.ThreadLink {
+  div.container {
+    div.group {
+      div.threadLink {
+        div.recps {
+          img {
+            $smallAvatar
+          }
+        }
+      }
     }
   }
 }
-
-
-
-
 
 

@@ -34,7 +34,7 @@ exports.create = (api) => {
   function home (location) {
     // location here can expected to be: { page: 'home' }
 
-    var div = h('Home', [])
+    var container = h('div.container', [])
 
     function subject (msg) {
       return firstLine(msg.content.subject || msg.content.text)
@@ -50,16 +50,16 @@ exports.create = (api) => {
 
       }
       if(!thread.value) return
-      return h('ThreadLink', link(thread), [
+      return h('div.threadLink', link(thread), [
           name,
-          h('Subject', [subject(thread.value)]),
-          reply ? h('Reply', [subject(reply.value)]) : null
+          h('div.subject', [subject(thread.value)]),
+          reply ? h('div.reply', [subject(reply.value)]) : null
         ]
       )
     }
 
     function threadGroup (threads, obj, toName) {
-      var div = h('Group')
+      var div = h('div.group')
       for(var k in obj) {
         var id = obj[k]
         var thread = threads.roots[id]
@@ -82,13 +82,13 @@ exports.create = (api) => {
           return api.message.sync.unbox(data)
         }).filter(Boolean).reduce(threadReduce, null)
 
-        div.appendChild(threadGroup(
+        container.appendChild(threadGroup(
           threads,
           threads.private,
           function (_, msg) {
             console.log(msg)
             if(!msg.value) debugger
-            return h('Recps',
+            return h('div.recps',
               msg.value.content.recps.map(function (link) {
                 return api.about.html.image(isString(link) ? link : link.link)
               })
@@ -96,10 +96,10 @@ exports.create = (api) => {
           }
         ))
 
-        div.appendChild(threadGroup(
+        container.appendChild(threadGroup(
           threads,
           threads.channels,
-          ch => h('h2.Title', '#'+ch)
+          ch => h('h2.title', '#'+ch)
         ))
       })
     )
@@ -107,7 +107,7 @@ exports.create = (api) => {
     return h('Page -home', [
       h('h1', 'Home'),
       api.app.html.nav(),
-      div
+      container
     ])
   }
 }
