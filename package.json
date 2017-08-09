@@ -25,9 +25,10 @@
     "mutant": "^3.21.2",
     "patch-history": "^1.0.0",
     "patchcore": "^1.9.0",
+    "pull-stream": "^3.6.0",
+    "read-directory": "^2.1.0",
     "setimmediate": "^1.0.5",
     "ssb-reduce-stream": "0.0.0",
-    "pull-stream": "^3.6.0",
-    "read-directory": "^2.1.0"
+    "ssb-ref": "^2.7.1"
   }
 }
