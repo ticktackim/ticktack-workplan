@@ -1,0 +1,7 @@
+body {
+  font-family: arial
+  background-color: #fff
+
+  margin: 0
+}
+

@@ -1,7 +1,7 @@
 Thread {
-  background-color: #eee
-  padding: 1rem
+  background-color: #f7f7f7
   font-family: 'arial'
+  padding: 1rem
 
   max-width: 1400px
 

@@ -19,9 +19,9 @@ exports.create = (api) => {
 
     const thread = api.app.html.thread(location.key)
 
-    return h('div', [
+    return h('Page -private', [
       h('h1', 'Private message'),
-      h('div', { 'ev-click': () => goTo({ page: 'home' }) }, 'Home'),
+      h('nav', { 'ev-click': () => goTo({ page: 'home' }) }, 'Home'),
       thread
     ])
   }
