@@ -18,8 +18,7 @@ exports.create = (api) => {
       h('div', { 'ev-click': () => push({page: 'home'}) }, 'Home'),
       // h('div', { 'ev-click': () => push({type: 'group', key: '%sadlkjas;lkdjas'}) }, 'Group'),
       h('div', { 'ev-click': () => push({key: '%fXXZgQrwnj7F+Y19H0IXxNriuvPFoahvusih3UzpkfA=.sha256'}) }, 'Thread A'),
-      h('div', { 'ev-click': () => push({key: '%3cWZHeN6k03XpvDBxrxP5bGLsNByFLTvr/rKYFV4f+c=.sha256'}) }, 'Thread B'),
+      h('div', { 'ev-click': () => push({key: '%3cWZHeN6k03XpvDBxrxP5bGLsNByFLTvr/rKYFV4f+c=.sha256'}) }, 'Thread B')
     ])
-  } 
+  }
 }
-

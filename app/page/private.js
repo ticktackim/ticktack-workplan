@@ -1,8 +1,6 @@
 const nest = require('depnest')
 const { h } = require('mutant')
 
-const pull = require('pull-stream')
-
 exports.gives = nest('app.page.private')
 
 exports.needs = nest({
@@ -11,9 +9,9 @@ exports.needs = nest({
 })
 
 exports.create = (api) => {
-  return nest('app.page.private', private)
+  return nest('app.page.private', privatePage)
 
-  function private (location) {
+  function privatePage (location) {
     // location here can expected to be an ssb-message
 
     const thread = api.app.html.thread(location.key)

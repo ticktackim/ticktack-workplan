@@ -14,8 +14,6 @@ exports.create = (api) => {
     // location here can be the root message of a group : { type: 'group', key }
     // TODO show specific group index described by key
 
-    const { goTo } = api.app.sync
-
     return h('Page -group', [
       h('h1', 'Group'),
       api.app.html.nav(),

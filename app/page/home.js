@@ -15,7 +15,7 @@ exports.create = (api) => {
 
     return h('Page -home', [
       h('h1', 'Home'),
-      api.app.html.nav(),
+      api.app.html.nav()
     ])
   }
 }

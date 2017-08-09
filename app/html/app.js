@@ -37,7 +37,3 @@ exports.create = (api) => {
       : document.body.appendChild(newView)
   }
 }
-
-
-
-
