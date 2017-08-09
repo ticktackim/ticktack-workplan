@@ -14,11 +14,11 @@ exports.create = (api) => {
   function nav (id) {
     const { push, back } = api.history.sync
     return h('Nav', [
-      h('div', { 'ev-click': back }, '(<)'),
+      h('div.back', { 'ev-click': back }, '←'),
       h('div', { 'ev-click': () => push({page: 'home'}) }, 'Home'),
-      h('div', { 'ev-click': () => push({type: 'group', key: '%sadlkjas;lkdjas'}) }, 'Group'),
-      h('div', { 'ev-click': () => push({key: '%fXXZgQrwnj7F+Y19H0IXxNriuvPFoahvusih3UzpkfA=.sha256'}) }, 'Private Thread A'),
-      h('div', { 'ev-click': () => push({key: '%3cWZHeN6k03XpvDBxrxP5bGLsNByFLTvr/rKYFV4f+c=.sha256'}) }, 'Private Thread B'),
+      // h('div', { 'ev-click': () => push({type: 'group', key: '%sadlkjas;lkdjas'}) }, 'Group'),
+      h('div', { 'ev-click': () => push({key: '%fXXZgQrwnj7F+Y19H0IXxNriuvPFoahvusih3UzpkfA=.sha256'}) }, 'Thread A'),
+      h('div', { 'ev-click': () => push({key: '%3cWZHeN6k03XpvDBxrxP5bGLsNByFLTvr/rKYFV4f+c=.sha256'}) }, 'Thread B'),
     ])
   } 
 }

@@ -1,11 +1,27 @@
 Nav {
   display: flex
-  margin-left: 1rem
+  align-items: center
+
+  margin: 0 0 1rem 1rem
 
   div {
     margin-right: 1rem
-    
 
+    :hover {
+      text-decoration: underline
+    }
+  }
+
+  div.back {
+    border: 1px solid #ddd
+    padding: 0 0.2em;
+    font-size: 1.4rem;
+    border-radius: 4px
+
+    :hover {
+      text-decoration: none
+      border-color: #222 
+    }
   }
 }
 
