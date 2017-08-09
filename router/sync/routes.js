@@ -9,14 +9,16 @@ exports.needs = nest({
 
 exports.create = (api) => {
   return nest('router.sync.routes', (sofar = []) => {
-    const { home, group } = api.app.page
+    const { home, group, channel } = api.app.page
 
     // route format: [ routeValidator, routeFunction ]
     const routes = [
       [ ({ page }) => page === 'home', home ],
       [ ({ type }) => type === 'group', group ]
+      [ ({ page }) => page === 'channel', channel ]
     ]
 
     return [...sofar, ...routes]
   })
 }
+
