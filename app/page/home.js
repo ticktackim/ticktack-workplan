@@ -3,29 +3,23 @@ const { h } = require('mutant')
 const {threadReduce} = require('ssb-reduce-stream')
 const pull = require('pull-stream')
 const when = require('mutant/when')
+const isObject = require('lodash/isObject')
+const isString = require('lodash/isString')
 
 exports.gives = nest('app.page.home')
 
 exports.needs = nest({
-  'feed.pull.public': 'first',
+  'about.html.image': 'first',
   'app.html.nav': 'first',
+  'feed.pull.public': 'first',
   'history.sync.push': 'first',
   'message.sync.unbox': 'first',
-  'about.html.image': 'first',
 })
 
 function firstLine (text) {
   if(text.length < 80 && !~text.indexOf('\n')) return text
 
   return text.split('\n')[0].substring(0, 80)
-}
-
-function isObject (o) {
-  return o && 'object' === typeof o
-}
-
-function isString (s) {
-  return 'string' == typeof s
 }
 
 exports.create = (api) => {
@@ -46,16 +40,13 @@ exports.create = (api) => {
 
     function item (name, thread) {
       var reply = thread.replies && thread.replies[thread.replies.length-1]
-      if(!thread.value) {
-
-      }
       if(!thread.value) return
+
       return h('div.threadLink', link(thread), [
-          name,
-          h('div.subject', [subject(thread.value)]),
-          reply ? h('div.reply', [subject(reply.value)]) : null
-        ]
-      )
+        name,
+        h('div.subject', [subject(thread.value)]),
+        reply ? h('div.reply', [subject(reply.value)]) : null
+      ])
     }
 
     function threadGroup (threads, obj, toName) {
@@ -86,13 +77,11 @@ exports.create = (api) => {
           threads,
           threads.private,
           function (_, msg) {
-            console.log(msg)
-            if(!msg.value) debugger
-            return h('div.recps',
+            return h('div.recps', [
               msg.value.content.recps.map(function (link) {
                 return api.about.html.image(isString(link) ? link : link.link)
               })
-            )
+            ])
           }
         ))
 
