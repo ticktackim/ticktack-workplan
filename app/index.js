@@ -1,4 +1,7 @@
 module.exports = {
+  async: {
+    catchLinkClick: require('./async/catch-link-click'),
+  },
   html: {
     app: require('./html/app'),
     thread: require('./html/thread'),
