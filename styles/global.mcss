@@ -17,3 +17,7 @@ body {
 img {
   max-width: 100%
 }
+
+Markdown {
+  word-break: break-word
+}
