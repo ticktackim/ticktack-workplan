@@ -19,15 +19,9 @@ exports.needs = nest({
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
   'message.sync.unbox': 'first',
-  'message.html.markdown': 'first'
+  'message.html.markdown': 'first',
+  'translations.sync.strings': 'first'
 })
-
-var strings = {
-  showMore: "Show More",
-  channels: "Channels",
-  directMessages: "Direct Messages",
-  replySymbol: "> "
-}
 
 function firstLine (text) {
   if(text.length < 80 && !~text.indexOf('\n')) return text
@@ -60,6 +54,7 @@ function firstLine (text) {
 
 exports.create = (api) => {
   return nest('app.page.home', function (location) {
+    var strings = api.translations.sync.strings()
     // location here can expected to be: { page: 'home' }
 
     var container = h('div.container', [])
