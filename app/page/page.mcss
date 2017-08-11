@@ -3,5 +3,14 @@ Page {
     margin-left: 1rem
   }
 
+  div.Nav {}
+
+  div.container {
+    $primaryBackground
+    padding: 1rem
+
+    max-width: 1400px
+
+  }
 }
 
