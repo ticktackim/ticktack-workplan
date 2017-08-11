@@ -1,0 +1,17 @@
+Page -home {
+  h1 {}
+
+  div.container {
+    div.group {
+      div.threadLink {
+        div.recps {
+          img {
+            $smallAvatar
+          }
+        }
+      }
+    }
+  }
+}
+
+
