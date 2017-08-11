@@ -3,5 +3,14 @@ body {
   background-color: #fff
 
   margin: 0
+
+  (a) {
+    color: #1a95a9
+    text-decoration: none
+
+    :hover {
+      text-decoration: underline
+    }
+  }
 }
 

@@ -1,10 +1,12 @@
 const nest = require('depnest')
 const values = require('lodash/values')
 const insertCss = require('insert-css')
+const openExternal = require('open-external')
 
 exports.gives = nest('app.html.app')
 
 exports.needs = nest({
+  'app.async.catchLinkClick': 'first',
   'history.sync.push': 'first',
   'history.obs.location': 'first',
   'history.obs.store': 'first',
@@ -18,6 +20,12 @@ exports.create = (api) => {
   function app () {
     const css = values(api.styles.css()).join('\n')
     insertCss(css)
+
+    api.app.async.catchLinkClick(document.body, (link, { isExternal }) => {
+      if (isExternal) return openExternal(link)
+
+      api.history.sync.push(link)
+    })
 
     api.history.obs.location()(render)
     api.history.sync.push({ page: 'home' })
