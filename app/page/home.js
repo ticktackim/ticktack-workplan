@@ -7,9 +7,9 @@ const isString = require('lodash/isString')
 const last = require('lodash/last')
 const get = require('lodash/get')
 const More = require('hypermore')
-exports.gives = nest('app.page.home')
 const morphdom = require('morphdom')
-const Next = require('pull-next')
+
+exports.gives = nest('app.page.home')
 
 exports.needs = nest({
   'about.html.image': 'first',
@@ -20,7 +20,8 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'message.sync.unbox': 'first',
   'message.html.markdown': 'first',
-  'translations.sync.strings': 'first'
+  'translations.sync.strings': 'first',
+  'state.obs.threads': 'first'
 })
 
 function firstLine (text) {
@@ -124,35 +125,12 @@ exports.create = (api) => {
       return groupEl
     }
 
-    var initial
-    try { initial = JSON.parse(localStorage.threadsState) }
-    catch (_) { }
-    var lastTimestamp = initial ? initial.last : Date.now()
+    var threadsObs = api.state.obs.threads()
 
-    var timer
-    function update (threadsState) {
-      clearTimeout(timer)
-      setTimeout(function () {
-        threadsState.last = lastTimestamp
-        localStorage.threadsState = JSON.stringify(threadsState)
-      }, 1000)
-    }
-
-    var threadsObs = More(
-      threadReduce,
-      pull(
-        Next(function () {
-          return api.sbot.pull.log({reverse: true, limit: 500, lte: lastTimestamp})
-        }),
-        pull.map(function (data) {
-          lastTimestamp = data.timestamp
-          if(isObject(data.value.content)) return data
-          return api.message.sync.unbox(data)
-        }),
-        pull.filter(Boolean)
-      ),
+    var threadsHtmlObs = More(
+      threadsObs,
       function render (threads) {
-        update(threads)
+        console.log('RENDER', JSON.stringify(threads).length)
         morphdom(container,
           h('div.container', [
             //private section
@@ -195,16 +173,17 @@ exports.create = (api) => {
         ])
         )
         return container
-      },
-      initial
+      }
     )
+
 
     return h('Page -home', [
       h('h1', 'Home'),
       api.app.html.nav(),
-      threadsObs,
-      h('button', {'ev-click': threadsObs.more}, [strings.showMore])
+      threadsHtmlObs,
+      h('button', {'ev-click': threadsHtmlObs.more}, [strings.showMore])
     ])
   })
 }
+
 
