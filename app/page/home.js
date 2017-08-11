@@ -2,7 +2,6 @@ const nest = require('depnest')
 const { h } = require('mutant')
 const {threadReduce} = require('ssb-reduce-stream')
 const pull = require('pull-stream')
-const when = require('mutant/when')
 const isObject = require('lodash/isObject')
 const isString = require('lodash/isString')
 const last = require('lodash/last')
@@ -57,22 +56,20 @@ exports.create = (api) => {
       // obj = a map of keys to root ids, where key ∈ (channel | group | concatenated list of pubkeys)
       // toName = fn that derives a name from a particular thread
  
-      var div = h('div.group')
+      var groupEl = h('div.group')
       for(var k in obj) {
         var id = obj[k]
         var thread = get(threads, ['roots', id])
         if(thread && thread.value) {
-          //throw new Error('missing thread:'+id+' for channel:'+k)
           var el = item(toName(k, thread), thread)
-          if(el) div.appendChild(el)
+          if(el) groupEl.appendChild(el)
         }
       }
-      return div
+      return groupEl
     }
 
     pull(
       api.feed.pull.public({reverse: true, limit: 1000}),
-      pull.through(console.log),
       pull.collect(function (err, messages) {
 
         var threads = messages
@@ -112,6 +109,4 @@ exports.create = (api) => {
     ])
   }
 }
-
-
 

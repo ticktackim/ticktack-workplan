@@ -1,5 +1,4 @@
 const nest = require('depnest')
-const isEmpty = require('lodash/isEmpty')
 const ref = require('ssb-ref')
 exports.gives = nest('router.sync.routes')
 
@@ -13,7 +12,7 @@ exports.create = (api) => {
   return nest('router.sync.routes', (sofar = []) => {
     const pages = api.app.page
     // route format: [ routeValidator, routeFunction ]
-    console.log('LOCATION', location, isEmpty(location.key))
+ 
     const routes = [
       [ location => location.page === 'home', pages.home ],
       [ location => location.type === 'group', pages.group ],
