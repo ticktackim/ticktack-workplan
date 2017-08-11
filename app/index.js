@@ -5,7 +5,8 @@ module.exports = {
   html: {
     app: require('./html/app'),
     thread: require('./html/thread'),
-    nav: require('./html/nav')
+    nav: require('./html/nav'),
+    threadCard: require('./html/thread-card')
   },
   page: {
     group: require('./page/group'),

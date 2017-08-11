@@ -21,91 +21,16 @@ exports.needs = nest({
   'message.sync.unbox': 'first',
   'message.html.markdown': 'first',
   'translations.sync.strings': 'first',
-  'state.obs.threads': 'first'
+  'state.obs.threads': 'first',
+  'app.html.threadCard': 'first'
 })
-
-function firstLine (text) {
-  if(text.length < 80 && !~text.indexOf('\n')) return text
-
-  var line = ''
-  var lineNumber = 0
-  while (line.length === 0) {
-    const rawLine = text.split('\n')[lineNumber]
-    line = trimLeadingMentions(rawLine)
-
-    lineNumber++
-  }
-
-  var sample = line.substring(0, 80)
-  if (hasBrokenLink(sample))
-    sample = sample + line.substring(81).match(/[^\)]*\)/)[0]
-
-  return sample
-
-  function trimLeadingMentions (str) {
-    return str.replace(/^(\s*\[@[^\)]+\)\s*)*/, '')
-    // deletes any number of pattern " [@...)  " from start of line
-  }
-
-  function hasBrokenLink (str) {
-    return /\[[^\]]*\]\([^\)]*$/.test(str)
-    // matches "[name](start_of_link"
-  }
-}
 
 exports.create = (api) => {
   return nest('app.page.home', function (location) {
-    var strings = api.translations.sync.strings()
     // location here can expected to be: { page: 'home' }
+    var strings = api.translations.sync.strings()
 
     var container = h('div.container', [])
-
-    function subject (msg) {
-      const { subject, text } = msg.value.content
-      return api.message.html.markdown(firstLine(subject|| text))
-    }
-
-    function link(location) {
-      return {'ev-click': () => api.history.sync.push(location)}
-    }
-
-    function item (context, thread, opts = {}) {
-      if(!thread.value) return
-
-      const subjectEl = h('div.subject', [
-        opts.nameRecipients
-          ?  h('div.recps', buildRecipientNames(thread).map(recp => h('div.recp', recp)))
-          : null,
-        subject(thread)
-      ])
-
-      const lastReply = thread.replies && last(thread.replies)
-      const replyEl = lastReply
-        ? h('div.reply', [
-            h('div.replySymbol', strings.replySymbol),
-            subject(lastReply)
-          ])
-        : null
-
-
-      // REFACTOR: move this to a template?
-      function buildRecipientNames (thread) {
-        const myId = api.keys.sync.id()
-
-        return thread.value.content.recps
-          .map(link => isString(link) ? link : link.link)
-          .filter(link => link !== myId)
-          .map(api.about.obs.name)
-      }
-
-      return h('div.thread', link(thread), [
-        h('div.context', context),
-        h('div.content', [
-          subjectEl,
-          replyEl
-        ])
-      ])
-    }
 
     function threadGroup (threads, obj, toContext, opts) {
       // threads = a state object for all the types of threads
@@ -118,7 +43,7 @@ exports.create = (api) => {
         var id = obj[k]
         var thread = get(threads, ['roots', id])
         if(thread && thread.value) {
-          var el = item(toContext(k, thread), thread, opts)
+          var el = api.app.html.threadCard(toContext(k, thread), thread, opts)
           if(el) groupEl.appendChild(el)
         }
       }
@@ -130,46 +55,18 @@ exports.create = (api) => {
     var threadsHtmlObs = More(
       threadsObs,
       function render (threads) {
-        console.log('RENDER', JSON.stringify(threads).length)
         morphdom(container,
           h('div.container', [
             //private section
             h('section.updates -directMessage', [
-              h('h2', strings.directMessages),
-              threadGroup(
-                threads,
-                threads.private,
-                function (_, msg) {
-                  // NB: msg passed in is actually a 'thread', but only care about root msg
-                  const myId = api.keys.sync.id()
-
-                  return msg.value.content.recps
-                    .map(link => isString(link) ? link : link.link)
-                    .filter(link => link !== myId)
-                    .map(api.about.html.image)
-                },
-                { nameRecipients: true }
+              h('div.threads', 
+                Object.keys(threads.roots).map(function (id) {
+              
+                  return api.app.html
+                    .threadCard(null, threads.roots[id], opts)
+                })
               )
             ]),
-            //channels section
-            h('section.updates -channel', [
-              h('h2', strings.channels),
-              threadGroup(
-                threads,
-                threads.channels,
-                ch => '#'+ch
-              )
-            ]),
-            //group section
-            h('section.updates -group', [
-              h('h2', 'Groups'),
-              'TODO: complete + enable when groups are live'
-              // threadGroup(
-              //   threads,
-              //   threads.groups,
-              //   toName ...
-              // )
-            ])
         ])
         )
         return container
@@ -185,5 +82,4 @@ exports.create = (api) => {
     ])
   })
 }
-
 
