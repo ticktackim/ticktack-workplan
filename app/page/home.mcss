@@ -64,8 +64,8 @@ $homePageSection {
     text-align: center
     padding-bottom: .3rem
     width: 420px
-    border-bottom: 1px solid #aaa
     margin-top: 0
+    margin-bottom: .4rem
   }
 
   div.threads {
@@ -86,11 +86,11 @@ $homePageSection {
       }
 
       div.content {
-        flex-grow: .8
+        flex-grow: 1
         background: #fff
         padding: 1rem
         border: 1px solid #ddd
-        border-radius: 1rem
+        border-radius: 2px
 
         div.subject {
           font-size: 1.2rem
