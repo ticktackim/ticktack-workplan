@@ -4,14 +4,35 @@ Page -home {
     $primaryBackground
 
     section.updates {
+
       -directMessage {
         $homePageSection
+
+        div.threads {
+          div.thread {
+            div.content {
+              div.subject {
+                display: flex
+
+                div.recps {
+                  display: flex
+                  font-weight: 600
+                  margin-right: .4rem
+
+                  div.recp {
+                    margin-right: .4rem
+                  }
+                }
+              }
+            }
+          }
+        }
       }
 
       -channel {
         $homePageSection
 
-        div.threads { 
+        div.threads {
           div.thread {
             div.context {
               background: #fff
@@ -72,15 +93,17 @@ $homePageSection {
         border-radius: 1rem
 
         div.subject {
-          font-weight: 600
+          font-size: 1.2rem
           margin-bottom: .3rem
 
-          $smallMarkdown
+          $largeMarkdown
         }
         div.reply {
           display: flex
-          div.author { 
-            font-weight: 600
+          color: #444
+
+          div.replySymbol {
+            margin-left: .7rem
             margin-right: .3rem
           }
 

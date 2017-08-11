@@ -6,7 +6,7 @@ Thread {
     $chunk
 
     justify-content: space-between
-    
+
     div.avatar {
       visibility: hidden
     }
@@ -68,7 +68,7 @@ $chunk {
         line-height: 1.2rem
         background-color: #fff
         padding: 0 .7rem
-        margin-bottom: .1rem 
+        margin-bottom: .1rem
         border-radius: .3rem
       }
       div.msg-spacer {

@@ -66,36 +66,56 @@ exports.create = (api) => {
       return {'ev-click': () => api.history.sync.push(location)}
     }
 
-    function item (context, thread) {
+    function item (context, thread, opts = {}) {
       if(!thread.value) return
+
+      const subjectEl = h('div.subject', [
+        opts.nameRecipients
+          ?  h('div.recps', buildRecipientNames(thread).map(recp => h('div.recp', recp)))
+          : null,
+        subject(thread)
+      ])
+
       const lastReply = thread.replies && last(thread.replies)
       const replyEl = lastReply
         ? h('div.reply', [
-          h('div.author', [api.about.obs.name(lastReply.value.author), ':']),
-          subject(lastReply)
-        ])
+            h('div.replySymbol', '► '),
+            subject(lastReply)
+          ])
         : null
+
+
+      // REFACTOR: move this to a template?
+      function buildRecipientNames (thread) {
+        const myId = api.keys.sync.id()
+
+        return thread.value.content.recps
+          .map(link => isString(link) ? link : link.link)
+          .filter(link => link !== myId)
+          .map(api.about.obs.name)
+      }
 
       return h('div.thread', link(thread), [
         h('div.context', context),
         h('div.content', [
-          h('div.subject', [subject(thread)]),
+          subjectEl,
           replyEl
         ])
       ])
     }
 
-    function threadGroup (threads, obj, toName) {
+    function threadGroup (threads, obj, toContext, opts) {
       // threads = a state object for all the types of threads
       // obj = a map of keys to root ids, where key ∈ (channel | group | concatenated list of pubkeys)
-      // toName = fn that derives a name from a particular thread
- 
+      // toContext = fn that derives the context of the group
+      // opts = { nameRecipients }
+
       var groupEl = h('div.threads')
       for(var k in obj) {
         var id = obj[k]
         var thread = get(threads, ['roots', id])
         if(thread && thread.value) {
-          var el = item(toName(k, thread), thread)
+          var el = item(toContext(k, thread), thread, opts)
           if(el) groupEl.appendChild(el)
         }
       }
@@ -119,16 +139,16 @@ exports.create = (api) => {
           threadGroup(
             threads,
             threads.private,
-            function (_, msg) {    
+            function (_, msg) 
               // NB: msg passed in is actually a 'thread', but only care about root msg
               const myId = api.keys.sync.id()
-   
+
               return msg.value.content.recps
                 .map(link => isString(link) ? link : link.link)
-                .filter(link => link !== myId) 
+                .filter(link => link !== myId)
                 .map(api.about.html.image)
-              
-            }
+            },
+            { nameRecipients: true }
           )
         ])
 
