@@ -1,17 +1,92 @@
 Page -home {
-  h1 {}
 
   div.container {
-    div.group {
-      div.threadLink {
-        div.recps {
-          img {
-            $smallAvatar
+    $primaryBackground
+
+    section.updates {
+      -directMessage {
+        $homePageSection
+      }
+
+      -channel {
+        $homePageSection
+
+        div.threads { 
+          div.thread {
+            div.context {
+              background: #fff
+              min-width: 8rem
+              padding: .1rem .3rem
+              border: 1px solid #ddd
+              border-radius: 2px
+            }
           }
         }
+      }
+
+      -group {
+        $homePageSection
       }
     }
   }
 }
 
+$homePageSection {
+  display: flex
+  flex-direction: column
+  align-items: center
+  margin-bottom: 1.5rem
 
+  h2 {
+    color: #888
+    font-size: 1rem
+    text-align: center
+    padding-bottom: .3rem
+    width: 420px
+    border-bottom: 1px solid #aaa
+    margin-top: 0
+  }
+
+  div.threads {
+    div.thread {
+      display: flex
+      align-items: center
+
+      margin-bottom: .5rem
+
+      div.context {
+        display: flex
+        margin-right: 1rem
+
+        img {
+          $smallAvatar
+          margin-right: .5rem
+        }
+      }
+
+      div.content {
+        flex-grow: .8
+        background: #fff
+        padding: 1rem
+        border: 1px solid #ddd
+        border-radius: 1rem
+
+        div.subject {
+          font-weight: 600
+          margin-bottom: .3rem
+
+          $smallMarkdown
+        }
+        div.reply {
+          display: flex
+          div.author { 
+            font-weight: 600
+            margin-right: .3rem
+          }
+
+          $smallMarkdown
+        }
+      }
+    }
+  }
+}

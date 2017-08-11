@@ -1,10 +1,4 @@
 Thread {
-  background-color: #f7f7f7
-  font-family: 'arial'
-  padding: 1rem
-
-  max-width: 1400px
-
   display: flex
   flex-direction: column
 
@@ -22,18 +16,8 @@ Thread {
         div.msg {
           $primaryColor
 
-          border-bottom-left-radius: .9rem
-          border-top-left-radius: .9rem
-        }
-        :first-child {
-          div.msg {
-            border-top-right-radius: .9rem
-          }
-        }
-        :last-child {
-          div.msg {
-            border-bottom-right-radius: .9rem
-          }
+          (a) { color: #4d3568 }
+          $roundLeft
         }
       }
     }
@@ -43,22 +27,10 @@ Thread {
     $chunk
 
     div.msgs {
-
       div.msg-row {
         div.msg {
           border: 1.5px #ddd solid
-          border-bottom-right-radius: .9rem
-          border-top-right-radius: .9rem
-        }
-        :first-child {
-          div.msg {
-            border-top-left-radius: .9rem
-          }
-        }
-        :last-child {
-          div.msg {
-            border-bottom-left-radius: .9rem
-          }
+          $roundRight
         }
       }
     }
@@ -84,6 +56,13 @@ $chunk {
     max-width: 80%
     div.msg-row {
       display: flex
+
+      :first-child {
+        div.msg { $roundTop }
+      }
+      :last-child {
+        div.msg { $roundBottom }
+      }
 
       div.msg {
         line-height: 1.2rem
