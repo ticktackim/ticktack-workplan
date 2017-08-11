@@ -12,14 +12,9 @@ const morphdom = require('morphdom')
 exports.gives = nest('app.page.home')
 
 exports.needs = nest({
-  'about.html.image': 'first',
-  'about.obs.name': 'first',
   'app.html.nav': 'first',
-  'sbot.pull.log': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
-  'message.sync.unbox': 'first',
-  'message.html.markdown': 'first',
   'translations.sync.strings': 'first',
   'state.obs.threads': 'first',
   'app.html.threadCard': 'first'
@@ -61,7 +56,6 @@ exports.create = (api) => {
             h('section.updates -directMessage', [
               h('div.threads', 
                 Object.keys(threads.roots).map(function (id) {
-              
                   return api.app.html
                     .threadCard(null, threads.roots[id], opts)
                 })
@@ -72,7 +66,6 @@ exports.create = (api) => {
         return container
       }
     )
-
 
     return h('Page -home', [
       h('h1', 'Home'),

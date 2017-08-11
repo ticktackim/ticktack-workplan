@@ -36,18 +36,20 @@ function firstLine (text) {
   if (hasBrokenLink(sample))
     sample = sample + line.substring(81).match(/[^\)]*\)/)[0]
 
-  return sample
-
-  function trimLeadingMentions (str) {
-    return str.replace(/^(\s*\[@[^\)]+\)\s*)*/, '')
-    // deletes any number of pattern " [@...)  " from start of line
-  }
-
-  function hasBrokenLink (str) {
-    return /\[[^\]]*\]\([^\)]*$/.test(str)
-    // matches "[name](start_of_link"
-  }
+  const ellipsis = (sample.length < line.length) ? '...' : '' 
+  return sample + ellipsis
 }
+
+function trimLeadingMentions (str) {
+  return str.replace(/^(\s*\[@[^\)]+\)\s*)*/, '')
+  // deletes any number of pattern " [@...)  " from start of line
+}
+
+function hasBrokenLink (str) {
+  return /\[[^\]]*\]\([^\)]*$/.test(str)
+  // matches "[name](start_of_link"
+}
+
 
 exports.create = function (api) {
 
@@ -120,5 +122,6 @@ exports.create = function (api) {
     ])
   }}}}
 }
+
 
 
