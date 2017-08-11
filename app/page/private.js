@@ -19,7 +19,7 @@ exports.create = (api) => {
     return h('Page -private', [
       h('h1', 'Private message'),
       api.app.html.nav(),
-      thread
+      h('div.container', thread)
     ])
   }
 }

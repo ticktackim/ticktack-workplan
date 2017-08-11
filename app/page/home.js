@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h } = require('mutant')
+const { h, computed } = require('mutant')
 const {threadReduce} = require('ssb-reduce-stream')
 const pull = require('pull-stream')
 const isObject = require('lodash/isObject')
@@ -11,16 +11,43 @@ exports.gives = nest('app.page.home')
 
 exports.needs = nest({
   'about.html.image': 'first',
+  'about.obs.name': 'first',
   'app.html.nav': 'first',
   'feed.pull.public': 'first',
   'history.sync.push': 'first',
+  'keys.sync.id': 'first',
   'message.sync.unbox': 'first',
+  'message.html.markdown': 'first'
 })
 
 function firstLine (text) {
   if(text.length < 80 && !~text.indexOf('\n')) return text
 
-  return text.split('\n')[0].substring(0, 80)
+  var line = ''
+  var lineNumber = 0
+  while (line.length === 0) {
+    const rawLine = text.split('\n')[lineNumber]
+    line = trimLeadingMentions(rawLine)
+
+    lineNumber++
+  }
+
+  var sample = line.substring(0, 80)
+  if (hasBrokenLink(sample))
+    sample = sample + line.substring(81).match(/[^\)]*\)/)[0]
+
+  const ellipsis = (sample.length < line.length) ? '...' : '' 
+  return sample + ellipsis
+}
+
+function trimLeadingMentions (str) {
+  return str.replace(/^(\s*\[@[^\)]+\)\s*)*/, '')
+  // deletes any number of pattern " [@...)  " from start of line
+}
+
+function hasBrokenLink (str) {
+  return /\[[^\]]*\]\([^\)]*$/.test(str)
+  // matches "[name](start_of_link"
 }
 
 exports.create = (api) => {
@@ -33,35 +60,63 @@ exports.create = (api) => {
 
     function subject (msg) {
       const { subject, text } = msg.value.content
-      return firstLine(subject|| text)
+      return api.message.html.markdown(firstLine(subject|| text))
     }
 
     function link(location) {
       return {'ev-click': () => api.history.sync.push(location)}
     }
 
-    function item (name, thread) {
+    function item (context, thread, opts = {}) {
       if(!thread.value) return
-      const lastReply = thread.replies && last(thread.replies)
 
-      return h('div.threadLink', link(thread), [
-        name,
-        h('div.subject', [subject(thread)]),
-        lastReply ? h('div.reply', [subject(lastReply)]) : null
+      const subjectEl = h('div.subject', [
+        opts.nameRecipients
+          ?  h('div.recps', buildRecipientNames(thread).map(recp => h('div.recp', recp)))
+          : null,
+        subject(thread)
+      ])
+
+      const lastReply = thread.replies && last(thread.replies)
+      const replyEl = lastReply
+        ? h('div.reply', [
+            h('div.replySymbol', '► '),
+            subject(lastReply)
+          ])
+        : null
+
+
+      // REFACTOR: move this to a template?
+      function buildRecipientNames (thread) {
+        const myId = api.keys.sync.id()
+
+        return thread.value.content.recps
+          .map(link => isString(link) ? link : link.link)
+          .filter(link => link !== myId)
+          .map(api.about.obs.name)
+      }
+
+      return h('div.thread', link(thread), [
+        h('div.context', context),
+        h('div.content', [
+          subjectEl,
+          replyEl
+        ])
       ])
     }
 
-    function threadGroup (threads, obj, toName) {
+    function threadGroup (threads, obj, toContext, opts) {
       // threads = a state object for all the types of threads
       // obj = a map of keys to root ids, where key ∈ (channel | group | concatenated list of pubkeys)
-      // toName = fn that derives a name from a particular thread
- 
-      var groupEl = h('div.group')
+      // toContext = fn that derives the context of the group
+      // opts = { nameRecipients }
+
+      var groupEl = h('div.threads')
       for(var k in obj) {
         var id = obj[k]
         var thread = get(threads, ['roots', id])
         if(thread && thread.value) {
-          var el = item(toName(k, thread), thread)
+          var el = item(toContext(k, thread), thread, opts)
           if(el) groupEl.appendChild(el)
         }
       }
@@ -80,25 +135,46 @@ exports.create = (api) => {
           .filter(Boolean)
           .reduce(threadReduce, null)
 
-        container.appendChild(threadGroup(
-          threads,
-          threads.private,
-          function (_, msg) {    
-            // NB: msg passed in is actually a 'thread', but only care about root msg
- 
-            return h('div.recps', [
-              msg.value.content.recps.map(function (link) {
-                return api.about.html.image(isString(link) ? link : link.link)
-              })
-            ])
-          }
-        ))
+        const privateUpdatesSection = h('section.updates -directMessage', [
+          h('h2', 'Direct Messages'),
+          threadGroup(
+            threads,
+            threads.private,
+            function (_, msg) {
+              // NB: msg passed in is actually a 'thread', but only care about root msg
+              const myId = api.keys.sync.id()
 
-        container.appendChild(threadGroup(
-          threads,
-          threads.channels,
-          ch => h('h2.title', '#'+ch)
-        ))
+              return msg.value.content.recps
+                .map(link => isString(link) ? link : link.link)
+                .filter(link => link !== myId)
+                .map(api.about.html.image)
+            },
+            { nameRecipients: true }
+          )
+        ])
+
+        const channelUpdatesSection = h('section.updates -channel', [
+          h('h2', 'Channels'),
+          threadGroup(
+            threads,
+            threads.channels,
+            ch => '#'+ch
+          )
+        ])
+
+        const groupUpdatesSection = h('section.updates -group', [
+          h('h2', 'Groups'),
+          'TODO: complete + enable when groups are live'
+          // threadGroup(
+          //   threads,
+          //   threads.groups,
+          //   toName ...
+          // )
+        ])
+
+        container.appendChild(privateUpdatesSection)
+        container.appendChild(channelUpdatesSection)
+        container.appendChild(groupUpdatesSection)
       })
     )
 
