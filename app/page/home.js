@@ -5,6 +5,8 @@ const pull = require('pull-stream')
 const when = require('mutant/when')
 const isObject = require('lodash/isObject')
 const isString = require('lodash/isString')
+const last = require('lodash/last')
+const get = require('lodash/get')
 
 exports.gives = nest('app.page.home')
 
@@ -31,7 +33,8 @@ exports.create = (api) => {
     var container = h('div.container', [])
 
     function subject (msg) {
-      return firstLine(msg.content.subject || msg.content.text)
+      const { subject, text } = msg.value.content
+      return firstLine(subject|| text)
     }
 
     function link(location) {
@@ -39,22 +42,26 @@ exports.create = (api) => {
     }
 
     function item (name, thread) {
-      var reply = thread.replies && thread.replies[thread.replies.length-1]
       if(!thread.value) return
+      const lastReply = thread.replies && last(thread.replies)
 
       return h('div.threadLink', link(thread), [
         name,
-        h('div.subject', [subject(thread.value)]),
-        reply ? h('div.reply', [subject(reply.value)]) : null
+        h('div.subject', [subject(thread)]),
+        lastReply ? h('div.reply', [subject(lastReply)]) : null
       ])
     }
 
     function threadGroup (threads, obj, toName) {
+      // threads = a state object for all the types of threads
+      // obj = a map of keys to root ids, where key ∈ (channel | group | concatenated list of pubkeys)
+      // toName = fn that derives a name from a particular thread
+ 
       var div = h('div.group')
       for(var k in obj) {
         var id = obj[k]
-        var thread = threads.roots[id]
-        if(threads.roots[id] && threads.roots[id].value) {
+        var thread = get(threads, ['roots', id])
+        if(thread && thread.value) {
           //throw new Error('missing thread:'+id+' for channel:'+k)
           var el = item(toName(k, thread), thread)
           if(el) div.appendChild(el)
@@ -68,15 +75,20 @@ exports.create = (api) => {
       pull.through(console.log),
       pull.collect(function (err, messages) {
 
-        var threads = messages.map(function (data) {
-          if(isObject(data.value.content)) return data
-          return api.message.sync.unbox(data)
-        }).filter(Boolean).reduce(threadReduce, null)
+        var threads = messages
+          .map(function (data) {
+            if(isObject(data.value.content)) return data
+            return api.message.sync.unbox(data)
+          })
+          .filter(Boolean)
+          .reduce(threadReduce, null)
 
         container.appendChild(threadGroup(
           threads,
           threads.private,
-          function (_, msg) {
+          function (_, msg) {    
+            // NB: msg passed in is actually a 'thread', but only care about root msg
+ 
             return h('div.recps', [
               msg.value.content.recps.map(function (link) {
                 return api.about.html.image(isString(link) ? link : link.link)
