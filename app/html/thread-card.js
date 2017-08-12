@@ -23,20 +23,14 @@ function isString (s) {
 function firstLine (text) {
   if(text.length < 80 && !~text.indexOf('\n')) return text
 
-  var line = ''
-  var lineNumber = 0
-  while (line.length === 0) {
-    const rawLine = text.split('\n')[lineNumber]
-    line = trimLeadingMentions(rawLine)
+  //get the first non-empty line
+  var line = text.trim().split('\n').shift().trim()
 
-    lineNumber++
-  }
+  //always break on a space, so that links are preserved.
+  var i = line.indexOf(' ', 80)
+  var sample = line.substring(0, ~i ? i : line.length)
 
-  var sample = line.substring(0, 80)
-  if (hasBrokenLink(sample))
-    sample = sample + line.substring(81).match(/[^\)]*\)/)[0]
-
-  const ellipsis = (sample.length < line.length) ? '...' : '' 
+  const ellipsis = (sample.length < line.length) ? '...' : ''
   return sample + ellipsis
 }
 
