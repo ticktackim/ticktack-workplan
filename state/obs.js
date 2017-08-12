@@ -40,11 +40,9 @@ exports.create = function (api) {
     threadReduce,
     pull(
       Next(function () {
-        console.log('More', lastTimestamp)
         return api.sbot.pull.log({reverse: true, limit: 500, lt: lastTimestamp})
       }),
       pull.through(function (data) {
-        console.log(data.timestamp)
         lastTimestamp = data.timestamp
       }),
       unbox()
@@ -61,7 +59,6 @@ exports.create = function (api) {
   var timer
   //keep localStorage up to date
   threadsObs(function (threadsState) {
-    console.log(threadsState)
     clearTimeout(timer)
     setTimeout(function () {
       threadsState.last = lastTimestamp
@@ -73,24 +70,19 @@ exports.create = function (api) {
   //there is no back pressure on new events
   //only a show more on the top (currently)
 
-//  pull(
-//    Next(function () {
-//      return api.sbot.pull.log({reverse: true, limit: 500, gte: firstTimestamp})
-//    }),
-//    pull.drain(function (data) {
-//      firstTimestamp = data.timestamp
-//      threadsObs.set(threadReduce(threadsObs.value, data))
-//    })
-//  )
+  pull(
+    Next(function () {
+      return api.sbot.pull.log({reverse: true, limit: 500, gte: firstTimestamp})
+    }),
+    pull.drain(function (data) {
+      firstTimestamp = data.timestamp
+      threadsObs.set(threadReduce(threadsObs.value, data))
+    })
+  )
 
   return {state: {obs: {threads: function () {
     return threadsObs
   }}}}
 
 }
-
-
-
-
-
 
