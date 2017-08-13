@@ -8,7 +8,7 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'history.sync.push': 'first',
   'about.obs.name': 'first',
-  'about.obs.image': 'first',
+  'about.html.image': 'first',
   'message.html.markdown': 'first',
   'translations.sync.strings': 'first'
 })
@@ -111,5 +111,6 @@ exports.create = function (api) {
     ])
   }}}}
 }
+
 
 
