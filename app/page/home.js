@@ -51,7 +51,7 @@ exports.create = (api) => {
         return rule.channel == thread.value.content.channel
       }
       else if(rule.group)
-        return rule.channel == thread.value.content.group
+        return rule.group == thread.value.content.group
       else if(rule.private)
         return rule.private == toRecpGroup(thread)
       else return true
