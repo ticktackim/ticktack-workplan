@@ -67,8 +67,10 @@ exports.create = function (api) {
     var timer
     //keep localStorage up to date
     threadsObs(function (threadsState) {
+      if(timer) return
       clearTimeout(timer)
-      setTimeout(function () {
+      timer = setTimeout(function () {
+        timer = null
         threadsState.last = lastTimestamp
         localStorage.threadsState = JSON.stringify(threadsState)
       }, 1000)
@@ -90,3 +92,4 @@ exports.create = function (api) {
     return threadsObs
   })
 }
+
