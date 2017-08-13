@@ -78,11 +78,10 @@ exports.create = function (api) {
 
   function subject (msg) {
     const { subject, text } = msg.value.content
-    if(!(subject||text)) debugger
     return api.message.html.markdown(firstLine(subject|| text))
   }
 
-  return {app: {html: {threadCard: function (_, thread, opts = {}) {
+  return {app: {html: {threadCard: function (thread, opts = {}) {
     var strings = api.translations.sync.strings()
 
     if(!thread.value) return
@@ -104,7 +103,6 @@ exports.create = function (api) {
       : null
 
     return h('div.thread', link(thread), [
-      //h('div.context', context),
       h('div.context', threadIcon(thread)),
       h('div.content', [
         subjectEl,
@@ -113,9 +111,5 @@ exports.create = function (api) {
     ])
   }}}}
 }
-
-
-
-
 
 

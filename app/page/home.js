@@ -105,7 +105,7 @@ exports.create = (api) => {
                   })
                   .map(function (thread) {
                     var el = api.app.html
-                      .threadCard(null, thread, opts)
+                      .threadCard(thread, opts)
                     if(!location.filter && el)
                       el.onclick = function () {
                         api.history.sync.push({page: 'home', filter: filterForThread(thread)})
