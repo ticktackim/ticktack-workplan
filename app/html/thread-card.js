@@ -1,20 +1,17 @@
 var h = require('mutant/h')
 const last = require('lodash/last')
+var nest = require('depnest')
 
-exports.gives = {
-  app: {html: {threadCard: true}}
-}
+exports.gives = nest('app.html.threadCard', true)
 
-exports.needs = {
-  keys: {sync: {id: 'first'}},
-  history: {sync: {push: 'first'}},
-  about: {
-    obs: {name: 'first'},
-    html: {image: 'first'},
-  },
-  message: {html: {markdown: 'first'}},
-  translations: {sync: {strings: 'first'}},
-}
+exports.needs = nest({
+  'keys.sync.id': 'first',
+  'history.sync.push': 'first',
+  'about.obs.name': 'first',
+  'about.obs.image': 'first',
+  'message.html.markdown': 'first',
+  'translations.sync.strings': 'first'
+})
 
 function isString (s) {
   return 'string' === typeof s
@@ -116,6 +113,9 @@ exports.create = function (api) {
     ])
   }}}}
 }
+
+
+
 
 
 

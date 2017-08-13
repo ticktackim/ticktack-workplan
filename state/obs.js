@@ -3,18 +3,22 @@ var threadReduce = require('ssb-reduce-stream')
 var pull = require('pull-stream')
 const Next = require('pull-next')
 
+var nest = require('depnest')
+
 function isObject (o) {
   return 'object' === typeof o
 }
 
-exports.gives = {
-  state: {obs: {threads: true}}
-}
+exports.gives = nest('state.obs.threads', true)
 
-exports.needs = {
-  message: {sync: {unbox: 'first'}},
-  sbot: {pull: {log: 'first'}}
-}
+//{
+//  state: {obs: {threads: true}}
+//}
+
+exports.needs = nest({
+  'message.sync.unbox': 'first',
+  'sbot.pull.log': 'first'
+})
 
 exports.create = function (api) {
 
@@ -80,9 +84,11 @@ exports.create = function (api) {
     })
   )
 
-  return {state: {obs: {threads: function () {
+  return nest('state.obs.threads',function () {
     return threadsObs
-  }}}}
+  })
 
 }
+
+
 
