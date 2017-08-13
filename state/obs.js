@@ -89,12 +89,4 @@ exports.create = function (api) {
     )
     return threadsObs
   })
-)
-
 }
-
-
-
-
-
-
