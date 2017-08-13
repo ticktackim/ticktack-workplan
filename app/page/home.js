@@ -8,6 +8,7 @@ const last = require('lodash/last')
 const get = require('lodash/get')
 const More = require('hypermore')
 const morphdom = require('morphdom')
+const Debounce = require('obv-debounce')
 
 exports.gives = nest('app.page.home')
 
@@ -59,28 +60,16 @@ exports.create = (api) => {
 
     var morePlease = false
     var threadsObs = api.state.obs.threads()
-    var threadsObsDebounced = function (fn) {
-      var ts = 0, timer
-      threadsObs(function (v) {
-        if(Date.now() > ts + 1000) {
-          console.log('threads', Object.keys(v.roots).length, v.stats)
-          morePlease = false
-          ts = Date.now()
-          fn(v)
-        }
-        else {
-          clearTimeout(timer)
-          timer = setTimeout(function () {
-            ts = Date.now()
-            morePlease = false
-            fn(threadsObs.value)
-          }, 1000)
-        }
-        if(morePlease) threadsObs.more()
-      })
 
-    }
-
+    // DUCT TAPE: debounce the observable so it doesn't
+    // update the dom more than 1/second
+    threadsObs(function () {
+      if(morePlease) threadsObs.more()
+    })
+    threadsObsDebounced = Debounce(threadsObs, 1000)
+    threadsObsDebounced(function () {
+      morePlease = false
+    })
     threadsObsDebounced.more = function () {
       morePlease = true
       threadsObs.more()
@@ -90,8 +79,8 @@ exports.create = (api) => {
       threadsObsDebounced,
       function render (threads) {
         morphdom(container,
-          //some of these containers could be removed
-          //but they are here to be compatible with the old MCSS.
+          // LEGACY: some of these containers could be removed
+          // but they are here to be compatible with the old MCSS.
           h('div.container', [
             //private section
             h('section.updates -directMessage', [
