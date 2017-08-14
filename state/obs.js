@@ -19,6 +19,56 @@ exports.needs = nest({
 exports.create = function (api) {
   var threadsObs
 
+  function createStateObs (threadReduce, createStream, opts, initial) {
+//    var lastTimestamp = initial ? initial.last : Date.now()
+//    var firstTimestamp = initial ? initial.first || Date.now() : Date.now()
+
+    var lastTimestamp = opts.last || Date.now()
+    var firstTimestamp = opts.first || Date.now()
+
+    function unbox () {
+      return pull(
+        pull.map(function (data) {
+          if(isObject(data.value.content)) return data
+          return api.message.sync.unbox(data)
+        }),
+        pull.filter(Boolean)
+      )
+    }
+
+    var threadsObs = PullObv(
+      threadReduce,
+      pull(
+        Next(function () {
+          return createStream({reverse: true, limit: 500, lt: lastTimestamp})
+        }),
+        pull.through(function (data) {
+          lastTimestamp = data.timestamp
+        }),
+        unbox()
+      ),
+      //value recovered from localStorage
+      initial
+    )
+
+    //stream live messages. this *should* work.
+    //there is no back pressure on new events
+    //only a show more on the top (currently)
+    pull(
+      Next(function () {
+        return createStream({limit: 500, gt: firstTimestamp, live: true})
+      }),
+      pull.drain(function (data) {
+        if(data.sync) return
+        firstTimestamp = data.timestamp
+        threadsObs.set(threadReduce(threadsObs.value, data))
+      })
+    )
+
+    return threadsObs
+  }
+
+
   return nest('state.obs.threads',   function buildThreadObs() {
     if(threadsObs) return threadsObs
 
@@ -29,54 +79,7 @@ exports.create = function (api) {
 
     initial = {}
 
-    function createStateObs (threadReduce, createStream, initial) {
-      var lastTimestamp = initial ? initial.last : Date.now()
-      var firstTimestamp = initial ? initial.first || Date.now() : Date.now()
-
-      function unbox () {
-        return pull(
-          pull.map(function (data) {
-            lastTimestamp = data.timestamp
-            if(isObject(data.value.content)) return data
-            return api.message.sync.unbox(data)
-          }),
-          pull.filter(Boolean)
-        )
-      }
-
-      var threadsObs = PullObv(
-        threadReduce,
-        pull(
-          Next(function () {
-            return api.sbot.pull.log({reverse: true, limit: 500, lt: lastTimestamp})
-          }),
-          pull.through(function (data) {
-            lastTimestamp = data.timestamp
-          }),
-          unbox()
-        ),
-        //value recovered from localStorage
-        initial
-      )
-
-      //stream live messages. this *should* work.
-      //there is no back pressure on new events
-      //only a show more on the top (currently)
-      pull(
-        Next(function () {
-          return api.sbot.pull.log({limit: 500, gt: firstTimestamp, live: true})
-        }),
-        pull.drain(function (data) {
-          if(data.sync) return
-          firstTimestamp = data.timestamp
-          threadsObs.set(threadReduce(threadsObs.value, data))
-        })
-      )
-
-      return threadsObs
-    }
-
-    threadsObs = createStateObs(threadReduce, null, initial)
+    threadsObs = createStateObs(threadReduce, api.sbot.pull.log, initial, {})
 
     threadsObs(function (threadsState) {
       if(threadsState.ended && threadsState.ended !== true)
@@ -99,6 +102,8 @@ exports.create = function (api) {
     return threadsObs
   })
 }
+
+
 
 
 
