@@ -1,5 +1,5 @@
 var h = require('mutant/h')
-const last = require('lodash/last')
+var lodash = require('lodash')
 var nest = require('depnest')
 
 exports.gives = nest('app.html.threadCard', true)
@@ -78,6 +78,7 @@ exports.create = function (api) {
 
   function subject (msg) {
     const { subject, text } = msg.value.content
+    if(!(subject || text)) return
     return api.message.html.markdown(firstLine(subject|| text))
   }
 
@@ -94,23 +95,24 @@ exports.create = function (api) {
       subject(thread)
     ])
 
-    const lastReply = thread.replies && last(thread.replies)
-    const replyEl = lastReply
-      ? h('div.reply', [
-          h('div.replySymbol', strings.replySymbol),
-          subject(lastReply)
-        ])
-      : null
+    const lastReply = thread.replies && 
+      lodash.maxBy(thread.replies, function (e) { return e.timestamp })
+    if(thread.replies)
+      console.log(thread.replies.map(function (r) {
+        return r.timestamp - thread.timestamp
+      }))
+    var replySample = lastReply ? subject(lastReply) : null
 
     return h('div.thread', link(thread), [
       h('div.context', threadIcon(thread)),
       h('div.content', [
         subjectEl,
-        replyEl
+        replySample ? h('div.reply', [
+          h('div.replySymbol', strings.replySymbol),
+          replySample
+        ]) : null
       ])
     ])
   }}}}
 }
-
-
 
