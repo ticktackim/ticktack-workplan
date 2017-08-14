@@ -19,13 +19,14 @@ exports.needs = nest({
 exports.create = function (api) {
   var threadsObs
 
-  function createStateObs (reduce, createStream, opts, initial) {
-    var lastTimestamp = opts.last || Date.now()
-    var firstTimestamp = opts.first || Date.now()
+  function createStateObs (threadReduce, createStream, initial) {
+    var lastTimestamp = initial ? initial.last : Date.now()
+    var firstTimestamp = initial ? initial.first || Date.now() : Date.now()
 
     function unbox () {
       return pull(
         pull.map(function (data) {
+//          lastTimestamp = data.timestamp
           if(isObject(data.value.content)) return data
           return api.message.sync.unbox(data)
         }),
@@ -33,8 +34,8 @@ exports.create = function (api) {
       )
     }
 
-    var obs = PullObv(
-      reduce,
+    var threadsObs = PullObv(
+      threadReduce,
       pull(
         Next(function () {
           return createStream({reverse: true, limit: 500, lt: lastTimestamp})
@@ -58,11 +59,11 @@ exports.create = function (api) {
       pull.drain(function (data) {
         if(data.sync) return
         firstTimestamp = data.timestamp
-        obs.set(reduce(threadsObs.value, data))
+        threadsObs.set(threadReduce(threadsObs.value, data))
       })
     )
 
-    return obs
+    return threadsObs
   }
 
 
@@ -76,7 +77,7 @@ exports.create = function (api) {
 
     initial = {}
 
-    threadsObs = createStateObs(threadReduce, api.sbot.pull.log, initial, {})
+    threadsObs = createStateObs(threadReduce, api.sbot.pull.log, initial)
 
     threadsObs(function (threadsState) {
       if(threadsState.ended && threadsState.ended !== true)
@@ -99,9 +100,6 @@ exports.create = function (api) {
     return threadsObs
   })
 }
-
-
-
 
 
 
