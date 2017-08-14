@@ -10,7 +10,13 @@ require('./context-menu')
 
 // from more specialized to more general
 const sockets = combine(
-  require('./'),
+  {
+    app: require('./app'),
+    blob: require('./blob'),
+    config: require('./config'),
+    router: require('./router'),
+    styles: require('./styles')
+  },
   require('patch-history'),
   require('patchcore')
 )

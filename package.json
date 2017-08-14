@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "rebuild": "cross-script npm rebuild --runtime=electron \"--target=$(electron -v)\" \"--abi=$(electron --abi)\" --disturl=https://atom.io/download/atom-shell",
-    "start": "electron electron.js",
+    "start": "electron .",
     "postinstall": "npm run rebuild",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
