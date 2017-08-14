@@ -25,6 +25,7 @@
     "micro-css": "^2.0.1",
     "morphdom": "^2.3.3",
     "mutant": "^3.21.2",
+    "obv-debounce": "^1.0.2",
     "open-external": "^0.1.1",
     "patch-history": "^1.0.0",
     "patchcore": "^1.9.1",
