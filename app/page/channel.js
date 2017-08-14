@@ -9,8 +9,9 @@ const get = require('lodash/get')
 const More = require('hypermore')
 const morphdom = require('morphdom')
 const Debounce = require('obv-debounce')
+const PullObv = require('pull-obv')
 
-exports.gives = nest('app.page.home')
+exports.gives = nest('app.page.channel')
 
 exports.needs = nest({
   'app.html.nav': 'first',
@@ -18,7 +19,8 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'translations.sync.strings': 'first',
   'state.obs.threads': 'first',
-  'app.html.threadCard': 'first'
+  'app.html.threadCard': 'first',
+  'feed.pull.channel': 'first'
 })
 
 function toRecpGroup(msg) {
@@ -32,7 +34,7 @@ function toRecpGroup(msg) {
 }
 
 exports.create = (api) => {
-  return nest('app.page.home', function (location) {
+  return nest('app.page.channel', function (location) {
     // location here can expected to be: { page: 'home' }
     var strings = api.translations.sync.strings()
 
@@ -61,31 +63,40 @@ exports.create = (api) => {
     var morePlease = false
     var threadsObs = api.state.obs.threads()
 
-    // DUCT TAPE: debounce the observable so it doesn't
-    // update the dom more than 1/second
-    threadsObs(function () {
-      if(morePlease) threadsObs.more()
-    })
-    threadsObsDebounced = Debounce(threadsObs, 1000)
-    threadsObsDebounced(function () {
-      morePlease = false
-    })
-    threadsObsDebounced.more = function () {
-      morePlease = true
-      requestIdleCallback(threadsObs.more)
-    }
+    var createChannelStream = api.feed.pull.channel(location.channel)
+
+    var channelObs = PullObv(
+      threadReduce,
+      createChannelStream({reverse: true, limit: 1000})
+    )
+      
+//    // DUCT TAPE: debounce the observable so it doesn't
+//    // update the dom more than 1/second
+//    threadsObs(function () {
+//      if(morePlease) threadsObs.more()
+//    })
+//    threadsObsDebounced = Debounce(threadsObs, 1000)
+//    threadsObsDebounced(function () {
+//      morePlease = false
+//    })
+//    threadsObsDebounced.more = function () {
+//      morePlease = true
+//      requestIdleCallback(threadsObs.more)
+//    }
 
     var threadsHtmlObs = More(
-      threadsObsDebounced,
+//      threadsObsDebounced,
+      channelObs,
       function render (threads) {
 
-        var groupedThreads =
-        roots(threads.private)
-        .concat(roots(threads.channels))
-        .concat(roots(threads.groups))
+        var sorted = Object.keys(threads.roots)
+        .map(function (id) {
+          return threads.roots[id]
+        })
         .sort(function (a, b) {
           return latestUpdate(b) - latestUpdate(a)
         })
+
 
         function latestUpdate(thread) {
           var m = thread.timestamp
@@ -96,15 +107,6 @@ exports.create = (api) => {
           return m
         }
 
-        function roots (r) {
-          return Object.keys(r || {}).map(function (k) {
-            return threads.roots[r[k]]
-          }).filter(function (e) {
-            return e && e.value
-          })
-        }
-
-
         morphdom(container,
           // LEGACY: some of these containers could be removed
           // but they are here to be compatible with the old MCSS.
@@ -112,17 +114,10 @@ exports.create = (api) => {
             //private section
             h('section.updates -directMessage', [
               h('div.threads', 
-                groupedThreads
+                sorted
                   .map(function (thread) {
                     var el = api.app.html
                       .threadCard(thread, opts)
-                    if(thread.value.content.channel) {
-                      el.onclick = function (ev) {
-                        console.log('THTREAD CHANNEL', thread.value.content.channel)
-                        api.history.sync.push({channel: thread.value.content.channel})
-                        ev.preventDefault()
-                      }
-                    }
                     return el
                 })
               )
@@ -134,11 +129,12 @@ exports.create = (api) => {
     )
 
     return h('Page -home', [
-      h('h1', 'Home'),
+      h('h1', location.channel),
       api.app.html.nav(),
       threadsHtmlObs,
       h('button', {'ev-click': threadsHtmlObs.more}, [strings.showMore])
     ])
   })
 }
+
 

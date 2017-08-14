@@ -10,7 +10,9 @@ module.exports = {
   },
   page: {
     group: require('./page/group'),
+    channel: require('./page/channel'),
     home: require('./page/home'),
     private: require('./page/private')
   }
 }
+
