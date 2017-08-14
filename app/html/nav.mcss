@@ -4,7 +4,8 @@ Nav {
 
   margin: 0 0 1rem 1rem
 
-  div {
+  a, div {
+    color: #222
     margin-right: 1rem
 
     :hover {

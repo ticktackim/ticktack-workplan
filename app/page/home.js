@@ -60,6 +60,7 @@ exports.create = (api) => {
 
     function subject (msg) {
       const { subject, text } = msg.value.content
+
       return api.message.html.markdown(firstLine(subject|| text))
     }
 
