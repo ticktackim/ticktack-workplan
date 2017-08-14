@@ -12,7 +12,8 @@ exports.needs = nest({
   'app.page.groupShow': 'first',
   'app.page.userFind': 'first',
   'app.page.userShow': 'first',
-  'app.page.threadShow': 'first'
+  'app.page.threadNew': 'first',
+  'app.page.threadShow': 'first',
 })
 
 exports.create = (api) => {
@@ -30,13 +31,14 @@ exports.create = (api) => {
       [ location => location.page === 'groupNew', pages.groupNew ],
       [ location => location.type === 'groupShow' && isMsg(location.key), pages.groupShow ],
 
+      // Thread pages
+      // QUESTION - should this be for private threads + group threads?
+      [ location => location.page === 'threadNew' && isFeed(location.feed), pages.threadNew ],
+      [ location => isMsg(location.key), pages.threadShow ],
+
       // User pages
       [ location => location.page === 'userFind', pages.userFind ],
       [ location => isFeed(location.feed), pages.userShow ],
-
-      // Thread pages
-      // QUESTION - should this be for private threads + group threads?
-      [ location => isMsg(location.key), pages.threadShow ],
 
       // Error page
       [ location => true, pages.error ]

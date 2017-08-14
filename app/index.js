@@ -18,6 +18,7 @@ module.exports = {
     settings: require('./page/settings'),
     userFind: require('./page/userFind'),
     userShow: require('./page/userShow'),
+    threadNew: require('./page/threadNew'),
     threadShow: require('./page/threadShow'),
   }
 }
