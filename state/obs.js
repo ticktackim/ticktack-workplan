@@ -9,24 +9,27 @@ function isObject (o) {
   return 'object' === typeof o
 }
 
-exports.gives = nest('state.obs.threads', true)
+exports.gives = nest({
+  'state.obs.threads': true,
+  'state.obs.channel': true
+})
 
 exports.needs = nest({
   'message.sync.unbox': 'first',
-  'sbot.pull.log': 'first'
+  'sbot.pull.log': 'first',
+  'feed.pull.channel': 'first'
 })
 
 exports.create = function (api) {
   var threadsObs
 
-  function createStateObs (threadReduce, createStream, initial) {
-    var lastTimestamp = initial ? initial.last : Date.now()
-    var firstTimestamp = initial ? initial.first || Date.now() : Date.now()
+  function createStateObs (reduce, createStream, opts, initial) {
+    var lastTimestamp = opts.last || Date.now()
+    var firstTimestamp = opts.first || Date.now()
 
     function unbox () {
       return pull(
         pull.map(function (data) {
-//          lastTimestamp = data.timestamp
           if(isObject(data.value.content)) return data
           return api.message.sync.unbox(data)
         }),
@@ -34,8 +37,8 @@ exports.create = function (api) {
       )
     }
 
-    var threadsObs = PullObv(
-      threadReduce,
+    var obs = PullObv(
+      reduce,
       pull(
         Next(function () {
           return createStream({reverse: true, limit: 500, lt: lastTimestamp})
@@ -59,45 +62,70 @@ exports.create = function (api) {
       pull.drain(function (data) {
         if(data.sync) return
         firstTimestamp = data.timestamp
-        threadsObs.set(threadReduce(threadsObs.value, data))
+        obs.set(reduce(threadsObs.value, data))
       })
     )
 
-    return threadsObs
+    return obs
   }
 
 
-  return nest('state.obs.threads',   function buildThreadObs() {
-    if(threadsObs) return threadsObs
+  return nest({
+  'state.obs.channel': function (channel) {
 
-//    var initial
-//    try { initial = JSON.parse(localStorage.threadsState) }
-//    catch (_) { }
-//
+      return createStateObs(
+        threadReduce,
+        function (opts) {
+          return opts.reverse ?
+          api.feed.pull.channel(channel)(opts):
+          pull(api.sbot.pull.log(opts), pull.filter(function (data) {
+            if(data.sync) return false
+            return data.value.content.channel === channel
+          }))
+        },
+        {}
+      )
 
-    initial = {}
+    var channelObs = PullObv(
+      threadReduce,
+      createChannelStream({reverse: true, limit: 1000})
+    )
 
-    threadsObs = createStateObs(threadReduce, api.sbot.pull.log, initial)
 
-    threadsObs(function (threadsState) {
-      if(threadsState.ended && threadsState.ended !== true)
-        console.error('threadObs error:', threadsState.ended)
-    })
+  },
+  'state.obs.threads': function buildThreadObs() {
+      if(threadsObs) return threadsObs
 
-//    var timer
-//    //keep localStorage up to date
-//    threadsObs(function (threadsState) {
-//      if(timer) return
-//      timer = setTimeout(function () {
-//        timer = null
-//        threadsState.last = lastTimestamp
-//        console.log('save state')
-//        localStorage.threadsState = JSON.stringify(threadsState)
-//      }, 1000)
-//    })
-//
+  // DISABLE localStorage cache. mainly disabling this to make debugging the other stuff
+  // easier. maybe re-enable this later? also, should this be for every channel too? not sure.
 
-    return threadsObs
+  //    var initial
+  //    try { initial = JSON.parse(localStorage.threadsState) }
+  //    catch (_) { }
+
+      initial = {}
+
+      threadsObs = createStateObs(threadReduce, api.sbot.pull.log, initial, {})
+
+      threadsObs(function (threadsState) {
+        if(threadsState.ended && threadsState.ended !== true)
+          console.error('threadObs error:', threadsState.ended)
+      })
+
+  //    var timer
+  //    //keep localStorage up to date
+  //    threadsObs(function (threadsState) {
+  //      if(timer) return
+  //      timer = setTimeout(function () {
+  //        timer = null
+  //        threadsState.last = lastTimestamp
+  //        console.log('save state')
+  //        localStorage.threadsState = JSON.stringify(threadsState)
+  //      }, 1000)
+  //    })
+
+      return threadsObs
+    }
   })
 }
 
