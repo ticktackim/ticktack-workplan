@@ -21,3 +21,7 @@ img {
 Markdown {
   word-break: break-word
 }
+
+button {
+  width: 100%
+}
