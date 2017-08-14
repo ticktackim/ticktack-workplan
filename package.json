@@ -34,7 +34,7 @@
     "pull-stream": "^3.6.0",
     "read-directory": "^2.1.0",
     "setimmediate": "^1.0.5",
-    "ssb-reduce-stream": "0.0.0",
+    "ssb-reduce-stream": "^1.0.1",
     "ssb-ref": "^2.7.1",
     "url": "^0.11.0"
   }
