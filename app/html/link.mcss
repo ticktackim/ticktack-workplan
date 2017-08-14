@@ -1,0 +1,6 @@
+Link {
+  color: blue
+  :hover {
+    text-decoration: underline
+  }
+}
