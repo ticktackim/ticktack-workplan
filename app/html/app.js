@@ -28,7 +28,7 @@ exports.create = (api) => {
     })
 
     api.history.obs.location()(render)
-    api.history.sync.push({ page: 'home' })
+    api.history.sync.push({ page: 'settings' })
   }
 
   function render (location) {
