@@ -72,12 +72,39 @@ exports.create = (api) => {
     })
     threadsObsDebounced.more = function () {
       morePlease = true
-      threadsObs.more()
+      requestIdleCallback(threadsObs.more)
     }
 
     var threadsHtmlObs = More(
       threadsObsDebounced,
       function render (threads) {
+
+        var groupedThreads =
+        roots(threads.private)
+        .concat(roots(threads.channels))
+        .concat(roots(threads.groups))
+        .sort(function (a, b) {
+          return latestUpdate(b) - latestUpdate(a)
+        })
+
+        function latestUpdate(thread) {
+          var m = thread.timestamp
+          if(!thread.replies) return m
+
+          for(var i = 0; i < thread.replies.length; i++)
+            m = Math.max(thread.replies[i].timestamp, m)
+          return m
+        }
+
+        function roots (r) {
+          return Object.keys(r || {}).map(function (k) {
+            return threads.roots[r[k]]
+          }).filter(function (e) {
+            return e && e.value
+          })
+        }
+
+
         morphdom(container,
           // LEGACY: some of these containers could be removed
           // but they are here to be compatible with the old MCSS.
@@ -85,26 +112,31 @@ exports.create = (api) => {
             //private section
             h('section.updates -directMessage', [
               h('div.threads', 
-                Object.keys(threads.roots)
-                  .map(function (id) {
-                    return threads.roots[id]
-                  })
-                  .filter(function (thread) {
-                    return filter(location.filter, thread)
-                  })
+//                Object.keys(threads.roots)
+//                  .map(function (id) {
+//                    return threads.roots[id]
+//                  })
+//                  .filter(function (thread) {
+//                    return filter(location.filter, thread)
+//                  })
+                groupedThreads
                   .map(function (thread) {
                     var el = api.app.html
                       .threadCard(thread, opts)
-                    if(!location.filter && el)
-                      el.onclick = function () {
-                        api.history.sync.push({page: 'home', filter: filterForThread(thread)})
-                      }
+//DISABLE: rethinking pages
+//                    if(!location.filter && el)
+//                      el.onclick = function () {
+//                        if(!filterForThread(thread))
+//                          api.history.sync.push({key: thread.key})
+//                        else
+//                          api.history.sync.push({page: 'home', filter: filterForThread(thread)})
+//                      }
                     return el
                 })
               )
             ]),
         ])
-        )
+       )
         return container
       }
     )
@@ -117,5 +149,14 @@ exports.create = (api) => {
     ])
   })
 }
+
+
+
+
+
+
+
+
+
 
 
