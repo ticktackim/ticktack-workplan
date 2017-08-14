@@ -48,21 +48,6 @@ exports.create = (api) => {
         return {channel: thread.value.content.channel}
     }
 
-    function filter (rule, thread) {
-      if(!thread.value) return false
-      if(!rule) return true
-      if(rule.channel) {
-        return rule.channel == thread.value.content.channel
-      }
-      else if(rule.group)
-        return rule.group == thread.value.content.group
-      else if(rule.private)
-        return rule.private == toRecpGroup(thread)
-      else return true
-    }
-
-    var morePlease = false
-
     var createChannelStream = api.feed.pull.channel(location.channel)
 
     var channelObs = PullObv(
@@ -128,4 +113,6 @@ exports.create = (api) => {
     ])
   })
 }
+
+
 
