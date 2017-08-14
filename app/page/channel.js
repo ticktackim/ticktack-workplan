@@ -10,6 +10,7 @@ const More = require('hypermore')
 const morphdom = require('morphdom')
 const Debounce = require('obv-debounce')
 const PullObv = require('pull-obv')
+const Computed = require('mutant/computed')
 
 exports.gives = nest('app.page.channel')
 
@@ -61,7 +62,6 @@ exports.create = (api) => {
     }
 
     var morePlease = false
-    var threadsObs = api.state.obs.threads()
 
     var createChannelStream = api.feed.pull.channel(location.channel)
 
@@ -69,23 +69,13 @@ exports.create = (api) => {
       threadReduce,
       createChannelStream({reverse: true, limit: 1000})
     )
-      
-//    // DUCT TAPE: debounce the observable so it doesn't
-//    // update the dom more than 1/second
-//    threadsObs(function () {
-//      if(morePlease) threadsObs.more()
-//    })
-//    threadsObsDebounced = Debounce(threadsObs, 1000)
-//    threadsObsDebounced(function () {
-//      morePlease = false
-//    })
-//    threadsObsDebounced.more = function () {
-//      morePlease = true
-//      requestIdleCallback(threadsObs.more)
-//    }
+
+    //disable "Show More" button when we are at the last thread.
+    var disableShowMore = Computed([channelObs], function (threads) {
+      return !!threads.ended
+    })
 
     var threadsHtmlObs = More(
-//      threadsObsDebounced,
       channelObs,
       function render (threads) {
 
@@ -96,7 +86,6 @@ exports.create = (api) => {
         .sort(function (a, b) {
           return latestUpdate(b) - latestUpdate(a)
         })
-
 
         function latestUpdate(thread) {
           var m = thread.timestamp
@@ -132,9 +121,11 @@ exports.create = (api) => {
       h('h1', location.channel),
       api.app.html.nav(),
       threadsHtmlObs,
-      h('button', {'ev-click': threadsHtmlObs.more}, [strings.showMore])
+      h('button', {
+        'ev-click': threadsHtmlObs.more,
+        disabled: disableShowMore
+      }, [strings.showMore])
     ])
   })
 }
-
 
