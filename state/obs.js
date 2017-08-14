@@ -22,10 +22,12 @@ exports.create = function (api) {
   return nest('state.obs.threads',   function buildThreadObs() {
     if(threadsObs) return threadsObs
 
-    var initial
-    try { initial = JSON.parse(localStorage.threadsState) }
-    catch (_) { }
+//    var initial
+//    try { initial = JSON.parse(localStorage.threadsState) }
+//    catch (_) { }
+//
 
+    initial = {}
     var lastTimestamp = initial ? initial.last : Date.now()
     var firstTimestamp = initial ? initial.first || Date.now() : Date.now()
 
@@ -55,27 +57,9 @@ exports.create = function (api) {
       initial
     )
 
-    threadsObs(function (threadsState) {
-      if(threadsState.ended && threadsState.ended !== true)
-        console.error('threadObs error:', threadsState.ended)
-    })
-
-    var timer
-    //keep localStorage up to date
-    threadsObs(function (threadsState) {
-      if(timer) return
-      timer = setTimeout(function () {
-        timer = null
-        threadsState.last = lastTimestamp
-        console.log('save state')
-        localStorage.threadsState = JSON.stringify(threadsState)
-      }, 1000)
-    })
-
     //stream live messages. this *should* work.
     //there is no back pressure on new events
     //only a show more on the top (currently)
-
     pull(
       Next(function () {
         return api.sbot.pull.log({limit: 500, gt: firstTimestamp, live: true})
@@ -87,7 +71,28 @@ exports.create = function (api) {
       })
     )
 
+
+    threadsObs(function (threadsState) {
+      if(threadsState.ended && threadsState.ended !== true)
+        console.error('threadObs error:', threadsState.ended)
+    })
+
+//    var timer
+//    //keep localStorage up to date
+//    threadsObs(function (threadsState) {
+//      if(timer) return
+//      timer = setTimeout(function () {
+//        timer = null
+//        threadsState.last = lastTimestamp
+//        console.log('save state')
+//        localStorage.threadsState = JSON.stringify(threadsState)
+//      }, 1000)
+//    })
+//
+
     return threadsObs
   })
 }
+
+
 
