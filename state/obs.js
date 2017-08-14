@@ -19,10 +19,7 @@ exports.needs = nest({
 exports.create = function (api) {
   var threadsObs
 
-  function createStateObs (threadReduce, createStream, opts, initial) {
-//    var lastTimestamp = initial ? initial.last : Date.now()
-//    var firstTimestamp = initial ? initial.first || Date.now() : Date.now()
-
+  function createStateObs (reduce, createStream, opts, initial) {
     var lastTimestamp = opts.last || Date.now()
     var firstTimestamp = opts.first || Date.now()
 
@@ -36,8 +33,8 @@ exports.create = function (api) {
       )
     }
 
-    var threadsObs = PullObv(
-      threadReduce,
+    var obs = PullObv(
+      reduce,
       pull(
         Next(function () {
           return createStream({reverse: true, limit: 500, lt: lastTimestamp})
@@ -61,11 +58,11 @@ exports.create = function (api) {
       pull.drain(function (data) {
         if(data.sync) return
         firstTimestamp = data.timestamp
-        threadsObs.set(threadReduce(threadsObs.value, data))
+        obs.set(reduce(threadsObs.value, data))
       })
     )
 
-    return threadsObs
+    return obs
   }
 
 
@@ -102,6 +99,8 @@ exports.create = function (api) {
     return threadsObs
   })
 }
+
+
 
 
 
