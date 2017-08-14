@@ -17,21 +17,18 @@ exports.gives = nest('app.page.channel')
 exports.needs = nest({
   'app.html.nav': 'first',
   'history.sync.push': 'first',
-  'keys.sync.id': 'first',
   'translations.sync.strings': 'first',
-  'state.obs.threads': 'first',
   'app.html.threadCard': 'first',
-  'feed.pull.channel': 'first'
+  'state.obs.channel': 'first',
 })
 
-function toRecpGroup(msg) {
-  //cannocialize
-  return Array.isArray(msg.value.content.repcs) &&
-    msg.value.content.recps.map(function (e) {
-    return (isString(e) ? e : e.link)
-  }).sort().map(function (id) {
-    return id.substring(0, 10)
-  }).join(',')
+function latestUpdate(thread) {
+  var m = thread.timestamp
+  if(!thread.replies) return m
+
+  for(var i = 0; i < thread.replies.length; i++)
+    m = Math.max(thread.replies[i].timestamp, m)
+  return m
 }
 
 exports.create = (api) => {
@@ -41,19 +38,7 @@ exports.create = (api) => {
 
     var container = h('div.container', [])
 
-    function filterForThread (thread) {
-      if(thread.value.private)
-        return {private: toRecpGroup(thread)}
-      else if(thread.value.content.channel)
-        return {channel: thread.value.content.channel}
-    }
-
-    var createChannelStream = api.feed.pull.channel(location.channel)
-
-    var channelObs = PullObv(
-      threadReduce,
-      createChannelStream({reverse: true, limit: 1000})
-    )
+    var channelObs = api.state.obs.channel(location.channel)
 
     //disable "Show More" button when we are at the last thread.
     var disableShowMore = Computed([channelObs], function (threads) {
@@ -64,40 +49,27 @@ exports.create = (api) => {
       channelObs,
       function render (threads) {
 
-        var sorted = Object.keys(threads.roots)
-        .map(function (id) {
-          return threads.roots[id]
-        })
-        .sort(function (a, b) {
-          return latestUpdate(b) - latestUpdate(a)
-        })
-
-        function latestUpdate(thread) {
-          var m = thread.timestamp
-          if(!thread.replies) return m
-
-          for(var i = 0; i < thread.replies.length; i++)
-            m = Math.max(thread.replies[i].timestamp, m)
-          return m
-        }
-
         morphdom(container,
           // LEGACY: some of these containers could be removed
           // but they are here to be compatible with the old MCSS.
           h('div.container', [
             //private section
             h('section.updates -directMessage', [
-              h('div.threads', 
-                sorted
-                  .map(function (thread) {
-                    var el = api.app.html
-                      .threadCard(thread, opts)
-                    return el
+              h('div.threads',
+                Object.keys(threads.roots)
+                .map(function (id) {
+                  return threads.roots[id]
+                })
+                .sort(function (a, b) {
+                  return latestUpdate(b) - latestUpdate(a)
+                })
+                .map(function (thread) {
+                  return api.app.html.threadCard(thread, opts)
                 })
               )
-            ]),
-        ])
-       )
+            ])
+          ])
+        )
         return container
       }
     )
@@ -113,6 +85,8 @@ exports.create = (api) => {
     ])
   })
 }
+
+
 
 
 
