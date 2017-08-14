@@ -27,7 +27,7 @@ exports.create = function (api) {
     catch (_) { }
 
     var lastTimestamp = initial ? initial.last : Date.now()
-    var firstTimestamp = initial ? initial.last : Date.now()
+    var firstTimestamp = initial ? initial.first || Date.now() : Date.now()
 
     function unbox () {
       return pull(
@@ -76,20 +76,18 @@ exports.create = function (api) {
     //there is no back pressure on new events
     //only a show more on the top (currently)
 
-//    pull(
-//      Next(function () {
-//        return api.sbot.pull.log({limit: 500, gte: firstTimestamp, live: true})
-//      }),
-//      pull.drain(function (data) {
-//        if(data.sync) return
-//        firstTimestamp = data.timestamp
-//        console.log("SET", data.timestamp, firstTimestamp)
-//        threadsObs.set(threadReduce(threadsObs.value, data))
-//      })
-//    )
+    pull(
+      Next(function () {
+        return api.sbot.pull.log({limit: 500, gt: firstTimestamp, live: true})
+      }),
+      pull.drain(function (data) {
+        if(data.sync) return
+        firstTimestamp = data.timestamp
+        threadsObs.set(threadReduce(threadsObs.value, data))
+      })
+    )
 
     return threadsObs
   })
 }
-
 
