@@ -6,184 +6,141 @@ const isObject = require('lodash/isObject')
 const isString = require('lodash/isString')
 const last = require('lodash/last')
 const get = require('lodash/get')
+const More = require('hypermore')
+const morphdom = require('morphdom')
+const Debounce = require('obv-debounce')
 
 exports.gives = nest('app.page.home')
 
 exports.needs = nest({
-  'about.html.image': 'first',
-  'about.obs.name': 'first',
   'app.html.nav': 'first',
-  'feed.pull.public': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
-  'message.sync.unbox': 'first',
-  'message.html.markdown': 'first'
+  'translations.sync.strings': 'first',
+  'state.obs.threads': 'first',
+  'app.html.threadCard': 'first'
 })
 
-function firstLine (text) {
-  if(text.length < 80 && !~text.indexOf('\n')) return text
-
-  var line = ''
-  var lineNumber = 0
-  while (line.length === 0) {
-    const rawLine = text.split('\n')[lineNumber]
-    line = trimLeadingMentions(rawLine)
-
-    lineNumber++
-  }
-
-  var sample = line.substring(0, 80)
-  if (hasBrokenLink(sample))
-    sample = sample + line.substring(81).match(/[^\)]*\)/)[0]
-
-  const ellipsis = (sample.length < line.length) ? '...' : '' 
-  return sample + ellipsis
-}
-
-function trimLeadingMentions (str) {
-  return str.replace(/^(\s*\[@[^\)]+\)\s*)*/, '')
-  // deletes any number of pattern " [@...)  " from start of line
-}
-
-function hasBrokenLink (str) {
-  return /\[[^\]]*\]\([^\)]*$/.test(str)
-  // matches "[name](start_of_link"
+function toRecpGroup(msg) {
+  //cannocialize
+  return Array.isArray(msg.value.content.repcs) &&
+    msg.value.content.recps.map(function (e) {
+    return (isString(e) ? e : e.link)
+  }).sort().map(function (id) {
+    return id.substring(0, 10)
+  }).join(',')
 }
 
 exports.create = (api) => {
-  return nest('app.page.home', home)
-
-  function home (location) {
+  return nest('app.page.home', function (location) {
     // location here can expected to be: { page: 'home' }
+    var strings = api.translations.sync.strings()
 
     var container = h('div.container', [])
 
-    function subject (msg) {
-      const { subject, text } = msg.value.content
-
-      return api.message.html.markdown(firstLine(subject|| text))
+    function filterForThread (thread) {
+      if(thread.value.private)
+        return {private: toRecpGroup(thread)}
+      else if(thread.value.content.channel)
+        return {channel: thread.value.content.channel}
     }
 
-    function link(location) {
-      return {'ev-click': () => api.history.sync.push(location)}
-    }
-
-    function item (context, thread, opts = {}) {
-      if(!thread.value) return
-
-      const subjectEl = h('div.subject', [
-        opts.nameRecipients
-          ?  h('div.recps', buildRecipientNames(thread).map(recp => h('div.recp', recp)))
-          : null,
-        subject(thread)
-      ])
-
-      const lastReply = thread.replies && last(thread.replies)
-      const replyEl = lastReply
-        ? h('div.reply', [
-            h('div.replySymbol', '► '),
-            subject(lastReply)
-          ])
-        : null
-
-
-      // REFACTOR: move this to a template?
-      function buildRecipientNames (thread) {
-        const myId = api.keys.sync.id()
-
-        return thread.value.content.recps
-          .map(link => isString(link) ? link : link.link)
-          .filter(link => link !== myId)
-          .map(api.about.obs.name)
+    function filter (rule, thread) {
+      if(!thread.value) return false
+      if(!rule) return true
+      if(rule.channel) {
+        return rule.channel == thread.value.content.channel
       }
-
-      return h('div.thread', link(thread), [
-        h('div.context', context),
-        h('div.content', [
-          subjectEl,
-          replyEl
-        ])
-      ])
+      else if(rule.group)
+        return rule.group == thread.value.content.group
+      else if(rule.private)
+        return rule.private == toRecpGroup(thread)
+      else return true
     }
 
-    function threadGroup (threads, obj, toContext, opts) {
-      // threads = a state object for all the types of threads
-      // obj = a map of keys to root ids, where key ∈ (channel | group | concatenated list of pubkeys)
-      // toContext = fn that derives the context of the group
-      // opts = { nameRecipients }
+    var morePlease = false
+    var threadsObs = api.state.obs.threads()
 
-      var groupEl = h('div.threads')
-      for(var k in obj) {
-        var id = obj[k]
-        var thread = get(threads, ['roots', id])
-        if(thread && thread.value) {
-          var el = item(toContext(k, thread), thread, opts)
-          if(el) groupEl.appendChild(el)
+    // DUCT TAPE: debounce the observable so it doesn't
+    // update the dom more than 1/second
+    threadsObs(function () {
+      if(morePlease) threadsObs.more()
+    })
+    threadsObsDebounced = Debounce(threadsObs, 1000)
+    threadsObsDebounced(function () {
+      morePlease = false
+    })
+    threadsObsDebounced.more = function () {
+      morePlease = true
+      requestIdleCallback(threadsObs.more)
+    }
+
+    var threadsHtmlObs = More(
+      threadsObsDebounced,
+      function render (threads) {
+
+        var groupedThreads =
+        roots(threads.private)
+        .concat(roots(threads.channels))
+        .concat(roots(threads.groups))
+        .sort(function (a, b) {
+          return latestUpdate(b) - latestUpdate(a)
+        })
+
+        function latestUpdate(thread) {
+          var m = thread.timestamp
+          if(!thread.replies) return m
+
+          for(var i = 0; i < thread.replies.length; i++)
+            m = Math.max(thread.replies[i].timestamp, m)
+          return m
         }
-      }
-      return groupEl
-    }
 
-    pull(
-      api.feed.pull.public({reverse: true, limit: 1000}),
-      pull.collect(function (err, messages) {
-
-        var threads = messages
-          .map(function (data) {
-            if(isObject(data.value.content)) return data
-            return api.message.sync.unbox(data)
+        function roots (r) {
+          return Object.keys(r || {}).map(function (k) {
+            return threads.roots[r[k]]
+          }).filter(function (e) {
+            return e && e.value
           })
-          .filter(Boolean)
-          .reduce(threadReduce, null)
+        }
 
-        const privateUpdatesSection = h('section.updates -directMessage', [
-          h('h2', 'Direct Messages'),
-          threadGroup(
-            threads,
-            threads.private,
-            function (_, msg) {
-              // NB: msg passed in is actually a 'thread', but only care about root msg
-              const myId = api.keys.sync.id()
 
-              return msg.value.content.recps
-                .map(link => isString(link) ? link : link.link)
-                .filter(link => link !== myId)
-                .map(api.about.html.image)
-            },
-            { nameRecipients: true }
-          )
+        morphdom(container,
+          // LEGACY: some of these containers could be removed
+          // but they are here to be compatible with the old MCSS.
+          h('div.container', [
+            //private section
+            h('section.updates -directMessage', [
+              h('div.threads', 
+                groupedThreads
+                  .map(function (thread) {
+                    var el = api.app.html
+                      .threadCard(thread, opts)
+
+                    if(thread.value.content.channel) {
+                      el.onclick = function (ev) {
+                        api.history.sync.push({channel: thread.value.content.channel})
+                        ev.preventDefault()
+                      }
+                    }
+
+                    return el
+                })
+              )
+            ]),
         ])
+       )
 
-        const channelUpdatesSection = h('section.updates -channel', [
-          h('h2', 'Channels'),
-          threadGroup(
-            threads,
-            threads.channels,
-            ch => '#'+ch
-          )
-        ])
-
-        const groupUpdatesSection = h('section.updates -group', [
-          h('h2', 'Groups'),
-          'TODO: complete + enable when groups are live'
-          // threadGroup(
-          //   threads,
-          //   threads.groups,
-          //   toName ...
-          // )
-        ])
-
-        container.appendChild(privateUpdatesSection)
-        container.appendChild(channelUpdatesSection)
-        container.appendChild(groupUpdatesSection)
-      })
+        return container
+      }
     )
 
     return h('Page -home', [
       h('h1', 'Home'),
       api.app.html.nav(),
-      container
+      threadsHtmlObs,
+      h('button', {'ev-click': threadsHtmlObs.more}, [strings.showMore])
     ])
-  }
+  })
 }
 

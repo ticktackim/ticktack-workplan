@@ -7,8 +7,11 @@ module.exports = {
     thread: require('./html/thread'),
     link: require('./html/link'),
     nav: require('./html/nav'),
+    threadCard: require('./html/thread-card'),
+    nav: require('./html/nav'),
   },
   page: {
+    channel: require('./page/channel'),
     error: require('./page/error'),
     groupFind: require('./page/groupFind'),
     groupIndex: require('./page/groupIndex'),
@@ -16,9 +19,13 @@ module.exports = {
     groupShow: require('./page/groupShow'),
     home: require('./page/home'),
     settings: require('./page/settings'),
+    threadShow: require('./page/threadShow'),
     userFind: require('./page/userFind'),
     userShow: require('./page/userShow'),
     threadNew: require('./page/threadNew'),
     threadShow: require('./page/threadShow'),
   }
 }
+
+
+

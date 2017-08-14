@@ -5,6 +5,7 @@ exports.gives = nest('router.sync.routes')
 exports.needs = nest({
   'app.page.error': 'first',
   'app.page.home': 'first',
+  'app.page.channel': 'first',
   'app.page.settings': 'first',
   'app.page.groupFind': 'first',
   'app.page.groupIndex': 'first',
@@ -23,6 +24,7 @@ exports.create = (api) => {
  
     const routes = [
       [ location => location.page === 'home', pages.home ],
+      [ location => location.channel , pages.channel ],
       [ location => location.page === 'settings', pages.settings ],
 
       // Group pages
@@ -47,6 +49,7 @@ exports.create = (api) => {
     return [...routes, ...sofar]
   })
 }
+
 
 
 
