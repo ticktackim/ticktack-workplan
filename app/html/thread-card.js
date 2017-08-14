@@ -97,10 +97,7 @@ exports.create = function (api) {
 
     const lastReply = thread.replies && 
       lodash.maxBy(thread.replies, function (e) { return e.timestamp })
-    if(thread.replies)
-      console.log(thread.replies.map(function (r) {
-        return r.timestamp - thread.timestamp
-      }))
+
     var replySample = lastReply ? subject(lastReply) : null
 
     return h('div.thread', link(thread), [
@@ -115,4 +112,5 @@ exports.create = function (api) {
     ])
   }}}}
 }
+
 
