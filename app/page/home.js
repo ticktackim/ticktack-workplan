@@ -116,19 +116,21 @@ exports.create = (api) => {
                   .map(function (thread) {
                     var el = api.app.html
                       .threadCard(thread, opts)
+
                     if(thread.value.content.channel) {
                       el.onclick = function (ev) {
-                        console.log('THTREAD CHANNEL', thread.value.content.channel)
                         api.history.sync.push({channel: thread.value.content.channel})
                         ev.preventDefault()
                       }
                     }
+
                     return el
                 })
               )
             ]),
         ])
        )
+
         return container
       }
     )
