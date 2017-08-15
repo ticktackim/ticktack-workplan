@@ -15,7 +15,6 @@ exports.create = (api) => {
   return nest('app.html.thread', thread)
 
   function thread (root) {
-    console.log('thread root', root)
     const myId = api.keys.sync.id()
     const thread = api.feed.obs.thread(root)
     const chunkedMessages = buildChunkedMessages(thread.messages)

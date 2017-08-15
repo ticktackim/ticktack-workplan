@@ -170,12 +170,11 @@ exports.create = function (api) {
         else throw err
       }
 
-      debugger
-
-      api.message.async.publish(content, done)
+      return api.message.async.publish(content, done)
       // return api.message.html.confirm(content, done)
 
       function done (err, msg) {
+        debugger
         publishBtn.disabled = false
         if (err) throw err
         else if (msg) textArea.value = ''
