@@ -6,8 +6,8 @@
   "scripts": {
     "rebuild": "cross-script npm rebuild --runtime=electron \"--target=$(electron -v)\" \"--abi=$(electron --abi)\" --disturl=https://atom.io/download/atom-shell",
     "start": "electron .",
-    "dev": "ssb_appname=ssb electron .",
-    "postinstall": "npm run rebuild",
+    "dev": "ssb_appname=ssb electro main.js",
+    "postinstall": "echo 'REMEMBER: npm run rebuild'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
