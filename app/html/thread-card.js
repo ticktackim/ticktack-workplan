@@ -86,8 +86,10 @@ exports.create = function (api) {
     const replySample = lastReply ? subject(lastReply) : null
 
     const onClick = opts.onClick || function () { api.history.sync.push(thread) }
+    const id = `${thread.key}-${JSON.stringify(opts)}`
+    // id is only here to help morphdom morph accurately
 
-    return h('div.thread', {'ev-click': onClick }, [
+    return h('div.thread', { 'ev-click': onClick, id }, [
       h('div.context', threadIcon(thread)),
       h('div.content', [
         subjectEl,
