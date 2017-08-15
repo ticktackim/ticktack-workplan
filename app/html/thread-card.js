@@ -83,10 +83,11 @@ exports.create = function (api) {
     ])
 
     const lastReply = thread.replies && maxBy(thread.replies, r => r.timestamp)
+    const replySample = lastReply ? subject(lastReply) : null
 
-    var replySample = lastReply ? subject(lastReply) : null
+    const onClick = opts.onClick || function () { api.history.sync.push(thread) }
 
-    return h('div.thread', {'ev-click': () => api.history.sync.push(thread)}, [
+    return h('div.thread', {'ev-click': onClick }, [
       h('div.context', threadIcon(thread)),
       h('div.content', [
         subjectEl,
