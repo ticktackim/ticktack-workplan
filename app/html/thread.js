@@ -17,8 +17,7 @@ exports.create = (api) => {
   function thread (id) {
     // location here can expected to be: { page: 'home' }
 
-    var myId = api.keys.sync.id()
-
+    const myId = api.keys.sync.id()
     const thread = api.feed.obs.thread(id)
     const chunkedMessages = buildChunkedMessages(thread.messages)
 

@@ -5,9 +5,21 @@ const nest = require('depnest')
 // polyfills
 require('setimmediate')
 
+// add inspect right click menu
+require('./context-menu')
+
 // from more specialized to more general
 const sockets = combine(
-  require('./'),
+  {
+    app: require('./app'),
+    blob: require('./blob'),
+    //config: require('./ssb-config'),
+    config: require('./config'),
+    router: require('./router'),
+    styles: require('./styles'),
+    translations: require('./translations/sync'),
+    state: require('./state/obs'),
+  },
   require('patch-history'),
   require('patchcore')
 )
@@ -18,3 +30,5 @@ const app = api.app.html.app()
 
 // TODO (mix) : once app has swapping pages, attach the app to the page here
 // document.body.appendChild(app)
+
+
