@@ -86,10 +86,10 @@ exports.create = function (api) {
         {}
       )
 
-    var channelObs = PullObv(
-      threadReduce,
-      createChannelStream({reverse: true, limit: 1000})
-    )
+    // var channelObs = PullObv(
+    //   threadReduce,
+    //   createChannelStream({reverse: true, limit: 1000})
+    // )
 
 
   },

@@ -1,11 +1,6 @@
 const nest = require('depnest')
-const { h, computed } = require('mutant')
-const {threadReduce} = require('ssb-reduce-stream')
-const pull = require('pull-stream')
-const isObject = require('lodash/isObject')
+const { h } = require('mutant')
 const isString = require('lodash/isString')
-const last = require('lodash/last')
-const get = require('lodash/get')
 const More = require('hypermore')
 const morphdom = require('morphdom')
 const Debounce = require('obv-debounce')
@@ -38,25 +33,25 @@ exports.create = (api) => {
 
     var container = h('div.container', [])
 
-    function filterForThread (thread) {
-      if(thread.value.private)
-        return {private: toRecpGroup(thread)}
-      else if(thread.value.content.channel)
-        return {channel: thread.value.content.channel}
-    }
+    // function filterForThread (thread) {
+    //   if(thread.value.private)
+    //     return {private: toRecpGroup(thread)}
+    //   else if(thread.value.content.channel)
+    //     return {channel: thread.value.content.channel}
+    // }
 
-    function filter (rule, thread) {
-      if(!thread.value) return false
-      if(!rule) return true
-      if(rule.channel) {
-        return rule.channel == thread.value.content.channel
-      }
-      else if(rule.group)
-        return rule.group == thread.value.content.group
-      else if(rule.private)
-        return rule.private == toRecpGroup(thread)
-      else return true
-    }
+    // function filter (rule, thread) {
+    //   if(!thread.value) return false
+    //   if(!rule) return true
+    //   if(rule.channel) {
+    //     return rule.channel == thread.value.content.channel
+    //   }
+    //   else if(rule.group)
+    //     return rule.group == thread.value.content.group
+    //   else if(rule.private)
+    //     return rule.private == toRecpGroup(thread)
+    //   else return true
+    // }
 
     var morePlease = false
     var threadsObs = api.state.obs.threads()
@@ -114,8 +109,7 @@ exports.create = (api) => {
               h('div.threads', 
                 groupedThreads
                   .map(function (thread) {
-                    var el = api.app.html
-                      .threadCard(thread, opts)
+                    var el = api.app.html.threadCard(thread)
 
                     if(thread.value.content.channel) {
                       el.onclick = function (ev) {

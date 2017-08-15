@@ -1,5 +1,6 @@
 var h = require('mutant/h')
-var lodash = require('lodash')
+var isString= require('lodash/isString')
+var maxBy= require('lodash/maxBy')
 var nest = require('depnest')
 
 exports.gives = nest('app.html.threadCard', true)
@@ -12,10 +13,6 @@ exports.needs = nest({
   'message.html.markdown': 'first',
   'translations.sync.strings': 'first'
 })
-
-function isString (s) {
-  return 'string' === typeof s
-}
 
 function firstLine (text) {
   if(text.length < 80 && !~text.indexOf('\n')) return text
@@ -35,12 +32,6 @@ function trimLeadingMentions (str) {
   return str.replace(/^(\s*\[@[^\)]+\)\s*)*/, '')
   // deletes any number of pattern " [@...)  " from start of line
 }
-
-function hasBrokenLink (str) {
-  return /\[[^\]]*\]\([^\)]*$/.test(str)
-  // matches "[name](start_of_link"
-}
-
 
 exports.create = function (api) {
 
@@ -72,10 +63,6 @@ exports.create = function (api) {
       .map(api.about.obs.name)
   }
 
-  function link(location) {
-    return {'ev-click': () => api.history.sync.push(location)}
-  }
-
   function subject (msg) {
     const { subject, text } = msg.value.content
     if(!(subject || text)) return
@@ -95,12 +82,11 @@ exports.create = function (api) {
       subject(thread)
     ])
 
-    const lastReply = thread.replies && 
-      lodash.maxBy(thread.replies, function (e) { return e.timestamp })
+    const lastReply = thread.replies && maxBy(thread.replies, r => r.timestamp)
 
     var replySample = lastReply ? subject(lastReply) : null
 
-    return h('div.thread', link(thread), [
+    return h('div.thread', {'ev-click': () => api.history.sync.push(thread)}, [
       h('div.context', threadIcon(thread)),
       h('div.content', [
         subjectEl,

@@ -1,25 +1,16 @@
 const nest = require('depnest')
 const { h, computed } = require('mutant')
-const {threadReduce} = require('ssb-reduce-stream')
-const pull = require('pull-stream')
-const isObject = require('lodash/isObject')
-const isString = require('lodash/isString')
-const last = require('lodash/last')
-const get = require('lodash/get')
 const More = require('hypermore')
 const morphdom = require('morphdom')
-const Debounce = require('obv-debounce')
-const PullObv = require('pull-obv')
-const Computed = require('mutant/computed')
 
 exports.gives = nest('app.page.channel')
 
 exports.needs = nest({
   'app.html.nav': 'first',
-  'history.sync.push': 'first',
-  'translations.sync.strings': 'first',
   'app.html.threadCard': 'first',
+  'history.sync.push': 'first',
   'state.obs.channel': 'first',
+  'translations.sync.strings': 'first',
 })
 
 function latestUpdate(thread) {
@@ -36,14 +27,12 @@ exports.create = (api) => {
     // location here can expected to be: { page: 'home' }
     var strings = api.translations.sync.strings()
 
-    var container = h('div.container', [])
+    var container = h('div.container')
 
     var channelObs = api.state.obs.channel(location.channel)
 
     //disable "Show More" button when we are at the last thread.
-    var disableShowMore = Computed([channelObs], function (threads) {
-      return !!threads.ended
-    })
+    var disableShowMore = computed([channelObs], threads => !!threads.ended)
 
     var threadsHtmlObs = More(
       channelObs,
@@ -64,7 +53,7 @@ exports.create = (api) => {
                   return latestUpdate(b) - latestUpdate(a)
                 })
                 .map(function (thread) {
-                  return api.app.html.threadCard(thread, opts)
+                  return api.app.html.threadCard(thread)
                 })
               )
             ])
@@ -85,8 +74,4 @@ exports.create = (api) => {
     ])
   })
 }
-
-
-
-
 
