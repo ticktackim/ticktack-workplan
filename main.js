@@ -11,10 +11,12 @@ require('./context-menu')
 // from more specialized to more general
 const sockets = combine(
   {
+    about: require('./about'),
     app: require('./app'),
     blob: require('./blob'),
     //config: require('./ssb-config'),
     config: require('./config'),
+    message: require('./message'),
     router: require('./router'),
     styles: require('./styles'),
     translations: require('./translations/sync'),

@@ -27,7 +27,7 @@ exports.create = (api) => {
     // location here can expected to be: { page: 'home' }
     var strings = api.translations.sync.strings()
 
-    var container = h('div.container')
+    var container = h('div.container', [])
 
     var channelObs = api.state.obs.channel(location.channel)
 
@@ -69,7 +69,7 @@ exports.create = (api) => {
       threadsHtmlObs,
       h('button', {
         'ev-click': threadsHtmlObs.more,
-        disabled: disableShowMore
+         disabled: disableShowMore
       }, [strings.showMore])
     ])
   })

@@ -109,16 +109,13 @@ exports.create = (api) => {
               h('div.threads', 
                 groupedThreads
                   .map(function (thread) {
-                    var el = api.app.html.threadCard(thread)
 
-                    if(thread.value.content.channel) {
-                      el.onclick = function (ev) {
-                        api.history.sync.push({channel: thread.value.content.channel})
-                        ev.preventDefault()
-                      }
-                    }
+                    const channel = thread.value.content.channel
+                    const onClick = channel 
+                      ? (ev) => api.history.sync.push({ channel })
+                      : null
 
-                    return el
+                    return api.app.html.threadCard(thread, { onClick })
                 })
               )
             ]),

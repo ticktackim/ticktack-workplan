@@ -14,11 +14,10 @@ exports.needs = nest({
 exports.create = (api) => {
   return nest('app.html.thread', thread)
 
-  function thread (id) {
-    // location here can expected to be: { page: 'home' }
-
+  function thread (root) {
+    console.log('thread root', root)
     const myId = api.keys.sync.id()
-    const thread = api.feed.obs.thread(id)
+    const thread = api.feed.obs.thread(root)
     const chunkedMessages = buildChunkedMessages(thread.messages)
 
     const threadView = h('Thread',

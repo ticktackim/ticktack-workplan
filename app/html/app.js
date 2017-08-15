@@ -28,6 +28,7 @@ exports.create = (api) => {
     })
 
     api.history.obs.location()(render)
+    api.history.obs.store()(his => console.log('history', his)) // REMOVE)
     api.history.sync.push({ page: 'home' })
   }
 

@@ -7,12 +7,12 @@ exports.needs = nest({
 })
 
 exports.create = function (api) {
-  return nest('blob.sync.url', function (id) {
+  return nest('blob.sync.url', function (link) {
     var config = api.config.sync.load()
     var prefix = config.blobsPrefix != null ? config.blobsPrefix : `http://localhost:${config.ws.port}/blobs/get`
-    if (id && typeof id.link === 'string') {
-      id = id.link
+    if (link && typeof link.link === 'string') {
+      link = link.link
     }
-    return `${prefix}/${encodeURIComponent(id)}`
+    return `${prefix}/${encodeURIComponent(link)}`
   })
 }
