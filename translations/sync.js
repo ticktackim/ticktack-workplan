@@ -1,13 +1,28 @@
+const nest = require('depnest')
 
-exports.gives = {translations: {sync: {strings: true}}}
+exports.gives = nest('translations.sync.strings')
 
-exports.create = function () {
-  return {translations: {sync: {strings: function () {
-    return {
-      showMore: "Show More",
-      channels: "Channels",
-      directMessages: "Direct Messages",
-      replySymbol: "> "
-    }
-  }}}}
+exports.create = (api) => {
+  return nest('translations.sync.strings', () => en)
 }
+
+const en = {
+  loading: 'Loading...',
+  showMore: 'Show More',
+  channels: 'Channels',
+  directMessages: 'Direct Messages',
+  replySymbol: '> ',
+  userShow: {
+    action: {
+      follow: 'Follow',
+      unfollow: 'Unfollow',
+      directMessage: 'New Direct Message'
+    },
+    state: {
+      friends: 'You are friends',
+      youFollow: 'You follow them',
+      theyFollow: 'They follow you'
+    }
+  }
+}
+
