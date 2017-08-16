@@ -7,7 +7,6 @@ exports.needs = nest({
   'translations.sync.strings': 'first',
   'about.html.image': 'first',
   'about.obs.name': 'first',
-  'app.html.nav': 'first',
   'app.html.thread': 'first',
 })
 
@@ -26,6 +25,7 @@ exports.create = (api) => {
     ])
   }
 }
+
 
 
 

@@ -4,8 +4,7 @@ const { h } = require('mutant')
 exports.gives = nest('app.page.error')
 
 exports.needs = nest({
-  'translations.sync.strings': 'first',
-  'app.html.nav': 'first'
+  'translations.sync.strings': 'first'
 })
 
 exports.create = (api) => {
@@ -16,10 +15,11 @@ exports.create = (api) => {
   function error (location) {
     return h('Page -error', {title: strings.error}, [
       strings.errorNotFound,
-      location.error
+      h('pre', [JSON.stringify(location, null, 2)])
     ])
   }
 }
+
 
 
 

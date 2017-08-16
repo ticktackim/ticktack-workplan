@@ -4,7 +4,6 @@ const { h } = require('mutant')
 exports.gives = nest('app.page.groupNew')
 
 exports.needs = nest({
-  'app.html.nav': 'first',
   'translations.sync.strings': 'first'
 })
 
@@ -17,5 +16,6 @@ exports.create = (api) => {
     ])
   }
 }
+
 
 

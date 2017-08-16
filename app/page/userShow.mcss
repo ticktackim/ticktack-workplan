@@ -1,0 +1,17 @@
+Page -userShow {
+  div.container {
+
+    div.friendship {
+      display: flex
+      align-items: center
+
+      margin-bottom: 1rem
+
+      div.state { flex-basis: 12rem }
+      div.Button {}
+    }
+    
+
+  }
+}
+

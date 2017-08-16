@@ -6,7 +6,6 @@ const morphdom = require('morphdom')
 exports.gives = nest('app.page.channel')
 
 exports.needs = nest({
-  'app.html.nav': 'first',
   'app.html.threadCard': 'first',
   'history.sync.push': 'first',
   'state.obs.channel': 'first',
@@ -72,5 +71,6 @@ exports.create = (api) => {
     ])
   })
 }
+
 
 

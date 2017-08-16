@@ -7,7 +7,6 @@ exports.gives = nest('app.page.threadShow')
 
 exports.needs = nest({
   'translations.sync.strings': 'first',
-  'app.html.nav': 'first',
   'app.html.thread': 'first',
   'message.html.compose': 'first'
 })
@@ -41,4 +40,5 @@ exports.create = (api) => {
     ])
   }
 }
+
 

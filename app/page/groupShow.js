@@ -5,7 +5,6 @@ exports.gives = nest('app.page.groupShow')
 
 exports.needs = nest({
   'translations.sync.strings': 'first',
-  'app.html.nav': 'first'
 })
 
 exports.create = (api) => {
@@ -21,6 +20,7 @@ exports.create = (api) => {
     ])
   }
 }
+
 
 
 
