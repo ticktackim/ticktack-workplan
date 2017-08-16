@@ -10,6 +10,8 @@ require('./context-menu')
 
 // from more specialized to more general
 const sockets = combine(
+  //we always need to have translations first!
+  {translations: require('./translations/sync')},
   {
     about: require('./about'),
     app: require('./app'),
@@ -19,10 +21,9 @@ const sockets = combine(
     message: require('./message'),
     router: require('./router'),
     styles: require('./styles'),
-    translations: require('./translations/sync'),
     state: require('./state/obs'),
   },
-  require('patch-history'),
+//  require('patch-history'),
   require('patchcore')
 )
 
@@ -32,5 +33,8 @@ const app = api.app.html.app()
 
 // TODO (mix) : once app has swapping pages, attach the app to the page here
 // document.body.appendChild(app)
+
+
+
 
 
