@@ -36,7 +36,6 @@ exports.create = (api) => {
     var threadsHtmlObs = More(
       channelObs,
       function render (threads) {
-
         morphdom(container,
           // LEGACY: some of these containers could be removed
           // but they are here to be compatible with the old MCSS.
@@ -47,6 +46,9 @@ exports.create = (api) => {
                 Object.keys(threads.roots)
                 .map(function (id) {
                   return threads.roots[id]
+                })
+                .filter(function (thread) {
+                  return thread.value && thread.value.content.channel == location.channel
                 })
                 .sort(function (a, b) {
                   return latestUpdate(b) - latestUpdate(a)
@@ -71,6 +73,5 @@ exports.create = (api) => {
     ])
   })
 }
-
 
 
