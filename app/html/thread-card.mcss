@@ -1,0 +1,42 @@
+ThreadCard {
+  display: flex
+  align-items: center
+
+  margin-bottom: .5rem
+
+  div.context {
+    display: flex
+    margin-right: 1rem
+
+    img {
+      $smallAvatar
+      margin-right: .5rem
+    }
+  }
+
+  div.content {
+    flex-grow: 1
+    background: #fff
+    padding: 1rem
+    border: 1px solid #ddd
+    border-radius: 2px
+
+    div.subject {
+      font-size: 1.2rem
+      margin-bottom: .3rem
+
+      $largeMarkdown
+    }
+    div.reply {
+      display: flex
+      color: #444
+
+      div.replySymbol {
+        margin-left: .7rem
+        margin-right: .3rem
+      }
+
+      $smallMarkdown
+    }
+  }
+}

@@ -1,17 +1,23 @@
 const nest = require('depnest')
-const { h, computed, when } = require('mutant')
+const { h, Array: MutantArray, computed, when, map } = require('mutant')
+const pull = require('pull-stream')
+const get = require('lodash/get')
 
 exports.gives = nest('app.page.userShow')
 
 exports.needs = nest({
   'app.html.link': 'first',
   'app.html.nav': 'first',
+  'app.html.threadCard': 'first',
   'about.html.image': 'first',
   'about.obs.name': 'first',
   'contact.async.follow': 'first',
   'contact.async.unfollow': 'first',
   'contact.obs.followers': 'first',
+  'feed.pull.private': 'first',
+  'feed.pull.rollup': 'first',
   'keys.sync.id': 'first',
+  'state.obs.threads': 'first',
   'translations.sync.strings': 'first',
 })
 
@@ -48,6 +54,25 @@ exports.create = (api) => {
       h('Button', { disabled: 'disabled' }, strings.loading )
     )
 
+
+    const threads = MutantArray() 
+    pull(
+      // next(api.feed.pull.private, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
+      // api.feed.pull.private({reverse: true, limit: 100, live: false}),
+      api.feed.pull.private({reverse: true, live: false}),
+      pull.filter(msg => {
+        const recps = get(msg, 'value.content.recps')
+        if (!recps) return 
+
+        return recps
+          .map(r => typeof r === 'object' ? r.link : r)
+          .includes(feed)
+      }),
+      api.feed.pull.rollup(),
+      pull.drain(threads.push)
+      // Scroller(container, content, render, false, false)
+    )
+
     const Link = api.app.html.link
 
     return h('Page -userShow', [
@@ -61,11 +86,11 @@ exports.create = (api) => {
             followButton
           ]) : '',
         h('div', '...friends in common'),
-        h('div', '...groups dominic is in'),
+        h('div', '...groups this person is in'),
         feed !== myId
           ? Link({ page: 'threadNew', feed }, h('Button -primary', strings.userShow.action.directMessage))
           : '',
-        h('div', 'conversations you\'ve had with dominic'),
+        h('div.threads', map(threads, api.app.html.threadCard))
       ])
     ])
   }
