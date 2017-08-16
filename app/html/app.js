@@ -3,7 +3,7 @@ const values = require('lodash/values')
 const insertCss = require('insert-css')
 const openExternal = require('open-external')
 
-const HyperNav = require('hypernav')
+const HyperNav = require('hyper-nav')
 const computed = require('mutant/computed')
 const h = require('mutant/h')
 
@@ -53,11 +53,5 @@ exports.create = (api) => {
     'history.sync.back': () => nav.back(),
     'history.obs.location': () => nav.history,
   })
-
 }
-
-
-
-
-
 
