@@ -1,0 +1,42 @@
+Header {
+  margin: 1rem 0 0 1rem
+
+  nav {
+    display: flex
+    align-items: center
+
+    position: fixed
+    top: 0
+    left: 0
+    background: #fff
+    width: 100%
+    padding: 1rem
+
+    a, div {
+      color: #222
+      margin-right: 1rem
+
+      :hover {
+        text-decoration: underline
+      }
+    }
+
+    div.back {
+      border: 1px solid #ddd
+      padding: 0 0.2em;
+      font-size: 1.4rem;
+      border-radius: 4px
+
+      :hover {
+        text-decoration: none
+        border-color: #222 
+      }
+    }
+  }
+
+  h1 { 
+    margin-top: 4rem
+
+  }
+}
+

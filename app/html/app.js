@@ -24,13 +24,11 @@ exports.create = (api) => {
 
   var nav = HyperNav(api.router.sync.router, function (nav) {
     return h('Header', [
-      h('h1', [
-        computed(nav.last, function (e) { return e.element.title })
-      ]),
-      h('Nav', [
+      h('nav', [
         h('div.back', { 'ev-click': nav.back }, '←'),
         h('div', { 'ev-click': () => nav.push({page:'home'}) }, 'Home')
-      ])
+      ]),
+      h('h1', computed(nav.last, e => e.element.title)),
     ])
   })
 
