@@ -174,7 +174,6 @@ exports.create = function (api) {
       // return api.message.html.confirm(content, done)
 
       function done (err, msg) {
-        debugger
         publishBtn.disabled = false
         if (err) throw err
         else if (msg) textArea.value = ''

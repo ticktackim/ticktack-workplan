@@ -27,13 +27,15 @@ exports.create = (api) => {
       channel,
       recps: get(location, 'value.content.recps')
     }
-    const composer = api.message.html.compose({ meta })
+    const composer = api.message.html.compose({ meta, shrink: false })
 
     return h('Page -threadShow', [
       h('h1', 'Private message'),
       api.app.html.nav(),
-      h('div.container', thread),
-      composer
+      h('div.container', [
+        thread,
+        composer
+      ]),
     ])
   }
 }

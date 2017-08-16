@@ -28,10 +28,10 @@ function firstLine (text) {
   return sample + ellipsis
 }
 
-function trimLeadingMentions (str) {
-  return str.replace(/^(\s*\[@[^\)]+\)\s*)*/, '')
-  // deletes any number of pattern " [@...)  " from start of line
-}
+// function trimLeadingMentions (str) {
+//   return str.replace(/^(\s*\[@[^\)]+\)\s*)*/, '')
+//   // deletes any number of pattern " [@...)  " from start of line
+// }
 
 exports.create = function (api) {
 

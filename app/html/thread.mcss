@@ -29,7 +29,7 @@ Thread {
     div.msgs {
       div.msg-row {
         div.msg {
-          border: 1.5px #ddd solid
+          border: 1px #ddd solid
           $roundRight
         }
       }
@@ -57,6 +57,8 @@ $chunk {
     div.msg-row {
       display: flex
 
+      margin-bottom: 3px
+
       :first-child {
         div.msg { $roundTop }
       }
@@ -68,11 +70,10 @@ $chunk {
         line-height: 1.2rem
         background-color: #fff
         padding: 0 .7rem
-        margin-bottom: .1rem
-        border-radius: .3rem
+        border-radius: 4px
       }
-      div.msg-spacer {
-        flex-grow: grow
+      div.spacer {
+        flex-grow: 1
       }
     }
   }

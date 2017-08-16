@@ -10,6 +10,15 @@ exports.create = (api) => {
 }
 
 const mainMixins = `
+$basicText {
+  font-family: arial
+  font-size: 1rem
+}
+
+$maxWidth {
+  max-width: 1200px
+}
+
 $primaryColor {
   color: white
   background-color: #3dc8c3

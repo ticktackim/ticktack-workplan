@@ -9,8 +9,15 @@ Page {
     $primaryBackground
     padding: 1rem
 
-    max-width: 1400px
+    div.Thread {
+      $maxWidth
+      margin: 0 auto 1rem
+    }
 
+    div.Compose {
+      $maxWidth
+      margin: 0 auto 
+    }
   }
 }
 
