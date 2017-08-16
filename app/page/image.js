@@ -17,13 +17,8 @@ exports.create = (api) => {
   return nest('app.page.image', function (location) {
     return h('img', {src: api.blob.sync.url(location.blob || location)})
   })
-//
-//  function threadNew (location) {
-//    return h('Page -Im', {title: "Image"}, [
-//      blob.sync.url(location)
-//    ])
-//  }
 }
+
 
 
 
