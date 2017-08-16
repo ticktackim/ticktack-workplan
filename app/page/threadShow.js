@@ -6,12 +6,15 @@ const get = require('lodash/get')
 exports.gives = nest('app.page.threadShow')
 
 exports.needs = nest({
+  'translations.sync.strings': 'first',
   'app.html.nav': 'first',
   'app.html.thread': 'first',
   'message.html.compose': 'first'
 })
 
 exports.create = (api) => {
+  var strings = api.translations.sync.strings()
+
   return nest('app.page.threadShow', threadShow)
 
   function threadShow (location) {
@@ -23,15 +26,14 @@ exports.create = (api) => {
     const meta = {
       type: 'post',
       root,
-      branch: get(last(location.replies), 'key'), // >> lastId? CHECK THIS LOGIC
-      channel,
+      branch: get(last(location.replies), 'key'),
+      // >> lastId? CHECK THIS LOGIC
+      channel: channel,
       recps: get(location, 'value.content.recps')
     }
     const composer = api.message.html.compose({ meta, shrink: false })
 
-    return h('Page -threadShow', [
-      h('h1', 'Private message'),
-      api.app.html.nav(),
+    return h('Page -threadShow', {title: strings.threadShow}, [
       h('div.container', [
         thread,
         composer
@@ -39,3 +41,4 @@ exports.create = (api) => {
     ])
   }
 }
+

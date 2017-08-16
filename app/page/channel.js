@@ -63,9 +63,7 @@ exports.create = (api) => {
       }
     )
 
-    return h('Page -home', [
-      h('h1', location.channel),
-      api.app.html.nav(),
+    return h('Page -home', {title: location.channel}, [
       threadsHtmlObs,
       h('button', {
         'ev-click': threadsHtmlObs.more,
@@ -74,4 +72,5 @@ exports.create = (api) => {
     ])
   })
 }
+
 

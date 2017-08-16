@@ -4,16 +4,18 @@ const { h } = require('mutant')
 exports.gives = nest('app.page.groupNew')
 
 exports.needs = nest({
-  'app.html.nav': 'first'
+  'app.html.nav': 'first',
+  'translations.sync.strings': 'first'
 })
 
 exports.create = (api) => {
   return nest('app.page.groupNew', groupNew)
-
+  var strings = api.translations.sync.strings()
   function groupNew (location) {
-    return h('Page -groupNew', [
-      h('h1', 'Group New'),
-      api.app.html.nav()
+    return h('Page -groupNew', {title: strings.groupNew}, [
+      strings.stub
     ])
   }
 }
+
+

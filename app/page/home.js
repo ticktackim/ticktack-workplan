@@ -28,7 +28,7 @@ function toRecpGroup(msg) {
 
 exports.create = (api) => {
   return nest('app.page.home', function (location) {
-    // location here can expected to be: { page: 'home' }
+    // location here can expected to be: { page: 'home'}
     var strings = api.translations.sync.strings()
 
     var container = h('div.container', [])
@@ -125,13 +125,11 @@ exports.create = (api) => {
         return container
       }
     )
-
-    return h('Page -home', [
-      h('h1', 'Home'),
-      api.app.html.nav(),
+    return h('Page -home', {title: strings.home}, [
       threadsHtmlObs,
       h('button', {'ev-click': threadsHtmlObs.more}, [strings.showMore])
     ])
   })
 }
+
 

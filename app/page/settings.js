@@ -4,6 +4,7 @@ const { h } = require('mutant')
 exports.gives = nest('app.page.settings')
 
 exports.needs = nest({
+  'translations.sync.strings': 'first',
   'app.html.nav': 'first'
 })
 
@@ -12,9 +13,10 @@ exports.create = (api) => {
 
   function settings (location) {
 
-    return h('Page -settings', [
-      h('h1', 'Settings'),
-      api.app.html.nav(),
+    return h('Page -settings', {title: strings.settings}, [
+      strings.stub
     ])
   }
 }
+
+
