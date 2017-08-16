@@ -10,7 +10,8 @@ exports.needs = nest({
 exports.create = (api) => {
   return nest('app.html.link', (location, body) => {
     return h('Link', { 
-      'ev-click': () => api.history.sync.push(location)
+      'ev-click': () => api.history.sync.push(location),
+      className: typeof body === 'string' ? '-string' : ''
     }, body)
   })
 }

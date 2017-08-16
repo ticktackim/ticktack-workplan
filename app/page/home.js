@@ -31,7 +31,6 @@ exports.create = (api) => {
     // location here can expected to be: { page: 'home' }
     var strings = api.translations.sync.strings()
 
-    var container = h('div.container', [])
 
     // function filterForThread (thread) {
     //   if(thread.value.private)
@@ -70,6 +69,7 @@ exports.create = (api) => {
       requestIdleCallback(threadsObs.more)
     }
 
+    var container = h('div.container', [])
     var threadsHtmlObs = More(
       threadsObsDebounced,
       function render (threads) {
@@ -107,19 +107,17 @@ exports.create = (api) => {
             //private section
             h('section.updates -directMessage', [
               h('div.threads',
-                groupedThreads
-                  .map(function (thread) {
+                groupedThreads.map(thread => {
+                  const channel = thread.value.content.channel
+                  const onClick = channel
+                    ? (ev) => api.history.sync.push({ channel })
+                    : null // threadCard will install default onClick
 
-                    const channel = thread.value.content.channel
-                    const onClick = channel
-                      ? (ev) => api.history.sync.push({ channel })
-                      : null // threadCard will install default onClick
-
-                    return api.app.html.threadCard(thread, { onClick })
+                  return api.app.html.threadCard(thread, { onClick })
                 })
               )
-            ]),
-        ])
+            ])
+         ])
        )
 
         return container

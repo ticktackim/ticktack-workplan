@@ -89,7 +89,7 @@ exports.create = function (api) {
     const id = `${thread.key}-${JSON.stringify(opts)}`
     // id is only here to help morphdom morph accurately
 
-    return h('div.thread', { 'ev-click': onClick, id }, [
+    return h('ThreadCard', { 'ev-click': onClick, id }, [
       h('div.context', threadIcon(thread)),
       h('div.content', [
         subjectEl,
