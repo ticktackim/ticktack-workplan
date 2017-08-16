@@ -20,7 +20,7 @@ exports.create = function () {
       threadNew: 'New Thread',
       threadShow: "Direct Messages",
       userFind: "Find User",
-      userIsInGroups: "is in groups:"
+      userIsInGroups: "is in groups:",
       userConversationsWith: 'conversations you\'ve had with',
       follow: "Follow",
       friendsInCommon: 'friends in common'
