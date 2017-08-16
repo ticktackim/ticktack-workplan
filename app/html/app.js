@@ -16,9 +16,6 @@ exports.gives = nest({
 
 exports.needs = nest({
   'app.async.catchLinkClick': 'first',
-//  'history.sync.push': 'first',
-//  'history.obs.location': 'first',
-//  'history.obs.store': 'first',
   'router.sync.router': 'first',
   'styles.css': 'first'
 })
@@ -47,11 +44,13 @@ exports.create = (api) => {
         nav.push(link)
       })
       nav.push({page: 'home'})
-     document.body.appendChild(nav)
+      return nav
     },
     'history.sync.push': (location) => nav.push(location),
     'history.sync.back': () => nav.back(),
     'history.obs.location': () => nav.history,
   })
 }
+
+
 
