@@ -77,6 +77,9 @@ exports.create = (api) => {
         roots(threads.private)
         .concat(roots(threads.channels))
         .concat(roots(threads.groups))
+        .filter(function (thread) {
+          return thread.value.content.recps || thread.value.content.channel
+        })
         .sort(function (a, b) {
           return latestUpdate(b) - latestUpdate(a)
         })
