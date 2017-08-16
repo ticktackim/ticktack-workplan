@@ -6,9 +6,7 @@ module.exports = {
     app: require('./html/app'),
     thread: require('./html/thread'),
     link: require('./html/link'),
-    nav: require('./html/nav'),
     threadCard: require('./html/thread-card'),
-    nav: require('./html/nav'),
   },
   page: {
     channel: require('./page/channel'),
@@ -26,6 +24,8 @@ module.exports = {
     threadShow: require('./page/threadShow'),
   }
 }
+
+
 
 
 
