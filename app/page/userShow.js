@@ -30,7 +30,7 @@ exports.create = (api) => {
 
     const { feed } = location
     const myId = api.keys.sync.id()
-    var name = api.about.html.name(feed)
+    const name = api.about.obs.name(feed)
 
     const strings = api.translations.sync.strings()
 
@@ -78,7 +78,7 @@ exports.create = (api) => {
 
     const Link = api.app.html.link
 
-    return h('Page -userShow', {title: strings.userShow}, [
+    return h('Page -userShow', {title: name}, [
       h('div.container', [
         api.about.html.image(feed),
         feed !== myId
