@@ -53,21 +53,20 @@ exports.create = function (api) {
       initial
     )
 
-    var getting = {}, g= 0, t = 0
+    var getting = {}, g = 0, t = 0
     var maybe = {}
     obs(function (state) {
-      if(state.effect) {
-        var effect = state.effect
-        state.effect = null
-        if(!getting[effect.key]) {
-          getting[effect.key] = true
-          api.sbot.async.get(effect.key, function (err, msg) {-            console.log('g', g, ++t)
-            if(msg) {
-              obs.set(reduce(obs.value, {key: effect.key, value: msg}))
-            }
-          })
-        }
-      }
+      var effect = state.effect
+      if(!effect) return
+
+      state.effect = null
+      if(getting[effect.key]) return 
+
+      getting[effect.key] = true
+      api.sbot.async.get(effect.key, (err, msg) => {
+        if (!msg) return 
+        obs.set(reduce(obs.value, {key: effect.key, value: msg}))
+      })
     })
 
     //stream live messages. this *should* work.
