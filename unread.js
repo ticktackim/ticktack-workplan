@@ -30,7 +30,6 @@ exports.create = function (api) {
 
     timer = setTimeout(function () {
       timer = null
-      console.log("SAVE")
       localStorage.unread = JSON.stringify(unread)
     }, 2e3)
   }
@@ -52,7 +51,6 @@ exports.create = function (api) {
         save()
         return true
       //}
-      
     }
   }
 
@@ -63,9 +61,4 @@ exports.create = function (api) {
     'unread.sync.markRead': markRead
   })
 }
-
-
-
-
-
 
