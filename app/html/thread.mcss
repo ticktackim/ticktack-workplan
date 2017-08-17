@@ -14,7 +14,7 @@ Thread {
     div.msgs {
       div.msg-row {
         div.msg {
-          $primaryColor
+          $colorPrimary
 
           (a) { color: #4d3568 }
           $roundLeft

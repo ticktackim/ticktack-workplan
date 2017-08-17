@@ -10,7 +10,7 @@ exports.create = (api) => {
 }
 
 const mainMixins = `
-$basicText {
+$fontBasic {
   font-family: arial
   font-size: 1rem
 }
@@ -19,7 +19,7 @@ $maxWidth {
   max-width: 1200px
 }
 
-$primaryColor {
+$colorPrimary {
   color: white
   background-color: #3dc8c3
 }
@@ -62,6 +62,10 @@ $largeMarkdown {
       margin: 0
     }
   }
+}
+
+$borderSubtle {
+  border: 1px solid #b9b9b9
 }
 
 $roundLeft {

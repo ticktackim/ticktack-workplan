@@ -14,12 +14,15 @@ exports.needs = nest({
   'emoji.sync.url': 'first',
   'message.async.publish': 'first',
   // 'message.html.confirm': 'first'
+  'translations.sync.strings': 'first'
 })
 
 exports.create = function (api) {
   return nest('message.html.compose', compose)
 
   function compose ({ shrink = true, meta, prepublish, placeholder = 'Write a message' }, cb) {
+    const strings = api.translations.sync.strings()
+
     var files = []
     var filesById = {}
     var channelInputFocused = Value(false)
@@ -80,7 +83,7 @@ exports.create = function (api) {
 
     fileInput.onclick = () => hasContent.set(true)
 
-    var publishBtn = h('button', { 'ev-click': publish }, 'Publish')
+    var publishBtn = h('Button -primary', { 'ev-click': publish }, strings.sendMessage)
 
     var actions = h('section.actions', [
       fileInput,
@@ -166,18 +169,23 @@ exports.create = function (api) {
         }
       } catch (err) {
         publishBtn.disabled = false
-        if (cb) cb(err)
-        else throw err
+        handleErr(err)
       }
+      debugger
 
       return api.message.async.publish(content, done)
       // return api.message.html.confirm(content, done)
 
       function done (err, msg) {
         publishBtn.disabled = false
-        if (err) throw err
+        if (err) handleErr(err)
         else if (msg) textArea.value = ''
         if (cb) cb(err, msg)
+      }
+
+      function handleErr (err) {
+        if (cb) cb(err)
+        else throw err
       }
     }
   }

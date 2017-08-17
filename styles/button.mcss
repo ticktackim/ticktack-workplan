@@ -15,7 +15,7 @@ Button {
     }
   }
   -primary {
-    $primaryColor
+    $colorPrimary
 
     :hover { 
       opacity: .9

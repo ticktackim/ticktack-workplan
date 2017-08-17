@@ -3,16 +3,16 @@ Compose {
   flex-direction: column
 
   textarea {
-    $basicText
+    $fontBasic
 
     padding: .6rem
-    border: 1px solid gainsboro
+    $borderSubtle
     border-top-left-radius: 0
     border-top-right-radius: 0
   }
 
   input.channel {
-    border: 1px solid gainsboro
+    $borderSubtle
     border-bottom: none
     border-bottom-left-radius: 0
     border-bottom-right-radius: 0
@@ -49,7 +49,7 @@ Compose {
       }
 
       ::before {
-        $composeButton
+        $attachButton
         padding-top: .3rem
 
         content: '📎'
@@ -66,12 +66,7 @@ Compose {
       }
     }
 
-    button {
-      $composeButton
-
-      text-transform: uppercase
-      font-weight: bold
-      font-size: .7rem
+    div.Button {
     }
   }
 
@@ -107,13 +102,11 @@ Compose {
 
 }
 
-$composeButton {
+$attachButton {
   background: #fff
   color: #666
-  border: 1px solid #bbb
-  border-radius: .5rem
+  border: 1px solid #b9b9b9
   padding: .5rem
   margin: 0
   cursor: pointer
 }
-
