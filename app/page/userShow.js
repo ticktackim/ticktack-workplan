@@ -30,7 +30,7 @@ exports.create = (api) => {
 
     const { feed } = location
     const myId = api.keys.sync.id()
-    var name = api.about.obs.name(feed)
+    const name = api.about.obs.name(feed)
 
     const strings = api.translations.sync.strings()
 
