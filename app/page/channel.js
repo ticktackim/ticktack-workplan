@@ -2,6 +2,7 @@ const nest = require('depnest')
 const { h, computed } = require('mutant')
 const More = require('hypermore')
 const morphdom = require('morphdom')
+const get = require('lodash/get')
 
 exports.gives = nest('app.page.channel')
 
@@ -23,12 +24,12 @@ function latestUpdate(thread) {
 
 exports.create = (api) => {
   return nest('app.page.channel', function (location) {
-    // location here can expected to be: { page: 'home' }
+    const { channel } = location
     var strings = api.translations.sync.strings()
 
     var container = h('div.container', [])
 
-    var channelObs = api.state.obs.channel(location.channel)
+    var channelObs = api.state.obs.channel(channel)
 
     //disable "Show More" button when we are at the last thread.
     var disableShowMore = computed([channelObs], threads => !!threads.ended)
@@ -36,24 +37,17 @@ exports.create = (api) => {
     var threadsHtmlObs = More(
       channelObs,
       function render (threads) {
-
         morphdom(container,
           // LEGACY: some of these containers could be removed
           // but they are here to be compatible with the old MCSS.
           h('div.container', [
             //private section
             h('section.updates -directMessage', [
-              h('div.threads',
-                Object.keys(threads.roots)
-                .map(function (id) {
-                  return threads.roots[id]
-                })
-                .sort(function (a, b) {
-                  return latestUpdate(b) - latestUpdate(a)
-                })
-                .map(function (thread) {
-                  return api.app.html.threadCard(thread)
-                })
+              h('div.threads', Object.keys(threads.roots)
+                .map(id => threads.roots[id])
+                .filter(thread => get(thread, 'value.content.channel') == channel)
+                .sort((a, b) => latestUpdate(b) - latestUpdate(a))
+                .map(thread => api.app.html.threadCard(thread))
               )
             ])
           ])
@@ -71,6 +65,5 @@ exports.create = (api) => {
     ])
   })
 }
-
 
 
