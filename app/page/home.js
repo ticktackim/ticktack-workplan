@@ -12,7 +12,8 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'translations.sync.strings': 'first',
   'state.obs.threads': 'first',
-  'app.html.threadCard': 'first'
+  'app.html.threadCard': 'first',
+  'unread.sync.isUnread': 'first'
 })
 
 function toRecpGroup(msg) {
@@ -73,17 +74,6 @@ exports.create = (api) => {
       threadsObsDebounced,
       function render (threads) {
 
-        var groupedThreads =
-        roots(threads.private)
-        .concat(roots(threads.channels))
-        .concat(roots(threads.groups))
-        .filter(function (thread) {
-          return thread.value.content.recps || thread.value.content.channel
-        })
-        .sort(function (a, b) {
-          return latestUpdate(b) - latestUpdate(a)
-        })
-
         function latestUpdate(thread) {
           var m = thread.timestamp
           if(!thread.replies) return m
@@ -101,7 +91,32 @@ exports.create = (api) => {
           })
         }
 
+        var groupedThreads =
+        roots(threads.private)
+        .concat(roots(threads.channels))
+        .concat(roots(threads.groups))
+        .filter(function (thread) {
+          return thread.value.content.recps || thread.value.content.channel
+        })
+        .map(function (thread) {
+          var unread = 0
+          if(api.unread.sync.isUnread(thread))
+            unread ++
+          ;(thread.replies || []).forEach(function (msg) {
+            if(api.unread.sync.isUnread(msg)) unread ++
+          })
+          thread.unread = unread
+//          console.log('unread', thread.unread, +!!thread.unread)
+          return thread
+        })
+        .sort(function (a, b) {
+          return ((!!b.unread) - (!!a.unread)) || (latestUpdate(b) - latestUpdate(a))
+        })
 
+//        console.log(groupedThreads.map(function (thread) {
+//          return {ch: thread.value.content.channel, unread: thread.unread, thread: thread}
+//        }))
+//
         morphdom(container,
           // LEGACY: some of these containers could be removed
           // but they are here to be compatible with the old MCSS.
@@ -121,8 +136,7 @@ exports.create = (api) => {
             ])
          ])
        )
-
-        return container
+      return container
       }
     )
     return h('Page -home', {title: strings.home}, [
@@ -131,6 +145,16 @@ exports.create = (api) => {
     ])
   })
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

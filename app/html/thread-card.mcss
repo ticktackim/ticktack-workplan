@@ -7,7 +7,7 @@ ThreadCard {
   div.context {
     display: flex
     margin-right: 1rem
-
+    font-weight: inherit
     img {
       $smallAvatar
       margin-right: .5rem
@@ -39,4 +39,13 @@ ThreadCard {
       $smallMarkdown
     }
   }
+  -unread {
+    //why does this only work on the channel name?
+    font-weight: bold
+  }
 }
+
+
+
+
+

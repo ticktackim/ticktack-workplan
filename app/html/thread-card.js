@@ -11,7 +11,8 @@ exports.needs = nest({
   'about.obs.name': 'first',
   'about.html.image': 'first',
   'message.html.markdown': 'first',
-  'translations.sync.strings': 'first'
+  'translations.sync.strings': 'first',
+  'unread.sync.isUnread': 'first'
 })
 
 function firstLine (text) {
@@ -89,7 +90,9 @@ exports.create = function (api) {
     const id = `${thread.key}-${JSON.stringify(opts)}`
     // id is only here to help morphdom morph accurately
 
-    return h('ThreadCard', { 'ev-click': onClick, id }, [
+    var unread = thread.unread ? ' -unread': ''
+
+    return h('ThreadCard' + unread, { 'ev-click': onClick, id}, [
       h('div.context', threadIcon(thread)),
       h('div.content', [
         subjectEl,
