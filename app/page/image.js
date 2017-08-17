@@ -15,7 +15,11 @@ exports.create = (api) => {
   var strings = api.translations.sync.strings()
 
   return nest('app.page.image', function (location) {
-    return h('img', {src: api.blob.sync.url(location.blob || location)})
+    return h('Page -image', [
+      h('div.container', [
+        h('img', {src: api.blob.sync.url(location.blob || location)})
+      ])
+    ])
   })
 }
 
