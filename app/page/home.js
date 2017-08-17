@@ -110,7 +110,10 @@ exports.create = (api) => {
           return thread
         })
         .sort(function (a, b) {
-          return ((!!b.unread) - (!!a.unread)) || (latestUpdate(b) - latestUpdate(a))
+          return (
+            //((!!b.unread) - (!!a.unread)) ||
+            (latestUpdate(b) - latestUpdate(a))
+          )
         })
 
 //        console.log(groupedThreads.map(function (thread) {
