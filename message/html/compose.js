@@ -171,7 +171,6 @@ exports.create = function (api) {
         publishBtn.disabled = false
         handleErr(err)
       }
-      debugger
 
       return api.message.async.publish(content, done)
       // return api.message.html.confirm(content, done)
