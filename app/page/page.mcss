@@ -1,22 +1,16 @@
 Page {
-  h1 { 
-    margin-left: 1rem
-  }
-
-  div.Nav {}
+  $primaryBackground
 
   div.container {
-    $primaryBackground
+    $maxWidth
     padding: 1rem
+    margin: 0 auto 
 
     div.Thread {
-      $maxWidth
-      margin: 0 auto 1rem
+      margin-bottom: 1rem
     }
 
     div.Compose {
-      $maxWidth
-      margin: 0 auto 
     }
   }
 }

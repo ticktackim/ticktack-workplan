@@ -8,6 +8,8 @@ exports.create = (api) => {
 
 const en = {
   loading: 'Loading...',
+  optionalField: 'optional',
+  sendMessage: 'Send',
   showMore: 'Show More',
   channels: 'Channels',
   directMessages: 'Direct Messages',
@@ -21,7 +23,14 @@ const en = {
   //stub: should not be shown on released software!
   stub: "this page is a stub",
   settings: "Settings",
-  threadNew: 'New Thread',
+  threadNew: {
+    pageTitle: 'New Thread',
+    field: {
+      to: 'To',
+      subject: 'Subject'
+    }
+
+  },
   threadShow: "Direct Messages",
   userShow: {
     action: {
