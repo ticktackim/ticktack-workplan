@@ -28,7 +28,7 @@ exports.create = (api) => {
         h('div.back', { 'ev-click': nav.back }, '←'),
         h('div', { 'ev-click': () => nav.push({page:'home'}) }, 'Home')
       ]),
-      h('h1', computed(nav.last, e => e.element.title)),
+      h('h1', computed(nav.location, e => e.element.title)),
     ])
   })
 

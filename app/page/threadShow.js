@@ -18,7 +18,7 @@ exports.create = (api) => {
 
   function threadShow (location) {
     // location = a thread (message decorated with replies)
-    const { key: root, replies, channel } = location
+    const { key: root, channel } = location
 
     const thread = api.app.html.thread(root)
 
