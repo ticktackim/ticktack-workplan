@@ -38,7 +38,7 @@ Page -threadNew {
             height: 2rem
             border-radius: 2rem
   
-            margin-right: .5rem
+            margin-right: 1rem
           }
 
           div.name {
