@@ -1,5 +1,5 @@
 var nest = require('depnest')
-var BloomFilter = require('jsbloom').filter
+//var BloomFilter = require('jsbloom').filter
 
 exports.gives = nest({
   'unread.sync.isUnread': true,
@@ -15,41 +15,57 @@ exports.create = function (api) {
     try {
       unread = JSON.parse(localStorage.unread)
     } catch (err) {}
+  }
+  if(!unread)
+    unread = {timestamp: Date.now()}
 
-    if(!unread) {
-      unread = {timestamp: Date.now()}
-    }
+  unread.timestamp = unread.timestamp || Date.now()
 
-    if(!unread.filter) {
-      unread.filter = new Filter(10000, 0.001)
-    }
-    else {
-      var filter = new BloomFilter(10000, 0.001)
-      filter.importData(unread.filter)
-      unread.filter = filter
-    }
+  if(!unread.filter)
+    unread.filter = {}
+
+  var timer
+  function save () {
+    if(timer) return
+
+    timer = setTimeout(function () {
+      timer = null
+      console.log("SAVE")
+      localStorage.unread = JSON.stringify(unread)
+    }, 2e3)
   }
 
   function isUnread(msg) {
     //ignore messages which do not have timestamps
     if(!msg.timestamp) return false
     if(msg.timestamp < unread.timestamp) return false
-    return !unread.filter.checkEntry(msg.key)
+    if(unread.filter[msg.key]) {
+      return false
+    }
+      return true
   }
 
-  function addRead(msg) {
-    unread.filter.addEntry(msg.key)
+  function markRead(msg) {
+    if('string' === typeof msg.key) {
+      //if(isUnread(msg)) {
+        unread.filter[msg.key] = true
+        save()
+        return true
+      //}
+      
+    }
   }
 
-  document.body.onunload = function () {
-    localStorage.unread = JSON.stringify({
-      timestamp: unread.timestamp,
-      filter: unread.filter.exportData()
-    })
-  }
+  document.body.onunload = save
 
   return nest({
     'unread.sync.isUnread': isUnread,
     'unread.sync.markRead': markRead
   })
 }
+
+
+
+
+
+
