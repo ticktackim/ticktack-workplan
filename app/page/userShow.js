@@ -22,8 +22,6 @@ exports.needs = nest({
 })
 
 exports.create = (api) => {
-  var strings = api.translations.sync.strings()
-
   return nest('app.page.userShow', userShow)
 
   function userShow (location) {

@@ -53,8 +53,7 @@ exports.create = function (api) {
       initial
     )
 
-    var getting = {}, g = 0, t = 0
-    var maybe = {}
+    var getting = {}
     obs(function (state) {
       var effect = state.effect
       if(!effect) return

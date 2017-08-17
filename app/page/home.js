@@ -15,15 +15,15 @@ exports.needs = nest({
   'app.html.threadCard': 'first'
 })
 
-function toRecpGroup(msg) {
-  //cannocialize
-  return Array.isArray(msg.value.content.repcs) &&
-    msg.value.content.recps.map(function (e) {
-    return (isString(e) ? e : e.link)
-  }).sort().map(function (id) {
-    return id.substring(0, 10)
-  }).join(',')
-}
+// function toRecpGroup(msg) {
+//   //cannocialize
+//   return Array.isArray(msg.value.content.repcs) &&
+//     msg.value.content.recps.map(function (e) {
+//     return (isString(e) ? e : e.link)
+//   }).sort().map(function (id) {
+//     return id.substring(0, 10)
+//   }).join(',')
+// }
 
 exports.create = (api) => {
   return nest('app.page.home', function (location) {
