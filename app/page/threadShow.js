@@ -18,7 +18,8 @@ exports.create = (api) => {
 
   function threadShow (location) {
     // location = a thread (message decorated with replies)
-    const { key: root, channel } = location
+    const { key: root, value } = location
+    const channel = get(value, 'content.channel')
 
     const thread = api.app.html.thread(root)
 
@@ -27,7 +28,7 @@ exports.create = (api) => {
       root,
       branch: get(last(location.replies), 'key'),
       // >> lastId? CHECK THIS LOGIC
-      channel: channel,
+      channel,
       recps: get(location, 'value.content.recps')
     }
     const composer = api.message.html.compose({ meta, shrink: false })
