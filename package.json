@@ -25,6 +25,7 @@
     "hyper-nav": "^2.0.0",
     "hypermore": "^2.0.0",
     "insert-css": "^2.0.0",
+    "jsbloom": "^1.0.3",
     "libnested": "^1.2.1",
     "lodash": "^4.17.4",
     "micro-css": "^2.0.1",
