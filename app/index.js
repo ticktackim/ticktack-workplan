@@ -11,6 +11,7 @@ module.exports = {
   page: {
     channel: require('./page/channel'),
     error: require('./page/error'),
+    image: require('./page/image'),
     groupFind: require('./page/groupFind'),
     groupIndex: require('./page/groupIndex'),
     groupNew: require('./page/groupNew'),
@@ -24,6 +25,7 @@ module.exports = {
     threadShow: require('./page/threadShow'),
   }
 }
+
 
 
 

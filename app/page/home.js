@@ -15,15 +15,15 @@ exports.needs = nest({
   'app.html.threadCard': 'first'
 })
 
-function toRecpGroup(msg) {
-  //cannocialize
-  return Array.isArray(msg.value.content.repcs) &&
-    msg.value.content.recps.map(function (e) {
-    return (isString(e) ? e : e.link)
-  }).sort().map(function (id) {
-    return id.substring(0, 10)
-  }).join(',')
-}
+// function toRecpGroup(msg) {
+//   //cannocialize
+//   return Array.isArray(msg.value.content.repcs) &&
+//     msg.value.content.recps.map(function (e) {
+//     return (isString(e) ? e : e.link)
+//   }).sort().map(function (id) {
+//     return id.substring(0, 10)
+//   }).join(',')
+// }
 
 exports.create = (api) => {
   return nest('app.page.home', function (location) {
@@ -77,16 +77,19 @@ exports.create = (api) => {
         roots(threads.private)
         .concat(roots(threads.channels))
         .concat(roots(threads.groups))
+        .filter(function (thread) {
+          return thread.value.content.recps || thread.value.content.channel
+        })
         .sort(function (a, b) {
           return latestUpdate(b) - latestUpdate(a)
         })
 
         function latestUpdate(thread) {
-          var m = thread.timestamp
+          var m = thread.timestamp || 0
           if(!thread.replies) return m
 
           for(var i = 0; i < thread.replies.length; i++)
-            m = Math.max(thread.replies[i].timestamp, m)
+            m = Math.max(thread.replies[i].timestamp||0, m)
           return m
         }
 

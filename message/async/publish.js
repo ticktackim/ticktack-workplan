@@ -1,4 +1,3 @@
-const h = require('mutant/h')
 const nest = require('depnest')
 
 exports.needs = nest({
