@@ -7,6 +7,7 @@ const get = require('lodash/get')
 exports.gives = nest('app.page.channel')
 
 exports.needs = nest({
+  'app.html.link': 'first',
   'app.html.threadCard': 'first',
   'history.sync.push': 'first',
   'state.obs.channel': 'first',
@@ -56,7 +57,10 @@ exports.create = (api) => {
       }
     )
 
-    return h('Page -home', {title: location.channel}, [
+    const Link = api.app.html.link
+
+    return h('Page -home', {title: channel}, [
+      Link({ page: 'threadNew', channel }, h('Button -primary', strings.channel.action.newThread)),
       threadsHtmlObs,
       h('button', {
         'ev-click': threadsHtmlObs.more,
