@@ -33,7 +33,7 @@
     "obv-debounce": "^1.0.2",
     "open-external": "^0.1.1",
     "patch-history": "^1.0.0",
-    "patchcore": "^1.9.1",
+    "patchcore": "^1.10.0",
     "pull-next": "^1.0.1",
     "pull-obv": "^1.3.0",
     "pull-stream": "^3.6.0",

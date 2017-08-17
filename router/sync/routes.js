@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { isMsg, isFeed } = require('ssb-ref')
+const { isMsg, isFeed, isBlob } = require('ssb-ref')
 exports.gives = nest('router.sync.routes')
 
 exports.needs = nest({
@@ -15,6 +15,7 @@ exports.needs = nest({
   'app.page.userShow': 'first',
   'app.page.threadNew': 'first',
   'app.page.threadShow': 'first',
+  'app.page.image': 'first',
 })
 
 exports.create = (api) => {
@@ -23,6 +24,7 @@ exports.create = (api) => {
     // route format: [ routeValidator, routeFunction ]
  
     const routes = [
+      [ location => isBlob(location.blob), pages.image ],
       [ location => location.page === 'home', pages.home ],
       [ location => location.channel , pages.channel ],
       [ location => location.page === 'settings', pages.settings ],
@@ -49,14 +51,6 @@ exports.create = (api) => {
     return [...routes, ...sofar]
   })
 }
-
-
-
-
-
-
-
-
 
 
 
