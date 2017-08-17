@@ -85,11 +85,11 @@ exports.create = (api) => {
         })
 
         function latestUpdate(thread) {
-          var m = thread.timestamp
+          var m = thread.timestamp || 0
           if(!thread.replies) return m
 
           for(var i = 0; i < thread.replies.length; i++)
-            m = Math.max(thread.replies[i].timestamp, m)
+            m = Math.max(thread.replies[i].timestamp||0, m)
           return m
         }
 

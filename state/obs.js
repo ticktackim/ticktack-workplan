@@ -17,6 +17,7 @@ exports.gives = nest({
 exports.needs = nest({
   'message.sync.unbox': 'first',
   'sbot.pull.log': 'first',
+  'sbot.async.get': 'first',
   'feed.pull.channel': 'first'
 })
 
@@ -52,6 +53,23 @@ exports.create = function (api) {
       initial
     )
 
+    var getting = {}, g= 0, t = 0
+    var maybe = {}
+    obs(function (state) {
+      if(state.effect) {
+        var effect = state.effect
+        state.effect = null
+        if(!getting[effect.key]) {
+          getting[effect.key] = true
+          api.sbot.async.get(effect.key, function (err, msg) {-            console.log('g', g, ++t)
+            if(msg) {
+              obs.set(reduce(obs.value, {key: effect.key, value: msg}))
+            }
+          })
+        }
+      }
+    })
+
     //stream live messages. this *should* work.
     //there is no back pressure on new events
     //only a show more on the top (currently)
@@ -62,7 +80,7 @@ exports.create = function (api) {
       pull.drain(function (data) {
         if(data.sync) return
         firstTimestamp = data.timestamp
-        obs.set(reduce(threadsObs.value, data))
+        obs.set(reduce(obs.value, data))
       })
     )
 
@@ -93,6 +111,7 @@ exports.create = function (api) {
 
 
   },
+
   'state.obs.threads': function buildThreadObs() {
       if(threadsObs) return threadsObs
 
@@ -128,7 +147,5 @@ exports.create = function (api) {
     }
   })
 }
-
-
 
 

@@ -23,13 +23,13 @@ const sockets = combine(
     styles: require('./styles'),
     state: require('./state/obs'),
   },
-//  require('patch-history'),
   require('patchcore')
 )
 
 const api = entry(sockets, nest('app.html.app', 'first'))
 
 document.body.appendChild(api.app.html.app())
+
 
 
 
