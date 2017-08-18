@@ -67,21 +67,28 @@ exports.create = function (api) {
     })
     textArea.publish = publish // TODO: fix - clunky api for the keyboard shortcut to target
 
-    var fileInput = api.blob.html.input(file => {
-      files.push(file)
-      filesById[file.link] = file
+    var fileInput
+    if(!meta.recps) {
+      fileInput = api.blob.html.input(file => {
+        files.push(file)
+        filesById[file.link] = file
 
-      var embed = file.type.match(/^image/) ? '!' : ''
-      var spacer = embed ? '\n' : ' '
-      var insertLink = spacer + embed + '[' + file.name + ']' + '(' + file.link + ')' + spacer
+        var embed = file.type.match(/^image/) ? '!' : ''
+        var spacer = embed ? '\n' : ' '
+        var insertLink = spacer + embed + '[' + file.name + ']' + '(' + file.link + ')' + spacer
 
-      var pos = textArea.selectionStart
-      textArea.value = textArea.value.slice(0, pos) + insertLink + textArea.value.slice(pos)
+        var pos = textArea.selectionStart
+        textArea.value = textArea.value.slice(0, pos) + insertLink + textArea.value.slice(pos)
 
-      console.log('added:', file)
-    })
+        console.log('added:', file)
+      })
 
-    fileInput.onclick = () => hasContent.set(true)
+      fileInput.onclick = () => hasContent.set(true)
+    }
+    // if fileInput is null, send button moves to the left side
+    // and we don't want that.
+    else
+      fileInput = h('span')
 
     var publishBtn = h('Button -primary', { 'ev-click': publish }, strings.sendMessage)
 
@@ -189,5 +196,7 @@ exports.create = function (api) {
     }
   }
 }
+
+
 
 
