@@ -37,6 +37,10 @@ function mixinsToMcss (mixinsObj) {
 
 function mcssToCss (mcssObj, mixinsStr) {
   return map(mcssObj, (mcssStr, [name]) => {
-    return compile(mixinsStr + '\n' + mcssStr)
+    const newCss = compile(mixinsStr + '\n' + mcssStr)
+    if (newCss == '') {
+      console.error('Some broken mcss!', { name, mcssStr, mixinsStr })
+    }
+    return newCss
   })
 }

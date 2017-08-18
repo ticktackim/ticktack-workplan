@@ -7,7 +7,7 @@ ThreadCard {
   div.context {
     display: flex
     margin-right: 1rem
-
+    font-weight: inherit
     img {
       $avatarSmall
       margin-right: .5rem
@@ -16,7 +16,7 @@ ThreadCard {
 
   div.content {
     flex-grow: 1
-    background: #fff
+
     padding: 1rem
     border: 1px solid #ddd
     border-radius: 2px
@@ -25,7 +25,7 @@ ThreadCard {
       font-size: 1.2rem
       margin-bottom: .3rem
 
-      $largeMarkdown
+      $markdownLarge
     }
     div.reply {
       color: #444
@@ -38,7 +38,22 @@ ThreadCard {
         margin-right: .5rem
       }
 
-      $smallMarkdown
+      $markdownSmall
+    }
+  }
+
+  -unread {
+    div.content {
+      background-color: #fff
+
+      div.subject {
+        $markdownBold
+      }
     }
   }
 }
+
+
+
+
+

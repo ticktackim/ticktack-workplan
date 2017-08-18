@@ -8,7 +8,9 @@ exports.needs = nest({
   'about.html.image': 'first',
   'feed.obs.thread': 'first',
   'keys.sync.id': 'first',
-  'message.html.markdown': 'first'
+  'message.html.markdown': 'first',
+  'unread.sync.markRead': 'first',
+  'unread.sync.isUnread': 'first'
 })
 
 exports.create = (api) => {
@@ -47,8 +49,9 @@ exports.create = (api) => {
 
     function message (msg) {
       const raw = get(msg, 'value.content.text')
-
-      return h('div.msg', api.message.html.markdown(raw))
+      var unread = api.unread.sync.isUnread(msg) ? ' -unread' : ' -read'
+      api.unread.sync.markRead(msg)
+      return h('div.msg'+unread, api.message.html.markdown(raw))
     }
 
     threadView.subject = computed(thread.messages, msgs => {
@@ -86,3 +89,11 @@ function isSameAuthor (msgA, msgB) {
   // TODO (mix) use lodash/get
   return msgA.value.author === msgB.value.author
 }
+
+
+
+
+
+
+
+

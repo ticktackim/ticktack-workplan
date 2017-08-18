@@ -1,7 +1,7 @@
+var nest = require('depnest')
 var h = require('mutant/h')
 var isString= require('lodash/isString')
 var maxBy= require('lodash/maxBy')
-var nest = require('depnest')
 
 exports.gives = nest('app.html.threadCard', true)
 
@@ -11,7 +11,8 @@ exports.needs = nest({
   'about.obs.name': 'first',
   'about.html.image': 'first',
   'message.html.markdown': 'first',
-  'translations.sync.strings': 'first'
+  'translations.sync.strings': 'first',
+  'unread.sync.isUnread': 'first'
 })
 
 function firstLine (text) {
@@ -70,7 +71,7 @@ exports.create = function (api) {
     return api.message.html.markdown(firstLine(subject|| text))
   }
 
-  return {app: {html: {threadCard: function (thread, opts = {}) {
+  return nest('app.html.threadCard', (thread, opts = {}) => {
     var strings = api.translations.sync.strings()
 
     if(!thread.value) return
@@ -90,7 +91,9 @@ exports.create = function (api) {
     const id = `${thread.key.replace(/[^a-z0-9]/gi, '')}` //-${JSON.stringify(opts)}`
     // id is only here to help morphdom morph accurately
 
-    return h('ThreadCard', { 'ev-click': onClick, id }, [
+    var className = thread.unread ? '-unread': ''
+
+    return h('ThreadCard', { id, className, 'ev-click': onClick, }, [
       h('div.context', threadIcon(thread)),
       h('div.content', [
         subjectEl,
@@ -100,7 +103,7 @@ exports.create = function (api) {
         ]) : null
       ])
     ])
-  }}}}
+  })
 }
 
 

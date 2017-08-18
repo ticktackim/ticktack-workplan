@@ -53,7 +53,7 @@ $avatarLarge {
   border-radius: 3rem
 }
 
-$smallMarkdown {
+$markdownSmall {
   div.Markdown {
     h1, h2, h3, h4, h5, h6, p {
       font-size: 1rem
@@ -63,12 +63,20 @@ $smallMarkdown {
   }
 }
 
-$largeMarkdown {
+$markdownLarge {
   div.Markdown {
     h1, h2, h3, h4, h5, h6, p {
       font-size: 1.2rem
       font-weight: 300
       margin: 0
+    }
+  }
+}
+
+$markdownBold {
+  div.Markdown {
+    h1, h2, h3, h4, h5, h6, p {
+      font-weight: bold
     }
   }
 }
