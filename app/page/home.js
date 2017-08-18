@@ -106,20 +106,14 @@ exports.create = (api) => {
             if(api.unread.sync.isUnread(msg)) unread ++
           })
           thread.unread = unread
-//          console.log('unread', thread.unread, +!!thread.unread)
           return thread
         })
         .sort(function (a, b) {
           return (
-            //((!!b.unread) - (!!a.unread)) ||
             (latestUpdate(b) - latestUpdate(a))
           )
         })
 
-//        console.log(groupedThreads.map(function (thread) {
-//          return {ch: thread.value.content.channel, unread: thread.unread, thread: thread}
-//        }))
-//
         morphdom(container,
           // LEGACY: some of these containers could be removed
           // but they are here to be compatible with the old MCSS.

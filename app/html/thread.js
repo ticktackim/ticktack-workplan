@@ -38,9 +38,6 @@ exports.create = (api) => {
           : h('div.other-chunk', [
             h('div.avatar', when(author, api.about.html.image(author()))),
             h('div.msgs', map(chunk, msg => {
-              console.log('markRead', msg.key)
-//              if(root.replies)
-//                thread.replies.forEach(api.unread.sync.markRead)
               return h('div.msg-row', [
                 message(msg),
                 h('div.spacer')

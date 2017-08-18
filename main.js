@@ -24,7 +24,6 @@ const sockets = combine(
     styles: require('./styles'),
     state: require('./state/obs'),
   },
-//  require('patch-history'),
   require('patchcore')
 )
 

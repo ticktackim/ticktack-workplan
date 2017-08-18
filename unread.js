@@ -1,5 +1,4 @@
 var nest = require('depnest')
-//var BloomFilter = require('jsbloom').filter
 
 exports.gives = nest({
   'unread.sync.isUnread': true,
