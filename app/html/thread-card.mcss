@@ -16,7 +16,7 @@ ThreadCard {
 
   div.content {
     flex-grow: 1
-    background: #fff
+
     padding: 1rem
     border: 1px solid #ddd
     border-radius: 2px
@@ -25,7 +25,7 @@ ThreadCard {
       font-size: 1.2rem
       margin-bottom: .3rem
 
-      $largeMarkdown
+      $markdownLarge
     }
     div.reply {
       display: flex
@@ -36,12 +36,18 @@ ThreadCard {
         margin-right: .3rem
       }
 
-      $smallMarkdown
+      $markdownSmall
     }
   }
+
   -unread {
-    //why does this only work on the channel name?
-    font-weight: bold
+    div.content {
+      background-color: #fff
+
+      div.subject {
+        $markdownBold
+      }
+    }
   }
 }
 

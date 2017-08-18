@@ -1,7 +1,7 @@
+var nest = require('depnest')
 var h = require('mutant/h')
 var isString= require('lodash/isString')
 var maxBy= require('lodash/maxBy')
-var nest = require('depnest')
 
 exports.gives = nest('app.html.threadCard', true)
 
@@ -70,7 +70,7 @@ exports.create = function (api) {
     return api.message.html.markdown(firstLine(subject|| text))
   }
 
-  return {app: {html: {threadCard: function (thread, opts = {}) {
+  return nest('app.html.threadCard', (thread, opts = {}) => {
     var strings = api.translations.sync.strings()
 
     if(!thread.value) return
@@ -90,9 +90,9 @@ exports.create = function (api) {
     const id = `${thread.key}-${JSON.stringify(opts)}`
     // id is only here to help morphdom morph accurately
 
-    var unread = thread.unread ? ' -unread': ''
+    var className = thread.unread ? '-unread': ''
 
-    return h('ThreadCard' + unread, { 'ev-click': onClick, id}, [
+    return h('ThreadCard', { id, className, 'ev-click': onClick, }, [
       h('div.context', threadIcon(thread)),
       h('div.content', [
         subjectEl,
@@ -102,7 +102,7 @@ exports.create = function (api) {
         ]) : null
       ])
     ])
-  }}}}
+  })
 }
 
 

@@ -122,10 +122,10 @@ exports.create = (api) => {
             h('section.updates -directMessage', [
               h('div.threads',
                 groupedThreads.map(thread => {
-                  const channel = thread.value.content.channel
-                  const onClick = channel
-                    ? (ev) => api.history.sync.push({ channel })
-                    : null // threadCard will install default onClick
+                  const { recps, channel } = thread.value.content
+                  var onClick
+                  if (channel && !recps)
+                    onClick = (ev) => api.history.sync.push({ channel })
 
                   return api.app.html.threadCard(thread, { onClick })
                 })
