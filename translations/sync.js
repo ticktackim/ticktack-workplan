@@ -13,7 +13,6 @@ const en = {
   showMore: 'Show More',
   channels: 'Channels',
   directMessages: 'Direct Messages',
-  replySymbol: '> ',
   home: "Home",
   error: "Error",
   errorNotFound: "The page wasn't found",
@@ -31,7 +30,12 @@ const en = {
     }
 
   },
-  threadShow: "Direct Messages",
+  threadShow: 'Direct Messages',
+  userFind: {
+    action: {
+      findAUser: 'Find a user',
+    }
+  },
   userShow: {
     action: {
       follow: 'Follow',
@@ -42,7 +46,6 @@ const en = {
       friends: 'You are friends',
       youFollow: 'You follow them',
       theyFollow: 'They follow you',
-      userFind: "Find User",
       userIsInGroups: "is in groups:",
       userConversationsWith: 'conversations you\'ve had with',
       follow: "Follow",
@@ -50,17 +53,5 @@ const en = {
     }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 

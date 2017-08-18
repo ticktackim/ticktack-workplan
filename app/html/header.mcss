@@ -2,17 +2,19 @@ Header {
   margin: 1rem 0 0 1rem
 
   nav {
-    display: flex
-    align-items: center
+    $navFA
+    padding: 1rem 0
 
+    width: 100%
     position: fixed
     top: 0
     left: 0
     background: #fff
-    width: 100%
-    padding: 1rem
 
-    a, div {
+    display: flex
+    align-items: center
+
+    (a) {
       color: #222
       margin-right: 1rem
 
@@ -22,21 +24,42 @@ Header {
     }
 
     div.back {
+      font-size: 1.4rem
+      width: 1rem
+      padding: 0 0.2em 0 1rem
       border: 1px solid #ddd
-      padding: 0 0.2em;
-      font-size: 1.4rem;
       border-radius: 4px
+      margin-right: 1rem
 
       :hover {
-        text-decoration: none
-        border-color: #222 
+        $colorPrimary
+        border: 1px solid #fff
       }
     }
-  }
 
-  h1 { 
-    margin-top: 4rem
 
+    div.tools {
+      flex-grow: 1
+
+      $navFA
+
+      display: flex
+      justify-content: flex-end
+    }
   }
+  
+
 }
 
+$navFA {
+  i {
+    font-size: 1.4rem
+    color: #b9b9b9
+    margin-right: 1rem
+
+    :hover {
+      text-decoration: none
+      $colorPrimaryFG
+    }
+  }
+}

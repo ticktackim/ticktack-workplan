@@ -1,29 +1,24 @@
 Page -home {
 
   div.container {
-    $primaryBackground
+    $backgroundPrimary
 
 
-    section.updates {
+    $homePageSection
 
-      -directMessage {
-        $homePageSection
+    div.threads {
+      div.ThreadCard {
+        div.content {
+          div.subject {
+            display: flex
 
-        div.threads {
-          div.ThreadCard {
-            div.content {
-              div.subject {
-                display: flex
+            div.recps {
+              display: flex
+              font-weight: 600
+              margin-right: .4rem
 
-                div.recps {
-                  display: flex
-                  font-weight: 600
-                  margin-right: .4rem
-
-                  div.recp {
-                    margin-right: .4rem
-                  }
-                }
+              div.recp {
+                margin-right: .4rem
               }
             }
           }

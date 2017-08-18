@@ -43,10 +43,10 @@ $chunk {
 
   div.avatar {
     background-color: #333
-    $smallAvatar
+    $avatarSmall
 
     img {
-      $smallAvatar
+      $avatarSmall
     }
 
     margin-right: 1rem
