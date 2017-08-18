@@ -18,17 +18,13 @@ Trello : https://trello.com/b/93eXDvVP/ticktack
 
 ```bash
 $ npm install
-$ npm run setup
-$ npm start
+$ npm run rebuild
 ```
 
 ### App env
 
-This app starts with default `ssb_appname` of `ticktack-ssb`, so you can find it's data in `~/.ticktack-ssb`.
+To run development setup with standard ssb key + network :
 
-To load the app with your classic ssb key, run :
-
-```bash
-$ ssb_appname=ssb npm start
-```
+1. start you sbot `$ sbot server`
+2. run `$ npm run dev` in the repo directory
 

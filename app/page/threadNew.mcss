@@ -1,6 +1,12 @@
 Page -threadNew {
 
   div.container {
+    div.flash {
+      margin-bottom: 2rem;
+      background: #fff;
+      padding: 1rem;
+    }
+
     div.field {
       margin-bottom: .5rem
       
@@ -24,6 +30,7 @@ Page -threadNew {
       
         div.recp {
           padding: .3rem
+          min-width: 5rem
           $borderSubtle
           border-radius: 6rem
           background-color: #fff
@@ -37,12 +44,10 @@ Page -threadNew {
             width: 2rem
             height: 2rem
             border-radius: 2rem
-  
-            margin-right: 1rem
           }
 
           div.name {
-            margin-right: .5rem
+            margin: 0 .5rem
           }
         }
       }      

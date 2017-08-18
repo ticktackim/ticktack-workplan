@@ -21,7 +21,18 @@ const en = {
   error: "Error",
   errorNotFound: "The page wasn't found",
   groupNew: "New Group",
-  groupFind: 'Find Group',
+  groupFind: {
+    action: {
+      findAGroup: 'Find Group',
+      newGroup: 'Create this group'
+    },
+    state: {
+      groupNotFound: 'This group does not exist yet.'
+    },
+    flash: {
+      createFirstThread: 'Start this group by posting the first thread.'
+    }
+  },
   groupIndex: "Group Index",
   //stub: should not be shown on released software!
   stub: "this page is a stub",

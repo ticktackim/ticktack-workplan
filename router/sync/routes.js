@@ -24,14 +24,8 @@ exports.create = (api) => {
     // route format: [ routeValidator, routeFunction ]
  
     const routes = [
-      // Group pages
-      [ location => location.page === 'groupFind', pages.groupFind ],
-      [ location => location.page === 'groupIndex', pages.groupIndex ],
-      [ location => location.page === 'groupNew', pages.groupNew ],
-      [ location => location.type === 'groupShow' && isMsg(location.key), pages.groupShow ],
 
       // Thread pages
-      // QUESTION - should this be for private threads + group threads?
       [ location => location.page === 'threadNew' && isFeed(location.feed), pages.threadNew ],
       [ location => location.page === 'threadNew' && location.channel, pages.threadNew ],
       [ location => isMsg(location.key), pages.threadShow ],
@@ -40,10 +34,16 @@ exports.create = (api) => {
       [ location => location.page === 'userFind', pages.userFind ],
       [ location => isFeed(location.feed), pages.userShow ],
 
+      // Group pages
+      [ location => location.page === 'groupFind', pages.groupFind ],
+      [ location => location.page === 'groupIndex', pages.groupIndex ],
+      [ location => location.page === 'groupNew', pages.groupNew ],
+      // [ location => location.type === 'groupShow' && isMsg(location.key), pages.groupShow ],
+      [ location => location.channel , pages.channel ],
+
       [ location => location.page === 'home', pages.home ],
       [ location => location.page === 'settings', pages.settings ],
       [ location => isBlob(location.blob), pages.image ],
-      [ location => location.channel , pages.channel ],
 
       // Error page
       [ location => true, pages.error ]

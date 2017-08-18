@@ -69,7 +69,7 @@ exports.create = (api) => {
   function threadNewChannel (location) {
     const strings = api.translations.sync.strings()
 
-    const { channel } = location
+    const { channel, flash } = location
 
     const meta = Struct({
       type: 'post',
@@ -83,6 +83,7 @@ exports.create = (api) => {
 
     return h('Page -threadNew', {title: strings.threadNew.pageTitle}, [
       h('div.container', [
+        flash ? h('div.flash', flash) : '',
         h('div.field -channel', [
           h('div.label', strings.threadNew.field.channel),
           h('div.recps', [

@@ -12,12 +12,15 @@ require('./context-menu')
 const sockets = combine(
   //we always need to have translations first!
   {translations: require('./translations/sync')},
+  require('./unread'),
   {
     about: require('./about'),
     app: require('./app'),
     blob: require('./blob'),
+    channel: require('./channel'),
     //config: require('./ssb-config'),
     config: require('./config'),
+    // group: require('./group'),
     message: require('./message'),
     router: require('./router'),
     styles: require('./styles'),
