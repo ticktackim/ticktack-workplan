@@ -95,7 +95,7 @@ exports.create = function (api) {
       h('div.content', [
         subjectEl,
         replySample ? h('div.reply', [
-          h('div.replySymbol', strings.replySymbol),
+          h('i.fa.fa-caret-left'),
           replySample
         ]) : null
       ])

@@ -1,13 +1,9 @@
+var nest = require('depnest')
 var PullObv = require('pull-obv')
 var threadReduce = require('ssb-reduce-stream')
 var pull = require('pull-stream')
 var Next = require('pull-next')
-
-var nest = require('depnest')
-
-function isObject (o) {
-  return 'object' === typeof o
-}
+var isObject = require('lodash/isObject')
 
 exports.gives = nest({
   'state.obs.threads': true,

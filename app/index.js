@@ -4,6 +4,7 @@ module.exports = {
   },
   html: {
     app: require('./html/app'),
+    header: require('./html/header'),
     thread: require('./html/thread'),
     link: require('./html/link'),
     threadCard: require('./html/thread-card'),

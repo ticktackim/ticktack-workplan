@@ -1,5 +1,5 @@
 Link {
-  color: blue
+  color: #222
 
   -string {
     :hover {

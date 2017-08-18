@@ -1,5 +1,8 @@
 module.exports = {
-  css: require('./css'),
+  css: {
+    fromMcss: require('./css/fromMcss'),
+    fontAwesome: require('./css/fontAwesome')
+  },
   mcss: require('./mcss'),
   mixins: require('./mixins')
 }

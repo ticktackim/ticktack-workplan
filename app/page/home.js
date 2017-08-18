@@ -68,7 +68,7 @@ exports.create = (api) => {
       requestIdleCallback(threadsObs.more)
     }
 
-    var container = h('div.container', [])
+    var updates = h('div.threads', [])
     var threadsHtmlObs = More(
       threadsObsDebounced,
       function render (threads) {
@@ -101,36 +101,26 @@ exports.create = (api) => {
           })
         }
 
+        morphdom(updates,
+          h('div.threads',
+            groupedThreads.map(thread => {
+              const channel = thread.value.content.channel
+              const onClick = channel
+                ? (ev) => api.history.sync.push({ channel })
+                : null // threadCard will install default onClick
 
-        morphdom(container,
-          // LEGACY: some of these containers could be removed
-          // but they are here to be compatible with the old MCSS.
-          h('div.container', [
-            //private section
-            h('section.updates -directMessage', [
-              h('div.threads',
-                groupedThreads.map(thread => {
-                  const channel = thread.value.content.channel
-                  const onClick = channel
-                    ? (ev) => api.history.sync.push({ channel })
-                    : null // threadCard will install default onClick
+              return api.app.html.threadCard(thread, { onClick })
+            })
+          )
+        )
 
-                  return api.app.html.threadCard(thread, { onClick })
-                })
-              )
-            ])
-         ])
-       )
-
-        return container
+        return updates
       }
     )
     return h('Page -home', {title: strings.home}, [
-      threadsHtmlObs,
-      h('button', {'ev-click': threadsHtmlObs.more}, [strings.showMore])
+      h('div.container', [ threadsHtmlObs ]),
+      h('Button -showMore', { 'ev-click': threadsHtmlObs.more }, strings.showMore)
     ])
   })
 }
-
-
 
