@@ -18,7 +18,9 @@ exports.needs = nest({
   'app.html.header': 'first',
   'app.async.catchLinkClick': 'first',
   'router.sync.router': 'first',
-  'styles.css': 'reduce'
+  'styles.css': 'reduce',
+  'about.async.suggest': 'first',
+  'channel.async.suggest': 'first',
 })
 
 exports.create = (api) => {
@@ -26,6 +28,11 @@ exports.create = (api) => {
 
   return nest({
     'app.html.app': function app () {
+
+      // DIRTY HACK - initializes the suggestion indexes
+      api.about.async.suggest()
+      api.channel.async.suggest()
+
       const css = values(api.styles.css()).join('\n')
       insertCss(css)
 
