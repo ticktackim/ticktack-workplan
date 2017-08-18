@@ -21,7 +21,11 @@ const en = {
   error: "Error",
   errorNotFound: "The page wasn't found",
   groupNew: "New Group",
-  groupFind: 'Find Group',
+  groupFind: {
+    action: {
+      findAGroup: 'Find Group'
+    }
+  },
   groupIndex: "Group Index",
   //stub: should not be shown on released software!
   stub: "this page is a stub",

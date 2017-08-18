@@ -28,6 +28,7 @@ exports.create = (api) => {
           h('i.fa.fa-search'),
           h('input', { 
             placeholder: strings.userFind.action.findAUser,
+            autofocus: 'autofocus',
             'ev-input': e => input.set(e.target.value) 
           }),
         ]),

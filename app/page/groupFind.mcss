@@ -1,0 +1,64 @@
+Page -groupFind {
+  div.container {
+    max-width: 40rem
+    div.search {
+      background-color: #fff
+
+      margin-bottom: 1rem
+
+      display: flex
+      align-items: center
+
+      i.fa-search {
+        margin-left: .8rem
+      }
+
+      input {
+        flex-grow: 1
+
+        $fontBasic
+        margin: .6rem
+
+        border: none
+        outline: none
+      }
+    }
+    
+
+    div.results {
+      max-width: 40rem
+
+      div.Link {
+        div.result {
+          background-color: #fff
+          
+          padding: .5rem
+
+          display: flex
+          align-items: center
+
+          img { 
+            $avatarSmall
+            margin-right: 1rem
+          }
+
+          div.alias {
+            flex-grow: 1
+            margin-right: 1rem
+          }
+
+          pre.key {
+            color: #999
+            
+          }
+
+          :hover {
+            background-color: #eee
+
+          } 
+        }
+      }
+    }
+  }
+}
+
