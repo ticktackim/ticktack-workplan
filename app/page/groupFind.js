@@ -14,7 +14,7 @@ exports.create = (api) => {
 
   function groupFind (location) {
     const strings = api.translations.sync.strings()
-    const input = Value()
+    const input = Value('')
 
     // CHANNEL != GROUP
     // note we're using channels in initial approximation of groups 
@@ -42,7 +42,17 @@ exports.create = (api) => {
             ])
           )
         })),
-        // computed([input, suggester.sync], (input, sync) => input && !sync ? 'Loading...' : '')
+        computed([input, groups], (input, groups) => {
+          if (input.length && groups.length === 0) {
+            return h('div.groupNotFound', [
+              h('div.info', strings.groupFind.state.groupNotFound),
+              Link(
+                { page: 'threadNew', channel: input, flash: strings.groupFind.flash.createFirstThread },
+                h('Button -primary', strings.groupFind.action.newGroup)
+              )
+            ])
+          }
+        })
       ])
     ])
   }

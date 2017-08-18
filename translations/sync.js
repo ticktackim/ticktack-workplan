@@ -23,7 +23,14 @@ const en = {
   groupNew: "New Group",
   groupFind: {
     action: {
-      findAGroup: 'Find Group'
+      findAGroup: 'Find Group',
+      newGroup: 'Create this group'
+    },
+    state: {
+      groupNotFound: 'This group does not exist yet.'
+    },
+    flash: {
+      createFirstThread: 'Start this group by posting the first thread.'
     }
   },
   groupIndex: "Group Index",
