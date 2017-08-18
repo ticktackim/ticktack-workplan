@@ -16,7 +16,6 @@ Thread {
         div.msg {
           $colorPrimary
 
-          (a) { color: #4d3568 }
           $roundLeft
         }
       }

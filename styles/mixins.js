@@ -23,6 +23,10 @@ $maxWidth {
 $colorPrimary {
   color: white
   background-color: #3dc8c3
+
+  (a) {
+    color: #5c6bc0
+  }
 }
 
 $colorPrimaryFG {
