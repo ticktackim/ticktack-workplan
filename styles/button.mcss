@@ -23,5 +23,15 @@ Button {
 
     border: none
   }
+
+  -showMore {
+    width: 100%
+
+    padding: .2rem 0
+
+    border-left: none
+    border-right: none
+    border-bottom: none
+  }
 }
 

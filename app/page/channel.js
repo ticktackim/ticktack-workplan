@@ -28,32 +28,24 @@ exports.create = (api) => {
     const { channel } = location
     var strings = api.translations.sync.strings()
 
-    var container = h('div.container', [])
-
     var channelObs = api.state.obs.channel(channel)
 
     //disable "Show More" button when we are at the last thread.
     var disableShowMore = computed([channelObs], threads => !!threads.ended)
 
+    var updates = h('div.threads', [])
     var threadsHtmlObs = More(
       channelObs,
       function render (threads) {
-        morphdom(container,
-          // LEGACY: some of these containers could be removed
-          // but they are here to be compatible with the old MCSS.
-          h('div.container', [
-            //private section
-            h('section.updates -directMessage', [
-              h('div.threads', Object.keys(threads.roots)
-                .map(id => threads.roots[id])
-                .filter(thread => get(thread, 'value.content.channel') == channel)
-                .sort((a, b) => latestUpdate(b) - latestUpdate(a))
-                .map(thread => api.app.html.threadCard(thread))
-              )
-            ])
-          ])
+        morphdom(updates,
+          h('div.threads', Object.keys(threads.roots)
+            .map(id => threads.roots[id])
+            .filter(thread => get(thread, 'value.content.channel') == channel)
+            .sort((a, b) => latestUpdate(b) - latestUpdate(a))
+            .map(thread => api.app.html.threadCard(thread))
+          )
         )
-        return container
+        return updates
       }
     )
 
@@ -61,8 +53,8 @@ exports.create = (api) => {
 
     return h('Page -home', {title: channel}, [
       Link({ page: 'threadNew', channel }, h('Button -primary', strings.channel.action.newThread)),
-      threadsHtmlObs,
-      h('button', {
+      h('div.container', [ threadsHtmlObs ]),
+      h('Button -showMore', {
         'ev-click': threadsHtmlObs.more,
          disabled: disableShowMore
       }, [strings.showMore])

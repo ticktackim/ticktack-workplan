@@ -1,8 +1,10 @@
 Page {
-  $primaryBackground
+  $backgroundPrimary
+  margin-top: 4rem
 
   div.container {
     $maxWidth
+    min-height: 100vh
     padding: 1rem
     margin: 0 auto 
 

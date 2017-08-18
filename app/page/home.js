@@ -69,7 +69,7 @@ exports.create = (api) => {
       requestIdleCallback(threadsObs.more)
     }
 
-    var container = h('div.container', [])
+    var updates = h('div.threads', [])
     var threadsHtmlObs = More(
       threadsObsDebounced,
       function render (threads) {
@@ -91,67 +91,46 @@ exports.create = (api) => {
           })
         }
 
-        var groupedThreads =
-        roots(threads.private)
-        .concat(roots(threads.channels))
-        .concat(roots(threads.groups))
-        .filter(function (thread) {
-          return thread.value.content.recps || thread.value.content.channel
-        })
-        .map(function (thread) {
-          var unread = 0
-          if(api.unread.sync.isUnread(thread))
-            unread ++
-          ;(thread.replies || []).forEach(function (msg) {
-            if(api.unread.sync.isUnread(msg)) unread ++
+
+        var groupedThreads = roots(threads.private)
+          .concat(roots(threads.channels))
+          .concat(roots(threads.groups))
+          .filter(function (thread) {
+            return thread.value.content.recps || thread.value.content.channel
           })
-          thread.unread = unread
-          return thread
-        })
-        .sort(function (a, b) {
-          return (
-            (latestUpdate(b) - latestUpdate(a))
+          .map(function (thread) {
+            var unread = 0
+            if(api.unread.sync.isUnread(thread))
+              unread ++
+            ;(thread.replies || []).forEach(function (msg) {
+              if(api.unread.sync.isUnread(msg)) unread ++
+            })
+            thread.unread = unread
+            return thread
+          })
+          .sort((a, b) => latestUpdate(b) - latestUpdate(a))
+
+        morphdom(
+          updates,
+          h('div.threads',
+            groupedThreads.map(thread => {
+              const { recps, channel } = thread.value.content
+              var onClick
+              if (channel && !recps)
+                onClick = (ev) => api.history.sync.push({ channel })
+
+              return api.app.html.threadCard(thread, { onClick })
+            })
           )
-        })
+        )
 
-        morphdom(container,
-          // LEGACY: some of these containers could be removed
-          // but they are here to be compatible with the old MCSS.
-          h('div.container', [
-            //private section
-            h('section.updates -directMessage', [
-              h('div.threads',
-                groupedThreads.map(thread => {
-                  const { recps, channel } = thread.value.content
-                  var onClick
-                  if (channel && !recps)
-                    onClick = (ev) => api.history.sync.push({ channel })
-
-                  return api.app.html.threadCard(thread, { onClick })
-                })
-              )
-            ])
-         ])
-       )
-      return container
+        return updates
       }
     )
     return h('Page -home', {title: strings.home}, [
-      threadsHtmlObs,
-      h('button', {'ev-click': threadsHtmlObs.more}, [strings.showMore])
+      h('div.container', [ threadsHtmlObs ]),
+      h('Button -showMore', { 'ev-click': threadsHtmlObs.more }, strings.showMore)
     ])
   })
 }
-
-
-
-
-
-
-
-
-
-
-
-
 

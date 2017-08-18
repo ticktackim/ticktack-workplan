@@ -9,7 +9,7 @@ ThreadCard {
     margin-right: 1rem
     font-weight: inherit
     img {
-      $smallAvatar
+      $avatarSmall
       margin-right: .5rem
     }
   }
@@ -28,12 +28,14 @@ ThreadCard {
       $markdownLarge
     }
     div.reply {
-      display: flex
       color: #444
 
-      div.replySymbol {
+      display: flex
+      align-items: center
+
+      i.fa-caret-left {
         margin-left: .7rem
-        margin-right: .3rem
+        margin-right: .5rem
       }
 
       $markdownSmall

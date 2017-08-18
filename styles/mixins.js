@@ -13,6 +13,7 @@ const mainMixins = `
 $fontBasic {
   font-family: arial
   font-size: 1rem
+  line-height: 1.2
 }
 
 $maxWidth {
@@ -24,21 +25,29 @@ $colorPrimary {
   background-color: #3dc8c3
 }
 
+$colorPrimaryFG {
+  color: #3dc8c3
+}
+
 $colorSubtle {
   color: #222
 }
 
-$primaryBackground {
+$backgroundPrimary {
   background-color: #f7f7f7
 }
 
-$smallAvatar {
+$borderBackgroundPrimary {
+  border: 1px #f7f7f7 solid
+}
+
+$avatarSmall {
   width: 3rem
   height: 3rem
   border-radius: 1.5rem
 }
 
-$largeAvatar {
+$avatarLarge {
   width: 6rem
   height: 6rem
   border-radius: 3rem

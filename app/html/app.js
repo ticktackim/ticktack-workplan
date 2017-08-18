@@ -15,22 +15,14 @@ exports.gives = nest({
 })
 
 exports.needs = nest({
+  'app.html.header': 'first',
   'app.async.catchLinkClick': 'first',
   'router.sync.router': 'first',
-  'styles.css': 'first'
+  'styles.css': 'reduce'
 })
 
 exports.create = (api) => {
-
-  var nav = HyperNav(api.router.sync.router, function (nav) {
-    return h('Header', [
-      h('nav', [
-        h('div.back', { 'ev-click': nav.back }, '←'),
-        h('div', { 'ev-click': () => nav.push({page:'home'}) }, 'Home')
-      ]),
-      h('h1', computed(nav.location, e => e.element.title)),
-    ])
-  })
+  var nav = null
 
   return nest({
     'app.html.app': function app () {
@@ -41,6 +33,12 @@ exports.create = (api) => {
         if (isExternal) return openExternal(link)
         nav.push(link)
       })
+
+      nav = HyperNav(
+        api.router.sync.router,
+        api.app.html.header
+      )
+
       nav.push({page: 'home'})
       return nav
     },
