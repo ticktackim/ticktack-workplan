@@ -22,15 +22,13 @@ exports.needs = nest({
 })
 
 exports.create = (api) => {
-  var strings = api.translations.sync.strings()
-
   return nest('app.page.userShow', userShow)
 
   function userShow (location) {
 
     const { feed } = location
     const myId = api.keys.sync.id()
-    var name = api.about.obs.name(feed)
+    const name = api.about.obs.name(feed)
 
     const strings = api.translations.sync.strings()
 

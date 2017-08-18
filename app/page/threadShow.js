@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h } = require('mutant')
+const { h, computed } = require('mutant')
 const last = require('lodash/last')
 const get = require('lodash/get')
 
@@ -18,7 +18,8 @@ exports.create = (api) => {
 
   function threadShow (location) {
     // location = a thread (message decorated with replies)
-    const { key: root, replies, channel } = location
+    const { key: root, value } = location
+    const channel = get(value, 'content.channel')
 
     const thread = api.app.html.thread(root)
 
@@ -27,13 +28,15 @@ exports.create = (api) => {
       root,
       branch: get(last(location.replies), 'key'),
       // >> lastId? CHECK THIS LOGIC
-      channel: channel,
+      channel,
       recps: get(location, 'value.content.recps')
     }
     const composer = api.message.html.compose({ meta, shrink: false })
+    const subject = computed(thread.subject, subject => subject || strings.threadShow)
 
-    return h('Page -threadShow', {title: strings.threadShow}, [
+    return h('Page -threadShow', [
       h('div.container', [
+        h('h1', subject),
         thread,
         composer
       ]),

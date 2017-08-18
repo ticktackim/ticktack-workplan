@@ -1,0 +1,52 @@
+Page -threadNew {
+
+  div.container {
+    div.field {
+      margin-bottom: .5rem
+      
+      display: flex
+      align-items: center
+
+      div.label {
+        flex-basis: 4rem
+        padding-left: 1rem
+        margin-right: 1rem
+      }
+
+      input {
+        flex-grow: 1
+        $fontBasic
+        padding: .6rem
+      }
+
+      div.recps {
+        display: flex
+      
+        div.recp {
+          padding: .3rem
+          $borderSubtle
+          border-radius: 6rem
+          background-color: #fff
+
+          margin-right: 1rem
+
+          display: flex
+          align-items: center
+
+          img { 
+            width: 2rem
+            height: 2rem
+            border-radius: 2rem
+  
+            margin-right: 1rem
+          }
+
+          div.name {
+            margin-right: .5rem
+          }
+        }
+      }      
+
+    }
+  }
+}

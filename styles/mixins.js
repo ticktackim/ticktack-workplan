@@ -10,7 +10,7 @@ exports.create = (api) => {
 }
 
 const mainMixins = `
-$basicText {
+$fontBasic {
   font-family: arial
   font-size: 1rem
 }
@@ -19,7 +19,7 @@ $maxWidth {
   max-width: 1200px
 }
 
-$primaryColor {
+$colorPrimary {
   color: white
   background-color: #3dc8c3
 }
@@ -70,25 +70,28 @@ $markdownBold {
       font-weight: bold
     }
   }
+
+$borderSubtle {
+  border: 1px solid #b9b9b9
 }
 
 $roundLeft {
-  border-top-left-radius: .9rem
-  border-bottom-left-radius: .9rem
+  border-top-left-radius: 1.2rem
+  border-bottom-left-radius: 1.2rem
 }
 
 $roundRight {
-  border-top-right-radius: .9rem
-  border-bottom-right-radius: .9rem
+  border-top-right-radius: 1.2rem
+  border-bottom-right-radius: 1.2rem
 }
 
 $roundTop {
-  border-top-left-radius: .9rem
-  border-top-right-radius: .9rem
+  border-top-left-radius: 1.2rem
+  border-top-right-radius: 1.2rem
 }
 
 $roundBottom {
-  border-bottom-left-radius: .9rem
-  border-bottom-right-radius: .9rem
+  border-bottom-left-radius: 1.2rem
+  border-bottom-right-radius: 1.2rem
 }
 `

@@ -16,15 +16,15 @@ exports.needs = nest({
   'unread.sync.isUnread': 'first'
 })
 
-function toRecpGroup(msg) {
-  //cannocialize
-  return Array.isArray(msg.value.content.repcs) &&
-    msg.value.content.recps.map(function (e) {
-    return (isString(e) ? e : e.link)
-  }).sort().map(function (id) {
-    return id.substring(0, 10)
-  }).join(',')
-}
+// function toRecpGroup(msg) {
+//   //cannocialize
+//   return Array.isArray(msg.value.content.repcs) &&
+//     msg.value.content.recps.map(function (e) {
+//     return (isString(e) ? e : e.link)
+//   }).sort().map(function (id) {
+//     return id.substring(0, 10)
+//   }).join(',')
+// }
 
 exports.create = (api) => {
   return nest('app.page.home', function (location) {
@@ -75,11 +75,11 @@ exports.create = (api) => {
       function render (threads) {
 
         function latestUpdate(thread) {
-          var m = thread.timestamp
+          var m = thread.timestamp || 0
           if(!thread.replies) return m
 
           for(var i = 0; i < thread.replies.length; i++)
-            m = Math.max(thread.replies[i].timestamp, m)
+            m = Math.max(thread.replies[i].timestamp||0, m)
           return m
         }
 

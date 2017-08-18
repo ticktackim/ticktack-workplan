@@ -54,6 +54,9 @@ exports.create = (api) => {
       return h('div.msg'+unread, api.message.html.markdown(raw))
     }
 
+    threadView.subject = computed(thread.messages, msgs => {
+      return get(msgs, '[0].value.content.subject')
+    })
     return threadView
   }
 }

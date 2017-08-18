@@ -22,17 +22,18 @@ function firstLine (text) {
   var line = text.trim().split('\n').shift().trim()
 
   //always break on a space, so that links are preserved.
-  var i = line.indexOf(' ', 80)
+  const leadingMentionsLength = countLeadingMentions(line)
+  const i = line.indexOf(' ', leadingMentionsLength + 80)
   var sample = line.substring(0, ~i ? i : line.length)
 
   const ellipsis = (sample.length < line.length) ? '...' : ''
   return sample + ellipsis
 }
 
-// function trimLeadingMentions (str) {
-//   return str.replace(/^(\s*\[@[^\)]+\)\s*)*/, '')
-//   // deletes any number of pattern " [@...)  " from start of line
-// }
+function countLeadingMentions (str) {
+  return str.match(/^(\s*\[@[^\)]+\)\s*)*/)[0].length
+  // matches any number of pattern " [@...)  " from start of line
+}
 
 exports.create = function (api) {
 
@@ -87,7 +88,7 @@ exports.create = function (api) {
     const replySample = lastReply ? subject(lastReply) : null
 
     const onClick = opts.onClick || function () { api.history.sync.push(thread) }
-    const id = `${thread.key}-${JSON.stringify(opts)}`
+    const id = `${thread.key.replace(/[^a-z0-9]/gi, '')}` //-${JSON.stringify(opts)}`
     // id is only here to help morphdom morph accurately
 
     var className = thread.unread ? '-unread': ''
