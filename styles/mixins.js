@@ -70,6 +70,7 @@ $markdownBold {
       font-weight: bold
     }
   }
+}
 
 $borderSubtle {
   border: 1px solid #b9b9b9
