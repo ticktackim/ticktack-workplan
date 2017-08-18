@@ -172,6 +172,8 @@ exports.create = function (api) {
         handleErr(err)
       }
 
+      debugger
+
       return api.message.async.publish(content, done)
       // return api.message.html.confirm(content, done)
 

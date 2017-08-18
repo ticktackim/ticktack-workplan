@@ -1,6 +1,4 @@
 Header {
-  margin: 1rem 0 0 1rem
-
   nav {
     $navFA
     padding: 1rem 0

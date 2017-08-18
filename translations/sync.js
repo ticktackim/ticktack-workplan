@@ -11,7 +11,11 @@ const en = {
   optionalField: 'optional',
   sendMessage: 'Send',
   showMore: 'Show More',
-  channels: 'Channels',
+  channel: {
+    action: {
+      newThread: 'New thread'
+    }
+  },
   directMessages: 'Direct Messages',
   home: "Home",
   error: "Error",
@@ -26,7 +30,8 @@ const en = {
     pageTitle: 'New Thread',
     field: {
       to: 'To',
-      subject: 'Subject'
+      subject: 'Subject',
+      channel: 'Channel'
     }
 
   },
