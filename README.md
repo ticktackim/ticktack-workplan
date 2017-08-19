@@ -2,10 +2,9 @@
 
 ## Planning
 
-Workplan 1 : https://hackmd.io/BwZhCYHZwNgFgLRxAU0XAhjECCcBGSDBGSfOSEDAE2oDMBWXIA==?view#
+Workplan 1 
 
-Trello : https://trello.com/b/93eXDvVP/ticktack
-
+Trello 
 
 ## Development
 
