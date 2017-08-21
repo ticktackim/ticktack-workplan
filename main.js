@@ -31,15 +31,20 @@ const sockets = combine(
 )
 
 const api = entry(sockets, nest({
-    'app.html.app': 'first',
-    'invite.async.autofollow': 'first'
+  'app.html.app': 'first',
+  'invite.async.autofollow': 'first',
+  'config.sync.load': 'first'
 }))
 
 document.body.appendChild(api.app.html.app())
 
-api.invite.async.autofollow(
-  'wx.larpa.net:8008:@DTNmX+4SjsgZ7xyDh5xxmNtFqa6pWi5Qtw7cE8aR9TQ=.ed25519~YIRnryeLBhtBa2il9fCWDlAIFWR37Uh63Vep0L6tk6c=',
-  function (err, follows) {
-  console.log('autofollowed', err, follows);
-})
+var invite = api.config.sync.load().autoinvite
+if(invite)
+  api.invite.async.autofollow(
+   invite,
+    function (err, follows) {
+    console.log('autofollowed', err, follows);
+  })
+else
+  console.log('no invite')
 

@@ -4,13 +4,7 @@ const ssbKeys = require('ssb-keys')
 const Path = require('path')
 
 const appName = 'ssb' //'ticktack-ssb'
-const opts = process.env.ssb_appname== 'ssb' ? {} :{
-  port: 43750,
-  blobsPort: 43751,
-  ws: {
-    port: 43751
-  }
-}
+const opts = process.env.ssb_appname== 'ssb' ? {} : require('./default-config.json')
 
 exports.gives = nest('config.sync.load')
 exports.create = (api) => {
@@ -26,3 +20,4 @@ exports.create = (api) => {
     return config
   })
 }
+
