@@ -26,8 +26,6 @@ module.exports = {
     }
   },
   groupIndex: "Group Index",
-  //stub: should not be shown on released software!
-  stub: "this page is a stub",
   settings: "Settings",
   threadNew: {
     pageTitle: 'New Thread',
@@ -36,7 +34,6 @@ module.exports = {
       subject: 'Subject',
       channel: 'Channel'
     }
-
   },
   threadShow: 'Direct Messages',
   userFind: {

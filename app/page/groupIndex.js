@@ -13,7 +13,7 @@ exports.create = (api) => {
 
   function groupIndex (location) {
     return h('Page -groupIndex', {title: strings.groupIndex}, [
-      strings.stub
+      '****'
     ])
   }
 }

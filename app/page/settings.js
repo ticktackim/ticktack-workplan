@@ -13,7 +13,7 @@ exports.create = (api) => {
   function settings (location) {
 
     return h('Page -settings', {title: strings.settings}, [
-      strings.stub
+      '****'
     ])
   }
 }
