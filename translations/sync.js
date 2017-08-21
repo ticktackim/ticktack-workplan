@@ -1,73 +1,17 @@
 const nest = require('depnest')
+const merge = require('lodash/merge')
 
 exports.gives = nest('translations.sync.strings')
 
+const en = require('./en.js')
+const ch = require('./ch_ma.js')
+
 exports.create = (api) => {
-  return nest('translations.sync.strings', () => en)
-}
-
-const en = {
-  loading: 'Loading...',
-  optionalField: 'optional',
-  sendMessage: 'Send',
-  showMore: 'Show More',
-  channel: {
-    action: {
-      newThread: 'New thread'
-    }
-  },
-  directMessages: 'Direct Messages',
-  home: "Home",
-  error: "Error",
-  errorNotFound: "The page wasn't found",
-  groupNew: "New Group",
-  groupFind: {
-    action: {
-      findAGroup: 'Find Group',
-      newGroup: 'Create this group'
-    },
-    state: {
-      groupNotFound: 'This group does not exist yet.'
-    },
-    flash: {
-      createFirstThread: 'Start this group by posting the first thread.'
-    }
-  },
-  groupIndex: "Group Index",
-  //stub: should not be shown on released software!
-  stub: "this page is a stub",
-  settings: "Settings",
-  threadNew: {
-    pageTitle: 'New Thread',
-    field: {
-      to: 'To',
-      subject: 'Subject',
-      channel: 'Channel'
-    }
-
-  },
-  threadShow: 'Direct Messages',
-  userFind: {
-    action: {
-      findAUser: 'Find a user',
-    }
-  },
-  userShow: {
-    action: {
-      follow: 'Follow',
-      unfollow: 'Unfollow',
-      directMessage: 'New Direct Message'
-    },
-    state: {
-      friends: 'You are friends',
-      youFollow: 'You follow them',
-      theyFollow: 'They follow you',
-      userIsInGroups: "is in groups:",
-      userConversationsWith: 'conversations you\'ve had with',
-      follow: "Follow",
-      friendsInCommon: 'friends in common'
-    }
-  }
+  // return nest('translations.sync.strings', () => en)
+  return nest('translations.sync.strings', () => {
+    const chWithFallback = merge({}, en, ch)
+    return chWithFallback
+  })
 }
 
 
