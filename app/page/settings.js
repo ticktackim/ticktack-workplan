@@ -31,8 +31,12 @@ exports.create = (api) => {
       const selectLang = () => api.settings.sync.set({ language: lang })
       const className = currentLanguage === lang ? '-primary' : '' 
 
-      return h('div.language', { 'ev-click': () => selectLang(lang) },
-        h('Button', { className }, lang)
+      return h('Button -language', 
+        { 
+          'ev-click': () => selectLang(lang), 
+          className 
+        }, 
+        lang
       )
     }
 

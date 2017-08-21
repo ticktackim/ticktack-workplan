@@ -21,7 +21,7 @@ Button {
       opacity: .9
     }
 
-    border: none
+    border: 1px solid #3dc8c3
   }
 
   -showMore {
