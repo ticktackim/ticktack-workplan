@@ -84,8 +84,8 @@ exports.create = (api) => {
             h('div.state', ourRelationship),
             followButton
           ]) : '',
-        h('div', '...friends in common'),
-        h('div', '...groups this person is in'),
+        // h('div', '...friends in common'),
+        // h('div', '...groups this person is in'),
         feed !== myId
           ? Link({ page: 'threadNew', feed }, h('Button -primary', strings.userShow.action.directMessage))
           : '',
