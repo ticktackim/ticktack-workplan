@@ -10,9 +10,9 @@ require('./context-menu')
 
 // from more specialized to more general
 const sockets = combine(
+  require('patch-settings'),
   //we always need to have translations first!
-  {translations: require('./translations/sync')},
-  require('./unread'),
+  { translations: require('./translations/sync') },
   {
     about: require('./about'),
     app: require('./app'),
@@ -25,6 +25,7 @@ const sockets = combine(
     router: require('./router'),
     styles: require('./styles'),
     state: require('./state/obs'),
+    unread: require('./unread'),
   },
   require('patchcore')
 )
@@ -41,11 +42,4 @@ api.invite.async.autofollow(
   function (err, follows) {
   console.log('autofollowed', err, follows);
 })
-
-
-
-
-
-
-
 

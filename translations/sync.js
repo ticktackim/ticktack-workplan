@@ -3,15 +3,18 @@ const merge = require('lodash/merge')
 
 exports.gives = nest('translations.sync.strings')
 
-const en = require('./en.js')
-const zh = require('./zh.js')
+exports.needs = nest('settings.sync.get', 'first')
 
-exports.create = (api) => {
-  // return nest('translations.sync.strings', () => en)
- 
-  return nest('translations.sync.strings', () => {
-    return merge({}, en, zh)
-  })
+const languages = {
+  en: require('./en.js'),
+  zh: require('./zh.js')
 }
 
+exports.create = (api) => {
+  return nest('translations.sync.strings', () => {
+    const language = api.settings.sync.get('language', 'zh')
+
+    return merge({}, languages.en, languages[language])
+  })
+}
 
