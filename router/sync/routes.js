@@ -11,6 +11,7 @@ exports.needs = nest({
   'app.page.groupIndex': 'first',
   'app.page.groupNew': 'first',
   'app.page.groupShow': 'first',
+  'app.page.userEdit': 'first',
   'app.page.userFind': 'first',
   'app.page.userShow': 'first',
   'app.page.threadNew': 'first',
@@ -32,6 +33,7 @@ exports.create = (api) => {
 
       // User pages
       [ location => location.page === 'userFind', pages.userFind ],
+      [ location => location.page === 'userEdit' && isFeed(location.feed), pages.userEdit ],
       [ location => isFeed(location.feed), pages.userShow ],
 
       // Group pages

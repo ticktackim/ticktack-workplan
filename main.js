@@ -27,6 +27,7 @@ const sockets = combine(
     state: require('./state/obs'),
     unread: require('./unread'),
   },
+  require('patch-profile'),
   require('patchcore')
 )
 

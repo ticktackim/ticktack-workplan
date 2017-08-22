@@ -20,15 +20,11 @@ module.exports = {
     home: require('./page/home'),
     settings: require('./page/settings'),
     threadShow: require('./page/threadShow'),
+    userEdit: require('./page/userEdit'),
     userFind: require('./page/userFind'),
     userShow: require('./page/userShow'),
     threadNew: require('./page/threadNew'),
     threadShow: require('./page/threadShow'),
   }
 }
-
-
-
-
-
 

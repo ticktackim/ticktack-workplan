@@ -6,11 +6,10 @@ const get = require('lodash/get')
 exports.gives = nest('app.page.userShow')
 
 exports.needs = nest({
-  'translations.sync.strings': 'first',
-  'app.html.link': 'first',
-  'app.html.threadCard': 'first',
   'about.html.image': 'first',
   'about.obs.name': 'first',
+  'app.html.link': 'first',
+  'app.html.threadCard': 'first',
   'contact.async.follow': 'first',
   'contact.async.unfollow': 'first',
   'contact.obs.followers': 'first',
@@ -84,6 +83,9 @@ exports.create = (api) => {
             h('div.state', ourRelationship),
             followButton
           ]) : '',
+
+        Link({ page: 'userEdit', feed }, h('Button', [ h('i.fa.fa-pencil') ])),
+        
         // h('div', '...friends in common'),
         // h('div', '...groups this person is in'),
         feed !== myId
