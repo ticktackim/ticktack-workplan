@@ -16,7 +16,8 @@ exports.create = (api) => {
 
         h('div.tools', [
           h('i.fa.fa-address-book', { 'ev-click': () => nav.push({page:'userFind'}) }),
-          h('i.fa.fa-hashtag', { 'ev-click': () => nav.push({page:'groupFind'}) })
+          h('i.fa.fa-hashtag', { 'ev-click': () => nav.push({page:'groupFind'}) }),
+          h('i.fa.fa-gear', { 'ev-click': () => nav.push({page:'settings'}) })
         ])
       ]),
     ])

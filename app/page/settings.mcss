@@ -1,0 +1,15 @@
+Page -settings {
+  div.container {
+    div.languages {
+      background: #fff
+      padding: 1rem
+      padding-bottom: 14rem
+
+      display: flex
+    }
+  }
+}
+
+Button -language {
+  margin-right: 1rem
+}

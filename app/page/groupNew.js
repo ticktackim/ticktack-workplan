@@ -12,7 +12,7 @@ exports.create = (api) => {
   var strings = api.translations.sync.strings()
   function groupNew (location) {
     return h('Page -groupNew', {title: strings.groupNew}, [
-      strings.stub
+      '****'
     ])
   }
 }

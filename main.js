@@ -10,9 +10,9 @@ require('./context-menu')
 
 // from more specialized to more general
 const sockets = combine(
+  require('patch-settings'),
   //we always need to have translations first!
-  {translations: require('./translations/sync')},
-  require('./unread'),
+  { translations: require('./translations/sync') },
   {
     about: require('./about'),
     app: require('./app'),
@@ -25,14 +25,15 @@ const sockets = combine(
     router: require('./router'),
     styles: require('./styles'),
     state: require('./state/obs'),
+    unread: require('./unread'),
   },
   require('patchcore')
 )
 
 const api = entry(sockets, nest({
-    'app.html.app': 'first',
-    'invite.async.autofollow': 'first',
-    'config.sync.load': 'first'
+  'app.html.app': 'first',
+  'invite.async.autofollow': 'first',
+  'config.sync.load': 'first'
 }))
 
 document.body.appendChild(api.app.html.app())
@@ -46,3 +47,4 @@ if(invite)
   })
 else
   console.log('no invite')
+
