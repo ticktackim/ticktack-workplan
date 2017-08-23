@@ -3,7 +3,7 @@ const nest = require('depnest')
 const ssbKeys = require('ssb-keys')
 const Path = require('path')
 
-const appName = 'ssb' //'ticktack-ssb'
+const appName = 'ticktack'
 const opts = process.env.ssb_appname== 'ssb' ? {} : require('./default-config.json')
 
 exports.gives = nest('config.sync.load')
