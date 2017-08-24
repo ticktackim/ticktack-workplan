@@ -36,6 +36,20 @@ module.exports = {
     }
   },
   threadShow: 'Direct Messages',
+  userEdit: {
+    section: {
+      name: 'Name',
+      avatar: 'Avatar'
+    },
+    instruction: {
+      crop: 'Click and drag to crop your avatar'
+    },
+    action: {
+      okay: 'Okay',
+      cancel: 'Cancel',
+      save: 'Save'
+    }
+  },
   userFind: {
     action: {
       findAUser: 'Find a user',

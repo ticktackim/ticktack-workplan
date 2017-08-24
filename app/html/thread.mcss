@@ -66,7 +66,7 @@ $chunk {
       }
 
       div.msg {
-        line-height: 1.2rem
+        line-height: 1.2
         background-color: #fff
         padding: 0 .7rem
         border-radius: 4px
