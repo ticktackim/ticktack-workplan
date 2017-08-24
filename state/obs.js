@@ -24,14 +24,10 @@ exports.create = function (api) {
     var lastTimestamp = opts.last || Date.now()
     var firstTimestamp = opts.first || Date.now()
 
-    function unbox () {
-      return pull(
-        pull.map(function (data) {
-          if(isObject(data.value.content)) return data
-          return api.message.sync.unbox(data)
-        }),
-        pull.filter(Boolean)
-      )
+    function unbox (data) {
+      if(data.sync) return data
+      if(isObject(data.value.content)) return data
+      return api.message.sync.unbox(data)
     }
 
     var obs = PullObv(
@@ -43,7 +39,7 @@ exports.create = function (api) {
         pull.through(function (data) {
           lastTimestamp = data.timestamp
         }),
-        unbox()
+        pull.map(unbox), pull.filter(Boolean)
       ),
       //value recovered from localStorage
       initial
@@ -59,8 +55,8 @@ exports.create = function (api) {
 
       getting[effect.key] = true
       api.sbot.async.get(effect.key, (err, msg) => {
-        if (!msg) return 
-        obs.set(reduce(obs.value, {key: effect.key, value: msg}))
+        if (!msg) return
+        obs.set(STATE=reduce(obs.value, unbox({key: effect.key, value: msg})))
       })
     })
 
@@ -71,6 +67,7 @@ exports.create = function (api) {
       Next(function () {
         return createStream({limit: 500, gt: firstTimestamp, live: true})
       }),
+      pull.map(unbox), pull.filter(Boolean),
       pull.drain(function (data) {
         if(data.sync) return
         firstTimestamp = data.timestamp
@@ -141,5 +138,13 @@ exports.create = function (api) {
     }
   })
 }
+
+
+
+
+
+
+
+
 
 

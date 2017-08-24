@@ -83,14 +83,18 @@ exports.create = (api) => {
           return m
         }
 
+        var o = {}
         function roots (r) {
-          return Object.keys(r || {}).map(function (k) {
-            return threads.roots[r[k]]
+          return Object.keys(r || {}).map(function (name) {
+            var id = r[name]
+            if(!o[id]) {
+              o[id] = true
+              return threads.roots[id]
+            }
           }).filter(function (e) {
             return e && e.value
           })
         }
-
 
         var groupedThreads = roots(threads.private)
           .concat(roots(threads.channels))
@@ -133,4 +137,15 @@ exports.create = (api) => {
     ])
   })
 }
+
+
+
+
+
+
+
+
+
+
+
 
