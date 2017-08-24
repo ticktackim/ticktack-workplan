@@ -23,7 +23,7 @@ exports.create = (api) => {
   return nest('router.sync.routes', (sofar = []) => {
     const pages = api.app.page
     // route format: [ routeValidator, routeFunction ]
- 
+
     const routes = [
 
       // Thread pages

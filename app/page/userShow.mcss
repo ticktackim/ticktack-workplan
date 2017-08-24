@@ -1,5 +1,21 @@
 Page -userShow {
   div.container {
+    header {
+      display: flex
+      align-items: baseline
+
+      h1 {
+        margin-right: 1rem
+      }
+      div.Link {
+        color: #666
+        :hover {
+          $colorPrimaryFG
+        }
+      }
+    }
+
+    img.Avatar {}
 
     div.friendship {
       display: flex
@@ -10,8 +26,8 @@ Page -userShow {
       div.state { flex-basis: 12rem }
       div.Button {}
     }
-    
 
+    div.threads {}
   }
 }
 

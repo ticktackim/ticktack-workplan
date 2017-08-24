@@ -39,9 +39,13 @@ module.exports = {
   userEdit: {
     section: {
       name: 'Name',
-      image: 'Image'
+      avatar: 'Avatar'
+    },
+    instruction: {
+      crop: 'Click and drag to crop your avatar'
     },
     action: {
+      okay: 'Okay',
       cancel: 'Cancel',
       save: 'Save'
     }

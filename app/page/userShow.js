@@ -55,14 +55,14 @@ exports.create = (api) => {
     )
 
 
-    const threads = MutantArray() 
+    const threads = MutantArray()
     pull(
       // next(api.feed.pull.private, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
       // api.feed.pull.private({reverse: true, limit: 100, live: false}),
       api.feed.pull.private({reverse: true, live: false}),
       pull.filter(msg => {
         const recps = get(msg, 'value.content.recps')
-        if (!recps) return 
+        if (!recps) return
 
         return recps
           .map(r => typeof r === 'object' ? r.link : r)
@@ -77,6 +77,10 @@ exports.create = (api) => {
 
     return h('Page -userShow', {title: name}, [
       h('div.container', [
+        h('header', [
+          h('h1', name),
+          Link({ page: 'userEdit', feed }, h('i.fa.fa-pencil'))
+        ]),
         api.about.html.image(feed),
         feed !== myId
           ? h('div.friendship', [
@@ -84,10 +88,10 @@ exports.create = (api) => {
             followButton
           ]) : '',
 
-        Link({ page: 'userEdit', feed }, h('Button', [ h('i.fa.fa-pencil') ])),
-        
+
         // h('div', '...friends in common'),
         // h('div', '...groups this person is in'),
+
         feed !== myId
           ? Link({ page: 'threadNew', feed }, h('Button -primary', strings.userShow.action.directMessage))
           : '',
@@ -96,11 +100,5 @@ exports.create = (api) => {
     ])
   }
 }
-
-
-
-
-
-
 
 
