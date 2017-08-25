@@ -39,13 +39,12 @@ const api = entry(sockets, nest({
 
 document.body.appendChild(api.app.html.app())
 
-var invite = api.config.sync.load().autoinvite
-if(invite)
-  api.invite.async.autofollow(
-   invite,
-    function (err, follows) {
-    console.log('autofollowed', err, follows);
-  })
-else
-  console.log('no invite')
-
+// var invite = api.config.sync.load().autoinvite
+// if(invite)
+//   api.invite.async.autofollow(
+//    invite,
+//     function (err, follows) {
+//     console.log('autofollowed', err, follows);
+//   })
+// else
+//   console.log('no invite')

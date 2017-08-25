@@ -3,15 +3,17 @@ const nest = require('depnest')
 const ssbKeys = require('ssb-keys')
 const Path = require('path')
 
-const appName = 'ticktack'
-const opts = process.env.ssb_appname== 'ssb' ? {} : require('./default-config.json')
+const appName = process.env.ssb_appname || 'ssb' //'ticktack' TEMP: this is for the windowsSSB installer only
+const opts = appName == 'ssb'
+  ? { "port": 43750, "blobsPort": 43751, "ws": { "port": 43751 } }
+  : require('./default-config.json')
 
 exports.gives = nest('config.sync.load')
 exports.create = (api) => {
   var config
   return nest('config.sync.load', () => {
     if (!config) {
-      config = Config(process.env.ssb_appname || appName, opts)
+      config = Config(appName, opts)
       config.keys = ssbKeys.loadOrCreateSync(Path.join(config.path, 'secret'))
 
       // HACK: fix offline on windows by specifying 127.0.0.1 instead of localhost (default)
@@ -20,4 +22,3 @@ exports.create = (api) => {
     return config
   })
 }
-
