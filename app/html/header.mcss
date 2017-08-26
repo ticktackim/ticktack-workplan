@@ -4,6 +4,7 @@ Header {
     padding: 1rem 0
 
     width: 100%
+    height: 1rem
     position: fixed
     top: 0
     left: 0
@@ -27,7 +28,6 @@ Header {
       padding: 0 0.2em 0 1rem
       border: 1px solid #ddd
       border-radius: 4px
-      margin-right: 1rem
 
       :hover {
         $colorPrimary
@@ -35,6 +35,9 @@ Header {
       }
     }
 
+    i.fa-home {
+      margin-left: 1rem
+    }
 
     div.tools {
       flex-grow: 1

@@ -1,6 +1,6 @@
 Page {
   $backgroundPrimary
-  margin-top: 4rem
+  margin-top: 3rem
 
   div.container {
     $maxWidth
