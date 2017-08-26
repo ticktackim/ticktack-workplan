@@ -9,9 +9,9 @@ exports.create = (api) => {
   return nest('app.html.header', (nav) => {
     return h('Header', [
       h('nav', [
-        // h('div.back', { 'ev-click': nav.back }, [
-        //   h('i.fa.fa-angle-left')
-        // ]), // BROKEN for rolled-in sbot
+        h('div.back', { 'ev-click': nav.back }, [
+          h('i.fa.fa-angle-left')
+        ]),
         h('i.fa.fa-home', { 'ev-click': () => nav.push({page:'home'}) }),
         // FUTURE breadcrumb here ?
         // h('h1', computed(nav.location, e => e.element.title)),
