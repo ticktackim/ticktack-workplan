@@ -9,11 +9,11 @@ exports.create = (api) => {
   return nest('app.html.header', (nav) => {
     return h('Header', [
       h('nav', [
-        h('div.back', { 'ev-click': nav.back }, [
-          h('i.fa.fa-angle-left')
-        ]),
+        // h('div.back', { 'ev-click': nav.back }, [
+        //   h('i.fa.fa-angle-left')
+        // ]), // BROKEN for rolled-in sbot
         h('i.fa.fa-home', { 'ev-click': () => nav.push({page:'home'}) }),
-        // breadcrumb here potentially
+        // FUTURE breadcrumb here ?
         // h('h1', computed(nav.location, e => e.element.title)),
 
         h('div.tools', [
@@ -26,4 +26,3 @@ exports.create = (api) => {
     ])
   })
 }
-
