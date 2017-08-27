@@ -32,6 +32,15 @@ exports.create = (api) => {
     const strings = api.translations.sync.strings()
     const currentLanguage = api.settings.sync.get('language')
 
+    const handleEdit = () => api.history.sync.push({
+      page:'userEdit',
+      feed,
+      callback: (err, didEdit) => {
+        if (err) throw new Error ('Error editing profile', err)
+        api.history.sync.push({ page: 'settings' })
+      }
+    }) 
+
     return h('Page -settings', [
       h('div.container', [
         h('h1', strings.settingsPage.title),
@@ -42,7 +51,7 @@ exports.create = (api) => {
             api.about.html.image(feed),
           ]),
           h('div.actions', [
-            h('Button', { 'ev-click': () => api.history.sync.push({page:'userEdit', feed}) }, [
+            h('Button', { 'ev-click': handleEdit}, [
               strings.settingsPage.action.edit,
               h('i.fa.fa-pencil')
             ])

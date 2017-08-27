@@ -6,6 +6,10 @@ Page -settings {
     padding: 1rem
     $maxWidthSmaller 
 
+    h1 {
+      margin-top: 0
+    }
+
     section {
       padding-bottom: 2rem
       margin-bottom: 2rem
