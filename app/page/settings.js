@@ -15,9 +15,12 @@ exports.needs = nest({
 })
 
 const LANGUAGES = ['zh', 'en']
-const DEFAULT_SETTINGS = {
-  language: 'zh'
-}
+
+// TODO - this needs moving somewhere upstream
+// const DEFAULT_SETTINGS = {
+//   onboarded: false,
+//   language: 'zh'
+// }
 
 exports.create = (api) => {
   return nest('app.page.settings', settings)

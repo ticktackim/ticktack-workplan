@@ -15,12 +15,15 @@ exports.gives = nest({
 })
 
 exports.needs = nest({
+  'about.async.suggest': 'first',
   'app.html.header': 'first',
   'app.async.catchLinkClick': 'first',
-  'router.sync.router': 'first',
-  'styles.css': 'reduce',
-  'about.async.suggest': 'first',
   'channel.async.suggest': 'first',
+  'keys.sync.id': 'first',
+  'router.sync.router': 'first',
+  'settings.sync.get': 'first',
+  'settings.sync.set': 'first',
+  'styles.css': 'reduce',
 })
 
 exports.create = (api) => {
@@ -46,7 +49,24 @@ exports.create = (api) => {
         api.app.html.header
       )
 
-      nav.push({page: 'home'})
+      const isOnboarded = api.settings.sync.get('onboarded')
+      if (isOnboarded)
+        nav.push({page: 'home'})
+      else {
+        nav.push({
+          page:'userEdit',
+          feed: api.keys.sync.id(),
+          callback: (err, didEdit) => {
+            if (err) throw new Error ('Error editing profile', err)
+
+            if (didEdit)
+              api.settings.sync.set({ onboarded: true })
+
+            nav.push({ page: 'home' })
+          }
+        }) 
+      }
+
       return nav
     },
     'history.sync.push': (location) => nav.push(location),
