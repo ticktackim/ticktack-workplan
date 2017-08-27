@@ -48,4 +48,3 @@ if(invite)
   })
 else
   console.log('no invite')
-
