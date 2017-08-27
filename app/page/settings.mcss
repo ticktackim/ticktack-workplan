@@ -1,11 +1,49 @@
 Page -settings {
-  div.container {
-    div.languages {
-      background: #fff
-      padding: 1rem
-      padding-bottom: 14rem
+  padding-top: 1rem
 
-      display: flex
+  div.container {
+    background: #fff
+    padding: 1rem
+    $maxWidthSmaller 
+
+    section {
+      padding-bottom: 2rem
+      margin-bottom: 2rem
+
+      header {
+        font-size: 1.4rem
+        margin-bottom: 1rem
+      }
+
+      -profile {
+        div.profile {
+          display: flex
+          flex-direction: column
+
+          div.name {
+            margin-bottom: .5rem
+          }
+          img.Avatar {
+            width: 8rem 
+            height: 8rem 
+          }
+          margin-bottom: .5rem
+        }
+
+        div.actions {
+          display:flex
+
+          div.Button {
+            i.fa { margin-left: .4rem }
+          }
+        }
+      }
+
+      -language {
+        div.languages {
+          display: flex
+        }
+      }
     }
   }
 }
@@ -13,3 +51,4 @@ Page -settings {
 Button -language {
   margin-right: 1rem
 }
+
