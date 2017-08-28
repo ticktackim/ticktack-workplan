@@ -20,6 +20,10 @@ $maxWidth {
   max-width: 1200px
 }
 
+$maxWidthSmaller {
+  max-width: 40rem
+}
+
 $colorPrimary {
   color: white
   background-color: #3dc8c3

@@ -79,7 +79,9 @@ exports.create = (api) => {
       h('div.container', [
         h('header', [
           h('h1', name),
-          Link({ page: 'userEdit', feed }, h('i.fa.fa-pencil'))
+          feed === myId // Only expose own profile editing right now
+            ? Link({ page: 'userEdit', feed }, h('i.fa.fa-pencil'))
+            : ''
         ]),
         api.about.html.image(feed),
         feed !== myId

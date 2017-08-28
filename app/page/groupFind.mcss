@@ -1,6 +1,6 @@
 Page -groupFind {
   div.container {
-    max-width: 40rem
+    $maxWidthSmaller
     div.search {
       background-color: #fff
 
@@ -26,7 +26,7 @@ Page -groupFind {
     
 
     div.results {
-      max-width: 40rem
+      $maxWidthSmaller
 
       div.Link {
         div.result {

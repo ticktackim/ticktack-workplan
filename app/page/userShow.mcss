@@ -15,7 +15,10 @@ Page -userShow {
       }
     }
 
-    img.Avatar {}
+    img.Avatar {
+      width: 30rem
+      height: 30rem
+    }
 
     div.friendship {
       display: flex

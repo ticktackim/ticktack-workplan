@@ -13,8 +13,8 @@ exports.create = (api) => {
   return nest('app.page.userEdit', userEdit)
 
   function userEdit (location) {
-    // location is an object { feed, page: 'userEdit' }
-    const { feed } = location
+    // location is an object { feed, page: 'userEdit', callback }
+    var { feed, callback } = location
 
     const strings = api.translations.sync.strings()
 
@@ -30,11 +30,14 @@ exports.create = (api) => {
       }
     })
 
-    const callback = (err, didEdit) => {
+    const defaultCallback = (err, didEdit) => {
       if (err) throw new Error ('Error editing profile', err)
 
       api.history.sync.push({ page: 'userShow', feed })
     }
+    callback = typeof callback == 'function'
+      ? callback
+      : defaultCallback
 
     return h('Page -userEdit', {}, [
       h('div.container', [

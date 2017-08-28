@@ -26,7 +26,16 @@ module.exports = {
     }
   },
   groupIndex: "Group Index",
-  settings: "Settings",
+  settingsPage: {
+    title: "Settings",
+    action: {
+      edit: 'Edit',
+    },
+    section: {
+      language: 'Language',
+      profile: 'Profile',
+    }
+  },
   threadNew: {
     pageTitle: 'New Thread',
     field: {

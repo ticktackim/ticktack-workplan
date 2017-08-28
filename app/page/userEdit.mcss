@@ -1,6 +1,6 @@
 Page -userEdit {
   div.container {
-    max-width: 40rem
+    $maxWidthSmaller
 
   }
 }

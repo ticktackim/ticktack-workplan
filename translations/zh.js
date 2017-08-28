@@ -26,7 +26,9 @@ module.exports = {
     }
   },
   groupIndex: '群组列表',
-  settings: '设置',
+  settingsPage: {
+    title: '设置',
+  },
   threadNew: {
     pageTitle: '新建话题',
     field: {
