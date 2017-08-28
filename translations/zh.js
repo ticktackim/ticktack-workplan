@@ -28,6 +28,13 @@ module.exports = {
   groupIndex: '群组列表',
   settingsPage: {
     title: '设置',
+    action: {
+      edit: '编辑',
+    },
+    section: {
+      language: '语言',
+      profile: '自我介绍'
+    }
   },
   threadNew: {
     pageTitle: '新建话题',
@@ -38,6 +45,20 @@ module.exports = {
     }
   },
   threadShow: '所有私信',
+  userEdit: {
+    section: {
+      name: '名称',
+      avatar: '头像'
+    },
+    instruction: {
+      crop: '点击编辑头像'
+    },
+    action: {
+      okay: '完成',
+      cancel: '取消',
+      save: '保存',
+    },
+  },
   userFind: {
     action: {
       findAUser: '查找用户'
