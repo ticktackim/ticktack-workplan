@@ -9,7 +9,7 @@ const h = require('mutant/h')
 
 exports.gives = nest({
   'app.html.app': true,
-  'history.obs.location': true,
+  'history.obs.history': true,
   'history.sync.push': true,
   'history.sync.back': true,
 })
@@ -71,7 +71,7 @@ exports.create = (api) => {
     },
     'history.sync.push': (location) => nav.push(location),
     'history.sync.back': () => nav.back(),
-    'history.obs.location': () => nav.history,
+    'history.obs.history': () => nav.history,
   })
 }
 

@@ -7,6 +7,7 @@ exports.needs = nest({
   'about.html.image': 'first',
   'about.obs.name': 'first',
   'history.sync.push': 'first',
+  'history.obs.history': 'first',
   'keys.sync.id': 'first',
   'settings.sync.get': 'first',
   'settings.sync.set': 'first',
@@ -26,16 +27,21 @@ exports.create = (api) => {
   return nest('app.page.settings', settings)
 
   function settings (location) {
+
     // RESET the app when the settings are changed
-    api.settings.obs.get()(() => {
-      window.location.reload()
+    api.settings.obs.get('language')(() => {
+      console.log('language changed, resetting view')
+
+      api.history.obs.history().set([])         // wipe nav cache
+      api.history.sync.push({page: 'home'})     // queue up basic pages
+      api.history.sync.push({page: 'settings'})
     })
 
     const feed = api.keys.sync.id()
     const strings = api.translations.sync.strings()
     const currentLanguage = api.settings.sync.get('language')
 
-    const handleEdit = () => api.history.sync.push({
+    const editProfile = () => api.history.sync.push({
       page:'userEdit',
       feed,
       callback: (err, didEdit) => {
@@ -54,7 +60,7 @@ exports.create = (api) => {
             api.about.html.image(feed),
           ]),
           h('div.actions', [
-            h('Button', { 'ev-click': handleEdit}, [
+            h('Button', { 'ev-click': editProfile }, [
               strings.settingsPage.action.edit,
               h('i.fa.fa-pencil')
             ])
