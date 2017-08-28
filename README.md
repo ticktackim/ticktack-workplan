@@ -50,3 +50,8 @@ It should have the plugins you're using and a copy of the content of default-con
 }
 ```
 
+### Translations
+
+Theses are in `/translations`.
+There's a helper script in there called `checker.js` which looks for translations in `en` (english) that are missing from `zh` (mandarin).
+
