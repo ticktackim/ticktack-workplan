@@ -1,5 +1,7 @@
 const nest = require('depnest')
 const { isMsg, isFeed, isBlob } = require('ssb-ref')
+const openExternal = require('open-external')
+
 exports.gives = nest('router.sync.routes')
 
 exports.needs = nest({
@@ -17,6 +19,7 @@ exports.needs = nest({
   'app.page.threadNew': 'first',
   'app.page.threadShow': 'first',
   'app.page.image': 'first',
+  'blob.sync.url': 'first',
 })
 
 exports.create = (api) => {
@@ -45,7 +48,12 @@ exports.create = (api) => {
 
       [ location => location.page === 'home', pages.home ],
       [ location => location.page === 'settings', pages.settings ],
-      [ location => isBlob(location.blob), pages.image ],
+      // [ location => isBlob(location.blob), pages.image ],
+
+      [ location => isBlob(location.blob), (location) => {
+        debugger
+        openExternal(api.blob.sync.url(location.blob))
+      }],
 
       // Error page
       [ location => true, pages.error ]
