@@ -1,0 +1,5 @@
+Avatar {
+  $avatarSmall
+  margin-right: .5rem
+}
+

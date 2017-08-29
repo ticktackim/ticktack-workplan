@@ -8,18 +8,22 @@ ThreadCard {
     display: flex
     margin-right: 1rem
     font-weight: inherit
-    img {
-      $avatarSmall
-      margin-right: .5rem
-    }
   }
 
   div.content {
     flex-grow: 1
 
+    cursor: pointer
     padding: 1rem
     border: 1px solid #ddd
     border-radius: 2px
+
+    transition: all .5s ease
+
+    :hover {
+      background-color: #fff
+      border: 1px solid #fff
+    }
 
     div.subject {
       font-size: 1.2rem

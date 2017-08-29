@@ -5,7 +5,7 @@ const get = require('lodash/get')
 exports.gives = nest('app.html.thread')
 
 exports.needs = nest({
-  'about.html.image': 'first',
+  'about.html.avatar': 'first',
   'feed.obs.thread': 'first',
   'keys.sync.id': 'first',
   'message.html.markdown': 'first',
@@ -36,7 +36,7 @@ exports.create = (api) => {
             }))
           ])
           : h('div.other-chunk', [
-            h('div.avatar', when(author, api.about.html.image(author()))),
+            h('div.avatar', when(author, api.about.html.avatar(author()))),
             h('div.msgs', map(chunk, msg => {
               return h('div.msg-row', [
                 message(msg),

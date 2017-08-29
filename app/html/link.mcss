@@ -1,5 +1,6 @@
 Link {
   color: #222
+  cursor: pointer
 
   -string {
     :hover {

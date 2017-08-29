@@ -9,7 +9,7 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'history.sync.push': 'first',
   'about.obs.name': 'first',
-  'about.html.image': 'first',
+  'about.html.avatar': 'first',
   'message.html.markdown': 'first',
   'translations.sync.strings': 'first',
   'unread.sync.isUnread': 'first'
@@ -48,7 +48,7 @@ exports.create = function (api) {
       return msg.value.content.recps
         .map(link => isString(link) ? link : link.link)
         .filter(link => link !== myId)
-        .map(api.about.html.image)
+        .map(api.about.html.avatar)
     }
     else if(msg.value.content.channel)
       return '#'+msg.value.content.channel
@@ -93,9 +93,9 @@ exports.create = function (api) {
 
     var className = thread.unread ? '-unread': ''
 
-    return h('ThreadCard', { id, className, 'ev-click': onClick, }, [
+    return h('ThreadCard', { id, className }, [
       h('div.context', threadIcon(thread)),
-      h('div.content', [
+      h('div.content', {'ev-click': onClick}, [
         subjectEl,
         replySample ? h('div.reply', [
           h('i.fa.fa-caret-left'),
