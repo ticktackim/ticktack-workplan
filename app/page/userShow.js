@@ -70,13 +70,13 @@ exports.create = (api) => {
       }),
       api.feed.pull.rollup(),
       pull.drain(threads.push)
-      // Scroller(container, content, render, false, false)
+      // Scroller(content, scrollerContent, render, false, false)
     )
 
     const Link = api.app.html.link
 
     return h('Page -userShow', {title: name}, [
-      h('div.container', [
+      h('div.content', [
         h('header', [
           h('h1', name),
           feed === myId // Only expose own profile editing right now

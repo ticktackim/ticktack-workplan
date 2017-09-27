@@ -1,7 +1,7 @@
 Page -settings {
   padding-top: 1rem
 
-  div.container {
+  div.content {
     background: #fff
     padding: 1rem
     $maxWidthSmaller 

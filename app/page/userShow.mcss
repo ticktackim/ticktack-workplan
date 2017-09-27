@@ -1,5 +1,5 @@
 Page -userShow {
-  div.container {
+  div.content {
     header {
       display: flex
       align-items: baseline

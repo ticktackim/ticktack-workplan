@@ -44,7 +44,7 @@ exports.create = (api) => {
     )
 
     return h('Page -threadNew', {title: strings.threadNew.pageTitle}, [
-      h('div.container', [
+      h('div.content', [
         h('div.field -to', [
           h('div.label', strings.threadNew.field.to),
           h('div.recps', [
@@ -82,7 +82,7 @@ exports.create = (api) => {
     )
 
     return h('Page -threadNew', {title: strings.threadNew.pageTitle}, [
-      h('div.container', [
+      h('div.content', [
         flash ? h('div.flash', flash) : '',
         h('div.field -channel', [
           h('div.label', strings.threadNew.field.channel),

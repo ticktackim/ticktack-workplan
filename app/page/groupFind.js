@@ -24,7 +24,7 @@ exports.create = (api) => {
     const Link = api.app.html.link
 
     return h('Page -groupFind', {title: strings.groupFind.pageTitle}, [
-      h('div.container', [
+      h('div.content', [
         h('div.search', [
           h('i.fa.fa-search'),
           h('input', { 

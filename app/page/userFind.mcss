@@ -1,5 +1,5 @@
 Page -userFind {
-  div.container {
+  div.content {
     $maxWidthSmaller
     div.search {
       background-color: #fff

@@ -35,7 +35,7 @@ exports.create = (api) => {
     const subject = computed(thread.subject, subject => subject || strings.threadShow)
 
     return h('Page -threadShow', [
-      h('div.container', [
+      h('div.content', [
         h('h1', subject),
         thread,
         composer

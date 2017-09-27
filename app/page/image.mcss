@@ -1,5 +1,5 @@
 Page -image {
-  div.container {
+  div.content {
     display: flex
 
     img {

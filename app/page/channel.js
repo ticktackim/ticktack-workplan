@@ -53,7 +53,7 @@ exports.create = (api) => {
 
     return h('Page -home', {title: channel}, [
       Link({ page: 'threadNew', channel }, h('Button -primary', strings.channel.action.newThread)),
-      h('div.container', [ threadsHtmlObs ]),
+      h('div.content', [ threadsHtmlObs ]),
       h('Button -showMore', {
         'ev-click': threadsHtmlObs.more,
          disabled: disableShowMore

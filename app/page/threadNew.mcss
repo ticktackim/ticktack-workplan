@@ -1,6 +1,6 @@
 Page -threadNew {
 
-  div.container {
+  div.content {
     div.flash {
       margin-bottom: 2rem;
       background: #fff;
