@@ -1,6 +1,6 @@
 Page -home {
 
-  div.container {
+  div.content {
     $backgroundPrimary
 
 

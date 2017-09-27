@@ -10,30 +10,10 @@ exports.needs = nest({
   'history.sync.push': 'first',
   'about.obs.name': 'first',
   'about.html.avatar': 'first',
-  'message.html.markdown': 'first',
+  'message.html.subject': 'first',
   'translations.sync.strings': 'first',
   'unread.sync.isUnread': 'first'
 })
-
-function firstLine (text) {
-  if(text.length < 80 && !~text.indexOf('\n')) return text
-
-  //get the first non-empty line
-  var line = text.trim().split('\n').shift().trim()
-
-  //always break on a space, so that links are preserved.
-  const leadingMentionsLength = countLeadingMentions(line)
-  const i = line.indexOf(' ', leadingMentionsLength + 80)
-  var sample = line.substring(0, ~i ? i : line.length)
-
-  const ellipsis = (sample.length < line.length) ? '...' : ''
-  return sample + ellipsis
-}
-
-function countLeadingMentions (str) {
-  return str.match(/^(\s*\[@[^\)]+\)\s*)*/)[0].length
-  // matches any number of pattern " [@...)  " from start of line
-}
 
 exports.create = function (api) {
 
@@ -65,14 +45,9 @@ exports.create = function (api) {
       .map(api.about.obs.name)
   }
 
-  function subject (msg) {
-    const { subject, text } = msg.value.content
-    if(!(subject || text)) return
-    return api.message.html.markdown(firstLine(subject|| text))
-  }
-
   return nest('app.html.threadCard', (thread, opts = {}) => {
     var strings = api.translations.sync.strings()
+    const { subject } = api.message.html
 
     if(!thread.value) return
     if(!thread.value.content.text) return

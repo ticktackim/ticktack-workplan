@@ -51,7 +51,7 @@ exports.create = (api) => {
     }) 
 
     return h('Page -settings', [
-      h('div.container', [
+      h('div.content', [
         h('h1', strings.settingsPage.title),
         h('section -profile', [
           h('header', strings.settingsPage.section.profile),

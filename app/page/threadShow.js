@@ -6,8 +6,9 @@ const get = require('lodash/get')
 exports.gives = nest('app.page.threadShow')
 
 exports.needs = nest({
-  'translations.sync.strings': 'first',
+  'app.html.context': 'first',
   'app.html.thread': 'first',
+  'translations.sync.strings': 'first',
   'message.html.compose': 'first'
 })
 
@@ -17,8 +18,10 @@ exports.create = (api) => {
   return nest('app.page.threadShow', threadShow)
 
   function threadShow (location) {
-    // location = a thread (message decorated with replies)
-    const { key: root, value } = location
+    console.log(location)
+    // location = a thread (message, may be decorated with replies)
+    const { key, value } = location
+    const root = get(value, 'content.root', key)
     const channel = get(value, 'content.channel')
 
     const thread = api.app.html.thread(root)
@@ -35,7 +38,8 @@ exports.create = (api) => {
     const subject = computed(thread.subject, subject => subject || strings.threadShow)
 
     return h('Page -threadShow', [
-      h('div.container', [
+      api.app.html.context(location),
+      h('div.content', [
         h('h1', subject),
         thread,
         composer

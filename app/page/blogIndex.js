@@ -1,57 +1,42 @@
 const nest = require('depnest')
 const { h } = require('mutant')
+
 const isString = require('lodash/isString')
 const More = require('hypermore')
 const morphdom = require('morphdom')
 const Debounce = require('obv-debounce')
 
-exports.gives = nest('app.page.home')
+exports.gives = nest('app.page.blogIndex')
 
 exports.needs = nest({
+  'app.html.context': 'first',
+  'app.html.threadCard': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
   'translations.sync.strings': 'first',
   'state.obs.threads': 'first',
-  'app.html.threadCard': 'first',
   'unread.sync.isUnread': 'first'
 })
 
-// function toRecpGroup(msg) {
-//   //cannocialize
-//   return Array.isArray(msg.value.content.repcs) &&
-//     msg.value.content.recps.map(function (e) {
-//     return (isString(e) ? e : e.link)
-//   }).sort().map(function (id) {
-//     return id.substring(0, 10)
-//   }).join(',')
-// }
-
 exports.create = (api) => {
-  return nest('app.page.home', function (location) {
-    // location here can expected to be: { page: 'home'}
+  var contentHtmlObs
+
+  return nest('app.page.blogIndex', function (location) {
+    // location here can expected to be: { page: 'blogIndex'}
+    //
     var strings = api.translations.sync.strings()
 
+    return h('Page -blogIndex', {title: strings.home}, [
+      api.app.html.context(location),
+      h('div.content', [
+        blogs(),
+        h('Button -showMore', { 'ev-click': contentHtmlObs.more }, strings.showMore)
+      ]),
+    ])
+  })
 
-    // function filterForThread (thread) {
-    //   if(thread.value.private)
-    //     return {private: toRecpGroup(thread)}
-    //   else if(thread.value.content.channel)
-    //     return {channel: thread.value.content.channel}
-    // }
-
-    // function filter (rule, thread) {
-    //   if(!thread.value) return false
-    //   if(!rule) return true
-    //   if(rule.channel) {
-    //     return rule.channel == thread.value.content.channel
-    //   }
-    //   else if(rule.group)
-    //     return rule.group == thread.value.content.group
-    //   else if(rule.private)
-    //     return rule.private == toRecpGroup(thread)
-    //   else return true
-    // }
-
+  function blogs () {
+    // TODO - replace with actual blogs
     var morePlease = false
     var threadsObs = api.state.obs.threads()
 
@@ -70,7 +55,7 @@ exports.create = (api) => {
     }
 
     var updates = h('div.threads', [])
-    var threadsHtmlObs = More(
+    contentHtmlObs = More(
       threadsObsDebounced,
       function render (threads) {
 
@@ -131,21 +116,8 @@ exports.create = (api) => {
         return updates
       }
     )
-    return h('Page -home', {title: strings.home}, [
-      h('div.content', [ threadsHtmlObs ]),
-      h('Button -showMore', { 'ev-click': threadsHtmlObs.more }, strings.showMore)
-    ])
-  })
+
+    return contentHtmlObs 
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
 

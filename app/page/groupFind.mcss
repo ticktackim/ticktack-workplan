@@ -1,5 +1,5 @@
 Page -groupFind {
-  div.container {
+  div.content {
     $maxWidthSmaller
     div.search {
       background-color: #fff

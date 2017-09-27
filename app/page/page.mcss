@@ -1,19 +1,25 @@
 Page {
+  height: calc(100% - 3rem)  /*needed for scrolling*/
+
   $backgroundPrimary
   margin-top: 3rem
 
-  div.container {
+  display: flex
+
+  div.Context {
+    min-height: calc(100% - 3rem)
+    overflow-y: auto
+    overflow-x: hidden
+  }
+
+  div.content {
+    min-height: calc(100% - 3rem)
+    overflow-y: auto
+      
     $maxWidth
-    min-height: 100vh
+    flex-grow: 1
+
     padding: 1rem
     margin: 0 auto 
-
-    div.Thread {
-      margin-bottom: 1rem
-    }
-
-    div.Compose {
-    }
-  }
 }
 

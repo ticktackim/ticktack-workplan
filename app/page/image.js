@@ -13,7 +13,7 @@ exports.needs = nest({
 exports.create = (api) => {
   return nest('app.page.image', function (location) {
     return h('Page -image', [
-      h('div.container', [
+      h('div.content', [
         h('img', {src: api.blob.sync.url(location.blob || location)})
       ])
     ])

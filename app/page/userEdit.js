@@ -40,7 +40,7 @@ exports.create = (api) => {
       : defaultCallback
 
     return h('Page -userEdit', {}, [
-      h('div.container', [
+      h('div.content', [
         api.about.page.edit(options, callback)
       ])
     ])

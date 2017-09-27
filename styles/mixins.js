@@ -26,7 +26,7 @@ $maxWidthSmaller {
 
 $colorPrimary {
   color: white
-  background-color: #3dc8c3
+  background-color: #2f63ad
 
   (a) {
     color: #5c6bc0
@@ -34,7 +34,7 @@ $colorPrimary {
 }
 
 $colorPrimaryFG {
-  color: #3dc8c3
+  color: #fff
 }
 
 $colorSubtle {
@@ -42,7 +42,15 @@ $colorSubtle {
 }
 
 $backgroundPrimary {
-  background-color: #f7f7f7
+  background-color: #fff
+}
+
+$backgroundGrey {
+  background-color: #f0f1f2
+}
+
+$backgroundSelected {
+  background-color: #f0f1f2
 }
 
 $borderBackgroundPrimary {
