@@ -6,11 +6,10 @@ Page {
 
   display: flex
 
-  div.context {
+  div.Context {
     min-height: calc(100% - 3rem)
     overflow-y: auto
-
-    padding: 1rem
+    overflow-x: hidden
   }
 
   div.content {

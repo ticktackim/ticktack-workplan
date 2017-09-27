@@ -9,11 +9,12 @@ const Debounce = require('obv-debounce')
 exports.gives = nest('app.page.blogIndex')
 
 exports.needs = nest({
+  'app.html.context': 'first',
+  'app.html.threadCard': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
   'translations.sync.strings': 'first',
   'state.obs.threads': 'first',
-  'app.html.threadCard': 'first',
   'unread.sync.isUnread': 'first'
 })
 
@@ -26,7 +27,7 @@ exports.create = (api) => {
     var strings = api.translations.sync.strings()
 
     return h('Page -blogIndex', {title: strings.home}, [
-      h('div.context', 'context (sidebar)'),
+      api.app.html.context(location),
       h('div.content', [
         blogs(),
         h('Button -showMore', { 'ev-click': contentHtmlObs.more }, strings.showMore)

@@ -34,7 +34,7 @@ $colorPrimary {
 }
 
 $colorPrimaryFG {
-  color: #2f63ad
+  color: #fff
 }
 
 $colorSubtle {
@@ -42,7 +42,11 @@ $colorSubtle {
 }
 
 $backgroundPrimary {
-  background-color: #f7f7f7
+  background-color: #fff
+}
+
+$backgroundSelected {
+  background-color: #f0f1f2
 }
 
 $borderBackgroundPrimary {

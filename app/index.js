@@ -4,6 +4,7 @@ module.exports = {
   },
   html: {
     app: require('./html/app'),
+    context: require('./html/context'),
     header: require('./html/header'),
     thread: require('./html/thread'),
     link: require('./html/link'),

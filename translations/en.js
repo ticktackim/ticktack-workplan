@@ -1,4 +1,7 @@
 module.exports = {
+  blogIndex: {
+    title: 'Discover',
+  },
   loading: 'Loading...',
   optionalField: 'optional',
   sendMessage: 'Send',
