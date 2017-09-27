@@ -3,7 +3,8 @@ module.exports = {
     publish: require('./async/publish'),
   },
   html: {
-    compose: require('./html/compose')
+    compose: require('./html/compose'),
+    subject: require('./html/subject')
   }
 }
 

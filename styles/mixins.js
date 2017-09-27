@@ -45,6 +45,10 @@ $backgroundPrimary {
   background-color: #fff
 }
 
+$backgroundGrey {
+  background-color: #f0f1f2
+}
+
 $backgroundSelected {
   background-color: #f0f1f2
 }

@@ -1,5 +1,6 @@
 Page -settings {
   padding-top: 1rem
+  $backgroundGrey
 
   div.content {
     background: #fff

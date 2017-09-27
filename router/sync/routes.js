@@ -1,6 +1,7 @@
 const nest = require('depnest')
 const { isMsg, isFeed, isBlob } = require('ssb-ref')
 const openExternal = require('open-external')
+const get = require('lodash/get')
 
 exports.gives = nest('router.sync.routes')
 
@@ -17,7 +18,7 @@ exports.needs = nest({
   // 'app.page.userFind': 'first',
   // 'app.page.userShow': 'first',
   // 'app.page.threadNew': 'first',
-  // 'app.page.threadShow': 'first',
+  'app.page.threadShow': 'first',
   // 'app.page.image': 'first',
   'blob.sync.url': 'first',
 })
@@ -32,7 +33,7 @@ exports.create = (api) => {
       // Thread pages
       // [ location => location.page === 'threadNew' && isFeed(location.feed), pages.threadNew ],
       // [ location => location.page === 'threadNew' && location.channel, pages.threadNew ],
-      // [ location => isMsg(location.key), pages.threadShow ],
+      [ location => isMsg(location.key), pages.threadShow ],
 
       // User pages
       // [ location => location.page === 'userFind', pages.userFind ],

@@ -26,7 +26,7 @@ module.exports = {
     // userFind: require('./page/userFind'),
     // userShow: require('./page/userShow'),
     // threadNew: require('./page/threadNew'),
-    // threadShow: require('./page/threadShow'),
+    threadShow: require('./page/threadShow'),
   }
 }
 

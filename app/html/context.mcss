@@ -60,7 +60,7 @@ Option {
 
     display: flex
     align-items: center
-    height: 3rem
+    min-height: 3rem
   }
 
 }
