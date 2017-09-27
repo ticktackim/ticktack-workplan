@@ -1,5 +1,6 @@
 Header {
   nav {
+    $colorPrimary
     $navFA
     padding: 1rem 0
 
@@ -7,12 +8,11 @@ Header {
     height: 1rem
     position: fixed
     top: 0
-    left: 0
     z-index: 99
-    background: #fff
 
     display: flex
     align-items: center
+    justify-content: center
 
     (a) {
       color: #222
@@ -22,46 +22,16 @@ Header {
         text-decoration: underline
       }
     }
-
-    div.back {
-      font-size: 1.4rem
-      width: 1rem
-      padding: 0 0.2em 0 1rem
-      border: 1px solid #ddd
-      border-radius: 4px
-      border-top-left-radius: 0
-      border-bottom-left-radius: 0
-      border-left: none
-
-      :hover {
-        $colorPrimary
-        border: 1px solid #fff
-        border-left: none
-      }
-    }
-
-    i.fa-home {
-      margin-left: 1rem
-    }
-
-    div.tools {
-      flex-grow: 1
-
-      $navFA
-
-      display: flex
-      justify-content: flex-end
-    }
-  }
-
-
 }
 
 $navFA {
   i {
     font-size: 1.4rem
-    color: #b9b9b9
-    margin-right: 1rem
+    margin: 0 1rem
+
+    -active {
+      color: red
+    }
 
     :hover {
       text-decoration: none
