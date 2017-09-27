@@ -5,9 +5,6 @@ Context {
     width: 11rem
     border-right: 1px gainsboro solid
 
-    display: flex
-    flex-direction: column
-      
     div.Option {}
 
   }
@@ -15,7 +12,7 @@ Context {
 
 Option {
   min-width: 8rem
-  padding: 1rem
+  padding: .5rem 1rem
   display: flex
   align-items: center
 

@@ -7,6 +7,7 @@ exports.gives = nest('app.html.header')
 exports.needs = nest('keys.sync.id', 'first')
 
 const FEED_PAGES = [
+  'home',
   'blogIndex',
   // 'blogSearch',
   // 'threadShow',
