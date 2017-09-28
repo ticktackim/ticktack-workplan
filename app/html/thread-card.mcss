@@ -1,7 +1,7 @@
 ThreadCard {
   display: flex
-  align-items: center
-
+//  align-items: center
+  flex-direction: column
   margin-bottom: .5rem
 
   div.context {
@@ -11,6 +11,8 @@ ThreadCard {
   }
 
   div.content {
+    display: flex
+    flex-direction: row
     flex-grow: 1
 
     cursor: pointer
@@ -23,6 +25,9 @@ ThreadCard {
     :hover {
       background-color: #fff
       border: 1px solid #fff
+    }
+    div.text {
+      flow-direction: column
     }
 
     div.subject {
@@ -57,7 +62,10 @@ ThreadCard {
   }
 }
 
-
-
-
-
+Thumbnail {
+  border-radius: 5px
+  min-width: 100px
+  min-height: 100px
+  width: 100px
+  height: 100px
+}
