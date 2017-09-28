@@ -5,6 +5,7 @@ module.exports = {
   loading: 'Loading...',
   optionalField: 'optional',
   writeMessage: 'Write a message',
+  peopleNearby: 'People nearby',
   sendMessage: 'Send',
   showMore: 'Show More',
   channel: {

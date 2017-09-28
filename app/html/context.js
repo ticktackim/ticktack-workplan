@@ -1,8 +1,9 @@
 const nest = require('depnest')
-const { h, computed, map, when, Dict, dictToCollection, Array: MutantArray } = require('mutant')
+const { h, computed, map, when, Dict, dictToCollection, Array: MutantArray, resolve } = require('mutant')
 const pull = require('pull-stream')
 const next = require('pull-next-step')
 const get = require('lodash/get')
+const isEmpty = require('lodash/isEmpty')
 
 exports.gives = nest('app.html.context')
 
@@ -14,6 +15,7 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'history.sync.push': 'first',
   'message.html.subject': 'first',
+  'sbot.obs.localPeers': 'first',
   'translations.sync.strings': 'first',
 })
 
@@ -24,15 +26,7 @@ exports.create = (api) => {
     const strings = api.translations.sync.strings()
     const myKey = api.keys.sync.id()
 
-    const discover = {
-      notifications: Math.floor(Math.random()*5+1),
-      imageEl: h('i.fa.fa-binoculars'),
-      label: strings.blogIndex.title,
-      location: { page: 'blogIndex' },
-      selected: ['blogIndex', 'home'].includes(location.page)
-    }
-    var nearby = []
-
+    var nearby = api.sbot.obs.localPeers()
     var recentPeersContacted = Dict()
     // TODO - extract as contact.obs.recentPrivate or something
 
@@ -57,17 +51,44 @@ exports.create = (api) => {
     ])
 
     function LevelOneContext () {
+
       return h('div.level.-one', [
-        Option(discover), 
-        map(nearby, Option), // TODO
+        // Nearby
+        computed(nearby, n => !isEmpty(n) ? h('header', strings.peopleNearby) : null), // TODO translate
+        map(nearby, feedId => Option({
+          notifications: Math.random() > 0.7 ? Math.floor(Math.random()*9+1) : 0, // TODO 
+          imageEl: api.about.html.image(feedId), // TODO make avatar
+          label: api.about.obs.name(feedId),
+          location: computed(recentPeersContacted, recent => {
+            const lastMsg = recent[feedId]
+            return lastMsg
+              ? Object.assign(lastMsg, { feed: feedId })
+              : { page: 'threadNew', feed: feedId }
+          }),
+          selected: location.feed === feedId
+        })),
+        computed(nearby, n => !isEmpty(n) ?  h('hr') : null),
+
+        // Discover
+        Option({
+          notifications: Math.floor(Math.random()*5+1),
+          imageEl: h('i.fa.fa-binoculars'),
+          label: strings.blogIndex.title,
+          location: { page: 'blogIndex' },
+          selected: ['blogIndex', 'home'].includes(location.page)
+        }),
+
+        // Recent Messages
         map(dictToCollection(recentPeersContacted), ({ key, value })  => { 
           const feedId = key()
           const lastMsg = value()
+          if (nearby.has(feedId)) return
+
           return Option({
             notifications: Math.random() > 0.7 ? Math.floor(Math.random()*9+1) : 0, // TODO
             imageEl: api.about.html.image(feedId), // TODO make avatar
             label: api.about.obs.name(feedId),
-            location: Object.assign(lastMsg, { feed: feedId }),  // QUESION : how should we pass the context, is stapling feed on like this horrible?
+            location: Object.assign(lastMsg, { feed: feedId }),
             selected: location.feed === feedId
           })
         })
@@ -110,7 +131,7 @@ exports.create = (api) => {
 
     function Option ({ notifications = 0, imageEl, label, location, selected }) {
       const className = selected ? '-selected' : '' 
-      const goToLocation = () => api.history.sync.push(location) 
+      const goToLocation = () => api.history.sync.push(resolve(location)) 
 
       if (!imageEl) {
         return h('Option', { className, 'ev-click': goToLocation }, [
