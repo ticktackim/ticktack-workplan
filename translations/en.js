@@ -4,6 +4,7 @@ module.exports = {
   },
   loading: 'Loading...',
   optionalField: 'optional',
+  writeMessage: 'Write a message',
   sendMessage: 'Send',
   showMore: 'Show More',
   channel: {

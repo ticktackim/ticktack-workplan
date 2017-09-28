@@ -22,7 +22,11 @@ exports.create = (api) => {
   return nest('app.html.header', (nav) => {
     const { location, push } = nav
 
-    const loc = computed(location, location => location.location || {})
+    const loc = computed(location, location => {
+      if (typeof location != 'object') return {}
+
+      return location.location || {}
+    })
     // Dominics nav location api is slightly different than mine - it nest location in nav.location.location
 
     const isFeed = computed(loc, loc => {
@@ -35,7 +39,7 @@ exports.create = (api) => {
 
     return h('Header', [
       h('nav', [
-        h('i.fa', { 
+        h('i.fa', {
           'ev-click': () => push({page: 'blogIndex'}),
           className: when(isFeed, 'fa-commenting', 'fa-commenting-o')
         }),
