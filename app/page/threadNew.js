@@ -4,13 +4,14 @@ const { h, Struct, Value, computed } = require('mutant')
 exports.gives = nest('app.page.threadNew')
 
 exports.needs = nest({
-  'translations.sync.strings': 'first',
   'about.html.image': 'first',
   'about.obs.name': 'first',
+  'app.html.context': 'first',
   'app.html.thread': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
-  'message.html.compose': 'first'
+  'message.html.compose': 'first',
+  'translations.sync.strings': 'first',
 })
 
 exports.create = (api) => {
@@ -21,7 +22,7 @@ exports.create = (api) => {
     const { feed, channel } = location
 
     if (feed) return threadNewFeed(location)
-    if (channel) return threadNewChannel(location)
+    // if (channel) return threadNewChannel(location)
   }
 
   function threadNewFeed (location) {
@@ -40,10 +41,11 @@ exports.create = (api) => {
     })
     const composer = api.message.html.compose(
       { meta, shrink: false },
-      (err, msg) => api.history.sync.push(err ? err : msg)
+      (err, msg) => api.history.sync.push(err ? err : Object.assign(msg, { feed }))
     )
 
     return h('Page -threadNew', {title: strings.threadNew.pageTitle}, [
+      api.app.html.context(location),
       h('div.content', [
         h('div.field -to', [
           h('div.label', strings.threadNew.field.to),
@@ -66,42 +68,42 @@ exports.create = (api) => {
     ])
   }
 
-  function threadNewChannel (location) {
-    const strings = api.translations.sync.strings()
+  // function threadNewChannel (location) {
+  //   const strings = api.translations.sync.strings()
 
-    const { channel, flash } = location
+  //   const { channel, flash } = location
 
-    const meta = Struct({
-      type: 'post',
-      channel,
-      subject: Value()
-    })
-    const composer = api.message.html.compose(
-      { meta, shrink: false },
-      (err, msg) => api.history.sync.push(err ? err : msg)
-    )
+  //   const meta = Struct({
+  //     type: 'post',
+  //     channel,
+  //     subject: Value()
+  //   })
+  //   const composer = api.message.html.compose(
+  //     { meta, shrink: false },
+  //     (err, msg) => api.history.sync.push(err ? err : msg)
+  //   )
 
-    return h('Page -threadNew', {title: strings.threadNew.pageTitle}, [
-      h('div.content', [
-        flash ? h('div.flash', flash) : '',
-        h('div.field -channel', [
-          h('div.label', strings.threadNew.field.channel),
-          h('div.recps', [
-            h('div.recp', [
-              h('div.name', `#${channel}`)
-            ])
-          ])
-        ]),
-        h('div.field -subject', [
-          h('div.label', strings.threadNew.field.subject),
-          h('input', {
-            'ev-input': e => meta.subject.set(e.target.value),
-            placeholder: strings.optionalField
-          }),
-        ]),
-        composer
-      ])
-    ])
-  }
+  //   return h('Page -threadNew', {title: strings.threadNew.pageTitle}, [
+  //     h('div.content', [
+  //       flash ? h('div.flash', flash) : '',
+  //       h('div.field -channel', [
+  //         h('div.label', strings.threadNew.field.channel),
+  //         h('div.recps', [
+  //           h('div.recp', [
+  //             h('div.name', `#${channel}`)
+  //           ])
+  //         ])
+  //       ]),
+  //       h('div.field -subject', [
+  //         h('div.label', strings.threadNew.field.subject),
+  //         h('input', {
+  //           'ev-input': e => meta.subject.set(e.target.value),
+  //           placeholder: strings.optionalField
+  //         }),
+  //       ]),
+  //       composer
+  //     ])
+  //   ])
+  // }
 }
 

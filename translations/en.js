@@ -45,6 +45,9 @@ module.exports = {
       to: 'To',
       subject: 'Subject',
       channel: 'Channel'
+    },
+    action: {
+      new: 'New Message'
     }
   },
   threadShow: 'Direct Messages',

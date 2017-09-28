@@ -42,6 +42,9 @@ module.exports = {
       to: '发送给',
       subject: '主题',
       channel: '频道'
+    },
+    action: {
+      new: '创建私信'
     }
   },
   threadShow: '所有私信',

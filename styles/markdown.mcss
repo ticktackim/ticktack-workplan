@@ -5,6 +5,10 @@ Markdown {
     margin: .5rem 0
     border-radius: .5rem
   }
+
+  (img.emoji) { 
+    margin: 0
+  }
 }
 
 
