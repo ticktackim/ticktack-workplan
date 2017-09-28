@@ -75,7 +75,7 @@ exports.create = (api) => {
     }
 
     function LevelTwoContext () {
-      const { key, value, feed: targetUser } = location
+      const { key, value, feed: targetUser, page } = location
       const root = get(value, 'content.root', key)
       if (!targetUser) return
 
@@ -94,8 +94,9 @@ exports.create = (api) => {
 
       return h('div.level.-two', [
         Option({
+          selected: page === 'threadNew',
           location: {page: 'threadNew', feed: targetUser},
-          label: h('Button', strings.threadNew.action.new)
+          label: h('Button', strings.threadNew.action.new),
         }),
         map(threads, thread => { 
           return Option({
