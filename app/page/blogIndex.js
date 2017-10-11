@@ -68,24 +68,16 @@ exports.create = (api) => {
           return m
         }
 
-        var o = {}
-        function roots (r) {
-          return Object.keys(r || {}).map(function (name) {
-            var id = r[name]
-            if(!o[id]) {
-              o[id] = true
-              return threads.roots[id]
-            }
-          }).filter(function (e) {
-            return e && e.value
+        var groupedThreads =
+          Object.keys(threads.roots || {}).map(function (id) {
+            return threads.roots[id]
           })
-        }
-
-        var groupedThreads = roots(threads.private)
-          .concat(roots(threads.channels))
-          .concat(roots(threads.groups))
           .filter(function (thread) {
-            return thread.value.content.recps || thread.value.content.channel
+            return thread.value
+          })
+          .filter(function (thread) {
+            //show public messages only
+            return !thread.value.content.recps
           })
           .map(function (thread) {
             var unread = 0
@@ -106,7 +98,7 @@ exports.create = (api) => {
               const { recps, channel } = thread.value.content
               var onClick
               if (channel && !recps)
-                onClick = (ev) => api.history.sync.push({ channel })
+                onClick = (ev) => api.history.sync.push({ key: thread.key })
 
               return api.app.html.threadCard(thread, { onClick })
             })
