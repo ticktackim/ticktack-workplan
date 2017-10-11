@@ -69,7 +69,14 @@ function buildChunkedMessages (messagesObs) {
     var _lastMsg = null
 
     msgs.forEach(msg => {
-      if (!_lastMsg || !isSameAuthor(_lastMsg, msg)) { createNewChunk(msg) } else { _chunk.push(msg) }
+      const text = get(msg, 'value.content.text')
+      if (!text) return
+
+      if (!_lastMsg || !isSameAuthor(_lastMsg, msg)) {
+        createNewChunk(msg)
+      } else {
+        _chunk.push(msg)
+      }
 
       _lastMsg = msg
     })

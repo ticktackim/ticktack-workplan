@@ -33,6 +33,7 @@ exports.create = (api) => {
     pull(
       next(api.feed.pull.private, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
       pull.filter(msg => msg.value.content.recps),
+      pull.filter(msg => msg.value.content.type === 'post'), // TODO is this the best way to protect against votes?
       pull.drain(msg => {
         msg.value.content.recps
           .map(recp => typeof recp === 'object' ? recp.link : recp)
@@ -54,18 +55,18 @@ exports.create = (api) => {
 
       return h('div.level.-one', [
         // Nearby
-        computed(nearby, n => !isEmpty(n) ? h('header', strings.peopleNearby) : null), // TODO translate
+        computed(nearby, n => !isEmpty(n) ? h('header', strings.peopleNearby) : null),
         map(nearby, feedId => Option({
           notifications: Math.random() > 0.7 ? Math.floor(Math.random()*9+1) : 0, // TODO 
           imageEl: api.about.html.image(feedId), // TODO make avatar
           label: api.about.obs.name(feedId),
+          selected: location.feed === feedId,
           location: computed(recentPeersContacted, recent => {
             const lastMsg = recent[feedId]
             return lastMsg
               ? Object.assign(lastMsg, { feed: feedId })
               : { page: 'threadNew', feed: feedId }
           }),
-          selected: location.feed === feedId
         })),
         computed(nearby, n => !isEmpty(n) ?  h('hr') : null),
 
@@ -74,8 +75,8 @@ exports.create = (api) => {
           notifications: Math.floor(Math.random()*5+1),
           imageEl: h('i.fa.fa-binoculars'),
           label: strings.blogIndex.title,
+          selected: ['blogIndex', 'home'].includes(location.page),
           location: { page: 'blogIndex' },
-          selected: ['blogIndex', 'home'].includes(location.page)
         }),
 
         // Recent Messages
@@ -88,8 +89,8 @@ exports.create = (api) => {
             notifications: Math.random() > 0.7 ? Math.floor(Math.random()*9+1) : 0, // TODO
             imageEl: api.about.html.image(feedId), // TODO make avatar
             label: api.about.obs.name(feedId),
-            location: Object.assign(lastMsg, { feed: feedId }),
-            selected: location.feed === feedId
+            selected: location.feed === feedId,
+            location: Object.assign(lastMsg, { feed: feedId }) // TODO make obs?
           })
         })
       ])
@@ -121,9 +122,9 @@ exports.create = (api) => {
         }),
         map(threads, thread => { 
           return Option({
+            label: api.message.html.subject(thread),
             selected: thread.key === root,
             location: Object.assign(thread, { feed: targetUser }),
-            label: api.message.html.subject(thread)
           })
         })
       ])
@@ -131,7 +132,9 @@ exports.create = (api) => {
 
     function Option ({ notifications = 0, imageEl, label, location, selected }) {
       const className = selected ? '-selected' : '' 
-      const goToLocation = () => api.history.sync.push(resolve(location)) 
+      const goToLocation = () => {
+        api.history.sync.push(resolve(location))
+      }
 
       if (!imageEl) {
         return h('Option', { className, 'ev-click': goToLocation }, [
