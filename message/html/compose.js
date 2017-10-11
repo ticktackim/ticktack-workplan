@@ -13,6 +13,7 @@ exports.needs = nest({
   'emoji.sync.names': 'first',
   'emoji.sync.url': 'first',
   'message.async.publish': 'first',
+  'message.html.markdown': 'first',
   // 'message.html.confirm': 'first'
   'translations.sync.strings': 'first'
 })
@@ -41,24 +42,9 @@ exports.create = function (api) {
       return focused
     })
 
-    // var channelInput = h('input.channel', {
-    //   'ev-input': () => hasContent.set(!!channelInput.value),
-    //   'ev-keyup': ev => {
-    //     ev.target.value = ev.target.value.replace(/^#*([\w@%&])/, '#$1')
-    //   },
-    //   'ev-blur': () => {
-    //     clearTimeout(blurTimeout)
-    //     blurTimeout = setTimeout(() => channelInputFocused.set(false), 200)
-    //   },
-    //   'ev-focus': send(channelInputFocused.set, true),
-    //   placeholder: '#channel (optional)',
-    //   value: computed(meta.channel, ch => ch ? '#' + ch : null),
-    //   disabled: when(meta.channel, true),
-    //   title: when(meta.channel, 'Reply is in same channel as original message')
-    // })
-
+    var textRaw = Value('')
     var textArea = h('textarea', {
-      'ev-input': () => hasContent.set(!!textArea.value),
+      'ev-input': () => textRaw.set(textArea.value),
       'ev-blur': () => {
         clearTimeout(blurTimeout)
         blurTimeout = setTimeout(() => textAreaFocused.set(false), 200)
@@ -66,6 +52,8 @@ exports.create = function (api) {
       'ev-focus': send(textAreaFocused.set, true),
       placeholder
     })
+    textRaw(text => hasContent.set(!!text))
+
     textArea.publish = publish // TODO: fix - clunky api for the keyboard shortcut to target
 
     var fileInput
@@ -79,7 +67,9 @@ exports.create = function (api) {
         var insertLink = spacer + embed + '[' + file.name + ']' + '(' + file.link + ')' + spacer
 
         var pos = textArea.selectionStart
-        textArea.value = textArea.value.slice(0, pos) + insertLink + textArea.value.slice(pos)
+        var newText = textRaw().slice(0, pos) + insertLink + textRaw().slice(pos)
+        textArea.value = newText
+        textRaw.set(newText)
 
         console.log('added:', file)
       })
@@ -91,30 +81,32 @@ exports.create = function (api) {
     else
       fileInput = h('span')
 
+    var showPreview = Value(false)
+    var previewBtn = h('Button',
+      {
+        className: when(showPreview, '-primary'),
+        'ev-click': () => showPreview.set(!showPreview())
+      }, 
+      when(showPreview, strings.blogNew.actions.edit, strings.blogNew.actions.preview)
+    )
+    var preview = computed(textRaw, text => api.message.html.markdown(text))
+
     var publishBtn = h('Button -primary', { 'ev-click': publish }, strings.sendMessage)
 
     var actions = h('section.actions', [
       fileInput,
+      previewBtn,
       publishBtn
     ])
 
     var composer = h('Compose', {
       classList: when(expanded, '-expanded', '-contracted')
     }, [
-      // channelInput,
-      textArea,
+      when(showPreview, preview, textArea),
       actions
     ])
 
-    // addSuggest(channelInput, (inputText, cb) => {
-    //   if (inputText[0] === '#') {
-    //     cb(null, getChannelSuggestions(inputText.slice(1)))
-    //   }
-    // }, {cls: 'SuggestBox'})
-    // channelInput.addEventListener('suggestselect', ev => {
-    //   channelInput.value = ev.detail.id  // HACK : this over-rides the markdown value
-    // })
-
+    // TODO replace with patch-suggest
     addSuggest(textArea, (inputText, cb) => {
       if (inputText[0] === '@') {
         cb(null, getProfileSuggestions(inputText.slice(1)))
@@ -146,11 +138,9 @@ exports.create = function (api) {
 
     function publish () {
       publishBtn.disabled = true
+      const text = resolve(textRaw)
 
-      // const channel = channelInput.value.startsWith('#')
-      //   ? channelInput.value.substr(1).trim()
-      //   : channelInput.value.trim()
-      const mentions = ssbMentions(textArea.value).map(mention => {
+      const mentions = ssbMentions(text).map(mention => {
         // merge markdown-detected mention with file info
         var file = filesById[mention.link]
         if (file) {
@@ -161,12 +151,10 @@ exports.create = function (api) {
       })
 
       var content = assign({}, resolve(meta), {
-        text: textArea.value,
-        // channel,
+        text,
         mentions
       })
 
-      // if (!channel) delete content.channel
       if (!content.channel) delete content.channel
       if (!mentions.length) delete content.mentions
       if (content.recps && content.recps.length === 0) delete content.recps
@@ -186,7 +174,10 @@ exports.create = function (api) {
       function done (err, msg) {
         publishBtn.disabled = false
         if (err) handleErr(err)
-        else if (msg) textArea.value = ''
+        else if (msg) { 
+          textRaw.set('')
+          textArea.value = ''
+        }
         if (cb) cb(err, msg)
       }
 
@@ -197,7 +188,4 @@ exports.create = function (api) {
     }
   }
 }
-
-
-
 

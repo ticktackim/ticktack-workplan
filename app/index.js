@@ -12,6 +12,7 @@ module.exports = {
   },
   page: {
     blogIndex: require('./page/blogIndex'),
+    blogNew: require('./page/blogNew'),
     error: require('./page/error'),
     settings: require('./page/settings'),
     // channel: require('./page/channel'),

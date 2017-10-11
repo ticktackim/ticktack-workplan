@@ -87,7 +87,7 @@ exports.create = (api) => {
   //     h('div.content', [
   //       flash ? h('div.flash', flash) : '',
   //       h('div.field -channel', [
-  //         h('div.label', strings.threadNew.field.channel),
+  //         h('div.label', strings.channel),
   //         h('div.recps', [
   //           h('div.recp', [
   //             h('div.name', `#${channel}`)
