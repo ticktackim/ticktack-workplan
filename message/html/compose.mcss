@@ -1,4 +1,6 @@
 Compose {
+  $maxWidth
+
   display: flex
   flex-direction: column
 

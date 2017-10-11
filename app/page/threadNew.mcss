@@ -9,6 +9,7 @@ Page -threadNew {
 
     div.field {
       margin-bottom: .5rem
+      $maxWidth
       
       display: flex
       align-items: center
