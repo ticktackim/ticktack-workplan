@@ -27,9 +27,8 @@ exports.create = function (api) {
 
     var files = []
     var filesById = {}
-    var channelInputFocused = Value(false)
     var textAreaFocused = Value(false)
-    var focused = computed([channelInputFocused, textAreaFocused], (a, b) => a || b)
+    var focused = textAreaFocused
     var hasContent = Value(false)
     var getProfileSuggestions = api.about.async.suggest()
     // var getChannelSuggestions = api.channel.async.suggest()
@@ -79,7 +78,7 @@ exports.create = function (api) {
     // if fileInput is null, send button moves to the left side
     // and we don't want that.
     else
-      fileInput = h('span')
+      fileInput = h('input', { style: {visibility: 'hidden'}})
 
     var showPreview = Value(false)
     var previewBtn = h('Button',

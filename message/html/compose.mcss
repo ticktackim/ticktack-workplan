@@ -39,6 +39,7 @@ Compose {
     margin-top: .4rem
 
     input[type="file"] {
+      flex-grow: 1
 
       padding: .5rem 0
 
@@ -69,6 +70,7 @@ Compose {
     }
 
     div.Button {
+      margin-left: .5rem
     }
   }
 
