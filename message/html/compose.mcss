@@ -38,9 +38,9 @@ Compose {
 
     margin-top: .4rem
 
-    input[type="file"] {
-      flex-grow: 1
+    input { flex-grow: 1 }
 
+    input[type="file"] {
       padding: .5rem 0
 
       width: 2.5rem
