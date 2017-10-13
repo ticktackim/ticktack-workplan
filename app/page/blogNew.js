@@ -7,13 +7,9 @@ exports.gives = nest('app.page.blogNew')
 exports.needs = nest({
   'app.html.context': 'first',
   'channel.async.suggest': 'first',
-  // 'app.html.threadCard': 'first',
   'history.sync.push': 'first',
-  // 'keys.sync.id': 'first',
   'message.html.compose': 'first',
   'translations.sync.strings': 'first',
-  // 'state.obs.threads': 'first',
-  // 'unread.sync.isUnread': 'first'
 })
 
 exports.create = (api) => {
