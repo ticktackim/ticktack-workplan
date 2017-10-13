@@ -52,6 +52,7 @@ exports.create = (api) => {
     ])
 
     function LevelOneContext () {
+      const PAGES_UNDER_DISCOVER = ['blogIndex', 'blogShow', 'home']
 
       return h('div.level.-one', [
         // Nearby
@@ -75,7 +76,7 @@ exports.create = (api) => {
           notifications: Math.floor(Math.random()*5+1),
           imageEl: h('i.fa.fa-binoculars'),
           label: strings.blogIndex.title,
-          selected: ['blogIndex', 'home'].includes(location.page),
+          selected: PAGES_UNDER_DISCOVER.includes(location.page),
           location: { page: 'blogIndex' },
         }),
 
