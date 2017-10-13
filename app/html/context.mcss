@@ -25,6 +25,13 @@ Context {
       border-bottom: none
       margin: 0
     }
+
+    -one {}
+    -two {
+      div.Option {
+        padding: 0 1rem
+      }
+    }
   }
 }
 
