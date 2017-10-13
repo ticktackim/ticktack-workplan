@@ -102,7 +102,6 @@ exports.create = function (api) {
 
     var img = marksum.image(thread.value.content.text)
     var m = /\!\[[^]+\]\(([^\)]+)\)/.exec(img)
-    console.log(m, img)
     if(m) {
       //hey this works! fit an image into a specific size (see thread-card.mcss)
       //centered, and scaled to fit the square (works with both landscape and portrait!)
