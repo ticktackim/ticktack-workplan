@@ -9,7 +9,8 @@ exports.gives = nest('message.html.compose')
 exports.needs = nest({
   'about.async.suggest': 'first',
   'blob.html.input': 'first',
-  // 'channel.async.suggest': 'first',
+  'channel.async.suggest': 'first',
+  'emoji.async.suggest': 'first',
   'emoji.sync.names': 'first',
   'emoji.sync.url': 'first',
   'message.async.publish': 'first',
@@ -23,6 +24,10 @@ exports.create = function (api) {
 
   function compose ({ shrink = true, meta, prepublish, placeholder }, cb) {
     const strings = api.translations.sync.strings()
+    const getProfileSuggestions = api.about.async.suggest()
+    const getChannelSuggestions = api.channel.async.suggest()
+    const getEmojiSuggestions = api.emoji.async.suggest()
+
     placeholder = placeholder || strings.writeMessage
 
     var files = []
@@ -30,8 +35,6 @@ exports.create = function (api) {
     var textAreaFocused = Value(false)
     var focused = textAreaFocused
     var hasContent = Value(false)
-    var getProfileSuggestions = api.about.async.suggest()
-    // var getChannelSuggestions = api.channel.async.suggest()
 
     var blurTimeout = null
 
@@ -105,31 +108,14 @@ exports.create = function (api) {
       actions
     ])
 
-    // TODO replace with patch-suggest
     addSuggest(textArea, (inputText, cb) => {
-      if (inputText[0] === '@') {
-        cb(null, getProfileSuggestions(inputText.slice(1)))
-      // } else if (inputText[0] === '#') {
-      //   cb(null, getChannelSuggestions(inputText.slice(1)))
-      } else if (inputText[0] === ':') {
-        // suggest emojis
-        var word = inputText.slice(1)
-        if (word[word.length - 1] === ':') {
-          word = word.slice(0, -1)
-        }
-        // TODO: when no emoji typed, list some default ones
-        cb(null, api.emoji.sync.names().filter(function (name) {
-          return name.slice(0, word.length) === word
-        }).slice(0, 100).map(function (emoji) {
-          return {
-            image: api.emoji.sync.url(emoji),
-            title: emoji,
-            subtitle: emoji,
-            value: ':' + emoji + ':'
-          }
-        }))
-      }
-    }, {cls: 'SuggestBox'})
+      const char = inputText[0]
+      const wordFragment = inputText.slice(1)
+
+      if (char === '@') cb(null, getProfileSuggestions(wordFragment))
+      if (char === '#') cb(null, getChannelSuggestions(wordFragment))
+      if (char === ':') cb(null, getEmojiSuggestions(wordFragment))
+    }, {cls: 'PatchSuggest'})
 
     return composer
 
@@ -167,6 +153,7 @@ exports.create = function (api) {
         handleErr(err)
       }
 
+      // debugger
       return api.message.async.publish(content, done)
       // return api.message.html.confirm(content, done)
 

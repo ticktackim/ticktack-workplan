@@ -53,8 +53,8 @@ $backgroundSelected {
   background-color: #f0f1f2
 }
 
-$borderBackgroundPrimary {
-  border: 1px #f7f7f7 solid
+$borderPrimary {
+  border: 1px #2f63ad solid
 }
 
 $avatarSmall {
