@@ -16,7 +16,7 @@ body {
   }
 
   (a) {
-    color: #1a95a9
+    color: #2f63ad
     text-decoration: none
 
     :hover {
