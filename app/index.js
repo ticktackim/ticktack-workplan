@@ -12,6 +12,7 @@ module.exports = {
   },
   page: {
     blogIndex: require('./page/blogIndex'),
+    blogNew: require('./page/blogNew'),
     error: require('./page/error'),
     settings: require('./page/settings'),
     // channel: require('./page/channel'),
@@ -25,7 +26,7 @@ module.exports = {
     userEdit: require('./page/userEdit'),
     // userFind: require('./page/userFind'),
     // userShow: require('./page/userShow'),
-    // threadNew: require('./page/threadNew'),
+    threadNew: require('./page/threadNew'),
     threadShow: require('./page/threadShow'),
   }
 }

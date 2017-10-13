@@ -1,4 +1,6 @@
 Compose {
+  $maxWidth
+
   display: flex
   flex-direction: column
 
@@ -36,8 +38,9 @@ Compose {
 
     margin-top: .4rem
 
-    input[type="file"] {
+    input { flex-grow: 1 }
 
+    input[type="file"] {
       padding: .5rem 0
 
       width: 2.5rem
@@ -67,6 +70,7 @@ Compose {
     }
 
     div.Button {
+      margin-left: .5rem
     }
   }
 

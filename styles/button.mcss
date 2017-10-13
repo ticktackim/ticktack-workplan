@@ -2,11 +2,15 @@ Button {
   font-family: arial
   text-align: center
 
-  cursor: pointer
+  $backgroundPrimary 
 
-  padding: .2rem 2rem
-  min-width: 4rem
+  min-width: 6rem
+  padding: .2rem 1rem
+
   border: 1px #b9b9b9 solid
+  border-radius: 10rem
+
+  cursor: pointer
 
   -subtle {
     color: #b9b9b9
@@ -14,14 +18,14 @@ Button {
       color: #222
     }
   }
+
   -primary {
     $colorPrimary
+    $borderPrimary
 
     :hover { 
       opacity: .9
     }
-
-    border: 1px solid #3dc8c3
   }
 
   -showMore {

@@ -2,15 +2,23 @@ module.exports = {
   blogIndex: {
     title: 'Discover',
   },
-  loading: 'Loading...',
-  optionalField: 'optional',
-  sendMessage: 'Send',
-  showMore: 'Show More',
-  channel: {
-    action: {
-      newThread: 'New thread'
+  blogNew: {
+    field: {
+      title: 'Title',
+    },
+    actions: {
+      edit: 'Edit',
+      preview: 'Preview',
+      writeBlog: 'Write a blog',
     }
   },
+  channel: 'Channel',
+  loading: 'Loading...',
+  optionalField: 'optional',
+  writeMessage: 'Write a message',
+  peopleNearby: 'People nearby',
+  sendMessage: 'Send',
+  showMore: 'Show More',
   directMessages: 'Direct Messages',
   home: "Home",
   error: "Error",
@@ -44,7 +52,9 @@ module.exports = {
     field: {
       to: 'To',
       subject: 'Subject',
-      channel: 'Channel'
+    },
+    action: {
+      new: 'New Message'
     }
   },
   threadShow: 'Direct Messages',

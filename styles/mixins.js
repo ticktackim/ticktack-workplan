@@ -53,8 +53,8 @@ $backgroundSelected {
   background-color: #f0f1f2
 }
 
-$borderBackgroundPrimary {
-  border: 1px #f7f7f7 solid
+$borderPrimary {
+  border: 1px #2f63ad solid
 }
 
 $avatarSmall {
@@ -72,9 +72,12 @@ $avatarLarge {
 $markdownSmall {
   div.Markdown {
     h1, h2, h3, h4, h5, h6, p {
-      font-size: 1rem
+      font-size: .9rem
       font-weight: 300
       margin: 0
+    }
+    (img.emoji) {
+      height: .9rem
     }
   }
 }

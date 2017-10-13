@@ -8,6 +8,7 @@ exports.gives = nest('router.sync.routes')
 exports.needs = nest({
   'app.page.error': 'first',
   'app.page.blogIndex': 'first',
+  'app.page.blogNew': 'first',
   'app.page.settings': 'first',
   // 'app.page.channel': 'first',
   // 'app.page.groupFind': 'first',
@@ -17,7 +18,7 @@ exports.needs = nest({
   'app.page.userEdit': 'first',
   // 'app.page.userFind': 'first',
   // 'app.page.userShow': 'first',
-  // 'app.page.threadNew': 'first',
+  'app.page.threadNew': 'first',
   'app.page.threadShow': 'first',
   // 'app.page.image': 'first',
   'blob.sync.url': 'first',
@@ -31,8 +32,8 @@ exports.create = (api) => {
     const routes = [
 
       // Thread pages
-      // [ location => location.page === 'threadNew' && isFeed(location.feed), pages.threadNew ],
       // [ location => location.page === 'threadNew' && location.channel, pages.threadNew ],
+      [ location => location.page === 'threadNew' && isFeed(location.feed), pages.threadNew ],
       [ location => isMsg(location.key), pages.threadShow ],
 
       // User pages
@@ -51,6 +52,7 @@ exports.create = (api) => {
       [ location => location.page === 'home', pages.blogIndex ],
       [ location => location.page === 'discovery', pages.blogIndex ],
       [ location => location.page === 'blogIndex', pages.blogIndex ],
+      [ location => location.page === 'blogNew', pages.blogNew ],
 
       [ location => location.page === 'settings', pages.settings ],
 
