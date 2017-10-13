@@ -29,6 +29,7 @@ exports.create = (api) => {
     return h('Page -blogIndex', {title: strings.home}, [
       api.app.html.context(location),
       h('div.content', [
+        h('Button -primary', { 'ev-click': () => api.history.sync.push({ page: 'blogNew' }) }, strings.blogNew.actions.writeBlog),
         blogs(),
         h('Button -showMore', { 'ev-click': contentHtmlObs.more }, strings.showMore)
       ]),

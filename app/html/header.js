@@ -9,6 +9,7 @@ exports.needs = nest('keys.sync.id', 'first')
 const FEED_PAGES = [
   'home',
   'blogIndex',
+  'blogNew',
   'threadShow', // TODO - this doesn't work (`threadSHow` isn't part of the location atm)
   'threadNew',
   // 'blogSearch',

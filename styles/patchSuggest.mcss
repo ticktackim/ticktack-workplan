@@ -1,0 +1,79 @@
+PatchSuggest {
+  box-shadow: rgba(0,0,0,0.1) 4px 4px 10px
+}
+
+PatchSuggest -channelHorizontal {
+  max-width: 50vw
+
+  ul {
+    display: flex
+    flex-wrap: wrap
+
+    li {
+      //// copied from Button.mcss
+      text-align: center
+
+      $backgroundPrimary 
+
+      padding: .3rem .4rem
+
+      border: 1px #b9b9b9 solid
+      border-radius: 10rem
+
+      cursor: pointer
+      ////
+
+      margin-right: 1rem
+      margin-bottom: .5rem
+
+      img {
+      }
+
+      strong {
+        min-width: initial
+
+        span.subtle {
+        }
+      }
+
+      small {
+
+        // profile only
+        div.aliases {
+          div.alias {
+            -bold {
+            }
+          }
+        }
+
+        // profile only
+        div.key {
+        }
+
+        // emoji only
+        div.emoji {
+        }
+
+      }
+    }
+
+    li.selected {
+      //// copied from Button.mcss
+      $colorPrimary
+      $borderPrimary
+
+      :hover { 
+        opacity: .9
+      }
+      ////
+
+      img {}
+      strong {}
+      small {
+        div.aliases {
+        }
+      }
+    }
+  }
+}
+

@@ -3,11 +3,7 @@ module.exports = {
   optionalField: '可选',
   sendMessage: '发送',
   showMore: '显示更多',
-  channel: {
-    action: {
-      newThread: '新建话题'
-    }
-  },
+  channel: '频道',
   directMessages: '私信',
   home: '主页',
   error: '错误',
@@ -41,7 +37,6 @@ module.exports = {
     field: {
       to: '发送给',
       subject: '主题',
-      channel: '频道'
     },
     action: {
       new: '创建私信'

@@ -10,14 +10,15 @@ require('./context-menu')
 
 // from more specialized to more general
 const sockets = combine(
-  require('patch-settings'),
-  //we always need to have translations first!
-  { translations: require('./translations/sync') },
+  //need some modules first
+  { 
+    settings: require('patch-settings'),
+    translations: require('./translations/sync')
+  },
   {
     about: require('./about'),
     app: require('./app'),
     blob: require('./blob'),
-    channel: require('./channel'),
     //config: require('./ssb-config'),
     config: require('./config'),
     // group: require('./group'),
@@ -27,8 +28,11 @@ const sockets = combine(
     state: require('./state/obs'),
     unread: require('./unread'),
   },
-  require('patch-profile'),
-  require('patchcore')
+  {
+    suggestions: require('patch-suggest'),
+    profile: require('patch-profile'),
+    core: require('patchcore')
+  }
 )
 
 const api = entry(sockets, nest({

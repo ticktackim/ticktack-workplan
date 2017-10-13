@@ -8,6 +8,7 @@ exports.gives = nest('router.sync.routes')
 exports.needs = nest({
   'app.page.error': 'first',
   'app.page.blogIndex': 'first',
+  'app.page.blogNew': 'first',
   'app.page.settings': 'first',
   // 'app.page.channel': 'first',
   // 'app.page.groupFind': 'first',
@@ -51,6 +52,7 @@ exports.create = (api) => {
       [ location => location.page === 'home', pages.blogIndex ],
       [ location => location.page === 'discovery', pages.blogIndex ],
       [ location => location.page === 'blogIndex', pages.blogIndex ],
+      [ location => location.page === 'blogNew', pages.blogNew ],
 
       [ location => location.page === 'settings', pages.settings ],
 

@@ -32,8 +32,8 @@ exports.create = (api) => {
 
     pull(
       next(api.feed.pull.private, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
-      pull.filter(msg => msg.value.content.recps),
       pull.filter(msg => msg.value.content.type === 'post'), // TODO is this the best way to protect against votes?
+      pull.filter(msg => msg.value.content.recps),
       pull.drain(msg => {
         msg.value.content.recps
           .map(recp => typeof recp === 'object' ? recp.link : recp)
@@ -90,7 +90,7 @@ exports.create = (api) => {
             imageEl: api.about.html.image(feedId), // TODO make avatar
             label: api.about.obs.name(feedId),
             selected: location.feed === feedId,
-            location: Object.assign(lastMsg, { feed: feedId }) // TODO make obs?
+            location: Object.assign({}, lastMsg, { feed: feedId }) // TODO make obs?
           })
         })
       ])
