@@ -33,6 +33,18 @@ $colorPrimary {
   }
 }
 
+$colorMessagePrimary {
+  background-color: #7eaaea
+
+  (a) {
+    color: #0b4fe7
+  }
+}
+
+$colorFontBasic {
+  color: #222
+}
+
 $colorPrimaryFG {
   color: #fff
 }
@@ -42,11 +54,7 @@ $colorSubtle {
 }
 
 $backgroundPrimary {
-  background-color: #fff
-}
-
-$backgroundGrey {
-  background-color: #f0f1f2
+  background-color: #f5f6f7
 }
 
 $backgroundSelected {

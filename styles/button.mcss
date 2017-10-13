@@ -2,8 +2,6 @@ Button {
   font-family: arial
   text-align: center
 
-  $backgroundPrimary 
-
   min-width: 6rem
   padding: .2rem 1rem
 

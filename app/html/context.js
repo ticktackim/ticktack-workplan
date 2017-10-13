@@ -8,7 +8,7 @@ const isEmpty = require('lodash/isEmpty')
 exports.gives = nest('app.html.context')
 
 exports.needs = nest({
-  'about.html.image': 'first',
+  'about.html.avatar': 'first',
   'about.obs.name': 'first',
   'feed.pull.private': 'first',
   'feed.pull.rollup': 'first',
@@ -59,7 +59,7 @@ exports.create = (api) => {
         computed(nearby, n => !isEmpty(n) ? h('header', strings.peopleNearby) : null),
         map(nearby, feedId => Option({
           notifications: Math.random() > 0.7 ? Math.floor(Math.random()*9+1) : 0, // TODO 
-          imageEl: api.about.html.image(feedId), // TODO make avatar
+          imageEl: api.about.html.avatar(feedId),
           label: api.about.obs.name(feedId),
           selected: location.feed === feedId,
           location: computed(recentPeersContacted, recent => {
@@ -88,7 +88,7 @@ exports.create = (api) => {
 
           return Option({
             notifications: Math.random() > 0.7 ? Math.floor(Math.random()*9+1) : 0, // TODO
-            imageEl: api.about.html.image(feedId), // TODO make avatar
+            imageEl: api.about.html.avatar(feedId),
             label: api.about.obs.name(feedId),
             selected: location.feed === feedId,
             location: Object.assign({}, lastMsg, { feed: feedId }) // TODO make obs?
@@ -133,7 +133,9 @@ exports.create = (api) => {
 
     function Option ({ notifications = 0, imageEl, label, location, selected }) {
       const className = selected ? '-selected' : '' 
-      const goToLocation = () => {
+      const goToLocation = (e) => {
+        e.preventDefault()
+        e.stopPropagation()
         api.history.sync.push(resolve(location))
       }
 

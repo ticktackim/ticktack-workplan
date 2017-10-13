@@ -17,7 +17,7 @@ Thread {
     div.msgs {
       div.msg-row {
         div.msg {
-          $colorPrimary
+          $colorMessagePrimary
 
           $roundLeft
         }
@@ -31,7 +31,7 @@ Thread {
     div.msgs {
       div.msg-row {
         div.msg {
-          border: 1px #ddd solid
+          border: 1px #fff solid
           $roundRight
         }
       }
