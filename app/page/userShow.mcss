@@ -1,33 +1,37 @@
 Page -userShow {
   div.content {
-    header {
+    section.about {
+      margin-top: 4rem
+      margin-bottom: 4rem
+
       display: flex
-      align-items: baseline
+      flex-direction: column
+      align-items: center
+
+      img.Avatar {
+        width: 5rem
+        height: 5rem
+        border-radius: 3rem
+      }
 
       h1 {
-        margin-right: 1rem
+        font-weight: 300
+        font-size: 1rem
       }
-      div.Link {
-        color: #666
-        :hover {
-          $colorPrimaryFG
+
+      div.actions {
+        display: flex
+
+        div.friendship {
+          margin-right: 1rem
+        }
+
+        div.directMessage {
         }
       }
     }
 
-    img.Avatar {
-      width: 30rem
-      height: 30rem
-    }
-
-    div.friendship {
-      display: flex
-      align-items: center
-
-      margin-bottom: 1rem
-
-      div.state { flex-basis: 12rem }
-      div.Button {}
+    section.blogs {
     }
 
     div.threads {}
