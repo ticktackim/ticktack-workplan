@@ -84,7 +84,7 @@ exports.create = function (api) {
     const { subject } = api.message.html
 
     if(!thread.value) return
-    if('string' === typeof thread.value.content.text) return
+    if('string' !== typeof thread.value.content.text) return
 
     const lastReply = thread.replies && maxBy(thread.replies, r => r.timestamp)
 
