@@ -2,6 +2,23 @@ var nest = require('depnest')
 var h = require('mutant/h')
 var isString= require('lodash/isString')
 var maxBy= require('lodash/maxBy')
+var humanTime = require('human-time')
+var marksum = require('markdown-summary')
+var markdown = require('ssb-markdown')
+var ref = require('ssb-ref')
+var htmlEscape = require('html-escape')
+
+function renderEmoji (emoji, url) {
+  if (!url) return ':' + emoji + ':'
+  return `
+    <img
+      src="${htmlEscape(url)}"
+      alt=":${htmlEscape(emoji)}:"
+      title=":${htmlEscape(emoji)}:"
+      class="emoji"
+    >
+  `
+}
 
 exports.gives = nest('app.html.threadCard', true)
 
@@ -10,12 +27,29 @@ exports.needs = nest({
   'history.sync.push': 'first',
   'about.obs.name': 'first',
   'about.html.avatar': 'first',
-  'message.html.subject': 'first',
   'translations.sync.strings': 'first',
-  'unread.sync.isUnread': 'first'
+  'unread.sync.isUnread': 'first',
+  'message.html.markdown': 'first',
+  'blob.sync.url': 'first',
+  'emoji.sync.url': 'first'
 })
 
 exports.create = function (api) {
+
+  //render markdown, but don't support patchwork@2 style mentions or custom emoji right now.
+  function render (source) {
+    return markdown.block(source, {
+      emoji: (emoji) => {
+        return renderEmoji(emoji, api.emoji.sync.url(emoji))
+      },
+      toUrl: (id) => {
+        if (ref.isBlob(id)) return api.blob.sync.url(id)
+        return id
+      },
+      imageLink: (id) => id
+    })
+  }
+
 
   //render the icon for a thread.
   //it would be more depjecty to split this
@@ -52,33 +86,81 @@ exports.create = function (api) {
     if(!thread.value) return
     if(!thread.value.content.text) return
 
-    const subjectEl = h('div.subject', [
-      opts.nameRecipients
-        ?  h('div.recps', buildRecipientNames(thread).map(recp => h('div.recp', recp)))
-        : null,
-      subject(thread)
-    ])
+//    const subjectEl = h('div.subject', [
+//      opts.nameRecipients
+//        ?  h('div.recps', buildRecipientNames(thread).map(recp => h('div.recp', recp)))
+//        : null,
+//      subject(thread)
+//    ])
 
     const lastReply = thread.replies && maxBy(thread.replies, r => r.timestamp)
-    const replySample = lastReply ? subject(lastReply) : null
+//    const replySample = lastReply ? subject(lastReply) : null
 
     const onClick = opts.onClick || function () { api.history.sync.push(thread) }
     const id = `${thread.key.replace(/[^a-z0-9]/gi, '')}` //-${JSON.stringify(opts)}`
     // id is only here to help morphdom morph accurately
 
-    var className = thread.unread ? '-unread': ''
+    var img = marksum.image(thread.value.content.text)
+    var m = /\!\[[^]+\]\(([^\)]+)\)/.exec(img)
+    console.log(m, img)
+    if(m) {
+      //hey this works! fit an image into a specific size (see thread-card.mcss)
+      //centered, and scaled to fit the square (works with both landscape and portrait!)
+      img = h('Thumbnail')
+      img.style = 'background-image: url("'+api.blob.sync.url(m[1])+'"); background-position:center; background-size: cover;'
+    }
+    else img = ''
+    var title = render(marksum.title(thread.value.content.text))
+    var summary = render(marksum.summary(thread.value.content.text))
 
+    var className = thread.unread ? '-unread': ''
     return h('ThreadCard', { id, className }, [
-      h('div.context', threadIcon(thread)),
+      h('div.context', [
+        api.about.html.avatar(thread.value.author),
+        ' ',
+        api.about.obs.name(thread.value.author),
+        ' ',
+        humanTime(new Date(thread.value.timestamp)),
+        ' ',
+        thread.value.content.channel ? '#'+thread.value.content.channel : null
+      ]),
       h('div.content', {'ev-click': onClick}, [
-        subjectEl,
-        replySample ? h('div.reply', [
-          h('i.fa.fa-caret-left'),
-          replySample
-        ]) : null
+        img,
+        h('Text', [
+          h('h2', {innerHTML: title}),
+          h('Summary', {innerHTML: summary})
+        ])
       ])
     ])
   })
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
