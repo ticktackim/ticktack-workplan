@@ -8,7 +8,7 @@ exports.gives = nest('app.page.channel')
 
 exports.needs = nest({
   'app.html.link': 'first',
-  'app.html.threadCard': 'first',
+  'app.html.blogCard': 'first',
   'history.sync.push': 'first',
   'state.obs.channel': 'first',
   'translations.sync.strings': 'first',
@@ -42,7 +42,7 @@ exports.create = (api) => {
             .map(id => threads.roots[id])
             .filter(thread => get(thread, 'value.content.channel') == channel)
             .sort((a, b) => latestUpdate(b) - latestUpdate(a))
-            .map(thread => api.app.html.threadCard(thread))
+            .map(thread => api.app.html.blogCard(thread))
           )
         )
         return updates

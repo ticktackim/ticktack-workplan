@@ -10,7 +10,7 @@ exports.gives = nest('app.page.blogIndex')
 
 exports.needs = nest({
   'app.html.context': 'first',
-  'app.html.threadCard': 'first',
+  'app.html.blogCard': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
   'translations.sync.strings': 'first',
@@ -101,7 +101,7 @@ exports.create = (api) => {
               if (channel && !recps)
                 onClick = (ev) => api.history.sync.push({ key: thread.key, page: 'blogShow' })
 
-              return api.app.html.threadCard(thread, { onClick })
+              return api.app.html.blogCard(thread, { onClick })
             })
           )
         )

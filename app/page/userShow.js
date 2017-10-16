@@ -9,7 +9,7 @@ exports.needs = nest({
   'about.html.image': 'first',
   'about.obs.name': 'first',
   'app.html.link': 'first',
-  'app.html.threadCard': 'first',
+  'app.html.blogCard': 'first',
   'contact.async.follow': 'first',
   'contact.async.unfollow': 'first',
   'contact.obs.followers': 'first',
@@ -93,7 +93,7 @@ exports.create = (api) => {
               ])
             : '',
         ]),
-        h('section.blogs', map(threads, api.app.html.threadCard))
+        h('section.blogs', map(threads, api.app.html.blogCard))
       ])
     ])
   }

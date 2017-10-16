@@ -12,7 +12,7 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'translations.sync.strings': 'first',
   'state.obs.threads': 'first',
-  'app.html.threadCard': 'first',
+  'app.html.blogCard': 'first',
   'unread.sync.isUnread': 'first'
 })
 
@@ -123,7 +123,7 @@ exports.create = (api) => {
               if (channel && !recps)
                 onClick = (ev) => api.history.sync.push({ channel })
 
-              return api.app.html.threadCard(thread, { onClick })
+              return api.app.html.blogCard(thread, { onClick })
             })
           )
         )

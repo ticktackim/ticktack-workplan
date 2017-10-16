@@ -9,7 +9,7 @@ Page -home {
     div.threads {
       min-width: 60%
 
-      div.ThreadCard {
+      div.BlogCard {
         div.content {
           div.subject {
             display: flex
@@ -31,7 +31,7 @@ Page -home {
         $homePageSection
 
         div.threads {
-          div.ThreadCard {
+          div.BlogCard {
             div.context {
               background: #fff
               min-width: 8rem
@@ -71,6 +71,6 @@ $homePageSection {
   }
 
   div.threads {
-    div.ThreadCard {} 
+    div.BlogCard {} 
   }
 }

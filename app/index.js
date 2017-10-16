@@ -8,7 +8,7 @@ module.exports = {
     header: require('./html/header'),
     thread: require('./html/thread'),
     link: require('./html/link'),
-    threadCard: require('./html/thread-card'),
+    blogCard: require('./html/thread-card'),
   },
   page: {
     blogIndex: require('./page/blogIndex'),

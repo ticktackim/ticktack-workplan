@@ -20,7 +20,7 @@ function renderEmoji (emoji, url) {
   `
 }
 
-exports.gives = nest('app.html.threadCard', true)
+exports.gives = nest('app.html.blogCard', true)
 
 exports.needs = nest({
   'keys.sync.id': 'first',
@@ -79,7 +79,7 @@ exports.create = function (api) {
       .map(api.about.obs.name)
   }
 
-  return nest('app.html.threadCard', (thread, opts = {}) => {
+  return nest('app.html.blogCard', (thread, opts = {}) => {
     var strings = api.translations.sync.strings()
     const { subject } = api.message.html
 
@@ -107,7 +107,7 @@ exports.create = function (api) {
     var summary = render(marksum.summary(thread.value.content.text))
 
     var className = thread.unread ? '-unread': ''
-    return h('ThreadCard', { id, className }, [
+    return h('BlogCard', { id, className }, [
       h('div.context', [
         api.about.html.avatar(thread.value.author),
         ' ',
