@@ -92,40 +92,39 @@ exports.create = function (api) {
     const id = `${thread.key.replace(/[^a-z0-9]/gi, '')}` //-${JSON.stringify(opts)}`
     // id is only here to help morphdom morph accurately
 
-    var img = marksum.image(thread.value.content.text)
-    var m = /\!\[[^]+\]\(([^\)]+)\)/.exec(img)
+    const { content, author, timestamp } = thread.value
 
+    var img = h('Thumbnail')
+    var m = /\!\[[^]+\]\(([^\)]+)\)/.exec(marksum.image(content.text))
     if(m) {
       //Hey this works! fit an image into a specific size (see thread-card.mcss)
       //centered, and scaled to fit the square (works with both landscape and portrait!)
       //This is functional css not opinionated css, so all embedded.
-      img = h('Thumbnail')
       img.style = 'background-image: url("'+api.blob.sync.url(m[1])+'"); background-position:center; background-size: cover;'
     }
-    else img = ''
-    var title = render(marksum.title(thread.value.content.text))
-    var summary = render(marksum.summary(thread.value.content.text))
 
-    var className = thread.unread ? '-unread': ''
+    const title = render(marksum.title(content.text))
+    const summary = render(marksum.summary(content.text))
+
+    const className = thread.unread ? '-unread': ''
+
     return h('BlogCard', { id, className }, [
       h('div.context', [
-        api.about.html.avatar(thread.value.author),
-        ' ',
-        api.about.obs.name(thread.value.author),
-        ' ',
-        humanTime(new Date(thread.value.timestamp)),
-        ' ',
-        thread.value.content.channel ? '#'+thread.value.content.channel : null
+        api.about.html.avatar(author),
+        h('div.name', api.about.obs.name(author)),
+        h('div.timeago', humanTime(new Date(timestamp))),
       ]),
       h('div.content', {'ev-click': onClick}, [
         img,
-        h('Text', [
+        h('div.text', [
           h('h2', {innerHTML: title}),
-          h('Summary', {innerHTML: summary})
+          content.channel
+            ? h('Button -channel', '#'+content.channel)
+            : '',
+          h('div.summary', {innerHTML: summary})
         ])
       ])
     ])
   })
 }
-
 

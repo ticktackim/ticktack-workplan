@@ -50,7 +50,7 @@ $colorPrimaryFG {
 }
 
 $colorSubtle {
-  color: #222
+  color: #999
 }
 
 $backgroundPrimary {
@@ -88,15 +88,28 @@ $markdownSmall {
       height: .9rem
     }
   }
+  h1, h2, h3, h4, h5, h6, p {
+    font-size: .9rem
+    font-weight: 300
+    margin: 0
+  }
+  (img.emoji) {
+    height: .9rem
+  }
 }
 
 $markdownLarge {
   div.Markdown {
     h1, h2, h3, h4, h5, h6, p {
-      font-size: 1.2rem
+      font-size: 1.5rem
       font-weight: 300
       margin: 0
     }
+  }
+  h1, h2, h3, h4, h5, h6, p {
+    font-size: 1.5rem
+    font-weight: 300
+    margin: 0
   }
 }
 
@@ -105,6 +118,9 @@ $markdownBold {
     h1, h2, h3, h4, h5, h6, p {
       font-weight: bold
     }
+  }
+  h1, h2, h3, h4, h5, h6, p {
+    font-weight: bold
   }
 }
 

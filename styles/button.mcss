@@ -1,15 +1,19 @@
 Button {
   font-family: arial
-  text-align: center
   background-color: #fff
 
   min-width: 6rem
+  height: 1.2rem
   padding: .2rem 1rem
 
   border: 1px #b9b9b9 solid
   border-radius: 10rem
 
   cursor: pointer
+
+  display: flex
+  justify-content: center
+  align-items: center
 
   -subtle {
     color: initial
