@@ -1,13 +1,13 @@
 BlogCard {
   padding: 1rem
   background-color: #fff
-  margin-bottom: .5rem
 
   border: 1px solid #fff
   transition: all .5s ease
 
   :hover {
-    border: 1px solid #999
+    border: 1px solid gainsboro 
+    box-shadow: gainsboro 2px 2px 10px
   }
 
   display: flex

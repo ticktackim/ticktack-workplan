@@ -2,6 +2,16 @@ Page -blogIndex {
 
   div.content {
     $backgroundPrimary
+
+    div.Button {
+      margin: 1rem 0
+    }
+
+    div.blogs {
+      div.BlogCard {
+        margin-bottom: .5rem
+      }
+    }
   }
 }
 
