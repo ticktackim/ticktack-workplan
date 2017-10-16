@@ -16,7 +16,6 @@ Page {
     min-height: calc(100% - 3rem)
     overflow-y: auto
       
-    $maxWidth
     flex-grow: 1
 
     padding: 1rem

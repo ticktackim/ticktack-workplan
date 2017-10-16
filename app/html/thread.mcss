@@ -1,4 +1,7 @@
 Thread {
+  $maxWidth
+  margin: 0 auto
+
   display: flex
   flex-direction: column
 
@@ -14,7 +17,7 @@ Thread {
     div.msgs {
       div.msg-row {
         div.msg {
-          $colorPrimary
+          $colorMessagePrimary
 
           $roundLeft
         }
@@ -28,7 +31,7 @@ Thread {
     div.msgs {
       div.msg-row {
         div.msg {
-          border: 1px #ddd solid
+          border: 1px #fff solid
           $roundRight
         }
       }

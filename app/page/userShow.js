@@ -33,27 +33,30 @@ exports.create = (api) => {
 
     const { followers } = api.contact.obs
 
-    const youFollowThem = computed(followers(feed), followers => followers.has(myId))
-    const theyFollowYou = computed(followers(myId), followers => followers.has(feed))
-    const youAreFriends = computed([youFollowThem, theyFollowYou], (a, b) => a && b)
+    const youFollowThem = computed(followers(feed), followers => followers.includes(myId))
+    // const theyFollowYou = computed(followers(myId), followers => followers.includes(feed))
+    // const youAreFriends = computed([youFollowThem, theyFollowYou], (a, b) => a && b)
 
-    const ourRelationship = computed(
-      [youAreFriends, youFollowThem, theyFollowYou],
-      (youAreFriends,  youFollowThem, theyFollowYou) => {
-        if (youAreFriends) return strings.userShow.state.friends
-        if (theyFollowYou) return strings.userShow.state.theyFollow
-        if (youFollowThem) return strings.userShow.state.youFollow
-      }
-    )
+    // const ourRelationship = computed(
+    //   [youAreFriends, youFollowThem, theyFollowYou],
+    //   (youAreFriends,  youFollowThem, theyFollowYou) => {
+    //     if (youAreFriends) return strings.userShow.state.friends
+    //     if (theyFollowYou) return strings.userShow.state.theyFollow
+    //     if (youFollowThem) return strings.userShow.state.youFollow
+    //   }
+    // )
     const { unfollow, follow } = api.contact.async
     const followButton = when(followers(myId).sync,
       when(youFollowThem,
-        h('Button -subtle', { 'ev-click': () => unfollow(feed) }, strings.userShow.action.unfollow),
+        h('Button -primary', { 'ev-click': () => unfollow(feed) }, strings.userShow.action.unfollow),
         h('Button -primary', { 'ev-click': () => follow(feed) }, strings.userShow.action.follow)
       ),
       h('Button', { disabled: 'disabled' }, strings.loading )
     )
 
+    const Link = api.app.html.link
+    const userEditButton = Link({ page: 'userEdit', feed }, h('i.fa.fa-pencil'))
+    const directMessageButton = Link({ page: 'threadNew', feed }, h('Button', strings.userShow.action.directMessage))
 
     const threads = MutantArray()
     pull(
@@ -73,31 +76,24 @@ exports.create = (api) => {
       // Scroller(content, scrollerContent, render, false, false)
     )
 
-    const Link = api.app.html.link
-
     return h('Page -userShow', {title: name}, [
       h('div.content', [
-        h('header', [
-          h('h1', name),
-          feed === myId // Only expose own profile editing right now
-            ? Link({ page: 'userEdit', feed }, h('i.fa.fa-pencil'))
-            : ''
+        h('section.about', [
+          api.about.html.image(feed),
+          h('h1', [
+            name,
+            feed === myId // Only expose own profile editing right now
+              ? userEditButton
+              : ''
+          ]),
+          feed !== myId
+            ? h('div.actions', [
+                h('div.friendship', followButton),
+                h('div.directMessage', directMessageButton)
+              ])
+            : '',
         ]),
-        api.about.html.image(feed),
-        feed !== myId
-          ? h('div.friendship', [
-            h('div.state', ourRelationship),
-            followButton
-          ]) : '',
-
-
-        // h('div', '...friends in common'),
-        // h('div', '...groups this person is in'),
-
-        feed !== myId
-          ? Link({ page: 'threadNew', feed }, h('Button -primary', strings.userShow.action.directMessage))
-          : '',
-        h('div.threads', map(threads, api.app.html.threadCard))
+        h('section.blogs', map(threads, api.app.html.threadCard))
       ])
     ])
   }

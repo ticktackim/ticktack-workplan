@@ -1,12 +1,37 @@
 Context {
+  flex-shrink: 0
+  flex-grow: 0
+  overflow: hidden
+  background-color: #fff
+
   display: flex
 
   div.level {
-    width: 11rem
+    width: 13rem
+    overflow-y: auto
+    overflow-x: hidden
+
     border-right: 1px gainsboro solid
 
     div.Option {}
 
+    header {
+      $colorSubtle
+      padding: .5rem 1rem
+    }
+
+    hr {
+      border: 1px solid gainsboro
+      border-bottom: none
+      margin: 0
+    }
+
+    -one {}
+    -two {
+      div.Option {
+        padding: 0 1rem
+      }
+    }
   }
 }
 
@@ -15,6 +40,11 @@ Option {
   padding: .5rem 1rem
   display: flex
   align-items: center
+
+  :hover {
+    cursor: pointer
+    $backgroundSelected
+  }
 
   -selected {
     $backgroundSelected
@@ -55,12 +85,22 @@ Option {
 
   }
 
-  div.Link {
+  div.label {
+    $markdownSmall 
+    (a) {
+      $colorFontBasic
+      :hover { text-decoration: none }
+    }
+
     flex-grow: 1
 
     display: flex
     align-items: center
     min-height: 3rem
-  }
 
+    div.Button {
+      flex-grow: 1
+    }
+  }
 }
+

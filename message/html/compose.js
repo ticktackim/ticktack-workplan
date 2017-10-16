@@ -9,10 +9,12 @@ exports.gives = nest('message.html.compose')
 exports.needs = nest({
   'about.async.suggest': 'first',
   'blob.html.input': 'first',
-  // 'channel.async.suggest': 'first',
+  'channel.async.suggest': 'first',
+  'emoji.async.suggest': 'first',
   'emoji.sync.names': 'first',
   'emoji.sync.url': 'first',
   'message.async.publish': 'first',
+  'message.html.markdown': 'first',
   // 'message.html.confirm': 'first'
   'translations.sync.strings': 'first'
 })
@@ -20,17 +22,19 @@ exports.needs = nest({
 exports.create = function (api) {
   return nest('message.html.compose', compose)
 
-  function compose ({ shrink = true, meta, prepublish, placeholder = 'Write a message' }, cb) {
+  function compose ({ shrink = true, meta, prepublish, placeholder }, cb) {
     const strings = api.translations.sync.strings()
+    const getProfileSuggestions = api.about.async.suggest()
+    const getChannelSuggestions = api.channel.async.suggest()
+    const getEmojiSuggestions = api.emoji.async.suggest()
+
+    placeholder = placeholder || strings.writeMessage
 
     var files = []
     var filesById = {}
-    var channelInputFocused = Value(false)
     var textAreaFocused = Value(false)
-    var focused = computed([channelInputFocused, textAreaFocused], (a, b) => a || b)
+    var focused = textAreaFocused
     var hasContent = Value(false)
-    var getProfileSuggestions = api.about.async.suggest()
-    // var getChannelSuggestions = api.channel.async.suggest()
 
     var blurTimeout = null
 
@@ -40,24 +44,9 @@ exports.create = function (api) {
       return focused
     })
 
-    // var channelInput = h('input.channel', {
-    //   'ev-input': () => hasContent.set(!!channelInput.value),
-    //   'ev-keyup': ev => {
-    //     ev.target.value = ev.target.value.replace(/^#*([\w@%&])/, '#$1')
-    //   },
-    //   'ev-blur': () => {
-    //     clearTimeout(blurTimeout)
-    //     blurTimeout = setTimeout(() => channelInputFocused.set(false), 200)
-    //   },
-    //   'ev-focus': send(channelInputFocused.set, true),
-    //   placeholder: '#channel (optional)',
-    //   value: computed(meta.channel, ch => ch ? '#' + ch : null),
-    //   disabled: when(meta.channel, true),
-    //   title: when(meta.channel, 'Reply is in same channel as original message')
-    // })
-
+    var textRaw = Value('')
     var textArea = h('textarea', {
-      'ev-input': () => hasContent.set(!!textArea.value),
+      'ev-input': () => textRaw.set(textArea.value),
       'ev-blur': () => {
         clearTimeout(blurTimeout)
         blurTimeout = setTimeout(() => textAreaFocused.set(false), 200)
@@ -65,6 +54,8 @@ exports.create = function (api) {
       'ev-focus': send(textAreaFocused.set, true),
       placeholder
     })
+    textRaw(text => hasContent.set(!!text))
+
     textArea.publish = publish // TODO: fix - clunky api for the keyboard shortcut to target
 
     var fileInput
@@ -78,7 +69,9 @@ exports.create = function (api) {
         var insertLink = spacer + embed + '[' + file.name + ']' + '(' + file.link + ')' + spacer
 
         var pos = textArea.selectionStart
-        textArea.value = textArea.value.slice(0, pos) + insertLink + textArea.value.slice(pos)
+        var newText = textRaw().slice(0, pos) + insertLink + textRaw().slice(pos)
+        textArea.value = newText
+        textRaw.set(newText)
 
         console.log('added:', file)
       })
@@ -88,56 +81,41 @@ exports.create = function (api) {
     // if fileInput is null, send button moves to the left side
     // and we don't want that.
     else
-      fileInput = h('span')
+      fileInput = h('input', { style: {visibility: 'hidden'}})
+
+    var showPreview = Value(false)
+    var previewBtn = h('Button',
+      {
+        className: when(showPreview, '-primary'),
+        'ev-click': () => showPreview.set(!showPreview())
+      }, 
+      when(showPreview, strings.blogNew.actions.edit, strings.blogNew.actions.preview)
+    )
+    var preview = computed(textRaw, text => api.message.html.markdown(text))
 
     var publishBtn = h('Button -primary', { 'ev-click': publish }, strings.sendMessage)
 
     var actions = h('section.actions', [
       fileInput,
+      previewBtn,
       publishBtn
     ])
 
     var composer = h('Compose', {
       classList: when(expanded, '-expanded', '-contracted')
     }, [
-      // channelInput,
-      textArea,
+      when(showPreview, preview, textArea),
       actions
     ])
 
-    // addSuggest(channelInput, (inputText, cb) => {
-    //   if (inputText[0] === '#') {
-    //     cb(null, getChannelSuggestions(inputText.slice(1)))
-    //   }
-    // }, {cls: 'SuggestBox'})
-    // channelInput.addEventListener('suggestselect', ev => {
-    //   channelInput.value = ev.detail.id  // HACK : this over-rides the markdown value
-    // })
-
     addSuggest(textArea, (inputText, cb) => {
-      if (inputText[0] === '@') {
-        cb(null, getProfileSuggestions(inputText.slice(1)))
-      // } else if (inputText[0] === '#') {
-      //   cb(null, getChannelSuggestions(inputText.slice(1)))
-      } else if (inputText[0] === ':') {
-        // suggest emojis
-        var word = inputText.slice(1)
-        if (word[word.length - 1] === ':') {
-          word = word.slice(0, -1)
-        }
-        // TODO: when no emoji typed, list some default ones
-        cb(null, api.emoji.sync.names().filter(function (name) {
-          return name.slice(0, word.length) === word
-        }).slice(0, 100).map(function (emoji) {
-          return {
-            image: api.emoji.sync.url(emoji),
-            title: emoji,
-            subtitle: emoji,
-            value: ':' + emoji + ':'
-          }
-        }))
-      }
-    }, {cls: 'SuggestBox'})
+      const char = inputText[0]
+      const wordFragment = inputText.slice(1)
+
+      if (char === '@') cb(null, getProfileSuggestions(wordFragment))
+      if (char === '#') cb(null, getChannelSuggestions(wordFragment))
+      if (char === ':') cb(null, getEmojiSuggestions(wordFragment))
+    }, {cls: 'PatchSuggest'})
 
     return composer
 
@@ -145,11 +123,9 @@ exports.create = function (api) {
 
     function publish () {
       publishBtn.disabled = true
+      const text = resolve(textRaw)
 
-      // const channel = channelInput.value.startsWith('#')
-      //   ? channelInput.value.substr(1).trim()
-      //   : channelInput.value.trim()
-      const mentions = ssbMentions(textArea.value).map(mention => {
+      const mentions = ssbMentions(text).map(mention => {
         // merge markdown-detected mention with file info
         var file = filesById[mention.link]
         if (file) {
@@ -160,12 +136,10 @@ exports.create = function (api) {
       })
 
       var content = assign({}, resolve(meta), {
-        text: textArea.value,
-        // channel,
+        text,
         mentions
       })
 
-      // if (!channel) delete content.channel
       if (!content.channel) delete content.channel
       if (!mentions.length) delete content.mentions
       if (content.recps && content.recps.length === 0) delete content.recps
@@ -179,13 +153,17 @@ exports.create = function (api) {
         handleErr(err)
       }
 
+      // debugger
       return api.message.async.publish(content, done)
       // return api.message.html.confirm(content, done)
 
       function done (err, msg) {
         publishBtn.disabled = false
         if (err) handleErr(err)
-        else if (msg) textArea.value = ''
+        else if (msg) { 
+          textRaw.set('')
+          textArea.value = ''
+        }
         if (cb) cb(err, msg)
       }
 
@@ -196,7 +174,4 @@ exports.create = function (api) {
     }
   }
 }
-
-
-
 

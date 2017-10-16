@@ -1,7 +1,7 @@
 Page -blogIndex {
 
   div.content {
-    $backgroundGrey
+    $backgroundPrimary
   }
 }
 

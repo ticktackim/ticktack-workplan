@@ -1,19 +1,21 @@
 const nest = require('depnest')
-const { h, computed, map, when, Dict, dictToCollection, Array: MutantArray } = require('mutant')
+const { h, computed, map, when, Dict, dictToCollection, Array: MutantArray, resolve } = require('mutant')
 const pull = require('pull-stream')
 const next = require('pull-next-step')
 const get = require('lodash/get')
+const isEmpty = require('lodash/isEmpty')
 
 exports.gives = nest('app.html.context')
 
 exports.needs = nest({
-  'about.html.image': 'first',
+  'about.html.avatar': 'first',
   'about.obs.name': 'first',
-  'app.html.link': 'first',
   'feed.pull.private': 'first',
   'feed.pull.rollup': 'first',
   'keys.sync.id': 'first',
+  'history.sync.push': 'first',
   'message.html.subject': 'first',
+  'sbot.obs.localPeers': 'first',
   'translations.sync.strings': 'first',
 })
 
@@ -24,20 +26,13 @@ exports.create = (api) => {
     const strings = api.translations.sync.strings()
     const myKey = api.keys.sync.id()
 
-    const discover = {
-      notifications: Math.floor(Math.random()*5+1),
-      imageEl: h('i.fa.fa-binoculars'),
-      name: strings.blogIndex.title,
-      location: { page: 'blogIndex' },
-      selected: ['blogIndex', 'home'].includes(location.page)
-    }
-    var nearby = []
-
+    var nearby = api.sbot.obs.localPeers()
     var recentPeersContacted = Dict()
     // TODO - extract as contact.obs.recentPrivate or something
 
     pull(
       next(api.feed.pull.private, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
+      pull.filter(msg => msg.value.content.type === 'post'), // TODO is this the best way to protect against votes?
       pull.filter(msg => msg.value.content.recps),
       pull.drain(msg => {
         msg.value.content.recps
@@ -57,25 +52,54 @@ exports.create = (api) => {
     ])
 
     function LevelOneContext () {
+      const PAGES_UNDER_DISCOVER = ['blogIndex', 'blogShow', 'home']
+
       return h('div.level.-one', [
-        Option(discover), 
-        map(nearby, Option), // TODO
+        // Nearby
+        computed(nearby, n => !isEmpty(n) ? h('header', strings.peopleNearby) : null),
+        map(nearby, feedId => Option({
+          notifications: Math.random() > 0.7 ? Math.floor(Math.random()*9+1) : 0, // TODO 
+          imageEl: api.about.html.avatar(feedId),
+          label: api.about.obs.name(feedId),
+          selected: location.feed === feedId,
+          location: computed(recentPeersContacted, recent => {
+            const lastMsg = recent[feedId]
+            return lastMsg
+              ? Object.assign(lastMsg, { feed: feedId })
+              : { page: 'threadNew', feed: feedId }
+          }),
+        })),
+        computed(nearby, n => !isEmpty(n) ?  h('hr') : null),
+
+        // Discover
+        Option({
+          notifications: Math.floor(Math.random()*5+1),
+          imageEl: h('i.fa.fa-binoculars'),
+          label: strings.blogIndex.title,
+          selected: PAGES_UNDER_DISCOVER.includes(location.page),
+          location: { page: 'blogIndex' },
+        }),
+
+        // Recent Messages
         map(dictToCollection(recentPeersContacted), ({ key, value })  => { 
           const feedId = key()
           const lastMsg = value()
+          if (nearby.has(feedId)) return
+
           return Option({
             notifications: Math.random() > 0.7 ? Math.floor(Math.random()*9+1) : 0, // TODO
-            imageEl: api.about.html.image(feedId), // TODO make avatar
-            name: api.about.obs.name(feedId),
-            location: Object.assign(lastMsg, { feed: feedId }),  // QUESION : how should we pass the context, is stapling feed on like this horrible?
-            selected: location.feed === feedId
+            imageEl: api.about.html.avatar(feedId),
+            label: api.about.obs.name(feedId),
+            selected: location.feed === feedId,
+            location: Object.assign({}, lastMsg, { feed: feedId }) // TODO make obs?
           })
         })
       ])
     }
 
     function LevelTwoContext () {
-      const targetUser = location.feed
+      const { key, value, feed: targetUser, page } = location
+      const root = get(value, 'content.root', key)
       if (!targetUser) return
 
       var threads = MutantArray()
@@ -83,35 +107,50 @@ exports.create = (api) => {
       pull(
         next(api.feed.pull.private, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
         pull.filter(msg => msg.value.content.recps),
-        pull.filter(msg => {
-          return msg.value.content.recps
-            .map(recp => typeof recp === 'object' ? recp.link : recp)
-            .some(recp => recp === targetUser)
-        }),
+        pull.filter(msg => msg.value.content.recps
+          .map(recp => typeof recp === 'object' ? recp.link : recp)
+          .some(recp => recp === targetUser)
+        ),
         api.feed.pull.rollup(),
         pull.drain(thread => threads.push(thread))
       )
 
       return h('div.level.-two', [
-        h('Button', 'New Message'), // TODO -translate
-        map(threads, thread => {
-          return h('Option', [
-            api.app.html.link(
-              Object.assign(thread, { feed: targetUser }),
-              api.message.html.subject(thread)
-            )
-          ])
+        Option({
+          selected: page === 'threadNew',
+          location: {page: 'threadNew', feed: targetUser},
+          label: h('Button', strings.threadNew.action.new),
+        }),
+        map(threads, thread => { 
+          return Option({
+            label: api.message.html.subject(thread),
+            selected: thread.key === root,
+            location: Object.assign(thread, { feed: targetUser }),
+          })
         })
       ])
     }
 
-    function Option ({ notifications = 0, imageEl, name, location, selected }) {
-      return h('Option', { className: selected ? '-selected' : '' }, [
+    function Option ({ notifications = 0, imageEl, label, location, selected }) {
+      const className = selected ? '-selected' : '' 
+      const goToLocation = (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        api.history.sync.push(resolve(location))
+      }
+
+      if (!imageEl) {
+        return h('Option', { className, 'ev-click': goToLocation }, [
+          h('div.label', label)
+        ])
+      }
+
+      return h('Option', { className }, [
         h('div.circle', [
           when(notifications, h('div.alert', notifications)),
           imageEl
         ]),
-        api.app.html.link(location, name),
+        h('div.label', { 'ev-click': goToLocation }, label)
       ])
     }
   })
