@@ -84,17 +84,9 @@ exports.create = function (api) {
     const { subject } = api.message.html
 
     if(!thread.value) return
-    if(!thread.value.content.text) return
-
-//    const subjectEl = h('div.subject', [
-//      opts.nameRecipients
-//        ?  h('div.recps', buildRecipientNames(thread).map(recp => h('div.recp', recp)))
-//        : null,
-//      subject(thread)
-//    ])
+    if('string' === typeof thread.value.content.text) return
 
     const lastReply = thread.replies && maxBy(thread.replies, r => r.timestamp)
-//    const replySample = lastReply ? subject(lastReply) : null
 
     const onClick = opts.onClick || function () { api.history.sync.push(thread) }
     const id = `${thread.key.replace(/[^a-z0-9]/gi, '')}` //-${JSON.stringify(opts)}`
@@ -102,10 +94,11 @@ exports.create = function (api) {
 
     var img = marksum.image(thread.value.content.text)
     var m = /\!\[[^]+\]\(([^\)]+)\)/.exec(img)
-    console.log(m, img)
+
     if(m) {
-      //hey this works! fit an image into a specific size (see thread-card.mcss)
+      //Hey this works! fit an image into a specific size (see thread-card.mcss)
       //centered, and scaled to fit the square (works with both landscape and portrait!)
+      //This is functional css not opinionated css, so all embedded.
       img = h('Thumbnail')
       img.style = 'background-image: url("'+api.blob.sync.url(m[1])+'"); background-position:center; background-size: cover;'
     }
@@ -134,33 +127,4 @@ exports.create = function (api) {
     ])
   })
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
