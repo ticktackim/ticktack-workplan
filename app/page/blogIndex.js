@@ -55,7 +55,7 @@ exports.create = (api) => {
       requestIdleCallback(threadsObs.more)
     }
 
-    var updates = h('div.threads', [])
+    var updates = h('div.blogs', [])
     contentHtmlObs = More(
       threadsObsDebounced,
       function render (threads) {
@@ -94,7 +94,7 @@ exports.create = (api) => {
 
         morphdom(
           updates,
-          h('div.threads',
+          h('div.blogs',
             groupedThreads.map(thread => {
               const { recps, channel } = thread.value.content
               var onClick

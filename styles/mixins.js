@@ -111,6 +111,9 @@ $markdownLarge {
     font-weight: 300
     margin: 0
   }
+  (img.emoji) { 
+    height: 1.5rem
+  }
 }
 
 $markdownBold {
