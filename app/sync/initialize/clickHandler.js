@@ -4,18 +4,20 @@ exports.gives = nest('app.sync.initialize')
 
 exports.needs = nest({
   'app.async.catchLinkClick': 'first',
-  'app.sync.nav': 'first',
+  'history.sync.push': 'first',
 })
 
 exports.create = (api) => {
   return nest({
     'app.sync.initialize': function initializeClickHandling () {
-      api.app.async.catchLinkClick(document.body, (link, { isExternal }) => {
-        const nav = api.app.sync.nav()
+      const target = document.body
 
+      api.app.async.catchLinkClick(target, (link, { isExternal }) => {
         if (isExternal) return openExternal(link)
-        nav.push(link)
+
+        api.history.sync.push(link)
       })
     }
   })
 }
+
