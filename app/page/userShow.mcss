@@ -17,6 +17,11 @@ Page -userShow {
       h1 {
         font-weight: 300
         font-size: 1rem
+        
+        display: flex
+        div.Link {
+          margin-left: .5rem
+        }
       }
 
       div.actions {
