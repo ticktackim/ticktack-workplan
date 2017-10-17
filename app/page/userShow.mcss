@@ -32,9 +32,10 @@ Page -userShow {
     }
 
     section.blogs {
+      div.BlogCard {
+        margin-bottom: .5rem
+      }
     }
-
-    div.threads {}
   }
 }
 
