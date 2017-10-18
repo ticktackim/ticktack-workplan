@@ -6,7 +6,7 @@ const get = require('lodash/get')
 exports.gives = nest('app.page.userShow')
 
 exports.needs = nest({
-  'about.html.image': 'first',
+  'about.html.avatar': 'first',
   'about.obs.name': 'first',
   'app.html.link': 'first',
   'app.html.blogCard': 'first',
@@ -79,7 +79,7 @@ exports.create = (api) => {
     return h('Page -userShow', {title: name}, [
       h('div.content', [
         h('section.about', [
-          api.about.html.image(feed),
+          api.about.html.avatar(feed, 'large'),
           h('h1', [
             name,
             feed === myId // Only expose own profile editing right now

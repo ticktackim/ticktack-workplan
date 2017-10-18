@@ -84,7 +84,7 @@ exports.create = function (api) {
       fileInput = h('input', { style: {visibility: 'hidden'}})
 
     var showPreview = Value(false)
-    var previewBtn = h('Button',
+    var previewBtn = h('Button -preview',
       {
         className: when(showPreview, '-primary'),
         'ev-click': () => showPreview.set(!showPreview())

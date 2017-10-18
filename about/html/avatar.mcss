@@ -1,5 +1,20 @@
 Avatar {
-  $avatarSmall
-  margin-right: .5rem
+  $circleSmall
+
+  -tiny {
+    $circleTiny
+  }
+
+  -small {
+    $circleSmall
+  }
+
+  -medium {
+    $circleMedium
+  }
+
+  -large {
+    $circleLarge
+  }
 }
 

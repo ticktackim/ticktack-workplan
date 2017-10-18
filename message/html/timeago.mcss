@@ -1,0 +1,5 @@
+Timeago {
+  font-size: .8rem
+  $colorSubtle
+}
+

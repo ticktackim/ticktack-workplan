@@ -4,11 +4,12 @@ module.exports = {
   },
   html: {
     app: require('./html/app'),
+    comments: require('./html/comments'),
     context: require('./html/context'),
     header: require('./html/header'),
     thread: require('./html/thread'),
     link: require('./html/link'),
-    blogCard: require('./html/blog-card'),
+    blogCard: require('./html/blogCard'),
   },
   page: {
     blogIndex: require('./page/blogIndex'),

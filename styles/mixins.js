@@ -45,8 +45,8 @@ $colorFontBasic {
   color: #222
 }
 
-$colorPrimaryFG {
-  color: #fff
+$colorFontPrimary {
+  color: #5c6bc0
 }
 
 $colorSubtle {
@@ -57,6 +57,10 @@ $backgroundPrimary {
   background-color: #f5f6f7
 }
 
+$backgroundPrimaryText {
+  background-color: #fff
+}
+
 $backgroundSelected {
   background-color: #f0f1f2
 }
@@ -65,16 +69,36 @@ $borderPrimary {
   border: 1px #2f63ad solid
 }
 
-$avatarSmall {
-  width: 3rem
-  height: 3rem
-  border-radius: 1.5rem
+$circleTiny {
+  min-width: 2rem
+  min-height: 2rem
+  width: 2rem
+  height: 2rem
+  border-radius: 1rem
 }
 
-$avatarLarge {
-  width: 6rem
-  height: 6rem
-  border-radius: 3rem
+$circleSmall {
+  min-width: 2.8rem
+  min-height: 2.8rem
+  width: 2.8rem
+  height: 2.8rem
+  border-radius: 1.4rem
+}
+
+$circleMedium {
+  min-width: 3.5rem
+  min-height: 3.5rem
+  width: 3.5rem
+  height: 3.5rem
+  border-radius: 1.75rem
+}
+
+$circlelarge {
+  min-width: 5rem
+  min-height: 5rem
+  width: 5rem
+  height: 5rem
+  border-radius: 2.5rem
 }
 
 $markdownSmall {
