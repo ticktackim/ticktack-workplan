@@ -26,7 +26,7 @@ exports.create = (api) => {
     const { author, content } = blogMsg.value
 
     const blog = content.text
-    const title = content.title || getTitle(blog)
+    const title = api.message.html.markdown(content.title || getTitle(blog))
 
     const comments = api.app.html.comments(blogMsg.key)
 

@@ -1,0 +1,65 @@
+Comments {
+  margin: 0 1.5rem
+
+  div.Comment {}
+}
+
+Comment {
+  display: flex
+
+  div.left {
+    margin-right: 1rem
+
+    div.Avatar {}
+  }
+
+  div.right {
+    flex-grow: 1
+
+    border-bottom: 1px solid gainsboro
+    padding-bottom: 1rem
+    margin-bottom: 1rem
+
+    section.context {
+      display: flex
+      align-items: baseline
+
+      div.name {
+        font-size: 1.2rem
+        margin-right: 1rem
+      }
+      div.Timeago {}
+    }
+
+    section.content {
+      font-size: .9rem
+      line-height: 1.4
+      div.Markdown {}
+    }
+
+    section.actions {
+      font-size: 1.2rem
+      margin-right: .5rem
+
+      display: flex
+      justify-content: flex-end
+      align-items: baseline
+
+      div.reply {
+        margin-right: 1.5rem
+        i.fa {}
+      }
+
+      div.Likes {
+        min-width: 2.5rem
+
+        display: flex
+        align-items: center
+
+        i.fa { margin-right: .3rem }
+        div.count {}
+      }
+    }
+  }
+}
+

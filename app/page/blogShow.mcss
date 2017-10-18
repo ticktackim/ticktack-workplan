@@ -2,6 +2,12 @@ Page -blogShow {
   // div.context {}
 
   div.content {
+    header, div, section {
+      $maxWidth
+      margin-left: auto
+      margin-right: auto
+    }
+
     header {
       $backgroundPrimaryText
       padding: 1rem
@@ -16,6 +22,8 @@ Page -blogShow {
         h1 {
           flex-basis: 100%
 
+          $markdownLarge
+          font-size: 2rem
           font-weight: 300
           margin: 0 0 1rem 0
         }

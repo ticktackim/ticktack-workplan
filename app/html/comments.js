@@ -10,8 +10,10 @@ exports.needs = nest({
   'feed.obs.thread': 'first',
   'keys.sync.id': 'first',
   'message.html.markdown': 'first',
+  'message.html.timeago': 'first',
+  'message.html.likes': 'first',
   'unread.sync.markRead': 'first',
-  'unread.sync.isUnread': 'first'
+  'unread.sync.isUnread': 'first',
 })
 
 exports.create = (api) => {
@@ -35,21 +37,18 @@ exports.create = (api) => {
 
       const { author } = msg.value
       return h('Comment', { className }, [
-        h('div.left', api.about.html.avatar(author)),
+        h('div.left', api.about.html.avatar(author, 'tiny')),
         h('div.right', [
           h('section.context', [
             h('div.name', api.about.obs.name(author)),
-            h('div.timeago', '3 hours ago'), //TODO
+            api.message.html.timeago(msg)
           ]),
           h('section.content', api.message.html.markdown(raw)),
           h('section.actions', [
             h('div.reply', [ 
               h('i.fa.fa-commenting-o'),
             ]),
-            h('div.like', [ 
-              Math.random() > 0.5 ? h('i.fa.fa-heart') : h('i.fa.fa-heart-o'), // TODO -obs I like
-              3  // TODO -obs like count
-            ])
+            api.message.html.likes(msg)
           ])
         ])
       ])
