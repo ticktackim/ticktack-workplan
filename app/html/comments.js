@@ -7,8 +7,8 @@ exports.gives = nest('app.html.comments')
 exports.needs = nest({
   'about.html.avatar': 'first',
   'about.obs.name': 'first',
+  'backlinks.obs.for': 'first',
   'feed.obs.thread': 'first',
-  'keys.sync.id': 'first',
   'message.html.markdown': 'first',
   'message.html.timeago': 'first',
   'message.html.likes': 'first',
@@ -20,39 +20,77 @@ exports.create = (api) => {
   return nest('app.html.comments', comments)
 
   function comments (root) {
-    const myId = api.keys.sync.id()
-    const { messages } = api.feed.obs.thread(root)
+    const thread = api.feed.obs.thread(root)
 
     return h('Comments',
-      map(messages, Comment)
+      map(thread.messages, Comment)
     )
 
-    function Comment (msgObs) {
-      const msg = resolve(msgObs)
-      const raw = get(msg, 'value.content.text')
-      var className = api.unread.sync.isUnread(msg) ? ' -unread' : ' -read'
-      api.unread.sync.markRead(msg)
+  }
 
-      if (!get(msg, 'value.content.root')) return
+  function Comment (msgObs) {
+    const msg = resolve(msgObs)
 
-      const { author } = msg.value
-      return h('Comment', { className }, [
-        h('div.left', api.about.html.avatar(author, 'tiny')),
-        h('div.right', [
-          h('section.context', [
-            h('div.name', api.about.obs.name(author)),
-            api.message.html.timeago(msg)
+    const raw = get(msg, 'value.content.text')
+    var className = api.unread.sync.isUnread(msg) ? ' -unread' : ' -read'
+    api.unread.sync.markRead(msg)
+
+    if (!get(msg, 'value.content.root')) return
+
+    const { author } = msg.value
+
+    // TODO - move this upstream into patchcore:feed.obs.thread ??
+    // OR change strategy to use forks
+    const backlinks = api.backlinks.obs.for(msg.key) 
+    const nestedReplies = computed(backlinks, backlinks => {
+      return backlinks.filter(backlinker => {
+        const { type, root } = backlinker.value.content
+        return type === 'post' && root === msg.key
+      })
+    })
+
+    return h('Comment', { className }, [
+      h('div.left', api.about.html.avatar(author, 'tiny')),
+      h('div.right', [
+        h('section.context', [
+          h('div.name', api.about.obs.name(author)),
+          api.message.html.timeago(msg)
+        ]),
+        h('section.content', api.message.html.markdown(raw)),
+        when(nestedReplies, 
+          h('section.replies', 
+            map(nestedReplies, NestedComment)
+          )
+        ),
+        h('section.actions', [
+          h('div.reply', [ 
+            h('i.fa.fa-commenting-o'),
           ]),
-          h('section.content', api.message.html.markdown(raw)),
-          h('section.actions', [
-            h('div.reply', [ 
-              h('i.fa.fa-commenting-o'),
-            ]),
-            api.message.html.likes(msg)
-          ])
-        ])
+          api.message.html.likes(msg)
+        ]),
       ])
-    }
+    ])
+  }
+
+  function NestedComment (msgObs) {
+    const msg = resolve(msgObs)
+    const raw = get(msg, 'value.content.text')
+    if (!raw) return
+
+    const { author } = msg.value
+
+    return h('Comment -nested', [
+      h('div.left'),
+      h('div.right', [
+        h('section.context', [
+          h('div.name', api.about.obs.name(author)),
+          api.message.html.timeago(msg)
+        ]),
+        h('section.content', api.message.html.markdown(raw)),
+      ])
+    ])
+
+    api.message.html.markdown(raw)
   }
 }
 

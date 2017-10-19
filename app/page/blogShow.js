@@ -39,7 +39,6 @@ exports.create = (api) => {
     }
 
     const { timeago, channel, markdown, compose } = api.message.html
-    const composer = compose({ meta, shrink: true })
 
     return h('Page -blogShow', [
       api.app.html.context({ page: 'discover' }), // HACK to highlight discover
@@ -60,8 +59,9 @@ exports.create = (api) => {
         ]),
         h('div.break', h('hr')),
         h('section.blog', markdown(blog)),
-        composer,
+        compose({ meta, shrink: true }),
         comments,
+        compose({ meta, shrink: false })
       ]),
     ])
   }

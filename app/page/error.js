@@ -14,7 +14,7 @@ exports.create = (api) => {
 
   function error (location) {
     return h('Page -error', {title: strings.error}, [
-      strings.errorNotFound,
+      h('div.message', strings.errorNotFound),
       h('pre', [JSON.stringify(location, null, 2)])
     ])
   }

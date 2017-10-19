@@ -63,3 +63,19 @@ Comment {
   }
 }
 
+Comment -nested {
+  padding: 1rem
+  $backgroundPrimaryText
+  $roundTop
+  $roundBottom
+
+  margin-bottom: 1rem
+
+  div.left { margin: 0 }
+  div.right {
+    padding: 0
+    border: 0
+    margin: 0
+  }
+}
+
