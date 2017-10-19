@@ -11,10 +11,11 @@ exports.needs = nest({
   'about.obs.name': 'first',
   'app.html.comments': 'first',
   'app.html.context': 'first',
+  'contact.html.follow': 'first',
   'message.html.channel': 'first',
-  'message.html.compose': 'first',
   'message.html.markdown': 'first',
   'message.html.timeago': 'first',
+  'feed.obs.thread': 'first'
 })
 
 exports.create = (api) => {
@@ -30,13 +31,7 @@ exports.create = (api) => {
 
     const comments = api.app.html.comments(blogMsg.key)
 
-    const meta = {
-      type: 'post',
-      root: blogMsg.key,
-      // branch: get(last(blogMsg.replies), 'key'), // TODO - change to match new comments logic
-      // >> lastId? CHECK THIS LOGIC
-      channel: content.channel
-    }
+    const { lastId: branch } = api.feed.obs.thread(blogMsg.key)
 
     const { timeago, channel, markdown, compose } = api.message.html
 
@@ -53,15 +48,13 @@ exports.create = (api) => {
             h('div.leftCol', api.about.html.avatar(author, 'medium')),
             h('div.rightCol', [
               h('div.name', api.about.obs.name(author)),
-              h('Button', 'Follow')
+              api.contact.html.follow(author)
             ]),
           ])
         ]),
         h('div.break', h('hr')),
         h('section.blog', markdown(blog)),
-        compose({ meta, shrink: true }),
         comments,
-        compose({ meta, shrink: false })
       ]),
     ])
   }

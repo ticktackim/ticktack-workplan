@@ -1,4 +1,5 @@
 Avatar {
+  cursor: pointer
   $circleSmall
 
   -tiny {

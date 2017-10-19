@@ -24,7 +24,7 @@ Page -userShow {
       div.actions {
         display: flex
 
-        div.friendship {
+        div.Follow {
           margin-right: 1rem
         }
 

@@ -108,13 +108,13 @@ exports.create = function (api) {
 
     const className = blog.unread ? '-unread': ''
 
-    return h('BlogCard', { id, className }, [
+    return h('BlogCard', { id, className, 'ev-click': onClick }, [
       h('div.context', [
         api.about.html.avatar(author, 'tiny'),
         h('div.name', api.about.obs.name(author)),
         api.message.html.timeago(blog)
       ]),
-      h('div.content', {'ev-click': onClick}, [
+      h('div.content', [
         img,
         h('div.text', [
           h('h2', {innerHTML: title}),

@@ -16,7 +16,10 @@ exports.create = function (api) {
       style: { 'background-color': api.about.obs.color(id) },
       src: api.about.obs.imageUrl(id),
       title: id,
-      'ev-click': () => api.history.sync.push({ page: 'userShow', feed: id })
+      'ev-click': e => {
+        e.stopPropagation()
+        api.history.sync.push({ page: 'userShow', feed: id })
+      }
     })
   })
 }

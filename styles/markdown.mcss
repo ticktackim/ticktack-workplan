@@ -6,6 +6,16 @@ Markdown {
     border-radius: .5rem
   }
 
+  // center blog images
+  p {
+    a {
+      img {
+        display: block
+        margin: auto
+      }
+    }
+  }
+
   (img.emoji) { 
     margin: 0
   }

@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, Array: MutantArray, map, computed, when, resolve } = require('mutant')
+const { h, Array: MutantArray, Value, map, computed, when, resolve } = require('mutant')
 const get = require('lodash/get')
 
 exports.gives = nest('app.html.comments')
@@ -9,6 +9,7 @@ exports.needs = nest({
   'about.obs.name': 'first',
   'backlinks.obs.for': 'first',
   'feed.obs.thread': 'first',
+  'message.html.compose': 'first',
   'message.html.markdown': 'first',
   'message.html.timeago': 'first',
   'message.html.likes': 'first',
@@ -20,15 +21,27 @@ exports.create = (api) => {
   return nest('app.html.comments', comments)
 
   function comments (root) {
-    const thread = api.feed.obs.thread(root)
+    const { messages, channel, lastId: branch } = api.feed.obs.thread(root)
 
-    return h('Comments',
-      map(thread.messages, Comment)
-    )
+    const meta = {
+      type: 'post',
+      root,
+      branch,
+      channel
+    }
+    const twoComposers = computed(messages, messages => {
+      return messages.length > 5
+    })
+    const { compose } = api.message.html
 
+    return h('Comments', [
+      when(twoComposers, compose({ meta, shrink: true, canAttach: false })),
+      map(messages, msg => Comment(msg, branch)),
+      compose({ meta, shrink: false, canAttach: false }),
+    ])
   }
 
-  function Comment (msgObs) {
+  function Comment (msgObs, branch) {
     const msg = resolve(msgObs)
 
     const raw = get(msg, 'value.content.text')
@@ -37,7 +50,7 @@ exports.create = (api) => {
 
     if (!get(msg, 'value.content.root')) return
 
-    const { author } = msg.value
+    const { author, content } = msg.value
 
     // TODO - move this upstream into patchcore:feed.obs.thread ??
     // OR change strategy to use forks
@@ -48,6 +61,20 @@ exports.create = (api) => {
         return type === 'post' && root === msg.key
       })
     })
+
+    var composeOpen = Value(false)
+    const toggleCompose = () => composeOpen.set(!composeOpen())
+    const composer = api.message.html.compose({
+      meta: {
+        type: 'post',
+        root: msg.key,
+        branch,
+        channel: content.channel
+      },
+      shrink: false,
+      canAttach: false,
+      canPreview: false
+    }, toggleCompose)
 
     return h('Comment', { className }, [
       h('div.left', api.about.html.avatar(author, 'tiny')),
@@ -63,11 +90,12 @@ exports.create = (api) => {
           )
         ),
         h('section.actions', [
-          h('div.reply', [ 
+          h('div.reply', { 'ev-click': toggleCompose }, [ 
             h('i.fa.fa-commenting-o'),
           ]),
           api.message.html.likes(msg)
         ]),
+        when(composeOpen, composer),
       ])
     ])
   }

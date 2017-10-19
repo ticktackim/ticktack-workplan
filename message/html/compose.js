@@ -22,7 +22,15 @@ exports.needs = nest({
 exports.create = function (api) {
   return nest('message.html.compose', compose)
 
-  function compose ({ shrink = true, meta, prepublish, placeholder }, cb) {
+  function compose (options, cb) {
+    var { 
+      meta, // required
+      placeholder,
+      shrink = true,
+      canAttach = true, canPreview = true,
+      prepublish
+    } = options
+
     const strings = api.translations.sync.strings()
     const getProfileSuggestions = api.about.async.suggest()
     const getChannelSuggestions = api.channel.async.suggest()
@@ -81,7 +89,7 @@ exports.create = function (api) {
     // if fileInput is null, send button moves to the left side
     // and we don't want that.
     else
-      fileInput = h('input', { style: {visibility: 'hidden'}})
+      fileInput = h('input', { style: {visibility: 'hidden'} })
 
     var showPreview = Value(false)
     var previewBtn = h('Button -preview',
@@ -96,8 +104,8 @@ exports.create = function (api) {
     var publishBtn = h('Button -primary', { 'ev-click': publish }, strings.sendMessage)
 
     var actions = h('section.actions', [
-      fileInput,
-      previewBtn,
+      canAttach ? fileInput : '',
+      canPreview ? previewBtn : '',
       publishBtn
     ])
 

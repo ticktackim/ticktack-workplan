@@ -19,6 +19,7 @@ const sockets = combine(
     about: require('./about'),
     app: require('./app'),
     blob: require('./blob'),
+    contact: require('./contact'),
     //config: require('./ssb-config'),
     config: require('./config'),
     // group: require('./group'),

@@ -72,19 +72,8 @@ Page -blogShow {
       margin-bottom: 1.5rem
     }
 
-    div.Compose {
-      margin-bottom: 1.5rem
-
-      section.actions {
-        input { display: none }
-
-        div.Button {
-          -preview { display: none }
-        }
-      }
+    div.Comments {
     }
-
-    div.Comments {}
   }
 }
 

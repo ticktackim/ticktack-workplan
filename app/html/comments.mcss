@@ -2,6 +2,10 @@ Comments {
   margin: 0 1.5rem
 
   div.Comment {}
+
+  div.Compose {
+    margin-bottom: 1.5rem
+  }
 }
 
 Comment {
@@ -46,6 +50,8 @@ Comment {
       align-items: baseline
 
       div.reply {
+        cursor: pointer
+
         margin-right: 1.5rem
         i.fa {}
       }
@@ -59,6 +65,10 @@ Comment {
         i.fa { margin-right: .3rem }
         div.count {}
       }
+    }
+
+    div.Compose {
+      margin: 1rem 0
     }
   }
 }
@@ -76,6 +86,7 @@ Comment -nested {
     padding: 0
     border: 0
     margin: 0
+
   }
 }
 
