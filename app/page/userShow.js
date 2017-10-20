@@ -12,9 +12,8 @@ exports.needs = nest({
   'app.html.blogCard': 'first',
   'contact.html.follow': 'first',
   'feed.pull.private': 'first',
-  'feed.pull.rollup': 'first',
+  'sbot.pull.userFeed': 'first',
   'keys.sync.id': 'first',
-  'state.obs.threads': 'first',
   'translations.sync.strings': 'first',
 })
 
@@ -48,21 +47,15 @@ exports.create = (api) => {
     const userEditButton = Link({ page: 'userEdit', feed }, h('i.fa.fa-pencil'))
     const directMessageButton = Link({ page: 'threadNew', feed }, h('Button', strings.userShow.action.directMessage))
 
-    const threads = MutantArray()
+    const BLOG_TYPES = ['blog', 'post']
+    const blogs = MutantArray()
     pull(
       // next(api.feed.pull.private, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
       // api.feed.pull.private({reverse: true, limit: 100, live: false}),
-      api.feed.pull.private({reverse: true, live: false}),
-      pull.filter(msg => {
-        const recps = get(msg, 'value.content.recps')
-        if (!recps) return
-
-        return recps
-          .map(r => typeof r === 'object' ? r.link : r)
-          .includes(feed)
-      }),
-      api.feed.pull.rollup(),
-      pull.drain(threads.push)
+      api.sbot.pull.userFeed({id: feed, reverse: true, live: false}),
+      pull.filter(msg => BLOG_TYPES.includes(get(msg, 'value.content.type'))),
+      pull.filter(msg => get(msg, 'value.content.root') === undefined),
+      pull.drain(blogs.push)
       // Scroller(content, scrollerContent, render, false, false)
     )
 
@@ -83,7 +76,7 @@ exports.create = (api) => {
               ])
             : '',
         ]),
-        h('section.blogs', map(threads, api.app.html.blogCard))
+        h('section.blogs', map(blogs, api.app.html.blogCard))
       ])
     ])
   }

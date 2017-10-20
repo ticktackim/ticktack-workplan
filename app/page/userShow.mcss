@@ -34,9 +34,15 @@ Page -userShow {
     }
 
     section.blogs {
-    }
+      div.BlogCard {
+        margin-bottom: .5rem
 
-    div.threads {}
+        div.context {
+          div.Link { display: none }
+          div.name { display: none }
+        }
+      }
+    }
   }
 }
 
