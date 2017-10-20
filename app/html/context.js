@@ -17,6 +17,7 @@ exports.needs = nest({
   'message.html.subject': 'first',
   'sbot.obs.localPeers': 'first',
   'translations.sync.strings': 'first',
+  'unread.sync.isUnread': 'first'
 })
 
 
@@ -30,19 +31,19 @@ exports.create = (api) => {
     var recentPeersContacted = Dict()
     // TODO - extract as contact.obs.recentPrivate or something
 
+    var m = {}
+
     pull(
       next(api.feed.pull.private, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
       pull.filter(msg => msg.value.content.type === 'post'), // TODO is this the best way to protect against votes?
       pull.filter(msg => msg.value.content.recps),
       pull.drain(msg => {
-        msg.value.content.recps
-          .map(recp => typeof recp === 'object' ? recp.link : recp)
-          .filter(recp => recp != myKey)
-          .forEach(recp => {
-            if (recentPeersContacted.has(recp)) return
-
-            recentPeersContacted.put(recp, msg)
-          })
+        var author = msg.value.author
+        if(api.unread.sync.isUnread(msg))
+          recentPeersContacted
+            .put(author, (recentPeersContacted.get(author)||0)+1)
+        else
+          recentPeersContacted.put(author, 0)
       })
     )
 
@@ -73,6 +74,7 @@ exports.create = (api) => {
 
         // Discover
         Option({
+          //XXX not a random number of notifications!
           notifications: Math.floor(Math.random()*5+1),
           imageEl: h('i.fa.fa-binoculars'),
           label: strings.blogIndex.title,
@@ -87,7 +89,9 @@ exports.create = (api) => {
           if (nearby.has(feedId)) return
 
           return Option({
-            notifications: Math.random() > 0.7 ? Math.floor(Math.random()*9+1) : 0, // TODO
+            //XXX not a random number of notifications.
+            notifications: value,
+            //Math.random() > 0.7 ? Math.floor(Math.random()*9+1) : 0, // TODO
             imageEl: api.about.html.avatar(feedId),
             label: api.about.obs.name(feedId),
             selected: location.feed === feedId,

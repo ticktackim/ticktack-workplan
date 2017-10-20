@@ -8,7 +8,8 @@ exports.gives = nest('app.page.threadShow')
 exports.needs = nest({
   'app.html.context': 'first',
   'app.html.thread': 'first',
-  'message.html.compose': 'first'
+  'message.html.compose': 'first',
+  'unread.sync.markRead': 'first'
 })
 
 exports.create = (api) => {
@@ -22,9 +23,14 @@ exports.create = (api) => {
 
     const thread = api.app.html.thread(root)
 
+    //mark the thread as read, as it's being displayed.
+    api.unread.sync.markRead(location)
+    location.replies.forEach(api.unread.sync.markRead)
+
     const meta = {
       type: 'post',
       root,
+      //XXX incorrect branch
       branch: get(last(location.replies), 'key'),
       // >> lastId? CHECK THIS LOGIC
       channel,
@@ -42,5 +48,6 @@ exports.create = (api) => {
     ])
   }
 }
+
 
 

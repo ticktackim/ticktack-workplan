@@ -29,27 +29,26 @@ exports.create = function (api) {
 
     timer = setTimeout(function () {
       timer = null
+      console.log('save!', Object.keys(unread.filter).length)
       localStorage.unread = JSON.stringify(unread)
     }, 2e3)
   }
 
   function isUnread(msg) {
     //ignore messages which do not have timestamps
+
     if(!msg.timestamp) return false
     if(msg.timestamp < unread.timestamp) return false
-    if(unread.filter[msg.key]) {
-      return false
-    }
-      return true
+    return !unread.filter[msg.key]
   }
 
   function markRead(msg) {
-    if('string' === typeof msg.key) {
-      //if(isUnread(msg)) {
+    if(msg && 'string' === typeof msg.key) {
+      if(isUnread(msg)) {
         unread.filter[msg.key] = true
         save()
         return true
-      //}
+      }
     }
   }
 
