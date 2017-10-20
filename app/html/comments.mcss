@@ -74,7 +74,7 @@ Comment {
 }
 
 Comment -nested {
-  padding: 1rem
+  padding: 1rem 1rem 0 1rem
   $backgroundPrimaryText
   $roundTop
   $roundBottom

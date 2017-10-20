@@ -23,6 +23,17 @@ exports.create = (api) => {
   function comments (root) {
     const { messages, channel, lastId: branch } = api.feed.obs.thread(root)
 
+    // TODO - move this up into Patchcore
+    const messagesTree = computed(messages, msgs => {
+      return msgs
+        .filter(msg => forkOf(msg) === undefined)
+        .map(threadMsg => { 
+          const nestedReplies = msgs.filter(msg => forkOf(msg) === threadMsg.key)
+          threadMsg.replies = nestedReplies
+          return threadMsg
+        })
+    })
+
     const meta = {
       type: 'post',
       root,
@@ -34,14 +45,15 @@ exports.create = (api) => {
     })
     const { compose } = api.message.html
 
+
     return h('Comments', [
       when(twoComposers, compose({ meta, shrink: true, canAttach: false })),
-      map(messages, msg => Comment(msg, branch)),
+      map(messagesTree, msg => Comment(msg, root, branch)),
       compose({ meta, shrink: false, canAttach: false }),
     ])
   }
 
-  function Comment (msgObs, branch) {
+  function Comment (msgObs, root, branch) {
     const msg = resolve(msgObs)
 
     const raw = get(msg, 'value.content.text')
@@ -52,22 +64,23 @@ exports.create = (api) => {
 
     const { author, content } = msg.value
 
-    // TODO - move this upstream into patchcore:feed.obs.thread ??
-    // OR change strategy to use forks
-    const backlinks = api.backlinks.obs.for(msg.key) 
-    const nestedReplies = computed(backlinks, backlinks => {
-      return backlinks.filter(backlinker => {
-        const { type, root } = backlinker.value.content
-        return type === 'post' && root === msg.key
-      })
-    })
+    // // TODO - move this upstream into patchcore:feed.obs.thread ??
+    // // OR change strategy to use forks
+    // const backlinks = api.backlinks.obs.for(msg.key) 
+    // const nestedReplies = computed(backlinks, backlinks => {
+    //   return backlinks.filter(backlinker => {
+    //     const { type, root } = backlinker.value.content
+    //     return type === 'post' && root === msg.key
+    //   })
+    // })
 
-    var composeOpen = Value(false)
-    const toggleCompose = () => composeOpen.set(!composeOpen())
-    const composer = api.message.html.compose({
+    var nestedReplyCompose = Value(false)
+    const toggleCompose = () => nestedReplyCompose.set(!nestedReplyCompose())
+    const nestedReplyComposer = api.message.html.compose({
       meta: {
         type: 'post',
-        root: msg.key,
+        root,
+        fork: msg.key,
         branch,
         channel: content.channel
       },
@@ -84,9 +97,9 @@ exports.create = (api) => {
           api.message.html.timeago(msg)
         ]),
         h('section.content', api.message.html.markdown(raw)),
-        when(nestedReplies, 
+        when(msgObs.replies, 
           h('section.replies', 
-            map(nestedReplies, NestedComment)
+            map(msgObs.replies, NestedComment)
           )
         ),
         h('section.actions', [
@@ -95,7 +108,7 @@ exports.create = (api) => {
           ]),
           api.message.html.likes(msg)
         ]),
-        when(composeOpen, composer),
+        when(nestedReplyCompose, nestedReplyComposer),
       ])
     ])
   }
@@ -122,3 +135,6 @@ exports.create = (api) => {
   }
 }
 
+function forkOf (msg) {
+  return get(msg, 'value.content.fork')
+}
