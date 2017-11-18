@@ -7,26 +7,13 @@ Compose {
   textarea {
     $fontBasic
 
-    padding: .6rem
-    $borderSubtle
-    border-top-left-radius: 0
-    border-top-right-radius: 0
-  }
-
-  input.channel {
-    $borderSubtle
-    border-bottom: none
-    border-bottom-left-radius: 0
-    border-bottom-right-radius: 0
-    padding: .5rem
+    padding: 1rem
+    border-radius: 1rem
+    border: none
+    margin-bottom: .5rem
 
     :focus {
       outline: none
-      box-shadow: none
-    }
-    :disabled {
-      background-color: #f1f1f1
-      cursor: not-allowed
     }
   }
 
@@ -34,7 +21,7 @@ Compose {
     display: flex
     flex-direction: row
     align-items: baseline
-    justify-content: space-between
+    justify-content: flex-end
 
     margin-top: .4rem
 

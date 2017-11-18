@@ -52,14 +52,19 @@ exports.create = (api) => {
     ])
 
     function LevelOneContext () {
-      const PAGES_UNDER_DISCOVER = ['blogIndex', 'blogShow', 'home']
+      function isDiscoverContext (loc) {
+        const PAGES_UNDER_DISCOVER = ['blogIndex', 'blogShow', 'home']
+
+        return PAGES_UNDER_DISCOVER.includes(location.page)
+          || get(location, 'value.private') === undefined
+      }
 
       return h('div.level.-one', [
         // Nearby
         computed(nearby, n => !isEmpty(n) ? h('header', strings.peopleNearby) : null),
         map(nearby, feedId => Option({
           notifications: Math.random() > 0.7 ? Math.floor(Math.random()*9+1) : 0, // TODO 
-          imageEl: api.about.html.avatar(feedId),
+          imageEl: api.about.html.avatar(feedId, 'small'),
           label: api.about.obs.name(feedId),
           selected: location.feed === feedId,
           location: computed(recentPeersContacted, recent => {
@@ -68,7 +73,8 @@ exports.create = (api) => {
               ? Object.assign(lastMsg, { feed: feedId })
               : { page: 'threadNew', feed: feedId }
           }),
-        })),
+        }), { comparer: (a, b) => a === b }),
+      
         computed(nearby, n => !isEmpty(n) ?  h('hr') : null),
 
         // Discover
@@ -76,7 +82,7 @@ exports.create = (api) => {
           notifications: Math.floor(Math.random()*5+1),
           imageEl: h('i.fa.fa-binoculars'),
           label: strings.blogIndex.title,
-          selected: PAGES_UNDER_DISCOVER.includes(location.page),
+          selected: isDiscoverContext(location),
           location: { page: 'blogIndex' },
         }),
 
@@ -93,7 +99,7 @@ exports.create = (api) => {
             selected: location.feed === feedId,
             location: Object.assign({}, lastMsg, { feed: feedId }) // TODO make obs?
           })
-        })
+        }, { comparer: (a, b) => a === b })
       ])
     }
 
@@ -127,7 +133,7 @@ exports.create = (api) => {
             selected: thread.key === root,
             location: Object.assign(thread, { feed: targetUser }),
           })
-        })
+        }, { comparer: (a, b) => a === b })
       ])
     }
 

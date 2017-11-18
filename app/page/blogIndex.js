@@ -99,7 +99,7 @@ exports.create = (api) => {
               const { recps, channel } = thread.value.content
               var onClick
               if (channel && !recps)
-                onClick = (ev) => api.history.sync.push({ key: thread.key, page: 'blogShow' })
+                onClick = (ev) => api.history.sync.push(Object.assign({}, thread, { page: 'blogShow' }))
 
               return api.app.html.blogCard(thread, { onClick })
             })

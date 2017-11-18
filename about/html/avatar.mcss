@@ -1,5 +1,21 @@
 Avatar {
-  $avatarSmall
-  margin-right: .5rem
+  cursor: pointer
+  $circleSmall
+
+  -tiny {
+    $circleTiny
+  }
+
+  -small {
+    $circleSmall
+  }
+
+  -medium {
+    $circleMedium
+  }
+
+  -large {
+    $circleLarge
+  }
 }
 

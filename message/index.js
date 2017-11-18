@@ -3,8 +3,11 @@ module.exports = {
     publish: require('./async/publish'),
   },
   html: {
+    channel: require('./html/channel'),
     compose: require('./html/compose'),
-    subject: require('./html/subject')
+    likes: require('./html/likes'),
+    subject: require('./html/subject'),
+    timeago: require('./html/timeago')
   }
 }
 

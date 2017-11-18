@@ -2,7 +2,7 @@ Context {
   flex-shrink: 0
   flex-grow: 0
   overflow: hidden
-  background-color: #fff
+  $backgroundPrimaryText
 
   display: flex
 
@@ -75,7 +75,7 @@ Option {
    
     }
     i {
-      $avatarSmall
+      $circleSmall
       $colorPrimary
       font-size: 1.3rem
       display: flex

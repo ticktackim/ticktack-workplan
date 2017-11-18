@@ -9,6 +9,7 @@ exports.needs = nest({
   'app.page.error': 'first',
   'app.page.blogIndex': 'first',
   'app.page.blogNew': 'first',
+  'app.page.blogShow': 'first',
   'app.page.settings': 'first',
   // 'app.page.channel': 'first',
   // 'app.page.groupFind': 'first',
@@ -31,7 +32,20 @@ exports.create = (api) => {
 
     const routes = [
 
-      // Thread pages
+      // Blog pages
+      [ location => location.page === 'home', pages.blogIndex ],
+      [ location => location.page === 'discovery', pages.blogIndex ],
+      [ location => location.page === 'blogIndex', pages.blogIndex ],
+      [ location => location.page === 'blogNew', pages.blogNew ],
+      [ location => location.page === 'blogShow', pages.blogShow ],
+      [ location => isMsg(location.key) && get(location, 'value.content.type') === 'blog', pages.blogShow ],
+      [ location => { 
+        return isMsg(location.key)
+          && get(location, 'value.content.type') === 'post'
+          && !get(location, 'value.private') // treats public posts as 'blogs'
+      }, pages.blogShow ],
+
+      // Private Thread pages
       // [ location => location.page === 'threadNew' && location.channel, pages.threadNew ],
       [ location => location.page === 'threadNew' && isFeed(location.feed), pages.threadNew ],
       [ location => isMsg(location.key), pages.threadShow ],
@@ -47,12 +61,6 @@ exports.create = (api) => {
       // [ location => location.page === 'groupNew', pages.groupNew ],
       // // [ location => location.type === 'groupShow' && isMsg(location.key), pages.groupShow ],
       // [ location => location.channel , pages.channel ],
-
-      // Blog pages
-      [ location => location.page === 'home', pages.blogIndex ],
-      [ location => location.page === 'discovery', pages.blogIndex ],
-      [ location => location.page === 'blogIndex', pages.blogIndex ],
-      [ location => location.page === 'blogNew', pages.blogNew ],
 
       [ location => location.page === 'settings', pages.settings ],
 

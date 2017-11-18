@@ -1,6 +1,6 @@
 BlogCard {
   padding: 1rem
-  background-color: #fff
+  $backgroundPrimaryText
 
   border: 1px solid #fff
   transition: all .5s ease
@@ -20,20 +20,15 @@ BlogCard {
     display: flex
     align-items: center
 
-    div.Link {
-      height: 2rem
-      img.Avatar {
-        width: 2rem
-        height: 2rem
-      }
+    img.Avatar {
+      margin-right: .5rem
     }
 
     div.name {
       margin-right: 1rem
     }
-    div.timeago {
-      $colorSubtle
-    }
+  
+    div.Timeago {}
   }
 
   div.content {
@@ -63,15 +58,6 @@ BlogCard {
     }
   }
 
-  -unread {
-    div.content {
-      background-color: #fff
-
-      div.subject {
-        $markdownBold
-      }
-    }
-  }
 }
 
 Thumbnail {
