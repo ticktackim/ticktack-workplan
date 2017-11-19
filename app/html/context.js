@@ -8,6 +8,7 @@ const isEmpty = require('lodash/isEmpty')
 exports.gives = nest('app.html.context')
 
 exports.needs = nest({
+  'app.html.scroller': 'first',
   'about.html.avatar': 'first',
   'about.obs.name': 'first',
   'feed.pull.private': 'first',
@@ -27,24 +28,24 @@ exports.create = (api) => {
     const myKey = api.keys.sync.id()
 
     var nearby = api.sbot.obs.localPeers()
-    var recentPeersContacted = Dict()
-    // TODO - extract as contact.obs.recentPrivate or something
+    var recentMsgLog = Dict ()
+    function updateRecentMsgLog (msg) {
+      const { author, timestamp } = msg.value
 
-    pull(
-      next(api.feed.pull.private, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
-      pull.filter(msg => msg.value.content.type === 'post'), // TODO is this the best way to protect against votes?
-      pull.filter(msg => msg.value.content.recps),
-      pull.drain(msg => {
-        msg.value.content.recps
-          .map(recp => typeof recp === 'object' ? recp.link : recp)
-          .filter(recp => recp != myKey)
-          .forEach(recp => {
-            if (recentPeersContacted.has(recp)) return
+      if (!recentMsgLog.has(author)) {
+        recentMsgLog.put(author, msg)
+        return
+      }
 
-            recentPeersContacted.put(recp, msg)
-          })
-      })
-    )
+      const currentWinner = recentMsgLog.get(author)
+      if (timestamp > currentWinner.value.timestamp) {
+        recentMsgLog.put(author, msg)
+      }
+    }
+    function isLatestMsg (msg) {
+      const { author, timestamp } = msg.value
+      return recentMsgLog.get(author).value.timestamp === timestamp
+    }
 
     return h('Context -feed', [
       LevelOneContext(),
@@ -59,7 +60,7 @@ exports.create = (api) => {
           || get(location, 'value.private') === undefined
       }
 
-      return h('div.level.-one', [
+      const prepend = [
         // Nearby
         computed(nearby, n => !isEmpty(n) ? h('header', strings.peopleNearby) : null),
         map(nearby, feedId => Option({
@@ -67,7 +68,7 @@ exports.create = (api) => {
           imageEl: api.about.html.avatar(feedId, 'small'),
           label: api.about.obs.name(feedId),
           selected: location.feed === feedId,
-          location: computed(recentPeersContacted, recent => {
+          location: computed(recentMsgLog, recent => {
             const lastMsg = recent[feedId]
             return lastMsg
               ? Object.assign(lastMsg, { feed: feedId })
@@ -75,6 +76,7 @@ exports.create = (api) => {
           }),
         }), { comparer: (a, b) => a === b }),
       
+        // ---------------------
         computed(nearby, n => !isEmpty(n) ?  h('hr') : null),
 
         // Discover
@@ -84,23 +86,36 @@ exports.create = (api) => {
           label: strings.blogIndex.title,
           selected: isDiscoverContext(location),
           location: { page: 'blogIndex' },
-        }),
+        })
+      ]
 
-        // Recent Messages
-        map(dictToCollection(recentPeersContacted), ({ key, value })  => { 
-          const feedId = key()
-          const lastMsg = value()
-          if (nearby.has(feedId)) return
+      const { scroller } = api.app.html.scroller({
+        classList: [ 'level', '-one' ],
+        prepend,
+        streamBottom: api.feed.pull.private,
+        filter: pull(
+          pull.filter(msg => msg.value.content.type === 'post'), // TODO is this the best way to protect against votes?
+          pull.filter(msg => msg.value.author != myKey),
+          pull.filter(msg => msg.value.content.recps),
+          pull.through(updateRecentMsgLog),
+          pull.filter(isLatestMsg)
+          //pull.through( // trim exisiting from content up Top case)
+        ),
+        renderer: (msg) => {
+          const { author } = msg.value
+          if (nearby.has(author)) return
 
           return Option({
             notifications: Math.random() > 0.7 ? Math.floor(Math.random()*9+1) : 0, // TODO
-            imageEl: api.about.html.avatar(feedId),
-            label: api.about.obs.name(feedId),
-            selected: location.feed === feedId,
-            location: Object.assign({}, lastMsg, { feed: feedId }) // TODO make obs?
+            imageEl: api.about.html.avatar(author),
+            label: api.about.obs.name(author),
+            selected: location.feed === author,
+            location: Object.assign({}, msg, { feed: author }) // TODO make obs?
           })
-        }, { comparer: (a, b) => a === b })
-      ])
+        }
+      })
+
+      return scroller
     }
 
     function LevelTwoContext () {

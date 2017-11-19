@@ -1,0 +1,110 @@
+const nest = require('depnest')
+const { h } = require('mutant')
+const pull = require('pull-stream')
+const pullScroll = require('pull-scroll')
+const next = require('pull-next-step')
+
+exports.gives = nest('app.html.scroller')
+
+exports.needs = nest({
+  'message.html.render': 'first'
+})
+
+exports.create = function (api) {
+  return nest('app.html.scroller', createScroller)
+
+  function createScroller (opts = {}) {
+    const { 
+      streamTop,
+      streamBottom,
+      filter = (msg) => true,
+      renderer,
+      classList = [],
+      content = h('section.content'),
+      prepend = [],
+      append = [] 
+    } = opts
+
+    if (!streamTop && !streamBottom) throw new Error('Scroller requires a at least one stream: streamTop || streamBottom')
+    if (!renderer) throw new Error('Scroller expects a renderer')
+
+    const scroller = h('Scroller', { classList, style: { overflow: 'auto' } }, [
+      h('div.wrapper', [
+        h('header', prepend),
+        content,
+        h('footer', append)
+      ])
+    ])
+    // scroller.scroll = keyscroll(content) // used for e.g. reset
+
+    draw()
+
+    return {
+      scroller,
+      content,
+      // reset,
+    }
+
+    function draw () {
+      reset()
+      
+      if (streamTop) {
+        pull(
+          next(streamTop, {old: false, limit: 100}, ['value', 'timestamp']),
+          filter,
+          // filterDownThrough(),
+          pullScroll(scroller, content, renderer, true, false)
+        )
+      }
+
+      if (streamBottom) {
+        pull(
+          next(streamBottom, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
+          filter,
+          // filterUpThrough(),
+          pullScroll(scroller, content, renderer, false, false)
+        )
+      }
+    }
+
+    function reset () {
+    }
+
+  }
+
+}
+
+function keyscroll (content) {
+  var curMsgEl
+
+  if (!content) return () => {}
+
+  content.addEventListener('click', onActivateChild, false)
+  content.addEventListener('focus', onActivateChild, true)
+
+  function onActivateChild (ev) {
+    for (var el = ev.target; el; el = el.parentNode) {
+      if (el.parentNode === content) {
+        curMsgEl = el
+        return
+      }
+    }
+  }
+
+  function selectChild (el) {
+    if (!el) { return }
+
+    ;(el.scrollIntoViewIfNeeded || el.scrollIntoView).call(el)
+    el.focus()
+    curMsgEl = el
+  }
+
+  return function scroll (d) {
+    selectChild((!curMsgEl || d === 'first') ? content.firstChild
+      : d < 0 ? curMsgEl.previousElementSibling || content.firstChild
+      : d > 0 ? curMsgEl.nextElementSibling || content.lastChild
+      : curMsgEl)
+
+    return curMsgEl
+  }
+}
