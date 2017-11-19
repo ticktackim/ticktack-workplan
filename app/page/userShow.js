@@ -18,9 +18,11 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'state.obs.threads': 'first',
   'translations.sync.strings': 'first',
+  'unread.sync.isUnread': 'first'
 })
 
 exports.create = (api) => {
+  var isUnread = api.unread.sync.isUnread
   return nest('app.page.userShow', userShow)
 
   function userShow (location) {
@@ -72,6 +74,15 @@ exports.create = (api) => {
           .includes(feed)
       }),
       api.feed.pull.rollup(),
+      //unread state should not be in this file...
+      pull.through(function (thread) {
+        if(isUnread(thread))
+          thread.unread = true
+        thread.replies.forEach(function (data) {
+          if(isUnread(data))
+            thread.unread = data.unread = true
+        })
+      }),
       pull.drain(threads.push)
       // Scroller(content, scrollerContent, render, false, false)
     )
@@ -98,5 +109,4 @@ exports.create = (api) => {
     ])
   }
 }
-
 

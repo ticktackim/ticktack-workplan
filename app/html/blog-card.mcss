@@ -62,15 +62,13 @@ BlogCard {
       }
     }
   }
+  background-color: #f8f8f8
 
   -unread {
     div.content {
-      background-color: #fff
-
-      div.subject {
-        $markdownBold
-      }
+      font-weight: bold
     }
+    background-color: #fff
   }
 }
 
@@ -81,4 +79,7 @@ Thumbnail {
   width: 8rem
   height: 6rem
 }
+
+
+
 

@@ -21,11 +21,8 @@ exports.create = (api) => {
     const root = get(value, 'content.root', key)
     const channel = get(value, 'content.channel')
 
+    //unread state is set in here...
     const thread = api.app.html.thread(root)
-
-    //mark the thread as read, as it's being displayed.
-    api.unread.sync.markRead(location)
-    location.replies.forEach(api.unread.sync.markRead)
 
     const meta = {
       type: 'post',
@@ -48,6 +45,9 @@ exports.create = (api) => {
     ])
   }
 }
+
+
+
 
 
 
