@@ -33,6 +33,10 @@ Thread {
         div.msg {
           border: 1px #fff solid
           $roundRight
+          -unread {
+            font-weight: bold
+          }
+
         }
       }
     }
@@ -80,4 +84,6 @@ $chunk {
     }
   }
 }
+
+
 
