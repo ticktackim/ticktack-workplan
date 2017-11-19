@@ -93,7 +93,7 @@ exports.create = (api) => {
         classList: [ 'level', '-one' ],
         prepend,
         stream: api.feed.pull.private,
-        filter: pull(
+        filter: () => pull(
           pull.filter(msg => msg.value.content.type === 'post'), // TODO is this the best way to protect against votes?
           pull.filter(msg => msg.value.author != myKey),
           pull.filter(msg => msg.value.content.recps),
@@ -123,31 +123,32 @@ exports.create = (api) => {
 
       var threads = MutantArray()
 
-      pull(
-        next(api.feed.pull.private, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
-        pull.filter(msg => msg.value.content.recps),
-        pull.filter(msg => msg.value.content.recps
-          .map(recp => typeof recp === 'object' ? recp.link : recp)
-          .some(recp => recp === targetUser)
-        ),
-        api.feed.pull.rollup(),
-        pull.drain(thread => threads.push(thread))
-      )
+      const prepend = Option({
+        selected: page === 'threadNew',
+        location: {page: 'threadNew', feed: targetUser},
+        label: h('Button', strings.threadNew.action.new),
+      })
 
-      return h('div.level.-two', [
-        Option({
-          selected: page === 'threadNew',
-          location: {page: 'threadNew', feed: targetUser},
-          label: h('Button', strings.threadNew.action.new),
-        }),
-        map(threads, thread => { 
+      return api.app.html.scroller({
+        classList: [ 'level', '-two' ],
+        prepend,
+        stream: api.feed.pull.private,
+        filter: () => pull(
+          pull.filter(msg => msg.value.content.recps),
+          pull.filter(msg => msg.value.content.recps
+            .map(recp => typeof recp === 'object' ? recp.link : recp)
+            .some(recp => recp === targetUser)
+          ),
+          api.feed.pull.rollup() // TODO - not technically a filter ...?
+        ),
+        render: (thread) => { 
           return Option({
             label: api.message.html.subject(thread),
             selected: thread.key === root,
             location: Object.assign(thread, { feed: targetUser }),
           })
-        }, { comparer: (a, b) => a === b })
-      ])
+        }
+      })
     }
 
     function Option ({ notifications = 0, imageEl, label, location, selected }) {

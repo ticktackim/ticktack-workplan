@@ -16,70 +16,24 @@ exports.create = function (api) {
   function createScroller (opts = {}) {
     const { 
       stream,
-      filter = pull.filter((msg) => true),
-      // renderer,
+      filter = () => pull.filter((msg) => true),
+      // render,
       // classList = [],
-      // content = h('section.content'),
       // prepend = [],
       // append = [] 
     } = opts
 
-    const streamToTop = undefined
-    // pull(
-    //   next(stream, {old: false, limit: 100}, ['value', 'timestamp']),
-    //   filter // is a pull-stream through
-    // )
+    const streamToTop = pull(
+      next(stream, {old: false, limit: 100}, ['value', 'timestamp']),
+      filter() // is a pull-stream through
+    )
 
     const streamToBottom = pull(
       next(stream, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
-      filter
+      filter()
     )
 
     return Scroller(Object.assign({}, opts, { streamToTop, streamToBottom }))
-
-  //   const scroller = h('Scroller', { classList, style: { overflow: 'auto' } }, [
-  //     h('div.wrapper', [
-  //       h('header', prepend),
-  //       content,
-  //       h('footer', append)
-  //     ])
-  //   ])
-  //   // scroller.scroll = keyscroll(content) // used for e.g. reset
-
-  //   draw()
-
-  //   return {
-  //     scroller,
-  //     content,
-  //     // reset,
-  //   }
-
-  //   function draw () {
-  //     reset()
-      
-  //     if (streamTop) {
-  //       pull(
-  //         next(streamTop, {old: false, limit: 100}, ['value', 'timestamp']),
-  //         filter,
-  //         // filterDownThrough(),
-  //         pullScroll(scroller, content, renderer, true, false)
-  //       )
-  //     }
-
-  //     if (streamBottom) {
-  //       pull(
-  //         next(streamBottom, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
-  //         filter,
-  //         // filterUpThrough(),
-  //         pullScroll(scroller, content, renderer, false, false)
-  //       )
-  //     }
-  //   }
-
-  //   function reset () {
-  //   }
-  // }
- 
   }
 }
 
