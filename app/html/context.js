@@ -12,6 +12,7 @@ exports.needs = nest({
   'about.obs.name': 'first',
   'feed.pull.private': 'first',
   'feed.pull.rollup': 'first',
+  'feed.pull.public': 'first',
   'keys.sync.id': 'first',
   'history.sync.push': 'first',
   'message.html.subject': 'first',
@@ -29,6 +30,7 @@ exports.create = (api) => {
 
     var nearby = api.sbot.obs.localPeers()
     var recentPeersContacted = Dict()
+    var recentThreads = Dict()
     // TODO - extract as contact.obs.recentPrivate or something
 
     var m = {}
@@ -48,6 +50,14 @@ exports.create = (api) => {
           recentPeersContacted.put(author, 0)
       })
     )
+
+//TODO: calculate unread state for public threads/blogs
+//    pull(
+//      next(api.feed.pull.public, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
+//      pull.drain(msg => {
+//
+//      })
+//    )
 
     return h('Context -feed', [
       LevelOneContext(),
@@ -162,6 +172,8 @@ exports.create = (api) => {
     }
   })
 }
+
+
 
 
 
