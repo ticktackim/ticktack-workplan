@@ -50,8 +50,7 @@ exports.create = (api) => {
     function message (msg) {
       const raw = get(msg, 'value.content.text')
       var unread = api.unread.sync.isUnread(msg) ? ' -unread' : ''
-      console.log('unread?', unread, msg)
-//      api.unread.sync.markRead(msg)
+      api.unread.sync.markRead(msg)
       return h('div.msg'+unread, api.message.html.markdown(raw))
     }
 
@@ -97,4 +96,5 @@ function isSameAuthor (msgA, msgB) {
   // TODO (mix) use lodash/get
   return msgA.value.author === msgB.value.author
 }
+
 
