@@ -39,9 +39,11 @@ exports.create = (api) => {
       pull.filter(msg => msg.value.content.recps),
       pull.drain(msg => {
         var author = msg.value.author
-        if(api.unread.sync.isUnread(msg))
+        if(api.unread.sync.isUnread(msg)) {
+          var seen = author === myKey ? 0 : 1
           recentPeersContacted
-            .put(author, (recentPeersContacted.get(author)||0)+1)
+            .put(author, (recentPeersContacted.get(author)||0)+seen)
+        }
         else
           recentPeersContacted.put(author, 0)
       })
@@ -53,6 +55,7 @@ exports.create = (api) => {
     ])
 
     function LevelOneContext () {
+      //the "discovery" button
       const PAGES_UNDER_DISCOVER = ['blogIndex', 'blogShow', 'home']
 
       return h('div.level.-one', [
@@ -89,7 +92,7 @@ exports.create = (api) => {
           if (nearby.has(feedId)) return
 
           return Option({
-            //XXX not a random number of notifications.
+            //the number of threads with each peer
             notifications: value,
             //Math.random() > 0.7 ? Math.floor(Math.random()*9+1) : 0, // TODO
             imageEl: api.about.html.avatar(feedId),
@@ -159,4 +162,6 @@ exports.create = (api) => {
     }
   })
 }
+
+
 
