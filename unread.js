@@ -35,15 +35,13 @@ exports.create = function (api) {
   }
 
   function isUnread(msg) {
-    //ignore messages which do not have timestamps
-
-    if(!msg.timestamp) return false
-    if(msg.timestamp < unread.timestamp) return false
+    if(msg.timestamp && msg.timestamp < unread.timestamp) return false
     return !unread.filter[msg.key]
   }
 
   function markRead(msg) {
     if(msg && 'string' === typeof msg.key) {
+      //note: there is a quirk where some messages don't have a timestamp
       if(isUnread(msg)) {
         unread.filter[msg.key] = true
         save()
@@ -59,4 +57,6 @@ exports.create = function (api) {
     'unread.sync.markRead': markRead
   })
 }
+
+
 
