@@ -89,19 +89,19 @@ exports.create = (api) => {
         })
       ]
 
-      const { scroller } = api.app.html.scroller({
+      return api.app.html.scroller({
         classList: [ 'level', '-one' ],
         prepend,
-        streamBottom: api.feed.pull.private,
+        stream: api.feed.pull.private,
         filter: pull(
           pull.filter(msg => msg.value.content.type === 'post'), // TODO is this the best way to protect against votes?
           pull.filter(msg => msg.value.author != myKey),
           pull.filter(msg => msg.value.content.recps),
           pull.through(updateRecentMsgLog),
           pull.filter(isLatestMsg)
-          //pull.through( // trim exisiting from content up Top case)
+          //pull.through( // trim exisiting from content up Top case) // do this with new updateTop in mutant-scroll
         ),
-        renderer: (msg) => {
+        render: (msg) => {
           const { author } = msg.value
           if (nearby.has(author)) return
 
@@ -114,8 +114,6 @@ exports.create = (api) => {
           })
         }
       })
-
-      return scroller
     }
 
     function LevelTwoContext () {

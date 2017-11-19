@@ -1,7 +1,7 @@
 const nest = require('depnest')
 const { h } = require('mutant')
 const pull = require('pull-stream')
-const pullScroll = require('pull-scroll')
+const Scroller = require('mutant-scroll')
 const next = require('pull-next-step')
 
 exports.gives = nest('app.html.scroller')
@@ -15,63 +15,72 @@ exports.create = function (api) {
 
   function createScroller (opts = {}) {
     const { 
-      streamTop,
-      streamBottom,
-      filter = (msg) => true,
-      renderer,
-      classList = [],
-      content = h('section.content'),
-      prepend = [],
-      append = [] 
+      stream,
+      filter = pull.filter((msg) => true),
+      // renderer,
+      // classList = [],
+      // content = h('section.content'),
+      // prepend = [],
+      // append = [] 
     } = opts
 
-    if (!streamTop && !streamBottom) throw new Error('Scroller requires a at least one stream: streamTop || streamBottom')
-    if (!renderer) throw new Error('Scroller expects a renderer')
+    const streamToTop = undefined
+    // pull(
+    //   next(stream, {old: false, limit: 100}, ['value', 'timestamp']),
+    //   filter // is a pull-stream through
+    // )
 
-    const scroller = h('Scroller', { classList, style: { overflow: 'auto' } }, [
-      h('div.wrapper', [
-        h('header', prepend),
-        content,
-        h('footer', append)
-      ])
-    ])
-    // scroller.scroll = keyscroll(content) // used for e.g. reset
+    const streamToBottom = pull(
+      next(stream, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
+      filter
+    )
 
-    draw()
+    return Scroller(Object.assign({}, opts, { streamToTop, streamToBottom }))
 
-    return {
-      scroller,
-      content,
-      // reset,
-    }
+  //   const scroller = h('Scroller', { classList, style: { overflow: 'auto' } }, [
+  //     h('div.wrapper', [
+  //       h('header', prepend),
+  //       content,
+  //       h('footer', append)
+  //     ])
+  //   ])
+  //   // scroller.scroll = keyscroll(content) // used for e.g. reset
 
-    function draw () {
-      reset()
+  //   draw()
+
+  //   return {
+  //     scroller,
+  //     content,
+  //     // reset,
+  //   }
+
+  //   function draw () {
+  //     reset()
       
-      if (streamTop) {
-        pull(
-          next(streamTop, {old: false, limit: 100}, ['value', 'timestamp']),
-          filter,
-          // filterDownThrough(),
-          pullScroll(scroller, content, renderer, true, false)
-        )
-      }
+  //     if (streamTop) {
+  //       pull(
+  //         next(streamTop, {old: false, limit: 100}, ['value', 'timestamp']),
+  //         filter,
+  //         // filterDownThrough(),
+  //         pullScroll(scroller, content, renderer, true, false)
+  //       )
+  //     }
 
-      if (streamBottom) {
-        pull(
-          next(streamBottom, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
-          filter,
-          // filterUpThrough(),
-          pullScroll(scroller, content, renderer, false, false)
-        )
-      }
-    }
+  //     if (streamBottom) {
+  //       pull(
+  //         next(streamBottom, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
+  //         filter,
+  //         // filterUpThrough(),
+  //         pullScroll(scroller, content, renderer, false, false)
+  //       )
+  //     }
+  //   }
 
-    function reset () {
-    }
-
+  //   function reset () {
+  //   }
+  // }
+ 
   }
-
 }
 
 function keyscroll (content) {
