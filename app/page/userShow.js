@@ -15,9 +15,11 @@ exports.needs = nest({
   'sbot.pull.userFeed': 'first',
   'keys.sync.id': 'first',
   'translations.sync.strings': 'first',
+  'unread.sync.isUnread': 'first'
 })
 
 exports.create = (api) => {
+  var isUnread = api.unread.sync.isUnread
   return nest('app.page.userShow', userShow)
 
   function userShow (location) {
@@ -50,13 +52,20 @@ exports.create = (api) => {
     const BLOG_TYPES = ['blog', 'post']
     const blogs = MutantArray()
     pull(
-      // next(api.feed.pull.private, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
-      // api.feed.pull.private({reverse: true, limit: 100, live: false}),
       api.sbot.pull.userFeed({id: feed, reverse: true, live: false}),
       pull.filter(msg => BLOG_TYPES.includes(get(msg, 'value.content.type'))),
       pull.filter(msg => get(msg, 'value.content.root') === undefined),
+      //unread state should not be in this file...
+      pull.through(function (blog) {
+        if(isUnread(blog))
+          thread.unread = true
+        thread.replies.forEach(function (data) {
+          if(isUnread(data))
+            blog.unread = data.unread = true
+        })
+      }),
       pull.drain(blogs.push)
-      // Scroller(content, scrollerContent, render, false, false)
+      // TODO - new Scroller ?
     )
 
     return h('Page -userShow', {title: name}, [
@@ -81,5 +90,4 @@ exports.create = (api) => {
     ])
   }
 }
-
 

@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, computed, map, when, Dict, dictToCollection, Array: MutantArray, Value, resolve } = require('mutant')
+const { h, computed, map, when, Dict, Array: MutantArray, Value, Set, resolve } = require('mutant')
 const pull = require('pull-stream')
 const next = require('pull-next-step')
 const get = require('lodash/get')
@@ -13,16 +13,19 @@ exports.needs = nest({
   'about.obs.name': 'first',
   'feed.pull.private': 'first',
   'feed.pull.rollup': 'first',
+  'feed.pull.public': 'first',
   'keys.sync.id': 'first',
   'history.sync.push': 'first',
   'message.html.subject': 'first',
   'sbot.obs.localPeers': 'first',
   'translations.sync.strings': 'first',
+  'unread.sync.isUnread': 'first'
 })
 
 exports.create = (api) => {
   var recentMsgCache = MutantArray()
-  var usersMsgCache = Dict() // { id: [ msgs ] }
+  var usersLastMsgCache = Dict() // { id: [ msgs ] }
+  var usersUnreadMsgsCache = Dict() // { id: [ msgs ] }
 
   return nest('app.html.context', context)
   
@@ -31,6 +34,29 @@ exports.create = (api) => {
     const myKey = api.keys.sync.id()
 
     var nearby = api.sbot.obs.localPeers()
+
+    pull(
+      next(api.feed.pull.private, {reverse: true, limit: 1000, live: false}, ['value', 'timestamp']),
+      pull.filter(msg => msg.value.content.type === 'post'), // TODO is this the best way to protect against votes?
+      pull.filter(msg => msg.value.content.recps),
+      pull.filter(msg => msg.value.author !== myKey),
+      pull.drain(msg => {
+        var cache = getUserUnreadMsgsCache(msg.value.author)
+
+        if(api.unread.sync.isUnread(msg)) 
+          cache.add(msg.key)
+        else
+          cache.delete(msg.key)
+      })
+    )
+
+    //TODO: calculate unread state for public threads/blogs
+    //    pull(
+    //      next(api.feed.pull.public, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
+    //      pull.drain(msg => {
+    //
+    //      })
+    //    )
 
     return h('Context -feed', [
       LevelOneContext(),
@@ -49,7 +75,7 @@ exports.create = (api) => {
         // Nearby
         computed(nearby, n => !isEmpty(n) ? h('header', strings.peopleNearby) : null),
         map(nearby, feedId => Option({
-          notifications: Math.random() > 0.7 ? Math.floor(Math.random()*9+1) : 0, // TODO 
+          notifications: notifications(feedId),
           imageEl: api.about.html.avatar(feedId, 'small'),
           label: api.about.obs.name(feedId),
           selected: location.feed === feedId,
@@ -66,7 +92,7 @@ exports.create = (api) => {
 
         // Discover
         Option({
-          notifications: Math.floor(Math.random()*5+1),
+          notifications: '!', //TODO - count this! 
           imageEl: h('i.fa.fa-binoculars'),
           label: strings.blogIndex.title,
           selected: isDiscoverContext(location),
@@ -79,7 +105,7 @@ exports.create = (api) => {
         prepend,
         stream: api.feed.pull.private,
         filter: () => pull(
-          pull.filter(msg => msg.value.content.type === 'post'), // TODO is this the best way to protect against votes?
+          pull.filter(msg => msg.value.content.type === 'post'),
           pull.filter(msg => msg.value.author != myKey),
           pull.filter(msg => msg.value.content.recps)
         ),
@@ -92,7 +118,8 @@ exports.create = (api) => {
           if (nearby.has(author)) return
 
           return Option({
-            notifications: Math.random() > 0.7 ? Math.floor(Math.random()*9+1) : 0, // TODO
+            //the number of threads with each peer
+            notifications: notifications(author),
             imageEl: api.about.html.avatar(author),
             label: api.about.obs.name(author),
             selected: location.feed === author,
@@ -131,6 +158,23 @@ exports.create = (api) => {
 
     }
 
+    function getUserUnreadMsgsCache (author) {
+      var cache = usersUnreadMsgsCache.get(author)
+      if (!cache) { 
+        cache = Set () 
+        usersUnreadMsgsCache.put(author, cache)
+      }
+      return cache
+    }
+
+    function notifications (author) {
+      return computed(getUserUnreadMsgsCache(author), cache => cache.length)
+
+      // TODO find out why this doesn't work
+      // return getUserUnreadMsgsCache(feedId)
+      //   .getLength
+    }
+
     function LevelTwoContext () {
       const { key, value, feed: targetUser, page } = location
       const root = get(value, 'content.root', key)
@@ -143,10 +187,10 @@ exports.create = (api) => {
         label: h('Button', strings.threadNew.action.new),
       })
 
-      var userMsgCache = usersMsgCache.get(targetUser)
-      if (!userMsgCache) {
-        userMsgCache = MutantArray()
-        usersMsgCache.put(targetUser, userMsgCache)
+      var userLastMsgCache = usersLastMsgCache.get(targetUser)
+      if (!userLastMsgCache) {
+        userLastMsgCache = MutantArray()
+        usersLastMsgCache.put(targetUser, userLastMsgCache)
       }
 
       return api.app.html.scroller({
@@ -154,17 +198,17 @@ exports.create = (api) => {
         prepend,
         stream: api.feed.pull.private,
         filter: () => pull(
-          pull.filter(msg => !msg.value.content.root), // only show the root message??? - check this still works with lastmessage
-          pull.filter(msg => msg.value.content.type === 'post'), // TODO is this the best way to protect against votes?
+          pull.filter(msg => !msg.value.content.root),
+          pull.filter(msg => msg.value.content.type === 'post'),
           pull.filter(msg => msg.value.content.recps),
           pull.filter(msg => msg.value.content.recps
             .map(recp => typeof recp === 'object' ? recp.link : recp)
             .some(recp => recp === targetUser)
           )
         ),
-        store: userMsgCache,
-        updateTop: updateUserMsgCache,
-        updateBottom: updateUserMsgCache,
+        store: userLastMsgCache,
+        updateTop: updateLastMsgCache,
+        updateBottom: updateLastMsgCache,
         render: (rootMsgObs) => { 
           const rootMsg = resolve(rootMsgObs)
           return Option({
@@ -175,7 +219,7 @@ exports.create = (api) => {
         }
       })
 
-      function updateUserMsgCache (soFar, newMsg) {
+      function updateLastMsgCache (soFar, newMsg) {
         soFar.transaction(() => { 
           const { timestamp } = newMsg.value
           const index = indexOf(soFar, (msg) => timestamp === resolve(msg).value.timestamp)
@@ -228,3 +272,4 @@ function indexOf (array, fn) {
   }
   return -1
 }
+

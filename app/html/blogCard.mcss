@@ -57,7 +57,14 @@ BlogCard {
       }
     }
   }
+  background-color: #f8f8f8
 
+  -unread {
+    div.content {
+      font-weight: bold
+    }
+    background-color: #fff
+  }
 }
 
 Thumbnail {
