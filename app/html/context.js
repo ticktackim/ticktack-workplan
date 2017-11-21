@@ -54,7 +54,7 @@ exports.create = (api) => {
           label: api.about.obs.name(feedId),
           selected: location.feed === feedId,
           location: computed(recentMsgCache, recent => {
-            const lastMsg = recent[feedId]
+            const lastMsg = recent.find(msg => msg.value.author === feedId)
             return lastMsg
               ? Object.assign(lastMsg, { feed: feedId })
               : { page: 'threadNew', feed: feedId }
