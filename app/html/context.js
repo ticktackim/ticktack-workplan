@@ -22,7 +22,7 @@ exports.needs = nest({
 
 exports.create = (api) => {
   var recentMsgCache = MutantArray()
-  var userMsgCache = Dict() // { id: [ msgs ] }
+  var usersMsgCache = Dict() // { id: [ msgs ] }
 
   return nest('app.html.context', context)
   
@@ -102,7 +102,7 @@ exports.create = (api) => {
       })
 
       function updateRecentMsgCache (soFar, newMsg) {
-        soFar.transaction(function () { 
+        soFar.transaction(() => { 
           const { author, timestamp } = newMsg.value
           const index = indexOf(soFar, (msg) => author === resolve(msg).value.author)
           var object = Value()
@@ -129,14 +129,6 @@ exports.create = (api) => {
         })
       }
 
-      function indexOf (array, fn) {
-        for (var i = 0; i < array.getLength(); i++) {
-          if (fn(array.get(i))) {
-            return i
-          }
-        }
-        return -1
-      }
     }
 
     function LevelTwoContext () {
@@ -144,7 +136,6 @@ exports.create = (api) => {
       const root = get(value, 'content.root', key)
       if (!targetUser) return
 
-      var threads = MutantArray()
 
       const prepend = Option({
         selected: page === 'threadNew',
@@ -152,26 +143,56 @@ exports.create = (api) => {
         label: h('Button', strings.threadNew.action.new),
       })
 
+      var userMsgCache = usersMsgCache.get(targetUser)
+      if (!userMsgCache) {
+        userMsgCache = MutantArray()
+        usersMsgCache.put(targetUser, userMsgCache)
+      }
+
       return api.app.html.scroller({
         classList: [ 'level', '-two' ],
         prepend,
         stream: api.feed.pull.private,
         filter: () => pull(
+          pull.filter(msg => !msg.value.content.root), // only show the root message??? - check this still works with lastmessage
+          pull.filter(msg => msg.value.content.type === 'post'), // TODO is this the best way to protect against votes?
           pull.filter(msg => msg.value.content.recps),
           pull.filter(msg => msg.value.content.recps
             .map(recp => typeof recp === 'object' ? recp.link : recp)
             .some(recp => recp === targetUser)
-          ),
-          api.feed.pull.rollup() // TODO - not technically a filter ...?
+          )
         ),
-        render: (thread) => { 
+        store: userMsgCache,
+        updateTop: updateUserMsgCache,
+        updateBottom: updateUserMsgCache,
+        render: (rootMsgObs) => { 
+          const rootMsg = resolve(rootMsgObs)
           return Option({
-            label: api.message.html.subject(thread),
-            selected: thread.key === root,
-            location: Object.assign(thread, { feed: targetUser }),
+            label: api.message.html.subject(rootMsg),
+            selected: rootMsg.key === root,
+            location: Object.assign(rootMsg, { feed: targetUser }),
           })
         }
       })
+
+      function updateUserMsgCache (soFar, newMsg) {
+        soFar.transaction(() => { 
+          const { timestamp } = newMsg.value
+          const index = indexOf(soFar, (msg) => timestamp === resolve(msg).value.timestamp)
+
+          if (index >= 0) return
+          // if reference already exists, abort
+
+          var object = Value(newMsg)
+
+          const justOlderPosition = indexOf(soFar, (msg) => timestamp > resolve(msg).value.timestamp)
+          if (justOlderPosition > -1) {
+            soFar.insert(object, justOlderPosition)
+          } else {
+            soFar.push(object)
+          }
+        })
+      }
     }
 
     function Option ({ notifications = 0, imageEl, label, location, selected }) {
@@ -199,3 +220,11 @@ exports.create = (api) => {
   }
 }
 
+function indexOf (array, fn) {
+  for (var i = 0; i < array.getLength(); i++) {
+    if (fn(array.get(i))) {
+      return i
+    }
+  }
+  return -1
+}
