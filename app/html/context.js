@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, computed, map, when, Dict, dictToCollection, Array: MutantArray, resolve } = require('mutant')
+const { h, computed, map, when, Dict, dictToCollection, Array: MutantArray, Value, resolve } = require('mutant')
 const pull = require('pull-stream')
 const next = require('pull-next-step')
 const get = require('lodash/get')
@@ -20,32 +20,17 @@ exports.needs = nest({
   'translations.sync.strings': 'first',
 })
 
-
 exports.create = (api) => {
-  return nest('app.html.context', (location) => {
+  var recentMsgCache = MutantArray()
+  var userMsgCache = Dict() // { id: [ msgs ] }
 
+  return nest('app.html.context', context)
+  
+  function context (location) {
     const strings = api.translations.sync.strings()
     const myKey = api.keys.sync.id()
 
     var nearby = api.sbot.obs.localPeers()
-    var recentMsgLog = Dict ()
-    function updateRecentMsgLog (msg) {
-      const { author, timestamp } = msg.value
-
-      if (!recentMsgLog.has(author)) {
-        recentMsgLog.put(author, msg)
-        return
-      }
-
-      const currentWinner = recentMsgLog.get(author)
-      if (timestamp > currentWinner.value.timestamp) {
-        recentMsgLog.put(author, msg)
-      }
-    }
-    function isLatestMsg (msg) {
-      const { author, timestamp } = msg.value
-      return recentMsgLog.get(author).value.timestamp === timestamp
-    }
 
     return h('Context -feed', [
       LevelOneContext(),
@@ -68,7 +53,7 @@ exports.create = (api) => {
           imageEl: api.about.html.avatar(feedId, 'small'),
           label: api.about.obs.name(feedId),
           selected: location.feed === feedId,
-          location: computed(recentMsgLog, recent => {
+          location: computed(recentMsgCache, recent => {
             const lastMsg = recent[feedId]
             return lastMsg
               ? Object.assign(lastMsg, { feed: feedId })
@@ -96,12 +81,13 @@ exports.create = (api) => {
         filter: () => pull(
           pull.filter(msg => msg.value.content.type === 'post'), // TODO is this the best way to protect against votes?
           pull.filter(msg => msg.value.author != myKey),
-          pull.filter(msg => msg.value.content.recps),
-          pull.through(updateRecentMsgLog),
-          pull.filter(isLatestMsg)
-          //pull.through( // trim exisiting from content up Top case) // do this with new updateTop in mutant-scroll
+          pull.filter(msg => msg.value.content.recps)
         ),
-        render: (msg) => {
+        store: recentMsgCache,
+        updateTop: updateRecentMsgCache,
+        updateBottom: updateRecentMsgCache,
+        render: (msgObs) => {
+          const msg = resolve(msgObs)
           const { author } = msg.value
           if (nearby.has(author)) return
 
@@ -114,6 +100,43 @@ exports.create = (api) => {
           })
         }
       })
+
+      function updateRecentMsgCache (soFar, newMsg) {
+        soFar.transaction(function () { 
+          const { author, timestamp } = newMsg.value
+          const index = indexOf(soFar, (msg) => author === resolve(msg).value.author)
+          var object = Value()
+
+          if (index >= 0) {
+            // reference already exists, lets use this instead!
+            const existingMsg = soFar.get(index)
+
+            if (resolve(existingMsg).value.timestamp > timestamp) return 
+            // but abort if the existing reference is newer
+
+            object = existingMsg
+            soFar.deleteAt(index)
+          }
+
+          object.set(newMsg)
+
+          const justOlderPosition = indexOf(soFar, (msg) => timestamp > resolve(msg).value.timestamp)
+          if (justOlderPosition > -1) {
+            soFar.insert(object, justOlderPosition)
+          } else {
+            soFar.push(object)
+          }
+        })
+      }
+
+      function indexOf (array, fn) {
+        for (var i = 0; i < array.getLength(); i++) {
+          if (fn(array.get(i))) {
+            return i
+          }
+        }
+        return -1
+      }
     }
 
     function LevelTwoContext () {
@@ -173,6 +196,6 @@ exports.create = (api) => {
         h('div.label', { 'ev-click': goToLocation }, label)
       ])
     }
-  })
+  }
 }
 

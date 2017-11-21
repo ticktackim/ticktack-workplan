@@ -17,10 +17,7 @@ exports.create = function (api) {
     const { 
       stream,
       filter = () => pull.filter((msg) => true),
-      // render,
-      // classList = [],
-      // prepend = [],
-      // append = [] 
+
     } = opts
 
     const streamToTop = pull(
@@ -34,6 +31,17 @@ exports.create = function (api) {
     )
 
     return Scroller(Object.assign({}, opts, { streamToTop, streamToBottom }))
+    // valid Scroller opts :  see github.com/mixmix/mutant-scroll
+    //   classList = [],
+    //   prepend = [],
+    //   append = [],
+    //   streamToTop,
+    //   streamToBottom,
+    //   render,
+    //   updateTop =  updateTopDefault,
+    //   updateBottom = updateBottomDefault,
+    //   store = MutantArray(),
+    //   cb = (err) => { if (err) throw err }
   }
 }
 
