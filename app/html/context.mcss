@@ -2,7 +2,7 @@ Context {
   flex-shrink: 0
   flex-grow: 0
   overflow: hidden
-  background-color: #fff
+  $backgroundPrimaryText
 
   display: flex
 
@@ -13,23 +13,31 @@ Context {
 
     border-right: 1px gainsboro solid
 
-    div.Option {}
+    div.wrapper {
+      section {
+        header {
+          $colorSubtle
+          padding: .5rem 1rem
+        }
 
-    header {
-      $colorSubtle
-      padding: .5rem 1rem
-    }
+        div.Option {}
 
-    hr {
-      border: 1px solid gainsboro
-      border-bottom: none
-      margin: 0
+        hr {
+          border: 1px solid gainsboro
+          border-bottom: none
+          margin: 0
+        }
+      }
     }
 
     -one {}
     -two {
-      div.Option {
-        padding: 0 1rem
+      div.wrapper {
+        section {
+          div.Option {
+            padding: 0 1rem
+          }
+        }
       }
     }
   }
@@ -75,7 +83,7 @@ Option {
    
     }
     i {
-      $avatarSmall
+      $circleSmall
       $colorPrimary
       font-size: 1.3rem
       display: flex

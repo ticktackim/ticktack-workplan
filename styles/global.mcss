@@ -1,6 +1,6 @@
 body {
   $fontBasic 
-  background-color: #fff
+  $backgroundPrimaryText
 
   margin: 0
 

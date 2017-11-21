@@ -34,7 +34,7 @@ Page -threadNew {
           min-width: 5rem
           $borderSubtle
           border-radius: 6rem
-          background-color: #fff
+          $backgroundPrimaryText
 
           margin-right: 1rem
 

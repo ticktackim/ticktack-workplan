@@ -1,7 +1,12 @@
 const nest = require('depnest')
 const Url = require('url')
+const { isMsg } = require('ssb-ref')
 
 exports.gives = nest('app.async.catchLinkClick')
+
+exports.needs = nest({
+  'sbot.async.get': 'first'
+})
 
 exports.create = function (api) {
   return nest('app.async.catchLinkClick', catchLinkClick)
@@ -28,6 +33,14 @@ exports.create = function (api) {
       const url = Url.parse(href)
       const opts = { 
         isExternal: !!url.host
+      }
+
+      if (isMsg(href)) {
+        api.sbot.async.get(href, (err, data) => {
+          // NOTE the catchLinkClick cb has signature (link, opts)
+          cb(err || data, opts)
+        })
+        return
       }
 
       cb(href, opts)

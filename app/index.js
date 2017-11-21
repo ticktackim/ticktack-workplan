@@ -4,15 +4,18 @@ module.exports = {
   },
   html: {
     app: require('./html/app'),
+    comments: require('./html/comments'),
     context: require('./html/context'),
     header: require('./html/header'),
     thread: require('./html/thread'),
     link: require('./html/link'),
-    blogCard: require('./html/blog-card'),
+    blogCard: require('./html/blogCard'),
+    scroller: require('./html/scroller'),
   },
   page: {
     blogIndex: require('./page/blogIndex'),
     blogNew: require('./page/blogNew'),
+    blogShow: require('./page/blogShow'),
     error: require('./page/error'),
     settings: require('./page/settings'),
     // channel: require('./page/channel'),
@@ -28,6 +31,14 @@ module.exports = {
     userShow: require('./page/userShow'),
     threadNew: require('./page/threadNew'),
     threadShow: require('./page/threadShow'),
+  },
+  sync: {
+    initialize: {
+      clickHandler: require('./sync/initialize/clickHandler'),
+      styles: require('./sync/initialize/styles'),
+      suggests: require('./sync/initialize/suggests'),
+    },
+    navHistory: require('./sync/nav-history'),
   }
 }
 

@@ -9,20 +9,22 @@ Page -userShow {
       align-items: center
 
       img.Avatar {
-        width: 5rem
-        height: 5rem
-        border-radius: 3rem
       }
 
       h1 {
         font-weight: 300
         font-size: 1rem
+        
+        display: flex
+        div.Link {
+          margin-left: .5rem
+        }
       }
 
       div.actions {
         display: flex
 
-        div.friendship {
+        div.Follow {
           margin-right: 1rem
         }
 
@@ -32,9 +34,15 @@ Page -userShow {
     }
 
     section.blogs {
-    }
+      div.BlogCard {
+        margin-bottom: .5rem
 
-    div.threads {}
+        div.context {
+          div.Link { display: none }
+          div.name { display: none }
+        }
+      }
+    }
   }
 }
 
