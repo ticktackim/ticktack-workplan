@@ -4,7 +4,6 @@ var { Dict, Set } = require('mutant')
 exports.gives = nest({
   'unread.sync.isUnread': true,
   'unread.sync.markRead': true,
-  'unread.obs.userMessages': true
 })
 
 //load current state of unread messages.
@@ -53,16 +52,11 @@ exports.create = function (api) {
     }
   }
 
-  function userMessages(feedId) {
-
-  }
-
   document.body.onunload = save
 
   return nest({
     'unread.sync.isUnread': isUnread,
     'unread.sync.markRead': markRead,
-    'unread.obs.userMessages': userMessages
   })
 }
 
