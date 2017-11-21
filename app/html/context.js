@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, computed, map, when, Dict, dictToCollection, Array: MutantArray, Value, resolve } = require('mutant')
+const { h, computed, map, when, Dict, Array: MutantArray, Value, Set, resolve } = require('mutant')
 const pull = require('pull-stream')
 const next = require('pull-next-step')
 const get = require('lodash/get')
@@ -24,7 +24,8 @@ exports.needs = nest({
 
 exports.create = (api) => {
   var recentMsgCache = MutantArray()
-  var usersMsgCache = Dict() // { id: [ msgs ] }
+  var usersLastMsgCache = Dict() // { id: [ msgs ] }
+  var usersUnreadMsgsCache = Dict() // { id: [ msgs ] }
 
   return nest('app.html.context', context)
   
@@ -34,30 +35,28 @@ exports.create = (api) => {
 
     var nearby = api.sbot.obs.localPeers()
 
-    var unreadCache = Dict()
-
     pull(
-      next(api.feed.pull.private, {reverse: true, limit: 10000, live: false}, ['value', 'timestamp']),
+      next(api.feed.pull.private, {reverse: true, limit: 1000, live: false}, ['value', 'timestamp']),
       pull.filter(msg => msg.value.content.type === 'post'), // TODO is this the best way to protect against votes?
       pull.filter(msg => msg.value.content.recps),
+      pull.filter(msg => msg.value.author !== myKey),
       pull.drain(msg => {
-        var author = msg.value.author
-        if(api.unread.sync.isUnread(msg)) {
-          var seen = author === myKey ? 0 : 1
-          unreadCache.put(author, (unreadCache.get(author)||0)+seen)
-        }
+        var cache = getUserUnreadMsgsCache(msg.value.author)
+
+        if(api.unread.sync.isUnread(msg)) 
+          cache.add(msg.key)
         else
-          unreadCache.put(author, 0)
+          cache.delete(msg.key)
       })
     )
 
-//TODO: calculate unread state for public threads/blogs
-//    pull(
-//      next(api.feed.pull.public, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
-//      pull.drain(msg => {
-//
-//      })
-//    )
+    //TODO: calculate unread state for public threads/blogs
+    //    pull(
+    //      next(api.feed.pull.public, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
+    //      pull.drain(msg => {
+    //
+    //      })
+    //    )
 
     return h('Context -feed', [
       LevelOneContext(),
@@ -76,7 +75,7 @@ exports.create = (api) => {
         // Nearby
         computed(nearby, n => !isEmpty(n) ? h('header', strings.peopleNearby) : null),
         map(nearby, feedId => Option({
-          notifications: unreadCache.get(feedId),
+          notifications: notifications(feedId),
           imageEl: api.about.html.avatar(feedId, 'small'),
           label: api.about.obs.name(feedId),
           selected: location.feed === feedId,
@@ -93,8 +92,7 @@ exports.create = (api) => {
 
         // Discover
         Option({
-          //TODO - count this! 
-          notifications: null,
+          notifications: '!', //TODO - count this! 
           imageEl: h('i.fa.fa-binoculars'),
           label: strings.blogIndex.title,
           selected: isDiscoverContext(location),
@@ -121,7 +119,7 @@ exports.create = (api) => {
 
           return Option({
             //the number of threads with each peer
-            notifications: computed(unreadCache, cache => cache[author]),
+            notifications: notifications(author),
             imageEl: api.about.html.avatar(author),
             label: api.about.obs.name(author),
             selected: location.feed === author,
@@ -160,6 +158,23 @@ exports.create = (api) => {
 
     }
 
+    function getUserUnreadMsgsCache (author) {
+      var cache = usersUnreadMsgsCache.get(author)
+      if (!cache) { 
+        cache = Set () 
+        usersUnreadMsgsCache.put(author, cache)
+      }
+      return cache
+    }
+
+    function notifications (author) {
+      return computed(getUserUnreadMsgsCache(author), cache => cache.length)
+
+      // TODO find out why this doesn't work
+      // return getUserUnreadMsgsCache(feedId)
+      //   .getLength
+    }
+
     function LevelTwoContext () {
       const { key, value, feed: targetUser, page } = location
       const root = get(value, 'content.root', key)
@@ -172,10 +187,10 @@ exports.create = (api) => {
         label: h('Button', strings.threadNew.action.new),
       })
 
-      var userMsgCache = usersMsgCache.get(targetUser)
-      if (!userMsgCache) {
-        userMsgCache = MutantArray()
-        usersMsgCache.put(targetUser, userMsgCache)
+      var userLastMsgCache = usersLastMsgCache.get(targetUser)
+      if (!userLastMsgCache) {
+        userLastMsgCache = MutantArray()
+        usersLastMsgCache.put(targetUser, userLastMsgCache)
       }
 
       return api.app.html.scroller({
@@ -191,9 +206,9 @@ exports.create = (api) => {
             .some(recp => recp === targetUser)
           )
         ),
-        store: userMsgCache,
-        updateTop: updateUserMsgCache,
-        updateBottom: updateUserMsgCache,
+        store: userLastMsgCache,
+        updateTop: updateLastMsgCache,
+        updateBottom: updateLastMsgCache,
         render: (rootMsgObs) => { 
           const rootMsg = resolve(rootMsgObs)
           return Option({
@@ -204,7 +219,7 @@ exports.create = (api) => {
         }
       })
 
-      function updateUserMsgCache (soFar, newMsg) {
+      function updateLastMsgCache (soFar, newMsg) {
         soFar.transaction(() => { 
           const { timestamp } = newMsg.value
           const index = indexOf(soFar, (msg) => timestamp === resolve(msg).value.timestamp)

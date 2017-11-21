@@ -1,8 +1,10 @@
 var nest = require('depnest')
+var { Dict, Set } = require('mutant')
 
 exports.gives = nest({
   'unread.sync.isUnread': true,
   'unread.sync.markRead': true,
+  'unread.obs.userMessages': true
 })
 
 //load current state of unread messages.
@@ -43,6 +45,7 @@ exports.create = function (api) {
     if(msg && 'string' === typeof msg.key) {
       //note: there is a quirk where some messages don't have a timestamp
       if(isUnread(msg)) {
+        var userUser 
         unread.filter[msg.key] = true
         save()
         return true
@@ -50,13 +53,16 @@ exports.create = function (api) {
     }
   }
 
+  function userMessages(feedId) {
+
+  }
+
   document.body.onunload = save
 
   return nest({
     'unread.sync.isUnread': isUnread,
-    'unread.sync.markRead': markRead
+    'unread.sync.markRead': markRead,
+    'unread.obs.userMessages': userMessages
   })
 }
-
-
 
