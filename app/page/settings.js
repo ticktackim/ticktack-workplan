@@ -7,7 +7,7 @@ exports.needs = nest({
   'about.html.image': 'first',
   'about.obs.name': 'first',
   'history.sync.push': 'first',
-  'history.obs.history': 'first',
+  'history.obs.store': 'first',
   'keys.sync.id': 'first',
   'settings.sync.get': 'first',
   'settings.sync.set': 'first',
@@ -32,7 +32,7 @@ exports.create = (api) => {
     api.settings.obs.get('language')(() => {
       console.log('language changed, resetting view')
 
-      api.history.obs.history().set([])         // wipe nav cache
+      api.history.obs.store().set([])         // wipe nav cache
       api.history.sync.push({page: 'home'})     // queue up basic pages
       api.history.sync.push({page: 'settings'})
     })

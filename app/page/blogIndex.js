@@ -19,24 +19,25 @@ exports.needs = nest({
 })
 
 exports.create = (api) => {
-  var contentHtmlObs
+  // var contentHtmlObs // TODO get a better cache than this
 
   return nest('app.page.blogIndex', function (location) {
     // location here can expected to be: { page: 'blogIndex'}
     //
     var strings = api.translations.sync.strings()
+    var blogs = blogsEl()
 
     return h('Page -blogIndex', {title: strings.home}, [
       api.app.html.context(location),
       h('div.content', [
         h('Button -primary', { 'ev-click': () => api.history.sync.push({ page: 'blogNew' }) }, strings.blogNew.actions.writeBlog),
-        blogs(),
-        h('Button -showMore', { 'ev-click': contentHtmlObs.more }, strings.showMore)
+        blogs,
+        h('Button -showMore', { 'ev-click': blogs.more }, strings.showMore)
       ]),
     ])
   })
 
-  function blogs () {
+  function blogsEl () {
     // TODO - replace with actual blogs
     var morePlease = false
     var threadsObs = api.state.obs.threads()
@@ -56,7 +57,8 @@ exports.create = (api) => {
     }
 
     var updates = h('div.blogs', [])
-    contentHtmlObs = More(
+    // contentHtmlObs = More(
+    var contentHtmlObs = More(
       threadsObsDebounced,
       function render (threads) {
 

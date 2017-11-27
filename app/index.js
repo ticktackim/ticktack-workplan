@@ -38,7 +38,6 @@ module.exports = {
       styles: require('./sync/initialize/styles'),
       suggests: require('./sync/initialize/suggests'),
     },
-    navHistory: require('./sync/nav-history'),
   }
 }
 
