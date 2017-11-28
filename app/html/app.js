@@ -22,7 +22,6 @@ exports.create = (api) => {
       var app = h('App', view)
       api.history.obs.location()(renderLocation)
       function renderLocation (loc) {
-        console.log('rendering new view', loc)
         var page = api.router.sync.router(loc)
         if (page) view.set([
           api.app.html.header({location: loc, push: api.history.sync.push}),

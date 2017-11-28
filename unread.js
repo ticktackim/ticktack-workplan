@@ -31,7 +31,6 @@ exports.create = function (api) {
 
     timer = setTimeout(function () {
       timer = null
-      console.log('save!', Object.keys(unread.filter).length)
       localStorage.unread = JSON.stringify(unread)
     }, 2e3)
   }
