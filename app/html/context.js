@@ -35,19 +35,25 @@ exports.create = (api) => {
 
     var nearby = api.sbot.obs.localPeers()
 
+    // Unread message counts
+    const updateUserUnreadMsgsCache = (msg) => {
+      var cache = getUserUnreadMsgsCache(msg.value.author)
+
+      if(api.unread.sync.isUnread(msg)) 
+        cache.add(msg.key)
+      else
+        cache.delete(msg.key)
+    }
     pull(
       next(api.feed.pull.private, {reverse: true, limit: 1000, live: false}, ['value', 'timestamp']),
-      pull.filter(msg => msg.value.content.type === 'post'), // TODO is this the best way to protect against votes?
-      pull.filter(msg => msg.value.content.recps),
-      pull.filter(msg => msg.value.author !== myKey),
-      pull.drain(msg => {
-        var cache = getUserUnreadMsgsCache(msg.value.author)
+      privateMsgFilter(),
+      pull.drain(updateUserUnreadMsgsCache)
+    )
 
-        if(api.unread.sync.isUnread(msg)) 
-          cache.add(msg.key)
-        else
-          cache.delete(msg.key)
-      })
+    pull(
+      next(api.feed.pull.private, {old: false, live: true}, ['value', 'timestamp']),
+      privateMsgFilter(),
+      pull.drain(updateUserUnreadMsgsCache)
     )
 
     //TODO: calculate unread state for public threads/blogs
@@ -104,11 +110,7 @@ exports.create = (api) => {
         classList: [ 'level', '-one' ],
         prepend,
         stream: api.feed.pull.private,
-        filter: () => pull(
-          pull.filter(msg => msg.value.content.type === 'post'),
-          pull.filter(msg => msg.value.author != myKey),
-          pull.filter(msg => msg.value.content.recps)
-        ),
+        filter: privateMsgFilter,
         store: recentMsgCache,
         updateTop: updateRecentMsgCache,
         updateBottom: updateRecentMsgCache,
@@ -260,6 +262,14 @@ exports.create = (api) => {
         ]),
         h('div.label', { 'ev-click': goToLocation }, label)
       ])
+    }
+
+    function privateMsgFilter () {
+      return pull(
+        pull.filter(msg => msg.value.content.type === 'post'),
+        pull.filter(msg => msg.value.author != myKey),
+        pull.filter(msg => msg.value.content.recps)
+      )
     }
   }
 }
