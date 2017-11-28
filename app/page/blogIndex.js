@@ -19,10 +19,10 @@ exports.needs = nest({
 })
 
 exports.create = (api) => {
-  // var contentHtmlObs // TODO get a better cache than this
+  var contentHtmlObs
 
   return nest('app.page.blogIndex', function (location) {
-    // location here can expected to be: { page: 'blogIndex'}
+    // location here can expected to be: { page: 'blogIndex'} or { page: 'home' }
     //
     var strings = api.translations.sync.strings()
     var blogs = blogsEl()
@@ -38,27 +38,35 @@ exports.create = (api) => {
   })
 
   function blogsEl () {
+    if (contentHtmlObs) return contentHtmlObs
     // TODO - replace with actual blogs
     var morePlease = false
+
     var threadsObs = api.state.obs.threads()
+    // var timestamp = new Date()
+    // threadsObs(ev => console.log(timestamp, ev))
+
+    var threadsObsDebounced = threadsObs // TODO rename or fix debounce
 
     // DUCT TAPE: debounce the observable so it doesn't
     // update the dom more than 1/second
-    threadsObs(function () {
-      if(morePlease) threadsObs.more()
-    })
-    threadsObsDebounced = Debounce(threadsObs, 1000)
-    threadsObsDebounced(function () {
-      morePlease = false
-    })
-    threadsObsDebounced.more = function () {
-      morePlease = true
-      requestIdleCallback(threadsObs.more)
-    }
+    // threadsObs(function () {
+    //   console.log('blogs - update?', morePlease)
+    //   if(morePlease) threadsObs.more()
+    // })
+    // threadsObsDebounced = Debounce(threadsObs, 1000)
+    // threadsObsDebounced(function () {
+    //   console.log('blogs - set morePlease: false')
+    //   morePlease = false
+    // })
+    // threadsObsDebounced.more = function () {
+    //   console.log('blogs - set morePlease: true', 'requestIdleCallback')
+    //   morePlease = true
+    //   requestIdleCallback(threadsObs.more)
+    // }
 
     var updates = h('div.blogs', [])
-    // contentHtmlObs = More(
-    var contentHtmlObs = More(
+    contentHtmlObs = More(
       threadsObsDebounced,
       function render (threads) {
 
