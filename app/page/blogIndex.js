@@ -31,6 +31,11 @@ exports.create = (api) => {
           return type === 'post' || type === 'blog'
         })
       ),
+      // FUTURE : if we need better perf, we can add a persistent cache. At the moment this page is fast enough though.
+      // See implementation of app.html.context for example
+      // store: recentMsgCache,
+      // updateTop: updateRecentMsgCache,
+      // updateBottom: updateRecentMsgCache,
       render
     })
 
