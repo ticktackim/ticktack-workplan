@@ -32,6 +32,7 @@ const sockets = combine(
   {
     suggestions: require('patch-suggest'),
     profile: require('patch-profile'),
+    history: require('patch-history'),
     core: require('patchcore')
   }
 )

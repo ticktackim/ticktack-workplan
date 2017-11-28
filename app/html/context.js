@@ -92,7 +92,7 @@ exports.create = (api) => {
 
         // Discover
         Option({
-          notifications: '!', //TODO - count this! 
+          // notifications: '!', //TODO - count this! 
           imageEl: h('i.fa.fa-binoculars'),
           label: strings.blogIndex.title,
           selected: isDiscoverContext(location),

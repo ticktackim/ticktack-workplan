@@ -26,9 +26,8 @@ exports.create = (api) => {
     const loc = computed(location, location => {
       if (typeof location != 'object') return {}
 
-      return location.location || {}
+      return location || {}
     })
-    // Dominics nav location api is slightly different than mine - it nest location in nav.location.location
 
     const isFeed = computed(loc, loc => {
       return FEED_PAGES.includes(loc.page) || (loc.key && loc.feed)

@@ -11,7 +11,7 @@ exports.needs = nest({
   'app.html.link': 'first',
   'app.html.blogCard': 'first',
   'contact.html.follow': 'first',
-  'feed.pull.private': 'first',
+  'feed.pull.rollup': 'first',
   'sbot.pull.userFeed': 'first',
   'keys.sync.id': 'first',
   'translations.sync.strings': 'first',
@@ -54,12 +54,13 @@ exports.create = (api) => {
     pull(
       api.sbot.pull.userFeed({id: feed, reverse: true, live: false}),
       pull.filter(msg => BLOG_TYPES.includes(get(msg, 'value.content.type'))),
-      pull.filter(msg => get(msg, 'value.content.root') === undefined),
+      // pull.filter(msg => get(msg, 'value.content.root') === undefined),
+      api.feed.pull.rollup(),
       //unread state should not be in this file...
       pull.through(function (blog) {
         if(isUnread(blog))
-          thread.unread = true
-        thread.replies.forEach(function (data) {
+          blog.unread = true
+        blog.replies.forEach(function (data) {
           if(isUnread(data))
             blog.unread = data.unread = true
         })

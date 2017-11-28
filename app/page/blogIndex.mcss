@@ -1,15 +1,26 @@
 Page -blogIndex {
+  $backgroundPrimary
 
-  div.content {
-    $backgroundPrimary
+  div.Scroller.content {
+    background-color: #fff
 
-    div.Button {
-      margin: 1rem 0
-    }
+    div.wrapper { 
+      section.top {
+        div.Button {
+          margin-bottom: 1rem
+        }
+      }
 
-    div.blogs {
-      div.BlogCard {
-        margin-bottom: .5rem
+      section.content {
+        div.BlogCard {
+          margin-bottom: .5rem
+        }
+      }
+
+      section.bottom {
+        div.Button {
+          margin: 1rem 0
+        }
       }
     }
   }
