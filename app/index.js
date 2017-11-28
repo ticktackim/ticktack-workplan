@@ -24,7 +24,6 @@ module.exports = {
     // groupIndex: require('./page/groupIndex'),
     // groupNew: require('./page/groupNew'),
     // groupShow: require('./page/groupShow'),
-    // home: require('./page/home'),
     // threadShow: require('./page/threadShow'),
     userEdit: require('./page/userEdit'),
     // userFind: require('./page/userFind'),
@@ -38,7 +37,6 @@ module.exports = {
       styles: require('./sync/initialize/styles'),
       suggests: require('./sync/initialize/suggests'),
     },
-    navHistory: require('./sync/nav-history'),
   }
 }
 

@@ -3,7 +3,8 @@ const nest = require('depnest')
 const ssbKeys = require('ssb-keys')
 const Path = require('path')
 
-const appName = process.env.ssb_appname || 'ticktack' //'ticktack' TEMP: this is for the windowsSSB installer only
+// const appName = process.env.ssb_appname || 'ticktack' //'ticktack' TEMP: this is for the windowsSSB installer only
+const appName = 'ssb'
 const opts = appName == 'ssb'
   ? null
   : require('./default-config.json')
