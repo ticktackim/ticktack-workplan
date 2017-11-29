@@ -45,20 +45,20 @@ exports.create = (api) => {
         cache.delete(msg.key)
     }
     pull(
-      next(api.feed.pull.private, {reverse: true, limit: 1000, live: false}, ['value', 'timestamp']),
+      next(api.feed.pull.private, {reverse: true, limit: 1000, live: false, property: ['value', 'timestamp']}),
       privateMsgFilter(),
       pull.drain(updateUserUnreadMsgsCache)
     )
 
     pull(
-      next(api.feed.pull.private, {old: false, live: true}, ['value', 'timestamp']),
+      next(api.feed.pull.private, {old: false, live: true, property: ['value', 'timestamp']}),
       privateMsgFilter(),
       pull.drain(updateUserUnreadMsgsCache)
     )
 
     //TODO: calculate unread state for public threads/blogs
     //    pull(
-    //      next(api.feed.pull.public, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
+    //      next(api.feed.pull.public, {reverse: true, limit: 100, live: false, property: ['value', 'timestamp']}),
     //      pull.drain(msg => {
     //
     //      })
