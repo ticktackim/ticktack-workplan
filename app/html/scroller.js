@@ -17,16 +17,15 @@ exports.create = function (api) {
     const { 
       stream,
       filter = () => pull.filter((msg) => true),
-
     } = opts
 
     const streamToTop = pull(
-      next(stream, {old: false, limit: 100}, ['value', 'timestamp']),
+      next(stream, {old: false, limit: 100, property: ['value', 'timestamp']}),
       filter() // is a pull-stream through
     )
 
     const streamToBottom = pull(
-      next(stream, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
+      next(stream, {reverse: true, limit: 100, live: false, property: ['value', 'timestamp']}),
       filter()
     )
 

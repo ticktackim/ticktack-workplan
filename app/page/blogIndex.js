@@ -29,7 +29,8 @@ exports.create = (api) => {
         pull.filter(msg => {
           const type = msg.value.content.type
           return type === 'post' || type === 'blog'
-        })
+        }),
+        pull.filter(msg => !msg.value.content.root) // show only root messages
       ),
       // FUTURE : if we need better perf, we can add a persistent cache. At the moment this page is fast enough though.
       // See implementation of app.html.context for example

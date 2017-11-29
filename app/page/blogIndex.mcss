@@ -1,10 +1,16 @@
 Page -blogIndex {
   $backgroundPrimary
 
+  div.content {
+    padding: 0
+  }
+
   div.Scroller.content {
     background-color: #fff
 
     div.wrapper { 
+      padding: 1rem
+
       section.top {
         div.Button {
           margin-bottom: 1rem
