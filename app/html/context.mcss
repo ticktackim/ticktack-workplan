@@ -16,7 +16,7 @@ Context {
     div.wrapper {
       section {
         header {
-          $colorSubtle
+          $colorFontSubtle
           padding: .5rem 1rem
         }
 

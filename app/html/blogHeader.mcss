@@ -1,0 +1,35 @@
+BlogHeader {
+  background-color: #fff
+  padding: 1rem
+  padding-bottom: .5rem
+
+  display: flex
+  justify-content: space-between
+
+  div.left {
+    display: flex
+    
+    div {
+      font-size: 1rem 
+      $colorFontSubtle
+      cursor: pointer
+
+      padding-bottom: .6rem
+      margin-right: 1rem
+      
+      -active {
+        $colorFontBasic
+        border-bottom: 2px solid #222
+      }
+
+      -discovery {
+        $colorFontBasic
+        i { margin-right: .5rem }
+      }
+    }
+  }
+
+  div.right {
+  }
+}
+

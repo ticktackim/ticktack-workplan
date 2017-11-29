@@ -33,7 +33,7 @@ exports.create = (api) => {
       console.log('language changed, resetting view')
 
       api.history.obs.store().set([])         // wipe nav cache
-      api.history.sync.push({page: 'home'})     // queue up basic pages
+      api.history.sync.push({page: 'blogIndex'})     // queue up basic pages
       api.history.sync.push({page: 'settings'})
     })
 

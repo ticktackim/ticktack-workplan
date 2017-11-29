@@ -7,6 +7,7 @@ exports.gives = nest('app.page.blogIndex')
 exports.needs = nest({
   'app.html.context': 'first',
   'app.html.blogCard': 'first',
+  'app.html.blogHeader': 'first',
   'app.html.scroller': 'first',
   'feed.pull.public': 'first',
   'history.sync.push': 'first',
@@ -17,13 +18,13 @@ exports.needs = nest({
 
 exports.create = (api) => {
   return nest('app.page.blogIndex', function (location) {
-    // location here can expected to be: { page: 'blogIndex'} or { page: 'home' }
+    // location here can expected to be: { page: 'blogIndex'}
  
     var strings = api.translations.sync.strings()
 
     var blogs = api.app.html.scroller({
       classList: ['content'],
-      prepend: h('Button -primary', { 'ev-click': () => api.history.sync.push({ page: 'blogNew' }) }, strings.blogNew.actions.writeBlog),
+      prepend: api.app.html.blogHeader(location),
       stream: api.feed.pull.public,
       filter: () => pull(
         pull.filter(msg => {

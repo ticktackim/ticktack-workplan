@@ -1,25 +1,32 @@
 Page -blogIndex {
-  $backgroundPrimary
 
   div.content {
     padding: 0
   }
 
   div.Scroller.content {
-    background-color: #fff
 
     div.wrapper { 
-      padding: 1rem
+      display: flex
+      flex-wrap: wrap
+      justify-content: center
 
       section.top {
-        div.Button {
-          margin-bottom: 1rem
-        }
+        position: sticky
+        left: 0
+        right: 0
+        top: 0
+        flex-basis: 100%
       }
 
       section.content {
+        background-color: #fff
+        $maxWidth
+        margin: .8rem
+        padding: 0 2rem
+
         div.BlogCard {
-          margin-bottom: .5rem
+          border-bottom: 1px solid gainsboro
         }
       }
 

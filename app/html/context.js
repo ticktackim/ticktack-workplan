@@ -71,7 +71,7 @@ exports.create = (api) => {
 
     function LevelOneContext () {
       function isDiscoverContext (loc) {
-        const PAGES_UNDER_DISCOVER = ['blogIndex', 'blogShow', 'home']
+        const PAGES_UNDER_DISCOVER = ['blogIndex', 'blogShow']
 
         return PAGES_UNDER_DISCOVER.includes(location.page)
           || get(location, 'value.private') === undefined

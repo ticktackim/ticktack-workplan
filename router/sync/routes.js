@@ -33,8 +33,6 @@ exports.create = (api) => {
     const routes = [
 
       // Blog pages
-      [ location => location.page === 'home', pages.blogIndex ],
-      [ location => location.page === 'discovery', pages.blogIndex ],
       [ location => location.page === 'blogIndex', pages.blogIndex ],
       [ location => location.page === 'blogNew', pages.blogNew ],
       [ location => location.page === 'blogShow', pages.blogShow ],

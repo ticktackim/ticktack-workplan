@@ -32,7 +32,7 @@ exports.create = (api) => {
 
       const isOnboarded = api.settings.sync.get('onboarded')
       if (isOnboarded)
-        api.history.sync.push({page: 'home'})
+        api.history.sync.push({page: 'blogIndex'})
       else {
         api.history.sync.push({
           page:'userEdit',
@@ -43,7 +43,7 @@ exports.create = (api) => {
             if (didEdit)
               api.settings.sync.set({ onboarded: true })
 
-            api.history.sync.push({ page: 'home' })
+            api.history.sync.push({ page: 'blogIndex' })
           }
         }) 
       }

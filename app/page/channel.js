@@ -51,6 +51,7 @@ exports.create = (api) => {
 
     const Link = api.app.html.link
 
+    // TODO change this to -channel
     return h('Page -home', {title: channel}, [
       Link({ page: 'threadNew', channel }, h('Button -primary', strings.channel.action.newThread)),
       h('div.content', [ threadsHtmlObs ]),

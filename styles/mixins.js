@@ -49,7 +49,7 @@ $colorFontPrimary {
   color: #5c6bc0
 }
 
-$colorSubtle {
+$colorFontSubtle {
   color: #999
 }
 

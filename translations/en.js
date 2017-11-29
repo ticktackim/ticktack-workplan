@@ -2,6 +2,10 @@ module.exports = {
   blogIndex: {
     title: 'Discover',
   },
+  blogHeader: {
+    blogsAll: 'Dynamics',
+    blogSearch: 'Search'
+  },
   blogNew: {
     field: {
       title: 'Title',
