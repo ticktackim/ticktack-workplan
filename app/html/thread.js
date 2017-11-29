@@ -2,6 +2,7 @@ const nest = require('depnest')
 const { h, Array: MutantArray, map, computed, when } = require('mutant')
 const get = require('lodash/get')
 
+// TODO - rename threadPrivate
 exports.gives = nest('app.html.thread')
 
 exports.needs = nest({
@@ -27,7 +28,7 @@ exports.create = (api) => {
 
         return author() === myId
           ? h('div.my-chunk', [
-            h('div.avatar'),
+            h('Avatar -small'),
             h('div.msgs', map(chunk, msg => {
               return h('div.msg-row', [
                 h('div.spacer'),
@@ -36,7 +37,7 @@ exports.create = (api) => {
             }))
           ])
           : h('div.other-chunk', [
-            h('div.avatar', when(author, api.about.html.avatar(author()))),
+            when(author, api.about.html.avatar(author()), 'small'),
             h('div.msgs', map(chunk, msg => {
               return h('div.msg-row', [
                 message(msg),
@@ -49,7 +50,7 @@ exports.create = (api) => {
 
     function message (msg) {
       const raw = get(msg, 'value.content.text')
-      var unread = api.unread.sync.isUnread(msg) ? ' -unread' : ' -read'
+      var unread = api.unread.sync.isUnread(msg) ? ' -unread' : ''
       api.unread.sync.markRead(msg)
       return h('div.msg'+unread, api.message.html.markdown(raw))
     }
@@ -96,11 +97,4 @@ function isSameAuthor (msgA, msgB) {
   // TODO (mix) use lodash/get
   return msgA.value.author === msgB.value.author
 }
-
-
-
-
-
-
-
 

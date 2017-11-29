@@ -1,59 +1,40 @@
 const nest = require('depnest')
-const values = require('lodash/values')
-const insertCss = require('insert-css')
-const openExternal = require('open-external')
+const { h, Value } = require('mutant')
 
-const HyperNav = require('hyper-nav')
-const computed = require('mutant/computed')
-const h = require('mutant/h')
-
-exports.gives = nest({
-  'app.html.app': true,
-  'history.obs.history': true,
-  'history.sync.push': true,
-  'history.sync.back': true,
-})
+exports.gives = nest('app.html.app')
 
 exports.needs = nest({
-  'about.async.suggest': 'first',
+  'app.sync.initialize': 'map',
   'app.html.header': 'first',
-  'app.async.catchLinkClick': 'first',
-  'channel.async.suggest': 'first',
+  'history.obs.location': 'first',
+  'history.sync.push': 'first',
   'keys.sync.id': 'first',
   'router.sync.router': 'first',
   'settings.sync.get': 'first',
   'settings.sync.set': 'first',
-  'styles.css': 'reduce',
 })
 
 exports.create = (api) => {
-  var nav = null
-
   return nest({
     'app.html.app': function app () {
+      api.app.sync.initialize()
 
-      // DIRTY HACK - initializes the suggestion indexes
-      api.about.async.suggest()
-      api.channel.async.suggest()
-
-      const css = values(api.styles.css()).join('\n')
-      insertCss(css)
-
-      api.app.async.catchLinkClick(document.body, (link, { isExternal }) => {
-        if (isExternal) return openExternal(link)
-        nav.push(link)
-      })
-
-      nav = HyperNav(
-        api.router.sync.router,
-        api.app.html.header
-      )
+      var view = Value()
+      var app = h('App', view)
+      api.history.obs.location()(renderLocation)
+      function renderLocation (loc) {
+        var page = api.router.sync.router(loc)
+        if (page) view.set([
+          api.app.html.header({location: loc, push: api.history.sync.push}),
+          page
+        ])
+      }
 
       const isOnboarded = api.settings.sync.get('onboarded')
       if (isOnboarded)
-        nav.push({page: 'home'})
+        api.history.sync.push({page: 'home'})
       else {
-        nav.push({
+        api.history.sync.push({
           page:'userEdit',
           feed: api.keys.sync.id(),
           callback: (err, didEdit) => {
@@ -62,18 +43,14 @@ exports.create = (api) => {
             if (didEdit)
               api.settings.sync.set({ onboarded: true })
 
-            nav.push({ page: 'home' })
+            api.history.sync.push({ page: 'home' })
           }
         }) 
       }
 
-      return nav
-    },
-    'history.sync.push': (location) => nav.push(location),
-    'history.sync.back': () => nav.back(),
-    'history.obs.history': () => nav.history,
+
+      return app
+    }
   })
 }
-
-
 

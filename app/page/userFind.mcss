@@ -2,7 +2,7 @@ Page -userFind {
   div.content {
     $maxWidthSmaller
     div.search {
-      background-color: #fff
+      $backgroundPrimaryText
 
       margin-bottom: 1rem
 
@@ -30,7 +30,7 @@ Page -userFind {
 
       div.Link {
         div.result {
-          background-color: #fff
+          $backgroundPrimaryText
           
           padding: .5rem
 
@@ -38,7 +38,7 @@ Page -userFind {
           align-items: center
 
           img { 
-            $avatarSmall
+            $circleSmall
             margin-right: 1rem
           }
 

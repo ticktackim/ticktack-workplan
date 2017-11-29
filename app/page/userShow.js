@@ -6,19 +6,20 @@ const get = require('lodash/get')
 exports.gives = nest('app.page.userShow')
 
 exports.needs = nest({
-  'about.html.image': 'first',
+  'about.html.avatar': 'first',
   'about.obs.name': 'first',
   'app.html.link': 'first',
   'app.html.blogCard': 'first',
-  'contact.async.follow': 'first',
-  'contact.async.unfollow': 'first',
-  'contact.obs.followers': 'first',
+  'contact.html.follow': 'first',
+  'feed.pull.rollup': 'first',
   'sbot.pull.userFeed': 'first',
   'keys.sync.id': 'first',
   'translations.sync.strings': 'first',
+  'unread.sync.isUnread': 'first'
 })
 
 exports.create = (api) => {
+  var isUnread = api.unread.sync.isUnread
   return nest('app.page.userShow', userShow)
 
   function userShow (location) {
@@ -29,9 +30,9 @@ exports.create = (api) => {
 
     const strings = api.translations.sync.strings()
 
-    const { followers } = api.contact.obs
+    // const { followers } = api.contact.obs
 
-    const youFollowThem = computed(followers(feed), followers => followers.includes(myId))
+    // const youFollowThem = computed(followers(feed), followers => followers.includes(myId))
     // const theyFollowYou = computed(followers(myId), followers => followers.includes(feed))
     // const youAreFriends = computed([youFollowThem, theyFollowYou], (a, b) => a && b)
 
@@ -43,14 +44,6 @@ exports.create = (api) => {
     //     if (youFollowThem) return strings.userShow.state.youFollow
     //   }
     // )
-    const { unfollow, follow } = api.contact.async
-    const followButton = when(followers(myId).sync,
-      when(youFollowThem,
-        h('Button -primary', { 'ev-click': () => unfollow(feed) }, strings.userShow.action.unfollow),
-        h('Button -primary', { 'ev-click': () => follow(feed) }, strings.userShow.action.follow)
-      ),
-      h('Button', { disabled: 'disabled' }, strings.loading )
-    )
 
     const Link = api.app.html.link
     const userEditButton = Link({ page: 'userEdit', feed }, h('i.fa.fa-pencil'))
@@ -59,19 +52,27 @@ exports.create = (api) => {
     const BLOG_TYPES = ['blog', 'post']
     const blogs = MutantArray()
     pull(
-      // next(api.feed.pull.private, {reverse: true, limit: 100, live: false}, ['value', 'timestamp']),
-      // api.feed.pull.private({reverse: true, limit: 100, live: false}),
       api.sbot.pull.userFeed({id: feed, reverse: true, live: false}),
       pull.filter(msg => BLOG_TYPES.includes(get(msg, 'value.content.type'))),
-      pull.filter(msg => get(msg, 'value.content.root') === undefined),
+      // pull.filter(msg => get(msg, 'value.content.root') === undefined),
+      api.feed.pull.rollup(),
+      //unread state should not be in this file...
+      pull.through(function (blog) {
+        if(isUnread(blog))
+          blog.unread = true
+        blog.replies.forEach(function (data) {
+          if(isUnread(data))
+            blog.unread = data.unread = true
+        })
+      }),
       pull.drain(blogs.push)
-      // Scroller(content, scrollerContent, render, false, false)
+      // TODO - new Scroller ?
     )
 
     return h('Page -userShow', {title: name}, [
       h('div.content', [
         h('section.about', [
-          api.about.html.image(feed),
+          api.about.html.avatar(feed, 'large'),
           h('h1', [
             name,
             feed === myId // Only expose own profile editing right now
@@ -80,7 +81,7 @@ exports.create = (api) => {
           ]),
           feed !== myId
             ? h('div.actions', [
-                h('div.friendship', followButton),
+                api.contact.html.follow(feed),
                 h('div.directMessage', directMessageButton)
               ])
             : '',
@@ -90,5 +91,4 @@ exports.create = (api) => {
     ])
   }
 }
-
 

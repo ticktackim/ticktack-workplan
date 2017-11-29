@@ -2,7 +2,6 @@ var nest = require('depnest')
 var h = require('mutant/h')
 var isString= require('lodash/isString')
 var maxBy= require('lodash/maxBy')
-var humanTime = require('human-time')
 var marksum = require('markdown-summary')
 var markdown = require('ssb-markdown')
 var ref = require('ssb-ref')
@@ -29,7 +28,8 @@ exports.needs = nest({
   'about.html.avatar': 'first',
   'translations.sync.strings': 'first',
   'unread.sync.isUnread': 'first',
-  'message.html.markdown': 'first',
+  // 'message.html.markdown': 'first',
+  'message.html.timeago': 'first',
   'blob.sync.url': 'first',
   'emoji.sync.url': 'first'
 })
@@ -51,18 +51,18 @@ exports.create = function (api) {
   }
 
 
-  //render the icon for a thread.
+  //render the icon for a blog.
   //it would be more depjecty to split this
   //into two methods, one in a private plugin
   //one in a channel plugin
-  function threadIcon (msg) {
+  function blogIcon (msg) {
     if(msg.value.private) {
       const myId = api.keys.sync.id()
 
       return msg.value.content.recps
         .map(link => isString(link) ? link : link.link)
         .filter(link => link !== myId)
-        .map(api.about.html.avatar)
+        .map(link => api.about.html.avatar)
     }
     else if(msg.value.content.channel)
       return '#'+msg.value.content.channel
@@ -70,34 +70,34 @@ exports.create = function (api) {
 
 
   // REFACTOR: move this to a template?
-  function buildRecipientNames (thread) {
+  function buildRecipientNames (blog) {
     const myId = api.keys.sync.id()
 
-    return thread.value.content.recps
+    return blog.value.content.recps
       .map(link => isString(link) ? link : link.link)
       .filter(link => link !== myId)
       .map(api.about.obs.name)
   }
 
-  return nest('app.html.blogCard', (thread, opts = {}) => {
+  return nest('app.html.blogCard', (blog, opts = {}) => {
     var strings = api.translations.sync.strings()
-    const { subject } = api.message.html
 
-    if(!thread.value) return
-    if('string' !== typeof thread.value.content.text) return
+    if(!blog.value) return
+    if('string' !== typeof blog.value.content.text) return
 
-    const lastReply = thread.replies && maxBy(thread.replies, r => r.timestamp)
+    const lastReply = blog.replies && maxBy(blog.replies, r => r.timestamp)
 
-    const onClick = opts.onClick || function () { api.history.sync.push(thread) }
-    const id = `${thread.key.replace(/[^a-z0-9]/gi, '')}` //-${JSON.stringify(opts)}`
+    const goToBlog = () => api.history.sync.push(blog)
+    const onClick = opts.onClick || goToBlog
+    const id = `${blog.key.replace(/[^a-z0-9]/gi, '')}` //-${JSON.stringify(opts)}`
     // id is only here to help morphdom morph accurately
 
-    const { content, author, timestamp } = thread.value
+    const { content, author } = blog.value
 
     var img = h('Thumbnail')
     var m = /\!\[[^]+\]\(([^\)]+)\)/.exec(marksum.image(content.text))
     if(m) {
-      //Hey this works! fit an image into a specific size (see thread-card.mcss)
+      //Hey this works! fit an image into a specific size (see blog-card.mcss)
       //centered, and scaled to fit the square (works with both landscape and portrait!)
       //This is functional css not opinionated css, so all embedded.
       img.style = 'background-image: url("'+api.blob.sync.url(m[1])+'"); background-position:center; background-size: cover;'
@@ -106,15 +106,15 @@ exports.create = function (api) {
     const title = render(marksum.title(content.text))
     const summary = render(marksum.summary(content.text))
 
-    const className = thread.unread ? '-unread': ''
+    const className = blog.unread ? '-unread': ''
 
-    return h('BlogCard', { id, className }, [
+    return h('BlogCard', { id, className, 'ev-click': onClick }, [
       h('div.context', [
-        api.about.html.avatar(author),
+        api.about.html.avatar(author, 'tiny'),
         h('div.name', api.about.obs.name(author)),
-        h('div.timeago', humanTime(new Date(timestamp))),
+        api.message.html.timeago(blog)
       ]),
-      h('div.content', {'ev-click': onClick}, [
+      h('div.content', [
         img,
         h('div.text', [
           h('h2', {innerHTML: title}),
@@ -127,4 +127,5 @@ exports.create = function (api) {
     ])
   })
 }
+
 

@@ -19,6 +19,7 @@ const sockets = combine(
     about: require('./about'),
     app: require('./app'),
     blob: require('./blob'),
+    contact: require('./contact'),
     //config: require('./ssb-config'),
     config: require('./config'),
     // group: require('./group'),
@@ -31,6 +32,7 @@ const sockets = combine(
   {
     suggestions: require('patch-suggest'),
     profile: require('patch-profile'),
+    history: require('patch-history'),
     core: require('patchcore')
   }
 )

@@ -14,7 +14,8 @@ exports.needs = nest({
   'message.sync.unbox': 'first',
   'sbot.pull.log': 'first',
   'sbot.async.get': 'first',
-  'feed.pull.channel': 'first'
+  'feed.pull.channel': 'first',
+  'feed.pull.rollup': 'first'
 })
 
 exports.create = function (api) {
@@ -39,26 +40,13 @@ exports.create = function (api) {
         pull.through(function (data) {
           lastTimestamp = data.timestamp
         }),
-        pull.map(unbox), pull.filter(Boolean)
+        pull.map(unbox),
+        pull.filter(Boolean),
+        api.feed.pull.rollup()
       ),
       //value recovered from localStorage
       initial
     )
-
-    var getting = {}
-    obs(function (state) {
-      var effect = state.effect
-      if(!effect) return
-
-      state.effect = null
-      if(getting[effect.key]) return 
-
-      getting[effect.key] = true
-      api.sbot.async.get(effect.key, (err, msg) => {
-        if (!msg) return
-        obs.set(STATE=reduce(obs.value, unbox({key: effect.key, value: msg})))
-      })
-    })
 
     //stream live messages. this *should* work.
     //there is no back pressure on new events
@@ -104,7 +92,7 @@ exports.create = function (api) {
   },
 
   'state.obs.threads': function buildThreadObs() {
-      if(threadsObs) return threadsObs
+      if (threadsObs) return threadsObs
 
   // DISABLE localStorage cache. mainly disabling this to make debugging the other stuff
   // easier. maybe re-enable this later? also, should this be for every channel too? not sure.

@@ -10,7 +10,7 @@ Thread {
 
     justify-content: space-between
 
-    div.avatar {
+    img.Avatar {
       visibility: hidden
     }
 
@@ -33,6 +33,10 @@ Thread {
         div.msg {
           border: 1px #fff solid
           $roundRight
+          -unread {
+            font-weight: bold
+          }
+
         }
       }
     }
@@ -43,14 +47,7 @@ $chunk {
   display: flex
   margin-bottom: .5rem
 
-  div.avatar {
-    background-color: #333
-    $avatarSmall
-
-    img {
-      $avatarSmall
-    }
-
+  img.Avatar {
     margin-right: 1rem
   }
 
@@ -70,7 +67,7 @@ $chunk {
 
       div.msg {
         line-height: 1.2
-        background-color: #fff
+        $backgroundPrimaryText
         padding: 0 .7rem
         border-radius: 4px
       }
@@ -80,4 +77,6 @@ $chunk {
     }
   }
 }
+
+
 
