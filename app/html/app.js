@@ -8,6 +8,7 @@ exports.needs = nest({
   'app.html.header': 'first',
   'history.obs.location': 'first',
   'history.sync.push': 'first',
+  'keys.sync.id': 'first',
   'router.sync.router': 'first',
   'settings.sync.get': 'first',
   'settings.sync.set': 'first',
