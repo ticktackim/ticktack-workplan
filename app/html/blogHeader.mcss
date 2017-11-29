@@ -1,5 +1,6 @@
 BlogHeader {
   background-color: #fff
+  height: 2.5rem
   padding: 1rem
   padding-bottom: .5rem
 
@@ -15,7 +16,7 @@ BlogHeader {
       cursor: pointer
 
       padding-bottom: .6rem
-      margin-right: 1rem
+      margin: .5rem 1rem .5rem .5rem
       
       -active {
         $colorFontBasic

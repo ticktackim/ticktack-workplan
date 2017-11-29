@@ -2,84 +2,86 @@ Page -blogShow {
   // div.context {}
 
   div.content {
-    header, div, section {
-      $maxWidth
-      margin-left: auto
-      margin-right: auto
-    }
-
-    div.blogHeader {
+    section.top {
       position: sticky
       left: 0
       right: 0
       top: 0
       flex-basis: 100%
-    }
-    header {
-      $backgroundPrimaryText
-      padding: 1rem
 
-      display: flex
-
-      div.blog {
-        display: flex
-        flex-wrap: wrap
-        flex-grow: 1
-
-        h1 {
-          flex-basis: 100%
-
-          $markdownLarge
-          font-size: 2rem
-          font-weight: 300
-          margin: 0 0 1rem 0
-        }
-
-        div.Timeago {
-          flex-basis: 100%
-          margin-bottom: .6rem
-        }
-
-        div.Button.-channel {}
+      div.blogHeader {
       }
+    }
 
-      div.author {
+    section.content {
+      margin: .8rem
+
+      header {
+        $backgroundPrimaryText
+        padding: 1.5rem
+
         display: flex
 
-        div.leftCol {
-          margin-right: 1rem
-          img.Avatar {}
-        }
+        div.blog {
+          display: flex
+          flex-wrap: wrap
+          flex-grow: 1
 
-        div.rightCol {
-          div.name { 
-            font-size: .9rem
-            margin-bottom: .5rem
+          h1 {
+            flex-basis: 100%
+
+            $markdownLarge
+            font-size: 2rem
+            font-weight: 300
+            margin: 0 0 1rem 0
           }
-          div.Button.-follow {} // extract
+
+          div.Timeago {
+            flex-basis: 100%
+            margin-bottom: .6rem
+          }
+
+          div.Button.-channel {}
+        }
+
+        div.author {
+          display: flex
+
+          div.leftCol {
+            margin-right: 1rem
+            img.Avatar {}
+          }
+
+          div.rightCol {
+            div.name { 
+              font-size: .9rem
+              margin-bottom: .5rem
+            }
+            div.Button.-follow {} // extract
+          }
         }
       }
-    }
 
-    div.break {
-      padding: 0 1rem
-      $backgroundPrimaryText
+      div.break {
+        padding: 0 1.5rem
+        $backgroundPrimaryText
 
-      hr {
-        margin: 0
-        border: none
-        border-bottom: 1px solid gainsboro
+        hr {
+          margin: 0
+          border: none
+          border-bottom: 1px solid gainsboro
+        }
       }
-    }
 
-    section.blog {
-      $backgroundPrimaryText
-      padding: 1rem
+      section.blog {
+        $backgroundPrimaryText
+        padding: 1.5rem
 
-      margin-bottom: 1.5rem
-    }
+        margin-bottom: 1.5rem
+      }
 
-    div.Comments {
+      div.Comments {
+      }
     }
   }
 }
