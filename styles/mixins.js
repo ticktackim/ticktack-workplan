@@ -174,4 +174,11 @@ $roundBottom {
   border-bottom-left-radius: 1.2rem
   border-bottom-right-radius: 1.2rem
 }
+
+$code {
+  background-color: #f5f5f5
+  color: #c121dc
+  border: 1px solid #e6e6e6
+  border-radius: 2px
+}
 `

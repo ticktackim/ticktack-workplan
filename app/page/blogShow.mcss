@@ -1,5 +1,6 @@
 Page -blogShow {
   // div.context {}
+  div.content { padding: 0 }
 
   div.content {
     section.top {
@@ -14,7 +15,9 @@ Page -blogShow {
     }
 
     section.content {
-      margin: .8rem
+      $maxWidth 
+      padding: .8rem
+      margin: 0 auto
 
       header {
         $backgroundPrimaryText

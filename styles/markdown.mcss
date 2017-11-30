@@ -19,6 +19,24 @@ Markdown {
   (img.emoji) { 
     margin: 0
   }
-}
 
+  // code snippets and codeblocks
+
+  pre {
+    background-color: #f5f5f5
+    padding: .3rem
+    white-space: pre-wrap
+    word-wrap: break-word
+      
+    code {
+      $code
+      border: none
+    }
+  }
+
+  p code {
+    $code
+    padding: 0.1rem .2rem
+  }
+}
 

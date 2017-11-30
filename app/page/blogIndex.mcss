@@ -1,8 +1,5 @@
 Page -blogIndex {
-
-  div.content {
-    padding: 0
-  }
+  div.content { padding: 0 }
 
   div.Scroller.content {
 

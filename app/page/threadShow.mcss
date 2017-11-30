@@ -1,0 +1,11 @@
+Page -threadShow {
+  div.content {
+
+    div.Thread {}
+
+    div.Compose {
+      margin: 0 auto
+    }
+
+  }
+}

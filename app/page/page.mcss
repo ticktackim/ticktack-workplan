@@ -18,6 +18,7 @@ Page {
       
     flex-grow: 1
 
+    padding: 1rem
     margin: 0 auto 
   }
 }
