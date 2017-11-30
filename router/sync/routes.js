@@ -9,6 +9,7 @@ exports.needs = nest({
   'app.page.error': 'first',
   'app.page.blogIndex': 'first',
   'app.page.blogNew': 'first',
+  'app.page.blogSearch': 'first',
   'app.page.blogShow': 'first',
   'app.page.settings': 'first',
   // 'app.page.channel': 'first',
@@ -35,6 +36,7 @@ exports.create = (api) => {
       // Blog pages
       [ location => location.page === 'blogIndex', pages.blogIndex ],
       [ location => location.page === 'blogNew', pages.blogNew ],
+      [ location => location.page === 'blogSearch', pages.blogSearch ],
       [ location => location.page === 'blogShow', pages.blogShow ],
       [ location => isMsg(location.key) && get(location, 'value.content.type') === 'blog', pages.blogShow ],
       [ location => { 

@@ -14,7 +14,7 @@ exports.create = (api) => {
     const strings = api.translations.sync.strings()
     const goTo = (loc) => () => api.history.sync.push(loc)
 
-    if (location.page === 'blogIndex') {
+    if (location.page === 'blogIndex' || location.page === 'blogSearch') {
       return h('BlogHeader', [
         h('div.left', [ 
           h('div', { 
@@ -22,7 +22,7 @@ exports.create = (api) => {
             'ev-click': goTo({ page: 'blogIndex' }) 
           }, strings.blogHeader.blogsAll),
           h('div', { 
-            className: location.page === 'blogSearch' ? 'active' : '',
+            className: location.page === 'blogSearch' ? '-active' : '',
             'ev-click': goTo({ page: 'blogSearch' }) 
           }, strings.blogHeader.blogSearch),
         ]),

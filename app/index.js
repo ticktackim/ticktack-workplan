@@ -16,6 +16,7 @@ module.exports = {
   page: {
     blogIndex: require('./page/blogIndex'),
     blogNew: require('./page/blogNew'),
+    blogSearch: require('./page/blogSearch'),
     blogShow: require('./page/blogShow'),
     error: require('./page/error'),
     settings: require('./page/settings'),

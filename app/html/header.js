@@ -6,13 +6,6 @@ exports.gives = nest('app.html.header')
 
 exports.needs = nest('keys.sync.id', 'first')
 
-const FEED_PAGES = [
-  'blogIndex',
-  'blogNew',
-  'threadShow', // TODO - this doesn't work (`threadSHow` isn't part of the location atm)
-  'threadNew',
-  // 'blogSearch',
-]
 const SETTINGS_PAGES = [
   'settings',
   'userEdit',
@@ -28,13 +21,11 @@ exports.create = (api) => {
       return location || {}
     })
 
-    const isFeed = computed(loc, loc => {
-      return FEED_PAGES.includes(loc.page) || (loc.key && loc.feed)
-    })
-
     const isSettings = computed(loc, loc => {
       return SETTINGS_PAGES.includes(loc.page)
     })
+
+    const isFeed = computed([isSettings], isSettings => !isSettings)
 
     return h('Header', [
       h('nav', [
