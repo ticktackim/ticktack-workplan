@@ -1,4 +1,5 @@
 const nest = require('depnest')
+const openExternal = require('open-external')
 
 exports.gives = nest('app.sync.initialize')
 

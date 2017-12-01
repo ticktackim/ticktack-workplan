@@ -38,7 +38,7 @@ exports.create = function (api) {
       if (isMsg(href)) {
         api.sbot.async.get(href, (err, data) => {
           // NOTE the catchLinkClick cb has signature (link, opts)
-          cb(err || data, opts)
+          cb(err || {key:href, value: data}, opts)
         })
         return
       }

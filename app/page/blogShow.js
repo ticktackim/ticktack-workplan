@@ -9,7 +9,7 @@ exports.gives = nest('app.page.blogShow')
 exports.needs = nest({
   'about.html.avatar': 'first',
   'about.obs.name': 'first',
-  'app.html.blogHeader': 'first',
+  'app.html.blogNav': 'first',
   'app.html.comments': 'first',
   'app.html.context': 'first',
   'contact.html.follow': 'first',
@@ -40,7 +40,7 @@ exports.create = (api) => {
       api.app.html.context({ page: 'discover' }), // HACK to highlight discover
       h('div.content', [
         h('section.top', [
-          api.app.html.blogHeader(location)
+          api.app.html.blogNav(location)
         ]),
         h('section.content', [
           h('header', [

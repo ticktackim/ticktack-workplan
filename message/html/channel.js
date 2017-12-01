@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h } = require('mutant')
+const { h, resolve } = require('mutant')
 
 exports.gives = nest('message.html.channel')
 
@@ -10,14 +10,28 @@ exports.needs = nest({
 exports.create = function (api) {
   return nest('message.html.channel', channel)
 
-  function channel (msg) {
-    const { channel } = msg.value.content
+  function channel (msgOrChannel, opts = {} ) {
+    const channel = typeof msgOrChannel === 'string'
+      ? msgOrChannel
+      : msgOrChannel.value.content.channel
 
     if (!channel) return
 
+    const { 
+      classList = [],
+      location = { page: 'blogSearch', channel }
+    } = opts
+
+    const goToChannel = (e) => {
+      e.stopPropagation()
+
+      api.history.sync.push(location)
+    }
+
     return h('Button -channel', {
-      // 'ev-click': () => history.sync.push({ page: 'channelIndex', channel }) // TODO
-    }, channel)
+      'ev-click': goToChannel,
+      classList
+    }, '#' + channel)
   }
 }
 

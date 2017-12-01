@@ -10,7 +10,7 @@ module.exports = {
     thread: require('./html/thread'),
     link: require('./html/link'),
     blogCard: require('./html/blogCard'),
-    blogHeader: require('./html/blogHeader'),
+    blogNav: require('./html/blogNav'),
     scroller: require('./html/scroller'),
   },
   page: {

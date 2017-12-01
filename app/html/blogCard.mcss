@@ -10,7 +10,7 @@ BlogCard {
 
   div.context {
     font-size: .8rem
-    margin-bottom: 1rem
+    margin-bottom: 1.5rem
 
     display: flex
     align-items: center
@@ -64,9 +64,19 @@ BlogCard {
 
 Thumbnail {
   border-radius: .5rem
-  min-width: 8rem 
-  min-height: 6rem
-  width: 8rem
-  height: 6rem
+  min-width: 9rem 
+  width: 9rem
+  min-height: 7rem
+  height: 7rem
+
+  -empty {
+    color: #fff
+    font-size: 1.8rem
+    opacity: .8
+
+    display: flex
+    justify-content: center
+    align-items: center
+  }
 }
 

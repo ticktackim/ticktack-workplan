@@ -7,16 +7,19 @@ Page -blogIndex {
       left: 0
       right: 0
       top: 0
+      z-index: 99
+
+      background-color: #fff
     }
 
     section.content {
       background-color: #fff
       $maxWidth
-      margin: .8rem
-      padding: 0 2rem
+      margin: .8rem auto
+      padding: .5rem 2rem
 
       div.BlogCard {
-        border-bottom: 1px solid gainsboro
+        border-bottom: 1px solid rgba(0,0,0, .1)
       }
     }
 

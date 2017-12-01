@@ -24,11 +24,13 @@ exports.gives = nest('app.html.blogCard', true)
 exports.needs = nest({
   'keys.sync.id': 'first',
   'history.sync.push': 'first',
+  'about.obs.color': 'first',
   'about.obs.name': 'first',
   'about.html.avatar': 'first',
   'translations.sync.strings': 'first',
   'unread.sync.isUnread': 'first',
   // 'message.html.markdown': 'first',
+  'message.html.channel': 'first',
   'message.html.timeago': 'first',
   'blob.sync.url': 'first',
   'emoji.sync.url': 'first'
@@ -101,6 +103,11 @@ exports.create = function (api) {
       //centered, and scaled to fit the square (works with both landscape and portrait!)
       //This is functional css not opinionated css, so all embedded.
       img.style = 'background-image: url("'+api.blob.sync.url(m[1])+'"); background-position:center; background-size: cover;'
+    } else {
+      var style =  { 'background-color': api.about.obs.color(blog.key) }
+      img = h('Thumbnail -empty', { style }, [
+        h('i.fa.fa-file-text-o')
+      ])
     }
 
     const title = render(marksum.title(content.text))
@@ -119,7 +126,7 @@ exports.create = function (api) {
         h('div.text', [
           h('h2', {innerHTML: title}),
           content.channel
-            ? h('Button -channel', '#'+content.channel)
+            ? api.message.html.channel(blog)
             : '',
           h('div.summary', {innerHTML: summary})
         ])

@@ -13,30 +13,26 @@ Context {
 
     border-right: 1px gainsboro solid
 
-    div.wrapper {
-      section {
-        header {
-          $colorFontSubtle
-          padding: .5rem 1rem
-        }
+    section {
+      header {
+        $colorFontSubtle
+        padding: .5rem 1rem
+      }
 
-        div.Option {}
+      div.Option {}
 
-        hr {
-          border: 1px solid gainsboro
-          border-bottom: none
-          margin: 0
-        }
+      hr {
+        border: 1px solid gainsboro
+        border-bottom: none
+        margin: 0
       }
     }
 
     -one {}
     -two {
-      div.wrapper {
-        section {
-          div.Option {
-            padding: 0 1rem
-          }
+      section {
+        div.Option {
+          padding: 0 1rem
         }
       }
     }

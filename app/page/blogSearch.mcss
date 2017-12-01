@@ -7,14 +7,52 @@ Page -blogSearch {
       left: 0
       right: 0
       top: 0
-      flex-basis: 100%
+      z-index: 99
+
+      background-color: #fff
+
+      div.search {
+        border-top: 1px solid gainsboro
+        padding: 1rem
+
+        div.input {
+          max-width: 16rem
+          border: 1px solid gainsboro
+          margin-left: .5rem
+
+          display: flex
+          align-items: center
+        
+          i.fa {
+            margin-left: .5rem
+          }
+
+          input { 
+            padding: .5rem
+            border: none
+            outline: none
+          }
+        }
+
+        div.results {
+          margin-top: 1rem
+          margin-left: .5rem
+
+          display: flex
+          flex-wrap: wrap
+
+          div.Button {
+            margin: .2rem .1rem
+          }
+        }
+      }
     }
 
     section.content {
       background-color: #fff
       $maxWidth
-      margin: .8rem
-      padding: 0 2rem
+      margin: .8rem auto
+      padding: .5rem 2rem
 
       div.BlogCard {
         border-bottom: 1px solid gainsboro

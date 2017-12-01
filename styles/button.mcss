@@ -39,6 +39,13 @@ Button {
     min-width: initial
   }
 
+  -channelActive {
+    $colorPrimary
+    $borderPrimary
+    font-size: .9rem
+    min-width: initial
+  }
+
   -showMore {
     width: 100%
 

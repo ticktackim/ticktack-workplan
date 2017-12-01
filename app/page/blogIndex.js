@@ -7,7 +7,7 @@ exports.gives = nest('app.page.blogIndex')
 exports.needs = nest({
   'app.html.context': 'first',
   'app.html.blogCard': 'first',
-  'app.html.blogHeader': 'first',
+  'app.html.blogNav': 'first',
   'app.html.scroller': 'first',
   'feed.pull.public': 'first',
   'history.sync.push': 'first',
@@ -24,7 +24,7 @@ exports.create = (api) => {
 
     var blogs = api.app.html.scroller({
       classList: ['content'],
-      prepend: api.app.html.blogHeader(location),
+      prepend: api.app.html.blogNav(location),
       stream: api.feed.pull.public,
       filter: () => pull(
         pull.filter(msg => {

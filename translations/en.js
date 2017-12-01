@@ -2,7 +2,7 @@ module.exports = {
   blogIndex: {
     title: 'Discover',
   },
-  blogHeader: {
+  blogNav: {
     blogsAll: 'Dynamics',
     blogSearch: 'Search'
   },
