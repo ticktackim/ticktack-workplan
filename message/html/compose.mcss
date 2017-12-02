@@ -9,12 +9,10 @@ Compose {
 
     padding: 1rem
     border-radius: 1rem
-    border: none
+    $borderSubtle
     margin-bottom: .5rem
 
-    :focus {
-      outline: none
-    }
+    outline: none
   }
 
   section.actions {
@@ -96,8 +94,9 @@ Compose {
 $attachButton {
   background: #fff
   color: #666
-  border: 1px solid #b9b9b9
   padding: .5rem
+  border: 1px solid #b9b9b9
+  border-radius: 4rem
   margin: 0
   cursor: pointer
 }

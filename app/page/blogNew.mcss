@@ -1,0 +1,48 @@
+Page -blogNew {
+  div.Context {}
+
+
+  div.content {
+    display: flex
+
+    div.container {
+      flex-basis: 100%
+      $maxWidth
+      margin: 0 auto
+
+
+      div.field {
+        margin-bottom: .5rem
+        $maxWidth
+        
+        display: flex
+        align-items: center
+
+        div.label {
+          flex-basis: 4rem
+          padding-left: 1rem
+          margin-right: 1rem
+        }
+
+        input {
+          flex-grow: 1
+          $fontBasic
+          padding: .6rem 1rem
+
+          border-radius: 4rem
+          $borderSubtle
+          outline: none
+        }
+
+  
+        -channel {}
+        -title {}
+      }
+      div.Compose {
+        textarea {
+           margin-top: 2rem
+        }
+      }
+    }
+  }
+}

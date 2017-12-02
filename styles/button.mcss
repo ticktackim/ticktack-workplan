@@ -2,8 +2,8 @@ Button {
   font-family: arial
   $backgroundPrimaryText
 
-  min-width: 6rem
-  height: 1.2em
+  min-width: 5rem
+  height: 1.4em
   padding: .2rem 1rem
 
   border: 1px #b9b9b9 solid
@@ -15,21 +15,29 @@ Button {
   justify-content: center
   align-items: center
 
+  :hover { 
+    opacity: .7
+  }
+  transition: all .1s ease-in
+
   -subtle {
-    color: initial
+    color: #555
     :hover {
       color: #222
     }
   }
 
   -primary {
+    $font
+    $colorFontPrimary
+    $borderPrimary
+  }
+
+  -strong {
     $colorPrimary
     $font
     $borderPrimary
 
-    :hover { 
-      opacity: .9
-    }
   }
 
   -channel {

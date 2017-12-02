@@ -1,5 +1,16 @@
 PatchSuggest {
   box-shadow: rgba(0,0,0,0.1) 4px 4px 10px
+
+  ul {
+    li {
+      img { $circleSmall }
+
+      small {
+        div.key { font-size: 1rem }
+      }
+    }
+  } 
+ 
 }
 
 PatchSuggest -channelHorizontal {

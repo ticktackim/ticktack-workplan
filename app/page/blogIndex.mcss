@@ -2,6 +2,7 @@ Page -blogIndex {
   div.content { padding: 0 }
 
   div.Scroller.content {
+
     section.top {
       position: sticky
       left: 0
@@ -18,7 +19,11 @@ Page -blogIndex {
       margin: .8rem auto
       padding: .5rem 2rem
 
+      display: flex
+      flex-wrap: wrap
+
       div.BlogCard {
+        flex-basis: 100%
         border-bottom: 1px solid rgba(0,0,0, .1)
       }
     }

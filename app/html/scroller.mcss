@@ -1,6 +1,4 @@
 Scroller {
-  display: flex
-  flex-direction: column
 
   overflow: auto
   width: 100%

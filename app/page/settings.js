@@ -77,7 +77,7 @@ exports.create = (api) => {
 
     function Language (lang) {
       const selectLang = () => api.settings.sync.set({ language: lang })
-      const className = currentLanguage === lang ? '-primary' : '' 
+      const className = currentLanguage === lang ? '-strong' : '' 
 
       return h('Button -language', 
         { 

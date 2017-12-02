@@ -13,7 +13,8 @@ const sockets = combine(
   //need some modules first
   { 
     settings: require('patch-settings'),
-    translations: require('./translations/sync')
+    translations: require('./translations/sync'),
+    suggestions: require('patch-suggest'), // so that styles can be over-ridden
   },
   {
     about: require('./about'),
@@ -30,7 +31,6 @@ const sockets = combine(
     unread: require('./unread'),
   },
   {
-    suggestions: require('patch-suggest'),
     profile: require('patch-profile'),
     history: require('patch-history'),
     core: require('patchcore')

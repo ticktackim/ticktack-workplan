@@ -28,7 +28,7 @@ exports.create = (api) => {
     })
 
     const composer = api.message.html.compose(
-      { meta, shrink: false },
+      { meta, placeholder: strings.blogNew.actions.writeBlog, shrink: false },
       (err, msg) => api.history.sync.push(err ? err : msg)
     )
 
@@ -39,18 +39,20 @@ exports.create = (api) => {
     var page = h('Page -blogNew', [
       api.app.html.context(location),
       h('div.content', [
-        h('div.field -channel', [
-          h('div.label', strings.channel),
-          channelInput
-        ]),
-        h('div.field -title', [
-          h('div.label', strings.blogNew.field.title),
-          h('input', {
-            'ev-input': e => meta.title.set(e.target.value),
-            placeholder: strings.blogNew.field.title
-          }),
-        ]),
-        composer
+        h('div.container', [
+          h('div.field -channel', [
+            h('div.label', strings.channel),
+            channelInput
+          ]),
+          h('div.field -title', [
+            h('div.label', strings.blogNew.field.title),
+            h('input', {
+              'ev-input': e => meta.title.set(e.target.value),
+              placeholder: strings.blogNew.field.title
+            }),
+          ]),
+          composer
+        ])
       ])
     ])
 
@@ -78,7 +80,7 @@ exports.create = (api) => {
       cb(null, suggestions)
     }, {cls: 'PatchSuggest.-channelHorizontal'}) // WARNING hacking suggest-box cls
 
-    channelInput.addEventListener('suggestselect', (e) => channel.set(e.value))
+    channelInput.addEventListener('suggestselect', (e) => meta.channel.set(e.value))
 
     return page
   }

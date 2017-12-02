@@ -17,7 +17,7 @@ $fontBasic {
 }
 
 $maxWidth {
-  max-width: 1200px
+  max-width: 1000px
 }
 
 $maxWidthSmaller {
@@ -82,7 +82,7 @@ $circleSmall {
   min-height: 2.8rem
   width: 2.8rem
   height: 2.8rem
-  border-radius: 1.4rem
+  border-radius: 4rem
 }
 
 $circleMedium {
@@ -90,15 +90,15 @@ $circleMedium {
   min-height: 3.5rem
   width: 3.5rem
   height: 3.5rem
-  border-radius: 1.75rem
+  border-radius: 4rem
 }
 
 $circlelarge {
-  min-width: 5rem
-  min-height: 5rem
-  width: 5rem
-  height: 5rem
-  border-radius: 2.5rem
+  min-width: 8rem
+  min-height: 8rem
+  width: 8rem
+  height: 8rem
+  border-radius: 8rem
 }
 
 $markdownSmall {

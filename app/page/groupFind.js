@@ -48,7 +48,7 @@ exports.create = (api) => {
               h('div.info', strings.groupFind.state.groupNotFound),
               Link(
                 { page: 'threadNew', channel: input, flash: strings.groupFind.flash.createFirstThread },
-                h('Button -primary', strings.groupFind.action.newGroup)
+                h('Button -strong', strings.groupFind.action.newGroup)
               )
             ])
           }

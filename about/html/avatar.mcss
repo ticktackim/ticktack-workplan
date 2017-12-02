@@ -15,7 +15,7 @@ Avatar {
   }
 
   -large {
-    $circleLarge
+    $circlelarge
   }
 }
 

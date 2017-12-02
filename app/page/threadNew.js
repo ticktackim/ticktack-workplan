@@ -47,23 +47,25 @@ exports.create = (api) => {
     return h('Page -threadNew', {title: strings.threadNew.pageTitle}, [
       api.app.html.context(location),
       h('div.content', [
-        h('div.field -to', [
-          h('div.label', strings.threadNew.field.to),
-          h('div.recps', [
-            h('div.recp', [
-              api.about.html.image(feed),
-              h('div.name', name)
+        h('div.container', [
+          h('div.field -to', [
+            h('div.label', strings.threadNew.field.to),
+            h('div.recps', [
+              h('div.recp', [
+                api.about.html.image(feed),
+                h('div.name', name)
+              ])
             ])
-          ])
-        ]),
-        h('div.field -subject', [
-          h('div.label', strings.threadNew.field.subject),
-          h('input', {
-            'ev-input': e => meta.subject.set(e.target.value),
-            placeholder: strings.optionalField
-          }),
-        ]),
-        composer
+          ]),
+          h('div.field -subject', [
+            h('div.label', strings.threadNew.field.subject),
+            h('input', {
+              'ev-input': e => meta.subject.set(e.target.value),
+              placeholder: strings.optionalField
+            }),
+          ]),
+          composer
+        ])
       ])
     ])
   }

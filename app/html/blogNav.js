@@ -27,7 +27,7 @@ exports.create = (api) => {
           }, strings.blogNav.blogSearch),
         ]),
         h('div.right', [ 
-          h('Button -primary', { 'ev-click': () => api.history.sync.push({ page: 'blogNew' }) }, strings.blogNew.actions.writeBlog),
+          h('Button -strong', { 'ev-click': () => api.history.sync.push({ page: 'blogNew' }) }, strings.blogNew.actions.writeBlog),
         ])
       ])
     }
