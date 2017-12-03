@@ -6,6 +6,7 @@ exports.gives = nest('app.html.blogNav')
 
 exports.needs = nest({
   'history.sync.push': 'first',
+  'history.sync.back': 'first',
   'translations.sync.strings': 'first',
 })
 
@@ -13,6 +14,7 @@ exports.create = (api) => {
   return nest('app.html.blogNav', (location) => {
     const strings = api.translations.sync.strings()
     const goTo = (loc) => () => api.history.sync.push(loc)
+    const back = () => api.history.sync.back()
 
     if (location.page === 'blogIndex' || location.page === 'blogSearch') {
       return h('BlogNav', [
@@ -34,7 +36,7 @@ exports.create = (api) => {
 
     return h('BlogNav', [
       h('div.left', [ 
-        h('div.-discovery', { 'ev-click': goTo({ page: 'blogIndex' }) }, [ 
+        h('div.-discovery', { 'ev-click': back }, [ 
           h('i.fa.fa-chevron-left'),
           strings.blogIndex.title
         ]),
