@@ -10,6 +10,7 @@ exports.needs = nest({
   'app.html.blogNav': 'first',
   'app.html.scroller': 'first',
   'channel.obs.recent': 'first',
+  'feed.pull.channel': 'first',
   'feed.pull.public': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
@@ -56,23 +57,22 @@ exports.create = (api) => {
       )
     ])
 
+    var createStream = api.feed.pull.public
+    if (location.channel) createStream = api.feed.pull.channel(location.channel)
+
     var blogs = api.app.html.scroller({
       classList: ['content'],
       prepend: [
         api.app.html.blogNav(location),
         searchField
       ],
-      stream: api.feed.pull.public,
+      stream: createStream,
       filter: () => pull(
         pull.filter(msg => {
           const type = msg.value.content.type
           return type === 'post' || type === 'blog'
         }),
-        pull.filter(msg => !msg.value.content.root), // show only root messages
-        pull.filter(msg => {
-          if (!location.channel) return true
-          return msg.value.content.channel === location.channel
-        })
+        pull.filter(msg => !msg.value.content.root) // show only root messages
       ),
       // FUTURE : if we need better perf, we can add a persistent cache. At the moment this page is fast enough though.
       // See implementation of app.html.context for example
