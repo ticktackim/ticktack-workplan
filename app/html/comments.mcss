@@ -42,7 +42,8 @@ Comment {
     }
 
     section.actions {
-      font-size: 1.2rem
+      font-size: 1rem
+      color: #555
       margin-right: .5rem
 
       display: flex
