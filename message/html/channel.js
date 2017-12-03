@@ -31,7 +31,7 @@ exports.create = function (api) {
     return h('Button -channel', {
       'ev-click': goToChannel,
       classList
-    }, '#' + channel)
+    }, channel)
   }
 }
 
