@@ -46,7 +46,7 @@ $colorFontBasic {
 }
 
 $colorFontPrimary {
-  color: #5c6bc0
+  color: #2f63ad
 }
 
 $colorFontSubtle {
