@@ -1,7 +1,7 @@
 Likes {
   cursor: pointer
 
-  i.fa.heart {
+  i.fa-heart {
     $colorFontPrimary
   }
 }
