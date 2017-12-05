@@ -2,7 +2,6 @@ var nest = require('depnest')
 var h = require('mutant/h')
 var isString= require('lodash/isString')
 var maxBy= require('lodash/maxBy')
-var marksum = require('markdown-summary')
 var markdown = require('ssb-markdown')
 var ref = require('ssb-ref')
 var htmlEscape = require('html-escape')
@@ -29,11 +28,14 @@ exports.needs = nest({
   'about.html.avatar': 'first',
   'translations.sync.strings': 'first',
   'unread.sync.isUnread': 'first',
-  // 'message.html.markdown': 'first',
   'message.html.channel': 'first',
   'message.html.timeago': 'first',
   'blob.sync.url': 'first',
-  'emoji.sync.url': 'first'
+  'emoji.sync.url': 'first',
+
+  'message.html.title': 'first',
+  'message.html.summary': 'first',
+  'message.html.thumbnail': 'first',
 })
 
 exports.create = function (api) {
@@ -85,7 +87,6 @@ exports.create = function (api) {
     var strings = api.translations.sync.strings()
 
     if(!blog.value) return
-    if('string' !== typeof blog.value.content.text) return
 
     const lastReply = blog.replies && maxBy(blog.replies, r => r.timestamp)
 
@@ -97,25 +98,27 @@ exports.create = function (api) {
     const { content, author } = blog.value
 
     var img = h('Thumbnail')
-    var m = /\!\[[^]+\]\(([^\)]+)\)/.exec(marksum.image(content.text))
-    if(m) {
+
+    var image = api.message.html.thumbnail(blog)
+
+    if(image) {
       //Hey this works! fit an image into a specific size (see blog-card.mcss)
       //centered, and scaled to fit the square (works with both landscape and portrait!)
       //This is functional css not opinionated css, so all embedded.
-      img.style = 'background-image: url("'+api.blob.sync.url(m[1])+'"); background-position:center; background-size: cover;'
-    } else {
+      img.style = 'background-image: url("'+api.blob.sync.url(image)+'"); background-position:center; background-size: cover;'
+
+    }
+    else {
       var style =  { 'background-color': api.about.obs.color(blog.key) }
       img = h('Thumbnail -empty', { style }, [
         h('i.fa.fa-file-text-o')
       ])
-    }
 
-    const title = render(marksum.title(content.text))
-    const summary = render(marksum.summary(content.text))
+    }
 
     const className = blog.unread ? '-unread': ''
 
-    return h('BlogCard', { id, className, 'ev-click': onClick }, [
+    var b = h('BlogCard', { id, className, 'ev-click': onClick }, [
       h('div.context', [
         api.about.html.avatar(author, 'tiny'),
         h('div.name', api.about.obs.name(author)),
@@ -124,15 +127,16 @@ exports.create = function (api) {
       h('div.content', [
         img,
         h('div.text', [
-          h('h2', {innerHTML: title}),
+          h('h2', api.message.html.title(blog)),
           content.channel
             ? api.message.html.channel(blog)
             : '',
-          h('div.summary', {innerHTML: summary})
+          h('div.summary', api.message.html.summary(blog))
         ])
       ])
     ])
+
+    return b
   })
 }
-
 

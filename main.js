@@ -31,6 +31,12 @@ const sockets = combine(
     unread: require('./unread'),
   },
   {
+    blogs: {
+      post: require('./blogs/post'),
+      blog: require('./blogs/blog')
+    }
+  },
+  {
     profile: require('patch-profile'),
     history: require('patch-history'),
     core: require('patchcore')
@@ -54,3 +60,4 @@ if(invite)
   })
 else
   console.log('no invite')
+

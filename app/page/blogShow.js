@@ -16,7 +16,11 @@ exports.needs = nest({
   'message.html.channel': 'first',
   'message.html.markdown': 'first',
   'message.html.timeago': 'first',
-  'feed.obs.thread': 'first'
+  'feed.obs.thread': 'first',
+
+  'message.html.title': 'first',
+  'message.html.content': 'first',
+
 })
 
 exports.create = (api) => {
@@ -27,8 +31,8 @@ exports.create = (api) => {
 
     const { author, content } = blogMsg.value
 
-    const blog = content.text
-    const title = api.message.html.markdown(content.title || getTitle(blog))
+    const blog = api.message.html.content(blogMsg)
+    const title = api.message.html.title(blogMsg)
 
     const comments = api.app.html.comments(blogMsg.key)
 
@@ -58,11 +62,12 @@ exports.create = (api) => {
             ])
           ]),
           h('div.break', h('hr')),
-          h('section.blog', markdown(blog)),
+          h('section.blog', blog),
           comments,
         ]),
       ])
     ])
   }
 }
+
 

@@ -54,8 +54,10 @@ exports.create = (api) => {
     var onClick
     if (channel && !recps)
       onClick = (ev) => api.history.sync.push(Object.assign({}, blog, { page: 'blogShow' }))
-
     return api.app.html.blogCard(blog, { onClick })
   }
 }
+
+
+
 
