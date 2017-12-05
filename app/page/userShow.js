@@ -53,6 +53,7 @@ exports.create = (api) => {
     const blogs = MutantArray()
     pull(
       api.sbot.pull.userFeed({id: feed, reverse: true, live: false}),
+      pull.filter(msg => msg.value && msg.value.content && !msg.value.content.root),
       pull.filter(msg => BLOG_TYPES.includes(get(msg, 'value.content.type'))),
       // pull.filter(msg => get(msg, 'value.content.root') === undefined),
       api.feed.pull.rollup(),
