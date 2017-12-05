@@ -14,7 +14,7 @@ exports.gives = {
 
 exports.needs = {
   message: { html: { markdown: 'first' } },
-  sbot: { pull: { getBlob: 'first' } }
+  sbot: { pull: { stream: 'first' } }
 }
 
 
@@ -39,7 +39,9 @@ exports.create = function (api) {
           if('blog' == typeof data.value.content.type) return
           var div = h('Markdown')
           pull(
-            api.sbot.pull.getBlob(data.value.content.blog),
+            api.sbot.pull.stream(function (sbot) {
+              return sbot.blobs.get(data.value.content.blog)
+            }),
             pull.collect(function (err, ary) {
               if(err) return
               var md = api.message.html.markdown({text:Buffer.concat(ary).toString()})
@@ -52,6 +54,9 @@ exports.create = function (api) {
     }
   }
 }
+
+
+
 
 
 
