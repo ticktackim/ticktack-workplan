@@ -10,6 +10,7 @@ exports.needs = nest({
   'feed.obs.thread': 'first',
   'keys.sync.id': 'first',
   'message.html.markdown': 'first',
+  'message.html.timeago': 'first',
   'unread.sync.markRead': 'first',
   'unread.sync.isUnread': 'first'
 })
@@ -32,7 +33,8 @@ exports.create = (api) => {
             h('div.msgs', map(chunk, msg => {
               return h('div.msg-row', [
                 h('div.spacer'),
-                message(msg)
+                message(msg),
+                api.message.html.timeago(msg)
               ])
             }))
           ])
@@ -41,7 +43,8 @@ exports.create = (api) => {
             h('div.msgs', map(chunk, msg => {
               return h('div.msg-row', [
                 message(msg),
-                h('div.spacer')
+                h('div.spacer'),
+                api.message.html.timeago(msg)
               ])
             }))
           ])

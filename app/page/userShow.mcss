@@ -1,41 +1,58 @@
 Page -userShow {
-  div.content {
-    section.about {
-      margin-top: 4rem
-      margin-bottom: 4rem
+  div.content { padding: 0 }
 
-      display: flex
-      flex-direction: column
-      align-items: center
+  div.Scroller.content {
+    section.top {
+      section.about {
+        margin-top: 4rem
+        margin-bottom: 4rem
 
-      img.Avatar {
-      }
-
-      h1 {
-        font-weight: 300
-        font-size: 1rem
-        
         display: flex
-        div.Link {
-          margin-left: .5rem
+        flex-direction: column
+        align-items: center
+
+        img.Avatar {
         }
-      }
-
-      div.actions {
-        display: flex
-
-        div.Follow {
-          margin-right: 1rem
+        div.introduction {
+          $maxWidthSmaller
         }
 
-        div.directMessage {
+        h1 {
+          font-weight: 300
+          font-size: 1rem
+          
+          display: flex
+          div.Link {
+            margin-left: .5rem
+          }
+        }
+
+        div.actions {
+          display: flex
+
+          div.Follow {
+            margin-right: 1rem
+          }
+
+          div.directMessage {
+          }
         }
       }
     }
 
-    section.blogs {
+    section.content {
+      background-color: #fff
+      $maxWidth
+      margin: .8rem auto
+      padding: .5rem 2rem
+
+      display: flex
+      flex-wrap: wrap
+
       div.BlogCard {
-        margin-bottom: .5rem
+        flex-basis: 100%
+        border-bottom: 1px solid rgba(0,0,0, .1)
+        /* margin-bottom: .5rem */
 
         div.context {
           div.Link { display: none }

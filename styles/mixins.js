@@ -12,8 +12,8 @@ exports.create = (api) => {
 const mainMixins = `
 $fontBasic {
   font-family: arial
-  font-size: 1rem
   line-height: 1.2
+  font-size: 1rem
 }
 
 $maxWidth {
@@ -46,7 +46,7 @@ $colorFontBasic {
 }
 
 $colorFontPrimary {
-  color: #5c6bc0
+  color: #2f63ad
 }
 
 $colorFontSubtle {
@@ -93,7 +93,7 @@ $circleMedium {
   border-radius: 4rem
 }
 
-$circlelarge {
+$circleLarge {
   min-width: 8rem
   min-height: 8rem
   width: 8rem

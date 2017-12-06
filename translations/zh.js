@@ -1,3 +1,4 @@
+
 module.exports = {
   loading: '加载中...',
   optionalField: '可选',
@@ -9,6 +10,25 @@ module.exports = {
   error: '错误',
   errorNotFound: '找不到此页面',
   groupNew: '新建群组',
+  writeMessage: '发私信',
+  peopleNearby: '附件的朋友',
+  blogIndex: {
+    title: '发现'
+  },
+  blogNew: {
+    field: {
+      title: '标题'
+    },
+    actions: {
+      edit: '编辑',
+      preview: '预览',
+      writeBlog: '撰文'
+    }
+  },
+  blogNav: {
+    blogsAll: '最新',
+    blogSearch: '搜索'
+  },
   groupFind: {
     action: {
       findAGroup: '查找群组',
@@ -29,7 +49,10 @@ module.exports = {
     },
     section: {
       language: '语言',
-      profile: '自我介绍'
+      profile: '自我介绍',
+      name: '名称',
+      introduction: '简介',
+      zoom: '放大'
     }
   },
   threadNew: {
@@ -46,7 +69,8 @@ module.exports = {
   userEdit: {
     section: {
       name: '名称',
-      avatar: '头像'
+      avatar: '头像',
+      introduction: '简介'
     },
     instruction: {
       crop: '点击编辑头像'
@@ -77,5 +101,9 @@ module.exports = {
       follow: '关注',
       friendsInCommon: '共同的好友'
     }
+  },
+  languages: {
+    en: '英文',
+    zh: '中文'
   }
 }

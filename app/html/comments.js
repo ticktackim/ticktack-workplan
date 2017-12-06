@@ -40,14 +40,14 @@ exports.create = (api) => {
       branch,
       channel
     }
-    const twoComposers = computed(messages, messages => {
-      return messages.length > 5
-    })
+    // const twoComposers = computed(messages, messages => {
+    //   return messages.length > 5
+    // })
     const { compose } = api.message.html
 
 
     return h('Comments', [
-      when(twoComposers, compose({ meta, shrink: true, canAttach: false })),
+      // when(twoComposers, compose({ meta, shrink: true, canAttach: false })),
       map(messagesTree, msg => Comment(msg, root, branch)),
       compose({ meta, shrink: false, canAttach: false }),
     ])

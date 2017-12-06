@@ -37,7 +37,10 @@ Thread {
           -unread {
             font-weight: bold
           }
+        }
 
+        div.Timeago {
+          justify-content: flex-start
         }
       }
     }
@@ -56,6 +59,7 @@ $chunk {
     max-width: 80%
     div.msg-row {
       display: flex
+      flex-wrap: wrap
 
       margin-bottom: 3px
 
@@ -75,9 +79,27 @@ $chunk {
       div.spacer {
         flex-grow: 1
       }
+      div.Timeago {
+        display: none
+
+        flex-basis: 100%
+        margin: .2rem
+
+        /* display: flex */
+        justify-content: flex-end
+      }
+    }
+  }
+
+  
+  div.msgs {
+    div.msg-row {
+      :last-child {
+        div.Timeago {
+          display: flex
+        }
+      }
     }
   }
 }
-
-
 

@@ -3,7 +3,7 @@ Button {
   $backgroundPrimaryText
 
   min-width: 5rem
-  height: 1.4em
+  height: 1.4rem
   padding: .2rem 1rem
 
   border: 1px #b9b9b9 solid

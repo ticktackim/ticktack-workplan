@@ -36,7 +36,7 @@ Comment {
     }
 
     section.content {
-      font-size: .9rem
+      font-size: .95rem
       line-height: 1.4
       div.Markdown {}
     }
@@ -57,15 +57,7 @@ Comment {
         i.fa {}
       }
 
-      div.Likes {
-        min-width: 2.5rem
-
-        display: flex
-        align-items: center
-
-        i.fa { margin-right: .3rem }
-        div.count {}
-      }
+      div.Likes { }
     }
 
     div.Compose {

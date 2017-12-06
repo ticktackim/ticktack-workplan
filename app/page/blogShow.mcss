@@ -29,6 +29,7 @@ Page -blogShow {
           display: flex
           flex-wrap: wrap
           flex-grow: 1
+          align-items: center
 
           h1 {
             flex-basis: 100%
@@ -44,7 +45,11 @@ Page -blogShow {
             margin-bottom: .6rem
           }
 
-          div.Button.-channel {}
+          div.Button.-channel {
+            margin-right: 1rem
+          }
+          div.Likes {
+          }
         }
 
         div.author {
