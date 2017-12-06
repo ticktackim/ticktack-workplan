@@ -8,10 +8,12 @@ exports.gives = nest('app.page.userShow')
 exports.needs = nest({
   'about.html.avatar': 'first',
   'about.obs.name': 'first',
+  'about.obs.description': 'first',
   'app.html.link': 'first',
   'app.html.blogCard': 'first',
   'contact.html.follow': 'first',
   'feed.pull.rollup': 'first',
+  'message.html.markdown': 'first',
   'sbot.pull.userFeed': 'first',
   'keys.sync.id': 'first',
   'translations.sync.strings': 'first',
@@ -27,6 +29,7 @@ exports.create = (api) => {
     const { feed } = location
     const myId = api.keys.sync.id()
     const name = api.about.obs.name(feed)
+    const description = computed(api.about.obs.description(feed), d => api.message.html.markdown(d || ''))
 
     const strings = api.translations.sync.strings()
 
@@ -80,6 +83,7 @@ exports.create = (api) => {
               ? userEditButton
               : ''
           ]),
+          h('div.introduction', description),
           feed !== myId
             ? h('div.actions', [
                 api.contact.html.follow(feed),

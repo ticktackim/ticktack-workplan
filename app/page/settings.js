@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h } = require('mutant')
+const { h, computed } = require('mutant')
 const electron = require('electron')
 
 exports.gives = nest('app.page.settings')
@@ -11,6 +11,7 @@ exports.needs = nest({
   'history.sync.push': 'first',
   'history.obs.store': 'first',
   'keys.sync.id': 'first',
+  'message.html.markdown': 'first',
   'settings.sync.get': 'first',
   'settings.sync.set': 'first',
   'settings.obs.get': 'first',
@@ -70,7 +71,7 @@ exports.create = (api) => {
         ]),
         h('section -introduction', [
           h('div.left', strings.settingsPage.section.introduction),
-          h('div.right', api.about.obs.description(feed)),
+          h('div.right', computed(api.about.obs.description(feed), d => api.message.html.markdown(d || '')))
         ]),
         h('section -language', [
           h('div.left', strings.settingsPage.section.language),
