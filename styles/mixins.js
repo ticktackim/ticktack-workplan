@@ -12,8 +12,8 @@ exports.create = (api) => {
 const mainMixins = `
 $fontBasic {
   font-family: arial
-  font-size: 1rem
   line-height: 1.2
+  font-size: 1rem
 }
 
 $maxWidth {

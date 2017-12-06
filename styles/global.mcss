@@ -1,3 +1,7 @@
+html {
+  font-size: 17px
+}
+
 body {
   $fontBasic 
   $backgroundPrimaryText
