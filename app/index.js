@@ -38,6 +38,7 @@ module.exports = {
       clickHandler: require('./sync/initialize/clickHandler'),
       styles: require('./sync/initialize/styles'),
       suggests: require('./sync/initialize/suggests'),
+      zoomMemory: require('./sync/initialize/zoomMemory'),
     },
   }
 }

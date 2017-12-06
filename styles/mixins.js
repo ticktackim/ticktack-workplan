@@ -93,7 +93,7 @@ $circleMedium {
   border-radius: 4rem
 }
 
-$circlelarge {
+$circleLarge {
   min-width: 8rem
   min-height: 8rem
   width: 8rem

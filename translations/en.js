@@ -47,8 +47,10 @@ module.exports = {
       edit: 'Edit',
     },
     section: {
+      name: 'Name',
+      introduction: 'Introduction',
       language: 'Language',
-      profile: 'Profile',
+      zoom: 'Zoom'
     }
   },
   threadNew: {
@@ -64,8 +66,9 @@ module.exports = {
   threadShow: 'Direct Messages',
   userEdit: {
     section: {
+      avatar: 'Avatar',
       name: 'Name',
-      avatar: 'Avatar'
+      introduction: 'Introduction',
     },
     instruction: {
       crop: 'Click and drag to crop your avatar'
@@ -96,5 +99,10 @@ module.exports = {
       follow: "Follow",
       friendsInCommon: 'friends in common'
     }
+  },
+  languages: {
+    en: 'English',
+    zh: 'Chinese'
   }
+
 }

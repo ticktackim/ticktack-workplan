@@ -5,6 +5,24 @@ Page -userEdit {
   div.content {
     $maxWidthSmaller
 
+    div.PatchProfileEdit {
+      section.-avatar {
+        div.input {
+          $circleLarge
+
+          img.Avatar {
+            $circleLarge
+          }
+
+          input {
+            ::before {
+              $circleLarge
+            }
+          }
+        }
+      }
+    }
+
   }
 }
 

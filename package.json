@@ -38,7 +38,7 @@
     "mutant-scroll": "0.0.5",
     "open-external": "^0.1.1",
     "patch-history": "^1.0.0",
-    "patch-profile": "^1.0.2",
+    "patch-profile": "^1.0.3",
     "patch-settings": "^1.0.0",
     "patch-suggest": "^1.0.1",
     "patchcore": "^1.12.0",

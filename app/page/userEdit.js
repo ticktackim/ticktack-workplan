@@ -21,8 +21,9 @@ exports.create = (api) => {
     const options = Object.assign({}, location, {
       feed,
       labels: {
-        name: strings.userEdit.section.name,
         avatar: strings.userEdit.section.avatar,
+        name: strings.userEdit.section.name,
+        description: strings.userEdit.section.introduction,
         instructionCrop: strings.userEdit.instruction.crop,
         okay: strings.userEdit.action.okay,
         cancel: strings.userEdit.action.cancel,

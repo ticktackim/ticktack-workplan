@@ -1,11 +1,13 @@
 const nest = require('depnest')
 const { h } = require('mutant')
+const electron = require('electron')
 
 exports.gives = nest('app.page.settings')
 
 exports.needs = nest({
   'about.html.image': 'first',
   'about.obs.name': 'first',
+  'about.obs.description': 'first',
   'history.sync.push': 'first',
   'history.obs.store': 'first',
   'keys.sync.id': 'first',
@@ -44,7 +46,7 @@ exports.create = (api) => {
     const currentLanguage = api.settings.sync.get('language')
 
     const editProfile = () => api.history.sync.push({
-      page:'userEdit',
+      page: 'userEdit',
       feed,
       callback: (err, didEdit) => {
         if (err) throw new Error ('Error editing profile', err)
@@ -55,23 +57,29 @@ exports.create = (api) => {
     return h('Page -settings', [
       h('div.content', [
         h('h1', strings.settingsPage.title),
-        h('section -profile', [
-          h('header', strings.settingsPage.section.profile),
-          h('div.profile', [
-            h('div.name', api.about.obs.name(feed)),
-            api.about.html.image(feed),
+        h('section -avatar', [
+          h('div.left'),
+          h('div.right', api.about.html.image(feed)),
+        ]),
+        h('section -name', [
+          h('div.left', strings.settingsPage.section.name),
+          h('div.right', [ 
+            api.about.obs.name(feed),
+            h('i.fa.fa-pencil', { 'ev-click': editProfile })
           ]),
-          h('div.actions', [
-            h('Button', { 'ev-click': editProfile }, [
-              strings.settingsPage.action.edit,
-              h('i.fa.fa-pencil')
-            ])
-          ])
+        ]),
+        h('section -introduction', [
+          h('div.left', strings.settingsPage.section.introduction),
+          h('div.right', api.about.obs.description(feed)),
         ]),
         h('section -language', [
-          h('header', strings.settingsPage.section.language),
-          h('div.languages', LANGUAGES.map(Language))
-        ])
+          h('div.left', strings.settingsPage.section.language),
+          h('div.right', LANGUAGES.map(Language))
+        ]),
+        h('section -zoom', [
+          h('div.left', strings.settingsPage.section.zoom),
+          h('div.right', [ zoomButton(-0.1, '-'), zoomButton(+0.1, '+') ])
+        ]),
       ])
     ])
 
@@ -84,10 +92,24 @@ exports.create = (api) => {
           'ev-click': () => selectLang(lang), 
           className 
         }, 
-        lang
+        strings.languages[lang]
       )
     }
 
+    function zoomButton (increment, symbol) {
+      const { getCurrentWebContents } = electron.remote
+      return h('Button -language', 
+        { 
+          'ev-click': () => {
+            var zoomFactor = api.settings.sync.get('ticktack.electron.zoomFactor', 1)
+            var newZoomFactor = zoomFactor + increment
+            var zoomFactor = api.settings.sync.set('ticktack.electron.zoomFactor', newZoomFactor)
+            getCurrentWebContents().setZoomFactor(newZoomFactor)
+          }
+        }, 
+        symbol
+      )
+    }
   }
 }
 

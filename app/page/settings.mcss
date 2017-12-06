@@ -1,54 +1,59 @@
 Page -settings {
   padding-top: 1rem
-  $backgroundGrey
+  background: #fff
 
   div.content {
-    background: #fff
     padding: 1rem
     $maxWidthSmaller 
 
     h1 {
+      font-size: 1.5rem
+      font-weight: 300
+
+      padding-bottom: 1rem
+      border-bottom: 1px solid gainsboro
       margin-top: 0
+      margin-bottom: 4rem
     }
 
     section {
-      padding-bottom: 2rem
+      display: flex
+      align-content: center
+
+      div { 
+        padding: .5rem
+
+        display: flex
+        align-items: center
+
+        img.Avatar {
+          $circleLarge
+          margin-bottom: 1rem
+        }
+
+        i.fa {
+          cursor: pointer
+          margin: 0 .5rem
+
+          :hover {
+            $colorFontPrimary
+          }
+        }
+      }
+      div.left {
+        flex-basis: 40%
+        $colorFontSubtle
+
+        justify-content: flex-end
+      }
+      div.right {
+        flex-basis: 60%
+        justify-content: flex-start
+      }
+    }
+
+    section -introduction {
       margin-bottom: 2rem
-
-      header {
-        font-size: 1.4rem
-        margin-bottom: 1rem
-      }
-
-      -profile {
-        div.profile {
-          display: flex
-          flex-direction: column
-
-          div.name {
-            margin-bottom: .5rem
-          }
-          img.Avatar {
-            width: 8rem 
-            height: 8rem 
-          }
-          margin-bottom: .5rem
-        }
-
-        div.actions {
-          display:flex
-
-          div.Button {
-            i.fa { margin-left: .4rem }
-          }
-        }
-      }
-
-      -language {
-        div.languages {
-          display: flex
-        }
-      }
     }
   }
 }
