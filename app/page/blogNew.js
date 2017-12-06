@@ -1,6 +1,7 @@
 const nest = require('depnest')
 const { h, Struct, Value } = require('mutant')
 const addSuggest = require('suggest-box')
+const pull = require('pull-stream')
 
 exports.gives = nest('app.page.blogNew')
 
@@ -10,13 +11,14 @@ exports.needs = nest({
   'history.sync.push': 'first',
   'message.html.compose': 'first',
   'translations.sync.strings': 'first',
+  'sbot.async.addBlob': 'first'
 })
 
 exports.create = (api) => {
   var contentHtmlObs
 
   return nest('app.page.blogNew', blogNew)
-  
+
   function blogNew (location) {
     const strings = api.translations.sync.strings()
     const getChannelSuggestions = api.channel.async.suggest()
@@ -28,7 +30,21 @@ exports.create = (api) => {
     })
 
     const composer = api.message.html.compose(
-      { meta, placeholder: strings.blogNew.actions.writeBlog, shrink: false },
+      {
+        meta,
+        placeholder: strings.blogNew.actions.writeBlog,
+        shrink: false,
+        prepublish: function (content, cb) {
+          var stream = pull.values([content.text])
+          delete content.text
+          api.sbot.async.addBlob(stream, function (err, hash) {
+            if(err) return cb(err)
+            if(!hash) throw new Error('missing hash')
+            content.blog = hash
+            cb(null, content)
+          })
+        }
+      },
       (err, msg) => api.history.sync.push(err ? err : msg)
     )
 
@@ -36,6 +52,7 @@ exports.create = (api) => {
       'ev-input': e => meta.channel.set(e.target.value),
       placeholder: strings.channel
     })
+
     var page = h('Page -blogNew', [
       api.app.html.context(location),
       h('div.content', [
@@ -85,3 +102,4 @@ exports.create = (api) => {
     return page
   }
 }
+

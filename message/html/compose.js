@@ -23,7 +23,7 @@ exports.create = function (api) {
   return nest('message.html.compose', compose)
 
   function compose (options, cb) {
-    var { 
+    var {
       meta, // required
       placeholder,
       shrink = true,
@@ -152,18 +152,14 @@ exports.create = function (api) {
       if (!mentions.length) delete content.mentions
       if (content.recps && content.recps.length === 0) delete content.recps
 
-      try {
-        if (typeof prepublish === 'function') {
-          content = prepublish(content)
-        }
-      } catch (err) {
-        publishBtn.disabled = false
-        handleErr(err)
+      if (typeof prepublish === 'function') {
+        prepublish(content, function (err, content) {
+          if(err) handleErr(err)
+          else api.message.async.publish(content, done)
+        })
       }
-
-      // debugger
-      return api.message.async.publish(content, done)
-      // return api.message.html.confirm(content, done)
+      else
+        api.message.async.publish(content, done)
 
       function done (err, msg) {
         publishBtn.disabled = false
@@ -176,10 +172,15 @@ exports.create = function (api) {
       }
 
       function handleErr (err) {
+        publishBtn.disabled = false
         if (cb) cb(err)
         else throw err
       }
     }
   }
 }
+
+
+
+
 
