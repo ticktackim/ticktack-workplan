@@ -9,7 +9,8 @@
     "dev": "ssb_appname=ssb electro main.js",
     "postinstall": "echo 'REMEMBER: npm run rebuild'",
     "test": "npm run test:deps",
-    "test:deps": "dependency-check package.json --entry main.js --entry background-process.js && dependency-check package.json --entry main.js --entry background-process.js --extra --no-dev"
+    "test:deps": "dependency-check package.json --entry main.js --entry background-process.js && dependency-check package.json --entry main.js --entry background-process.js --extra --no-dev",
+    "test:i18n": "node translations/checker.js"
   },
   "repository": {
     "type": "git",
