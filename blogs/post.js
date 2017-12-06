@@ -1,8 +1,5 @@
 var marksum = require('markdown-summary')
 
-//var markdown = require('ssb-markdown')
-
-
 exports.gives = {
   message: {
     html: {
@@ -21,18 +18,6 @@ exports.needs = {
 
 exports.create = function (api) {
 
-  function render (source) {
-    return markdown.block(source, {
-      emoji: (emoji) => {
-        return renderEmoji(emoji, api.emoji.sync.url(emoji))
-      },
-      toUrl: (id) => {
-        if (ref.isBlob(id)) return api.blob.sync.url(id)
-        return id
-      },
-      imageLink: (id) => id
-    })
-  }
   function fromPost(fn) {
     return function (data) {
       if('post' !== data.value.content.type) return
@@ -64,6 +49,8 @@ exports.create = function (api) {
     }
   }
 }
+
+
 
 
 

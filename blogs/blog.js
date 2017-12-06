@@ -29,11 +29,11 @@ exports.create = function (api) {
         },
         summary: function (data) {
           if('blog' == typeof data.value.content.type) return
-          return data.value.content.title
+          return data.value.content.summary
         },
         thumbnail: function (data) {
           if('blog' == typeof data.value.content.type) return
-          return data.value.content.title
+          return data.value.content.thumbnail
         },
         content: function (data) {
           if('blog' == typeof data.value.content.type) return
@@ -54,9 +54,4 @@ exports.create = function (api) {
     }
   }
 }
-
-
-
-
-
 
