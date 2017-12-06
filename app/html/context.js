@@ -71,7 +71,7 @@ exports.create = (api) => {
 
     function LevelOneContext () {
       function isDiscoverContext (loc) {
-        const PAGES_UNDER_DISCOVER = ['blogIndex', 'blogShow']
+        const PAGES_UNDER_DISCOVER = ['blogIndex', 'blogShow', 'userShow']
 
         return PAGES_UNDER_DISCOVER.includes(location.page)
           || get(location, 'value.private') === undefined
@@ -181,6 +181,7 @@ exports.create = (api) => {
       const { key, value, feed: targetUser, page } = location
       const root = get(value, 'content.root', key)
       if (!targetUser) return
+      if (page === 'userShow') return
 
 
       const prepend = Option({
