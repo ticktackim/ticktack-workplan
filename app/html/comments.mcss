@@ -57,15 +57,7 @@ Comment {
         i.fa {}
       }
 
-      div.Likes {
-        min-width: 2.5rem
-
-        display: flex
-        align-items: center
-
-        i.fa { margin-right: .3rem }
-        div.count {}
-      }
+      div.Likes { }
     }
 
     div.Compose {

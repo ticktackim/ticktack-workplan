@@ -14,6 +14,7 @@ exports.needs = nest({
   'app.html.context': 'first',
   'contact.html.follow': 'first',
   'message.html.channel': 'first',
+  'message.html.likes': 'first',
   'message.html.markdown': 'first',
   'message.html.timeago': 'first',
   'feed.obs.thread': 'first'
@@ -47,7 +48,8 @@ exports.create = (api) => {
             h('div.blog', [
               h('h1', title),
               timeago(blogMsg),
-              channel(blogMsg)
+              channel(blogMsg),
+              api.message.html.likes(blogMsg)
             ]),
             h('div.author', [
               h('div.leftCol', api.about.html.avatar(author, 'medium')),
