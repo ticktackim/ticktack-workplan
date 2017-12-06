@@ -29,7 +29,7 @@ exports.create = (api) => {
 
     const composer = api.message.html.compose(
       { meta, placeholder: strings.blogNew.actions.writeBlog, shrink: false },
-      (err, msg) => api.history.sync.push(err ? err : msg)
+      (err, msg) => api.history.sync.push(err ? err : { page: 'blogIndex' })
     )
 
     const channelInput = h('input', {
