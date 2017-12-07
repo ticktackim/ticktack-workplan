@@ -35,6 +35,9 @@ exports.create = (api) => {
         placeholder: strings.blogNew.actions.writeBlog,
         shrink: false,
         prepublish: function (content, cb) {
+          var m = /\!\[[^]+\]\(([^\)]+)\)/.exec(marksum.image(content.text))
+          content.thumbnail = m && m[1]
+
           var stream = pull.values([content.text])
           delete content.text
           api.sbot.async.addBlob(stream, function (err, hash) {
@@ -102,4 +105,6 @@ exports.create = (api) => {
     return page
   }
 }
+
+
 

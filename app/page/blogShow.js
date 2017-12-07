@@ -19,8 +19,8 @@ exports.needs = nest({
   'message.html.timeago': 'first',
   'feed.obs.thread': 'first',
 
-  'message.html.title': 'first',
-  'message.html.content': 'first',
+  'blog.html.title': 'first',
+  'blog.html.content': 'first',
 
 })
 
@@ -32,8 +32,8 @@ exports.create = (api) => {
 
     const { author, content } = blogMsg.value
 
-    const blog = api.message.html.content(blogMsg)
-    const title = api.message.html.title(blogMsg)
+    const blog = api.blog.html.content(blogMsg)
+    const title = api.blog.html.title(blogMsg)
 
     const comments = api.app.html.comments(blogMsg.key)
 

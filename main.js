@@ -31,10 +31,10 @@ const sockets = combine(
     unread: require('./unread'),
   },
   {
-    blogs: {
-      post: require('./blogs/post'),
-      blog: require('./blogs/blog')
-    }
+    blog: {html: {
+      post: require('./blog/html/post'),
+      blog: require('./blog/html/blog')
+    }}
   },
   {
     profile: require('patch-profile'),

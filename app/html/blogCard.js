@@ -33,9 +33,9 @@ exports.needs = nest({
   'blob.sync.url': 'first',
   'emoji.sync.url': 'first',
 
-  'message.html.title': 'first',
-  'message.html.summary': 'first',
-  'message.html.thumbnail': 'first',
+  'blog.html.title': 'first',
+  'blog.html.summary': 'first',
+  'blog.html.thumbnail': 'first',
 })
 
 exports.create = function (api) {
@@ -99,7 +99,7 @@ exports.create = function (api) {
 
     var img = h('Thumbnail')
 
-    var image = api.message.html.thumbnail(blog)
+    var image = api.blog.html.thumbnail(blog)
 
     if(image) {
       //Hey this works! fit an image into a specific size (see blog-card.mcss)
@@ -127,11 +127,11 @@ exports.create = function (api) {
       h('div.content', [
         img,
         h('div.text', [
-          h('h2', api.message.html.title(blog)),
+          h('h2', api.blog.html.title(blog)),
           content.channel
             ? api.message.html.channel(blog)
             : '',
-          h('div.summary', api.message.html.summary(blog))
+          h('div.summary', api.blog.html.summary(blog))
         ])
       ])
     ])
