@@ -1,8 +1,8 @@
 {
-  "port": 43750,
-  "blobsPort": 43751,
-  "ws": { "port": 43751 },
-  "caps": {"shs": "ErgQF85hFQpUXp69IXtLW+nXDgFIOKKDOWFX/st2aWk="},
+  "_port": 43750,
+  "_blobsPort": 43751,
+  "_ws": { "port": 43751 },
+  "_caps": {"shs": "ErgQF85hFQpUXp69IXtLW+nXDgFIOKKDOWFX/st2aWk="},
   "autoinvite": "128.199.132.182:43750:@7xMrWP8708+LDvaJrRMRQJEixWYp4Oipa9ohqY7+NyQ=.ed25519~YC4ZnjHH8qzsyHe2sihW8WDlhxSUH33IthOi4EsldwQ="
 }
 
