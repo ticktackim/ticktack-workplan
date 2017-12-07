@@ -5,7 +5,10 @@ const next = require('pull-next-step')
 const get = require('lodash/get')
 const isEmpty = require('lodash/isEmpty')
 
-exports.gives = nest('app.html.context')
+exports.gives = nest({
+  'app.html.context': true,
+  'unread.sync.markUnread': true
+})
 
 exports.needs = nest({
   'app.html.scroller': 'first',
@@ -25,9 +28,18 @@ exports.needs = nest({
 exports.create = (api) => {
   var recentMsgCache = MutantArray()
   var usersLastMsgCache = Dict() // { id: [ msgs ] }
-  var usersUnreadMsgsCache = Dict() // { id: [ msgs ] }
+  var unreadMsgsCache = Dict() // { id: [ msgs ] }
 
-  return nest('app.html.context', context)
+  return nest({
+    //intercept markUnread and remove them from the cache.
+    'unread.sync.markUnread': function (msg) {
+      unreadMsgsCache.get(msg.value.content.root || msg.key)
+        .delete(msg.key)
+      unreadMsgsCache.get(msg.value.author)
+        .delete(msg.key)
+    },
+    'app.html.context': context,
+  })
   
   function context (location) {
     const strings = api.translations.sync.strings()
@@ -36,24 +48,28 @@ exports.create = (api) => {
     var nearby = api.sbot.obs.localPeers()
 
     // Unread message counts
-    const updateUserUnreadMsgsCache = (msg) => {
-      var cache = getUserUnreadMsgsCache(msg.value.author)
-
+    function updateCache (cache, msg) {
       if(api.unread.sync.isUnread(msg)) 
         cache.add(msg.key)
       else
         cache.delete(msg.key)
     }
+
+    function updateUnreadMsgsCache (msg) {
+      updateCache(getUnreadMsgsCache(msg.value.author), msg)
+      updateCache(getUnreadMsgsCache(msg.value.content.root || msg.key), msg)
+    }
+
     pull(
       next(api.feed.pull.private, {reverse: true, limit: 1000, live: false, property: ['value', 'timestamp']}),
       privateMsgFilter(),
-      pull.drain(updateUserUnreadMsgsCache)
+      pull.drain(updateUnreadMsgsCache)
     )
 
     pull(
       next(api.feed.pull.private, {old: false, live: true, property: ['value', 'timestamp']}),
       privateMsgFilter(),
-      pull.drain(updateUserUnreadMsgsCache)
+      pull.drain(updateUnreadMsgsCache)
     )
 
     //TODO: calculate unread state for public threads/blogs
@@ -160,21 +176,17 @@ exports.create = (api) => {
 
     }
 
-    function getUserUnreadMsgsCache (author) {
-      var cache = usersUnreadMsgsCache.get(author)
-      if (!cache) { 
-        cache = Set () 
-        usersUnreadMsgsCache.put(author, cache)
+    function getUnreadMsgsCache (key) {
+      var cache = unreadMsgsCache.get(key)
+      if (!cache) {
+        cache = Set ()
+        unreadMsgsCache.put(key, cache)
       }
       return cache
     }
 
-    function notifications (author) {
-      return computed(getUserUnreadMsgsCache(author), cache => cache.length)
-
-      // TODO find out why this doesn't work
-      // return getUserUnreadMsgsCache(feedId)
-      //   .getLength
+    function notifications (key) {
+      return computed(getUnreadMsgsCache(key), cache => cache.length)
     }
 
     function LevelTwoContext () {
@@ -212,9 +224,10 @@ exports.create = (api) => {
         store: userLastMsgCache,
         updateTop: updateLastMsgCache,
         updateBottom: updateLastMsgCache,
-        render: (rootMsgObs) => { 
+        render: (rootMsgObs) => {
           const rootMsg = resolve(rootMsgObs)
           return Option({
+            notifications: notifications(rootMsg.key),
             label: api.message.html.subject(rootMsg),
             selected: rootMsg.key === root,
             location: Object.assign(rootMsg, { feed: targetUser }),
@@ -244,7 +257,7 @@ exports.create = (api) => {
 
     function Option ({ notifications = 0, imageEl, label, location, selected }) {
       const className = selected ? '-selected' : '' 
-      const goToLocation = (e) => {
+      function goToLocation (e) {
         e.preventDefault()
         e.stopPropagation()
         api.history.sync.push(resolve(location))
@@ -252,6 +265,7 @@ exports.create = (api) => {
 
       if (!imageEl) {
         return h('Option', { className, 'ev-click': goToLocation }, [
+          when(notifications, h('div.spacer', h('div.alert', notifications))),
           h('div.label', label)
         ])
       }
@@ -283,4 +297,10 @@ function indexOf (array, fn) {
   }
   return -1
 }
+
+
+
+
+
+
 
