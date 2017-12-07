@@ -40,7 +40,7 @@ exports.create = (api) => {
     },
     'app.html.context': context,
   })
-  
+
   function context (location) {
     const strings = api.translations.sync.strings()
     const myKey = api.keys.sync.id()
@@ -108,7 +108,7 @@ exports.create = (api) => {
               : { page: 'threadNew', feed: feedId }
           }),
         }), { comparer: (a, b) => a === b }),
-      
+
         // ---------------------
         computed(nearby, n => !isEmpty(n) ?  h('hr') : null),
 
@@ -297,10 +297,5 @@ function indexOf (array, fn) {
   }
   return -1
 }
-
-
-
-
-
 
 
