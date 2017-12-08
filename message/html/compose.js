@@ -143,10 +143,12 @@ exports.create = function (api) {
         return mention
       })
 
-      var content = assign({}, resolve(meta), {
+      var content = assign({}, meta, {
         text,
         mentions
       })
+      for(var k in content)
+          content[k] = resolve(content[k])
 
       if (!content.channel) delete content.channel
       if (!mentions.length) delete content.mentions
@@ -179,6 +181,8 @@ exports.create = function (api) {
     }
   }
 }
+
+
 
 
 
