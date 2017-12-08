@@ -19,7 +19,7 @@ Page -blogNew {
         align-items: center
 
         div.label {
-          flex-basis: 4rem
+          flex-basis: 4.5rem
           padding-left: 1rem
           margin-right: 1rem
         }
