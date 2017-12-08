@@ -4,6 +4,7 @@ const pull = require('pull-stream')
 const next = require('pull-next-step')
 const get = require('lodash/get')
 const isEmpty = require('lodash/isEmpty')
+const path = require('path')
 
 exports.gives = nest({
   'app.html.context': true,
@@ -115,7 +116,10 @@ exports.create = (api) => {
         // Discover
         Option({
           // notifications: '!', //TODO - count this! 
-          imageEl: h('i.fa.fa-binoculars'),
+          // imageEl: h('i.fa.fa-binoculars'),
+          imageEl: h('i', [
+            h('img', { src: path.join(__dirname, '../../assets', 'discover.png') })
+          ]),
           label: strings.blogIndex.title,
           selected: isDiscoverContext(location),
           location: { page: 'blogIndex' },

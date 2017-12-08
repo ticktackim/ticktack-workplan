@@ -2,7 +2,7 @@ Page {
   height: calc(100% - 3rem)  /*needed for scrolling*/
 
   $backgroundPrimary
-  margin-top: 3rem
+  margin-top: 3.5rem
 
   display: flex
 

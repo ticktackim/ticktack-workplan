@@ -18,7 +18,7 @@ Compose {
   section.actions {
     display: flex
     flex-direction: row
-    align-items: baseline
+    align-items: center
     justify-content: flex-end
 
     margin-top: .4rem
@@ -26,10 +26,11 @@ Compose {
     input { flex-grow: 1 }
 
     input[type="file"] {
-      padding: .5rem 0
+      /* padding: .5rem 0 */
 
-      width: 2.5rem
-      height: 1.5rem
+      /* width: 2.5rem */
+      /* height: 1.5rem */
+      margin-left: .5rem
       color: transparent
 
       ::-webkit-file-upload-button {
@@ -38,9 +39,10 @@ Compose {
 
       ::before {
         $attachButton
-        padding-top: .3rem
+        /* padding-top: .3rem */
 
-        content: '📎'
+        /* content: '📎' */
+        content: url('file.png')
         font-size: 1rem
 
         outline: none
@@ -92,10 +94,10 @@ Compose {
 }
 
 $attachButton {
-  background: #fff
+  /* background: #fff */
   color: #666
-  padding: .5rem
-  border: 1px solid #b9b9b9
+  /* padding: .5rem */
+  /* border: 1px solid #b9b9b9 */
   border-radius: 4rem
   margin: 0
   cursor: pointer
