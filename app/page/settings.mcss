@@ -31,7 +31,7 @@ Page -settings {
           margin-bottom: 1rem
         }
 
-        i.fa {
+        i.fa, img {
           cursor: pointer
           margin: 0 .5rem
 

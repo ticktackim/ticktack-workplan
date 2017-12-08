@@ -1,6 +1,7 @@
 const nest = require('depnest')
 const { h, computed } = require('mutant')
 const electron = require('electron')
+const path = require('path')
 
 exports.gives = nest('app.page.settings')
 
@@ -66,7 +67,8 @@ exports.create = (api) => {
           h('div.left', strings.settingsPage.section.name),
           h('div.right', [ 
             api.about.obs.name(feed),
-            h('i.fa.fa-pencil', { 'ev-click': editProfile })
+            h('img', { src: path.join(__dirname, '../../assets', 'edit.png') })
+            // h('i.fa.fa-pencil', { 'ev-click': editProfile })
           ]),
         ]),
         h('section -introduction', [

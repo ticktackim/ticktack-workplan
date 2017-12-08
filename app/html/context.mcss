@@ -78,6 +78,7 @@ Option {
     a img {
    
     }
+
     i {
       $circleSmall
       $colorPrimary
@@ -86,7 +87,6 @@ Option {
       justify-content: center
       align-items: center
     }
-
   }
 
   div.label {

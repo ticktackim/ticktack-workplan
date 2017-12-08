@@ -2,6 +2,7 @@ const nest = require('depnest')
 const { h, Array: MutantArray, computed, when, map } = require('mutant')
 const pull = require('pull-stream')
 const get = require('lodash/get')
+const path = require('path')
 
 exports.gives = nest('app.page.userShow')
 
@@ -34,7 +35,11 @@ exports.create = (api) => {
     const strings = api.translations.sync.strings()
 
     const Link = api.app.html.link
-    const userEditButton = Link({ page: 'userEdit', feed }, h('i.fa.fa-pencil'))
+    const userEditButton = Link(
+      { page: 'userEdit', feed }, 
+      // h('i.fa.fa-pencil')
+      h('img', { src: path.join(__dirname, '../../assets', 'edit.png') })
+    )
     const directMessageButton = Link({ page: 'threadNew', feed }, h('Button', strings.userShow.action.directMessage))
 
     const BLOG_TYPES = ['blog', 'post']

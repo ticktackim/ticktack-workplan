@@ -1,6 +1,7 @@
 const nest = require('depnest')
 const { h, computed, when } = require('mutant')
 const get = require('lodash/get')
+const path = require('path')
 
 exports.gives = nest('app.html.header')
 
@@ -29,15 +30,20 @@ exports.create = (api) => {
 
     return h('Header', [
       h('nav', [
-        h('i.fa', {
+        h('img.feed', { 
+          src: when(isFeed, assetPath('feed_on.png'), assetPath('feed.png')),
           'ev-click': () => push({page: 'blogIndex'}),
-          className: when(isFeed, 'fa-commenting', 'fa-commenting-o')
         }),
-        h('i.fa', {
-          className: when(isSettings, 'fa-user', 'fa-user-o'),
+        h('img.feed', { 
+          src: when(isSettings, assetPath('settings_on.png'), assetPath('settings.png')),
           'ev-click': () => push({page: 'settings'})
-        })
+        }),
       ]),
     ])
   })
 }
+
+function assetPath (name) {
+  return path.join(__dirname, '../../assets', name)
+}
+
