@@ -11,6 +11,7 @@ module.exports = {
   errorNotFound: '找不到此页面',
   groupNew: '新建群组',
   writeMessage: '发私信',
+  writeComment: '留言',
   peopleNearby: '附件的朋友',
   blogIndex: {
     title: '发现'
@@ -103,7 +104,7 @@ module.exports = {
     }
   },
   languages: {
-    en: '英文',
+    en: 'English',
     zh: '中文'
   }
 }

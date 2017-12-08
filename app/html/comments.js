@@ -15,6 +15,7 @@ exports.needs = nest({
   'message.html.likes': 'first',
   'unread.sync.markRead': 'first',
   'unread.sync.isUnread': 'first',
+  'translations.sync.strings': 'first',
 })
 
 exports.create = (api) => {
@@ -22,9 +23,9 @@ exports.create = (api) => {
 
   function comments (thread) {
     const { messages, channel, lastId: branch } = thread
+    const strings = api.translations.sync.strings()
 
     // TODO - move this up into Patchcore
-    var debouncer = null
     const messagesTree = computed(throttle(messages, 200), msgs => {
       return msgs
         .filter(msg => forkOf(msg) === undefined)
@@ -50,11 +51,12 @@ exports.create = (api) => {
     return h('Comments', [
       // when(twoComposers, compose({ meta, shrink: true, canAttach: false })),
       map(messagesTree, msg => Comment(msg, root, branch)),
-      compose({ meta, shrink: false, canAttach: false }),
+      compose({ meta, shrink: false, canAttach: false, placeholder: strings.writeComment }),
     ])
   }
 
   function Comment (msgObs, root, branch) {
+    const strings = api.translations.sync.strings()
     const msg = resolve(msgObs)
 
     const raw = get(msg, 'value.content.text')
@@ -87,7 +89,8 @@ exports.create = (api) => {
       },
       shrink: false,
       canAttach: false,
-      canPreview: false
+      canPreview: false,
+      placeholder: strings.writeComment 
     }, toggleCompose)
 
     return h('Comment', { className }, [

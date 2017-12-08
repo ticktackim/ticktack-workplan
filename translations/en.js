@@ -27,6 +27,7 @@ Building Honest Communication
   loading: 'Loading...',
   optionalField: 'optional',
   writeMessage: 'Write a message',
+  writeComment: 'Write a comment',
   peopleNearby: 'People nearby',
   sendMessage: 'Send',
   showMore: 'Show More',
@@ -109,7 +110,7 @@ Building Honest Communication
   },
   languages: {
     en: 'English',
-    zh: 'Chinese'
+    zh: '中文'
   }
 
 }
