@@ -9,6 +9,7 @@ module.exports = {
   blogNew: {
     field: {
       title: 'Title',
+      summary: 'Summary'
     },
     actions: {
       edit: 'Edit',

@@ -73,6 +73,13 @@ exports.create = (api) => {
               placeholder: strings.blogNew.field.title
             }),
           ]),
+          h('div.field -title', [
+            h('div.label', strings.blogNew.field.summary),
+            h('input', {
+              'ev-input': e => meta.title.set(e.target.value),
+              placeholder: strings.blogNew.field.summary
+            }),
+          ]),
           composer
         ])
       ])
@@ -109,6 +116,7 @@ exports.create = (api) => {
     return page
   }
 }
+
 
 
 
