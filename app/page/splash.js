@@ -13,17 +13,20 @@ exports.create = (api) => {
 
   function splash (location) {
     // location is an object { feed, page: 'splash', callback }
-    
-   const strings = api.translations.sync.strings()
+
+    const strings = api.translations.sync.strings()
+
+    const svg = assetPath('splash.svg')
+    console.log(svg)
 
     const style = {
-      'background-image': assetUrl('splash.svg')
+      'background': require('../../assets/splash-svg.js'),
+      'background-repeat': 'no-repeat',
+      'background-size': 'contain'
     }
 
     return h('Splash', [
-      // h('div.top'),
       h('div.top', [
-        // h('div.logoName', { style: { 'background-image': assetUrl('logo_and_name.png')} } )
         h('img.logoName', { src: assetPath('logo_and_name.png') })
       ]),
       h('div.bottom', { style }, [
@@ -36,8 +39,4 @@ exports.create = (api) => {
 
 function assetPath (name) {
   return path.join(__dirname, '../../assets', name)
-}
-
-function assetUrl (name) {
-  return `url(${assetPath(name)})`
 }

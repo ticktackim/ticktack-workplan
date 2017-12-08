@@ -39,7 +39,7 @@ exports.create = (api) => {
   function startApp () {
     api.history.sync.push({page: 'splash'})
 
-    setTimeout(enterApp, 2000)
+    // setTimeout(enterApp, 2000)
   }
 
   function enterApp() {
@@ -58,9 +58,8 @@ exports.create = (api) => {
 
           api.history.sync.push({ page: 'blogIndex' })
         }
-      }) 
+      })
     }
 
   }
 }
-
