@@ -15,6 +15,7 @@ Page -userShow {
         }
         div.introduction {
           $maxWidthSmaller
+          text-align: center
         }
 
         h1 {

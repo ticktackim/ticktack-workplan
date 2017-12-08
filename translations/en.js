@@ -110,7 +110,7 @@ Building Honest Communication
   },
   languages: {
     en: 'English',
-    zh: 'Chinese'
+    zh: '中文'
   }
 
 }

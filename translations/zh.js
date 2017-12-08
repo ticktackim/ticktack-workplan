@@ -104,7 +104,7 @@ module.exports = {
     }
   },
   languages: {
-    en: '英文',
+    en: 'English',
     zh: '中文'
   }
 }

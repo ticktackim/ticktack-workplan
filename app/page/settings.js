@@ -101,7 +101,7 @@ exports.create = (api) => {
 
     function zoomButton (increment, symbol) {
       const { getCurrentWebContents } = electron.remote
-      return h('Button -language', 
+      return h('Button -zoom', 
         { 
           'ev-click': () => {
             var zoomFactor = api.settings.sync.get('ticktack.electron.zoomFactor', 1)

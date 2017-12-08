@@ -62,3 +62,8 @@ Button -language {
   margin-right: 1rem
 }
 
+Button -zoom {
+  margin-right: 1rem
+  min-width: .5rem
+}
+
