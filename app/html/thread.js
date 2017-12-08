@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, Array: MutantArray, map, computed, when } = require('mutant')
+const { h, Array: MutantArray, map, computed, when, throttle } = require('mutant')
 const get = require('lodash/get')
 
 // TODO - rename threadPrivate
@@ -66,7 +66,7 @@ exports.create = (api) => {
 }
 
 function buildChunkedMessages (messagesObs) {
-  return computed(messagesObs, msgs => {
+  return computed(throttle(messagesObs, 200), msgs => {
     var chunkedMessages = MutantArray()
 
     var _chunk = null
