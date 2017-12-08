@@ -4,10 +4,8 @@ const ssbKeys = require('ssb-keys')
 const Path = require('path')
 
 // const appName = process.env.ssb_appname || 'ticktack' //'ticktack' TEMP: this is for the windowsSSB installer only
-const appName = 'ssb'
-const opts = appName == 'ssb'
-  ? null
-  : require('./default-config.json')
+const appName = process.env.ssb_appname || 'ssb'
+var opts = appName === 'ssb' ? require('./ssb-config.json') : require('./default-config')
 
 exports.gives = nest('config.sync.load')
 exports.create = (api) => {
@@ -23,3 +21,4 @@ exports.create = (api) => {
     return config
   })
 }
+
