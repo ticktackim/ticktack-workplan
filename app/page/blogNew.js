@@ -2,6 +2,7 @@ const nest = require('depnest')
 const { h, Struct, Value } = require('mutant')
 const addSuggest = require('suggest-box')
 const pull = require('pull-stream')
+const marksum = require('markdown-summary')
 
 exports.gives = nest('app.page.blogNew')
 
@@ -37,6 +38,7 @@ exports.create = (api) => {
         prepublish: function (content, cb) {
           var m = /\!\[[^]+\]\(([^\)]+)\)/.exec(marksum.image(content.text))
           content.thumbnail = m && m[1]
+          // content.summary = marksum.summary(content.text) // Need a summary whihch doesn't trim the start
 
           var stream = pull.values([content.text])
           delete content.text
@@ -100,7 +102,9 @@ exports.create = (api) => {
       cb(null, suggestions)
     }, {cls: 'PatchSuggest.-channelHorizontal'}) // WARNING hacking suggest-box cls
 
-    channelInput.addEventListener('suggestselect', (e) => meta.channel.set(e.value))
+    channelInput.addEventListener('suggestselect', (e) => {
+      meta.channel.set(e.detail.value)
+    })
 
     return page
   }

@@ -19,19 +19,19 @@ exports.create = function (api) {
 
   return nest({
     'blog.html.title': function (data) {
-      if('blog' == typeof data.value.content.type) return
+      if('blog' !== data.value.content.type) return
       return data.value.content.title
     },
     'blog.html.summary': function (data) {
-      if('blog' == typeof data.value.content.type) return
+      if('blog' !== data.value.content.type) return
       return data.value.content.summary
     },
     'blog.html.thumbnail': function (data) {
-      if('blog' == typeof data.value.content.type) return
+      if('blog' !== data.value.content.type) return
       return data.value.content.thumbnail
     },
     'blog.html.content': function (data) {
-      if('blog' == typeof data.value.content.type) return
+      if('blog' !== data.value.content.type) return
       var div = h('Markdown')
       pull(
         api.sbot.pull.stream(function (sbot) {
@@ -39,7 +39,7 @@ exports.create = function (api) {
         }),
         pull.collect(function (err, ary) {
           if(err) return
-          var md = api.message.html.markdown({text:Buffer.concat(ary).toString()})
+          var md = api.message.html.markdown({text: Buffer.concat(ary).toString()})
           div.innerHTML = md.innerHTML
         })
       )
@@ -47,8 +47,4 @@ exports.create = function (api) {
     }
   })
 }
-
-
-
-
 

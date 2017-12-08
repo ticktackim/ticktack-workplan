@@ -32,6 +32,7 @@ exports.create = function (api) {
       if('post' !== data.value.content.type) return
       var content = data.value.content
       if(content.thumbnail) return content.thumbnail
+
       var img = marksum.image(content.text)
       var m = /\!\[[^]+\]\(([^\)]+)\)/.exec(img)
       if(m) return m[1]
