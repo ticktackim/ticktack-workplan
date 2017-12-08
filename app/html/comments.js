@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, Array: MutantArray, Value, map, computed, when, resolve } = require('mutant')
+const { h, Array: MutantArray, Value, map, computed, when, resolve, throttle } = require('mutant')
 const get = require('lodash/get')
 
 exports.gives = nest('app.html.comments')
@@ -24,7 +24,8 @@ exports.create = (api) => {
     const { messages, channel, lastId: branch } = api.feed.obs.thread(root)
 
     // TODO - move this up into Patchcore
-    const messagesTree = computed(messages, msgs => {
+    var debouncer = null
+    const messagesTree = computed(throttle(messages, 200), msgs => {
       return msgs
         .filter(msg => forkOf(msg) === undefined)
         .map(threadMsg => { 
@@ -138,3 +139,5 @@ exports.create = (api) => {
 function forkOf (msg) {
   return get(msg, 'value.content.fork')
 }
+
+
