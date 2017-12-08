@@ -20,8 +20,8 @@ exports.needs = nest({
 exports.create = (api) => {
   return nest('app.html.comments', comments)
 
-  function comments (root) {
-    const { messages, channel, lastId: branch } = api.feed.obs.thread(root)
+  function comments (thread) {
+    const { messages, channel, lastId: branch } = thread
 
     // TODO - move this up into Patchcore
     var debouncer = null

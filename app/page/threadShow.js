@@ -9,7 +9,8 @@ exports.needs = nest({
   'app.html.context': 'first',
   'app.html.thread': 'first',
   'message.html.compose': 'first',
-  'unread.sync.markRead': 'first'
+  'unread.sync.markRead': 'first',
+  'feed.obs.thread': 'first'
 })
 
 exports.create = (api) => {
@@ -22,14 +23,12 @@ exports.create = (api) => {
     const channel = get(value, 'content.channel')
 
     //unread state is set in here...
-    const thread = api.app.html.thread(root)
+    const thread = api.feed.obs.thread(root)
 
     const meta = {
       type: 'post',
       root,
-      //XXX incorrect branch
-      branch: get(last(location.replies), 'key'),
-      // >> lastId? CHECK THIS LOGIC
+      branch: thread.lastId,
       channel,
       recps: get(location, 'value.content.recps')
     }
@@ -39,12 +38,16 @@ exports.create = (api) => {
       api.app.html.context(location),
       h('div.content', [
         when(thread.subject, h('h1', thread.subject)),
-        thread,
+        api.app.html.thread(thread),
         composer
       ]),
     ])
   }
 }
+
+
+
+
 
 
 

@@ -16,11 +16,10 @@ exports.needs = nest({
 })
 
 exports.create = (api) => {
-  return nest('app.html.thread', thread)
-
-  function thread (root) {
+  return nest('app.html.thread', function (thread) {
+    //catch any code that still uses this the old way...
+    if('string' === typeof thread) throw new Error('thread should be observable')
     const myId = api.keys.sync.id()
-    const thread = api.feed.obs.thread(root)
     const chunkedMessages = buildChunkedMessages(thread.messages)
 
     const threadView = h('Thread',
@@ -62,7 +61,7 @@ exports.create = (api) => {
       return get(msgs, '[0].value.content.subject')
     })
     return threadView
-  }
+  })
 }
 
 function buildChunkedMessages (messagesObs) {
@@ -100,4 +99,7 @@ function isSameAuthor (msgA, msgB) {
   // TODO (mix) use lodash/get
   return msgA.value.author === msgB.value.author
 }
+
+
+
 
