@@ -21,6 +21,7 @@ module.exports = {
   loading: 'Loading...',
   optionalField: 'optional',
   writeMessage: 'Write a message',
+  writeComment: 'Write a comment',
   peopleNearby: 'People nearby',
   sendMessage: 'Send',
   showMore: 'Show More',

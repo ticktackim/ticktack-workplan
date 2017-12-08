@@ -18,10 +18,8 @@ exports.needs = nest({
   'message.html.markdown': 'first',
   'message.html.timeago': 'first',
   'feed.obs.thread': 'first',
-
   'blog.html.title': 'first',
   'blog.html.content': 'first',
-
 })
 
 exports.create = (api) => {
