@@ -87,6 +87,7 @@ exports.create = (api) => {
     ])
 
     addSuggest(channelInput, (inputText, cb) => {
+      inputText = inputText.replace(/^#/, '')
       var suggestions = getChannelSuggestions(inputText)
         .map(s => {
           s.value = s.value.replace(/^#/, '') // strip the defualt # prefix here

@@ -40,7 +40,8 @@ Page -blogNew {
       }
       div.Compose {
         textarea {
-           margin-top: 2rem
+          margin-top: 2rem
+          min-height: 30rem 
         }
       }
     }
