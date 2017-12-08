@@ -46,22 +46,20 @@ const api = entry(sockets, nest({
 }))
 
 document.body.appendChild(api.app.html.app())
-console.log(api.config.sync.load())
+// console.log(api.config.sync.load())
 
 var invite = api.config.sync.load().autoinvite
 var self_id = api.config.sync.load().keys.id
 if(invite) {
   api.sbot.async.friendsGet({dest: self_id}, function (err, friends) {
-    var c = 0
     //if you have less than 5 followers, maybe use the autoinvite
     if(Object.keys(friends).length <= 5)
       api.invite.async.autofollow(
-       invite,
-        function (err, follows) {
-        console.log('autofollowed', err, follows);
-      })
+        invite,
+        function (err, follows) { console.log('autofollowed', err, follows) }
+      )
     else
-      console.log('already onboarded')
+      console.log('no autoinvite - you have friends already')
   })
 }
 else
