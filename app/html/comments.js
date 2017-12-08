@@ -36,9 +36,11 @@ exports.create = (api) => {
         })
     })
 
+    const root = computed(messages, ary => ary[0].key)
+
     const meta = {
       type: 'post',
-      root: computed(messages, function (ary) { return ary[0].key }),
+      root,
       branch,
       channel
     }
