@@ -35,8 +35,10 @@ exports.create = (api) => {
     const blog = api.blog.html.content(blogMsg)
     const title = api.blog.html.title(blogMsg)
 
+    //app.html.comments also loads the thread obs.
     const comments = api.app.html.comments(blogMsg.key)
 
+    //loads entire thread, just to get the branch.
     const { lastId: branch } = api.feed.obs.thread(blogMsg.key)
 
     const { timeago, channel, markdown, compose } = api.message.html
