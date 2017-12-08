@@ -18,9 +18,10 @@ exports.create = (api) => {
 
     const loc = computed(location, location => {
       if (typeof location != 'object') return {}
-
-      return location || {}
+      return location
     })
+
+    if (loc().page === 'splash') return
 
     const isSettings = computed(loc, loc => {
       return SETTINGS_PAGES.includes(loc.page)
