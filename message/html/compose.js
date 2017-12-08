@@ -143,7 +143,7 @@ exports.create = function (api) {
         return mention
       })
 
-      var content = assign({}, meta, {
+      var content = assign({}, resolve(meta), {
         text,
         mentions
       })
@@ -181,10 +181,5 @@ exports.create = function (api) {
     }
   }
 }
-
-
-
-
-
 
 
