@@ -20,6 +20,7 @@ exports.needs = nest({
   'app.page.userEdit': 'first',
   // 'app.page.userFind': 'first',
   'app.page.userShow': 'first',
+  'app.page.splash': 'first',
   'app.page.threadNew': 'first',
   'app.page.threadShow': 'first',
   // 'app.page.image': 'first',
@@ -32,6 +33,7 @@ exports.create = (api) => {
     // route format: [ routeValidator, routeFunction ]
 
     const routes = [
+      [ location => location.page === 'splash', pages.splash ],
 
       // Blog pages
       [ location => location.page === 'blogIndex', pages.blogIndex ],

@@ -30,6 +30,7 @@ module.exports = {
     userEdit: require('./page/userEdit'),
     // userFind: require('./page/userFind'),
     userShow: require('./page/userShow'),
+    splash: require('./page/splash'),
     threadNew: require('./page/threadNew'),
     threadShow: require('./page/threadShow'),
   },
