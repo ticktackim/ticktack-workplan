@@ -28,6 +28,7 @@ exports.create = (api) => {
       type: 'blog',
       channel: Value(),
       title: Value(),
+      summary: Value(),
     })
 
     const composer = api.message.html.compose(
@@ -73,10 +74,10 @@ exports.create = (api) => {
               placeholder: strings.blogNew.field.title
             }),
           ]),
-          h('div.field -title', [
+          h('div.field -summary', [
             h('div.label', strings.blogNew.field.summary),
             h('input', {
-              'ev-input': e => meta.title.set(e.target.value),
+              'ev-input': e => meta.summary.set(e.target.value),
               placeholder: strings.blogNew.field.summary
             }),
           ]),
@@ -116,6 +117,7 @@ exports.create = (api) => {
     return page
   }
 }
+
 
 
 
