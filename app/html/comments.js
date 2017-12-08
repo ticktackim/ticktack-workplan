@@ -38,7 +38,7 @@ exports.create = (api) => {
 
     const meta = {
       type: 'post',
-      root,
+      root: computed(messages, function (ary) { return ary[0].key }),
       branch,
       channel
     }
@@ -142,5 +142,7 @@ exports.create = (api) => {
 function forkOf (msg) {
   return get(msg, 'value.content.fork')
 }
+
+
 
 
