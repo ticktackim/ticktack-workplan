@@ -1,17 +1,12 @@
 # Ticktack
 
-## Planning
-
-Workplan 1 
-
-Trello 
+A blogging platform for the Scuttleverse
 
 ## Development
 
 ### Repos
 
-- `git@github.com:ticktackim/ticktack-wp1.git`
-- `ssb://%tkJPTTaxOzfLbsewZmgC9CslSER0ntjQOcyhIk6y/cQ=.sha256`
+- ` ssb://%wnNDjViKYZH+RWpbNzDXR2oxLWmTagvvFBjy97Zko4I=.sha256`
 
 ### Install
 
