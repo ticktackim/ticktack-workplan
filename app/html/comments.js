@@ -53,7 +53,7 @@ exports.create = (api) => {
     return h('Comments', [
       // when(twoComposers, compose({ meta, shrink: true, canAttach: false })),
       map(messagesTree, msg => Comment(msg, root, branch)),
-      compose({ meta, shrink: false, canAttach: false, placeholder: strings.writeComment }),
+      compose({ meta, shrink: false, canAttach: true, placeholder: strings.writeComment }),
     ])
   }
 
@@ -90,7 +90,7 @@ exports.create = (api) => {
         channel: content.channel
       },
       shrink: false,
-      canAttach: false,
+      canAttach: true,
       canPreview: false,
       placeholder: strings.writeComment 
     }, toggleCompose)

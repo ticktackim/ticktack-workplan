@@ -1,6 +1,6 @@
 module.exports = {
   splash: {
-    about: `A new era social network for people who have faith in a decentralized world that values openness, equalty, and freedom`,
+    about: `A new era social network for people who have faith in a decentralized world that values openness, equality, and freedom`,
     slogan: `Connecting the Unconnected
 Building Honest Communication
 `

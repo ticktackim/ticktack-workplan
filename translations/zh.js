@@ -18,7 +18,8 @@ module.exports = {
   },
   blogNew: {
     field: {
-      title: '标题'
+      title: '标题',
+      summary: '序言',
     },
     actions: {
       edit: '编辑',
