@@ -58,7 +58,9 @@ exports.create = (api) => {
     ])
 
     var createStream = api.feed.pull.public
-    if (location.channel) createStream = api.feed.pull.channel(location.channel)
+    if (location.channel) {
+      createStream = api.feed.pull.channel(location.channel)
+    }
 
     var blogs = api.app.html.scroller({
       classList: ['content'],

@@ -33,7 +33,6 @@ It should have the plugins you're using and a copy of the content of default-con
 ```json
 {
   "plugins": {
-    "ssb-contacts": true,
     "ssb-about": true,
     "ssb-backlinks": true
   },
