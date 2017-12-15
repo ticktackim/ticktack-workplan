@@ -1,6 +1,6 @@
 var pull = require('pull-stream')
 var nest = require('depnest')
-const h = require('mutant').h
+const { h, onceTrue } = require('mutant')
 
 exports.gives = nest({
   'blog.html.title': true,
@@ -11,11 +11,18 @@ exports.gives = nest({
 
 exports.needs = nest({
   'message.html.markdown': 'first',
-  'sbot.pull.stream': 'first'
+  'sbot.pull.stream': 'first',
+  'sbot.obs.connection': 'first'
 })
 
 
 exports.create = function (api) {
+  function loadBlob (data) {
+    onceTrue(
+      api.sbot.obs.connection(),
+      sbot => sbot.blobs.want(data.value.content.blog)
+    )
+  }
 
   return nest({
     'blog.html.title': function (data) {
@@ -24,6 +31,8 @@ exports.create = function (api) {
     },
     'blog.html.summary': function (data) {
       if('blog' !== data.value.content.type) return
+
+      loadBlob(data)
       return data.value.content.summary
     },
     'blog.html.thumbnail': function (data) {
@@ -32,6 +41,8 @@ exports.create = function (api) {
     },
     'blog.html.content': function (data) {
       if('blog' !== data.value.content.type) return
+
+      loadBlob(data)
       var div = h('Markdown')
       pull(
         api.sbot.pull.stream(function (sbot) {
