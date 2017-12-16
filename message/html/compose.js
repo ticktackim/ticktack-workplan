@@ -54,8 +54,9 @@ exports.create = function (api) {
       return focused
     })
 
-    var textRaw = Value('')
+    var textRaw = meta.text || Value('')
     var textArea = h('textarea', {
+      value: computed(textRaw, t => t),
       'ev-input': () => textRaw.set(textArea.value),
       'ev-blur': () => {
         clearTimeout(blurTimeout)
@@ -114,9 +115,7 @@ exports.create = function (api) {
       publishBtn
     ])
 
-    var composer = h('Compose', {
-      classList: when(expanded, '-expanded', '-contracted')
-    }, [
+    var composer = h('Compose', { classList: when(expanded, '-expanded', '-contracted') }, [
       when(showPreview, preview, textArea),
       actions
     ])
