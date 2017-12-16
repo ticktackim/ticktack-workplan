@@ -3,6 +3,8 @@ const { h, Struct, Value } = require('mutant')
 const addSuggest = require('suggest-box')
 const pull = require('pull-stream')
 const marksum = require('markdown-summary')
+const MediumEditor = require('medium-editor').MediumEditor
+const MediumToMD = require('medium-editor-markdown')
 
 exports.gives = nest('app.page.blogNew')
 
@@ -28,9 +30,11 @@ exports.create = (api) => {
       type: 'blog',
       channel: Value(),
       title: Value(),
-      summary: Value()
+      summary: Value(),
+      text: Value('')
     })
 
+    const mediumComposer = h('div.editor')
     const composer = api.message.html.compose(
       {
         meta,
@@ -82,10 +86,35 @@ exports.create = (api) => {
               placeholder: strings.blogNew.field.summary
             })
           ]),
+          mediumComposer,
           composer
         ])
       ])
     ])
+
+    function initialiseMedium () {
+      new MediumEditor(mediumComposer, {
+        toolbar: {
+          allowMultiParagraphSelection: true,
+          buttons: ['bold', 'italic', 'underline', 'anchor', 'h2', 'h3', 'quote'],
+          diffLeft: 0,
+          diffTop: -10,
+          firstButtonClass: 'medium-editor-button-first',
+          lastButtonClass: 'medium-editor-button-last',
+          relativeContainer: null,
+          standardizeSelectionStart: false,
+          static: false,
+          /* options which only apply when static is true */
+          align: 'center',
+          sticky: false,
+          updateOnEmptySelection: false
+        },
+        extensions: {
+          markdown: new MediumToMD (md => meta.text.set(md))
+        }
+      })
+    }
+    initialiseMedium()
 
     addSuggest(channelInput, (inputText, cb) => {
       inputText = inputText.replace(/^#/, '')

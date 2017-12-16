@@ -8,7 +8,9 @@ exports.create = function (api) {
   return nest('styles.css', (sofar = {}) => {
     return assign(
       sofar,
-      { fontAwesome: requireStyle('font-awesome') }
+      { mediumEditorCore: requireStyle('medium-editor/dist/css/medium-editor.css') },
+      { mediumEditorTheme: requireStyle('medium-editor/dist/css/themes/default.css') }
     )
   })
 }
+
