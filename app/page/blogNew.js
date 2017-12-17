@@ -5,6 +5,7 @@ const pull = require('pull-stream')
 const marksum = require('markdown-summary')
 const MediumEditor = require('medium-editor').MediumEditor
 const MediumToMD = require('medium-editor-markdown')
+const CustomHtml = require('medium-editor-custom-async')
 
 exports.gives = nest('app.page.blogNew')
 
@@ -34,7 +35,10 @@ exports.create = (api) => {
       text: Value('')
     })
 
-    const mediumComposer = h('div.editor')
+    const mediumComposer = h('div.editor', {
+      'ev-input': e => {
+      }
+    })
     const composer = api.message.html.compose(
       {
         meta,
@@ -87,6 +91,14 @@ exports.create = (api) => {
             })
           ]),
           mediumComposer,
+          h('Button', {
+            'ev-click': () => {
+              var img = h('img', { src: 'http://localhost:8989/blobs/get/%264TKyoyZmjjtpPvwiSR%2BGQIgrJs8o6XmzfUDZ5p1PP30%3D.sha256' })
+              // var e = MediumEditor.getEditorFromElement(mediumComposer)
+              // e.serialize()['element-0'].value
+              mediumComposer.appendChild(img)
+            }
+          }, 'Add Image'),
           composer
         ])
       ])
@@ -94,6 +106,7 @@ exports.create = (api) => {
 
     function initialiseMedium () {
       new MediumEditor(mediumComposer, {
+        elementsContainer: page,
         toolbar: {
           allowMultiParagraphSelection: true,
           buttons: ['bold', 'italic', 'underline', 'anchor', 'h2', 'h3', 'quote'],
@@ -110,7 +123,21 @@ exports.create = (api) => {
           updateOnEmptySelection: false
         },
         extensions: {
-          markdown: new MediumToMD (md => meta.text.set(md))
+          markdown: new MediumToMD (
+            {
+              toMarkdownOptions: {
+                converters: [{
+                  filter: 'img',
+                  replacement: (content, node) => {
+                    var blob = decodeURIComponent(node.src.replace('http://localhost:8989/blobs/get/', ''))
+                    return `![](${blob})`
+                  }
+                }]
+              },
+              events: ['input', 'change', 'DOMNodeInserted']
+            },
+            md => meta.text.set(md)
+          )
         }
       })
     }
