@@ -94,6 +94,7 @@ exports.create = (api) => {
 
     function initialiseMedium () {
       new MediumEditor(mediumComposer, {
+        elementsContainer: page,
         toolbar: {
           allowMultiParagraphSelection: true,
           buttons: ['bold', 'italic', 'underline', 'anchor', 'h2', 'h3', 'quote'],
