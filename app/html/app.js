@@ -52,8 +52,10 @@ exports.create = (api) => {
 
   function enterApp() {
     const isOnboarded = api.settings.sync.get('onboarded')
-    if (isOnboarded)
+    if (isOnboarded) {
+      autoPub()
       api.history.sync.push({page: 'blogIndex'})
+    }
     else {
       api.history.sync.push({
         page:'userEdit',

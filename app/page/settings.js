@@ -67,7 +67,10 @@ exports.create = (api) => {
           h('div.left', strings.settingsPage.section.name),
           h('div.right', [ 
             api.about.obs.name(feed),
-            h('img', { src: path.join(__dirname, '../../assets', 'edit.png') })
+            h('img', { 
+              src: path.join(__dirname, '../../assets', 'edit.png'),
+              'ev-click': editProfile
+            })
             // h('i.fa.fa-pencil', { 'ev-click': editProfile })
           ]),
         ]),

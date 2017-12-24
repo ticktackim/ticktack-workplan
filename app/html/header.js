@@ -24,8 +24,8 @@ exports.create = (api) => {
 
     if (loc().page === 'splash') return
 
-    const isProfile = computed(loc, loc => loc.feed == myKey)
     const isSettings = computed(loc, loc => SETTINGS_PAGES.includes(loc.page))
+    const isProfile = computed([loc, isSettings], loc => loc.feed == myKey && !isSettings)
 
     const isFeed = computed([isProfile, isSettings], (p, s) => !p && !s)
 
