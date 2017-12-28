@@ -83,7 +83,10 @@ exports.create = (api) => {
         if(Object.keys(friends).length <= 5)
           api.invite.async.autofollow(
             invite,
-            function (err, follows) { console.log('autofollowed', err, follows) }
+            function (err, follows) {
+              if (err) console.error('Autofollow error:', err)
+              else console.log('Autofollow success', follows)
+            }
           )
         else
           console.log('no autoinvite - you have friends already')
