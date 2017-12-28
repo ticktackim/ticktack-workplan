@@ -22,24 +22,26 @@ exports.create = function (api) {
   }
 
   return nest({
-    'blog.html.title': fromPost(function (content) {
-      return content.title || marksum.title(content.text)
+    'blog.html.title': fromPost(content => {
+      if (content.title) return content.title
+      if (content.text) return marksum.title(content.text)
     }),
-    'blog.html.summary': fromPost(function (content) {
-      return content.summary || marksum.summary(content.text)
+    'blog.html.summary': fromPost(content => {
+      if (content.summary) return content.summary
+      if (content.text) return marksum.summary(content.text)
     }),
     'blog.html.thumbnail': function (data) {
-      if('post' !== data.value.content.type) return
-      var content = data.value.content
-      if(content.thumbnail) return content.thumbnail
+      const { type, thumbnail, text }  = data.value.content
+      if('post' !== type) return
+      if (thumbnail) return thumbnail
 
-      var img = marksum.image(content.text)
-      var m = /\!\[[^]+\]\(([^\)]+)\)/.exec(img)
-      if(m) return m[1]
+      if (text) {
+        var img = marksum.image(text)
+        var m = /\!\[[^]+\]\(([^\)]+)\)/.exec(img)
+        if(m) return m[1]
+      }
     },
-    'blog.html.content': fromPost(function (content) {
-      return content.text
-    })
+    'blog.html.content': fromPost(content => content.text)
   })
 }
 
