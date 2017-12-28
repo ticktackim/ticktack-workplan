@@ -12,7 +12,7 @@ const languages = {
 
 exports.create = (api) => {
   return nest('translations.sync.strings', () => {
-    const language = api.settings.sync.get('language', 'zh')
+    const language = api.settings.sync.get('language', 'en')
 
     return merge({}, languages.en, languages[language])
   })
