@@ -13,7 +13,7 @@ Page -blogNew {
       div.field {
         margin-bottom: .5rem
         $maxWidth
-        
+
         display: flex
         align-items: center
 
@@ -33,7 +33,7 @@ Page -blogNew {
           outline: none
         }
 
-  
+
         -channel {}
         -title {}
       }
@@ -42,14 +42,14 @@ Page -blogNew {
         background-color: #fff
         padding: 1rem
         margin-top: 2rem
-        min-height: 30rem 
+        min-height: 30rem
         outline: none
       }
 
       div.Compose {
         textarea {
           margin-top: 2rem
-          min-height: 30rem 
+          min-height: 30rem
         }
       }
     }
