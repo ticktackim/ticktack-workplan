@@ -9,9 +9,11 @@ exports.needs = nest({
   'app.html.blogCard': 'first',
   'app.html.blogNav': 'first',
   'app.html.scroller': 'first',
-  'feed.pull.public': 'first',
+  // 'feed.pull.public': 'first',
+  'feed.pull.type': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
+  'message.sync.isBlocked': 'first',
   'translations.sync.strings': 'first',
   'unread.sync.isUnread': 'first'
 })
@@ -25,13 +27,15 @@ exports.create = (api) => {
     var blogs = api.app.html.scroller({
       classList: ['content'],
       prepend: api.app.html.blogNav(location),
-      stream: api.feed.pull.public,
+      // stream: api.feed.pull.public,
+      stream: api.feed.pull.type('blog'),
       filter: () => pull(
-        pull.filter(msg => {
-          const type = msg.value.content.type
-          return type === 'post' || type === 'blog'
-        }),
-        pull.filter(msg => !msg.value.content.root) // show only root messages
+        // pull.filter(msg => {
+        //   const type = msg.value.content.type
+        //   return type === 'post' || type === 'blog'
+        // }),
+        pull.filter(msg => !msg.value.content.root), // show only root messages
+        pull.filter(msg => !api.message.sync.isBlocked(msg))
       ),
       // FUTURE : if we need better perf, we can add a persistent cache. At the moment this page is fast enough though.
       // See implementation of app.html.context for example
