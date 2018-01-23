@@ -1,8 +1,8 @@
 Page -blogShow {
   // div.context {}
-  div.content { padding: 0 }
 
   div.content {
+    padding: 0
     section.top {
       position: sticky
       left: 0
@@ -15,7 +15,7 @@ Page -blogShow {
     }
 
     section.content {
-      $maxWidth 
+      $maxWidth
       padding: .8rem
       margin: 0 auto
 
@@ -61,7 +61,7 @@ Page -blogShow {
           }
 
           div.rightCol {
-            div.name { 
+            div.name {
               font-size: .9rem
               margin-bottom: .5rem
             }

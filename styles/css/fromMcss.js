@@ -5,12 +5,10 @@ const { assign } = Object
 
 exports.gives = nest('styles.css')
 
-exports.needs = {
-  styles: {
-    mcss: 'reduce',
-    mixins: 'reduce'
-  }
-}
+exports.needs = nest({
+  'styles.mcss': 'reduce',
+  'styles.mixins': 'reduce'
+})
 
 exports.create = function (api) {
   return nest('styles.css', css)
