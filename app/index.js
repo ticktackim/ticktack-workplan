@@ -5,13 +5,15 @@ module.exports = {
   html: {
     app: require('./html/app'),
     comments: require('./html/comments'),
-    context: require('./html/context'),
     header: require('./html/header'),
     thread: require('./html/thread'),
     link: require('./html/link'),
     blogCard: require('./html/blogCard'),
     blogNav: require('./html/blogNav'),
     scroller: require('./html/scroller'),
+    sideNav: {
+      discovery: require('./html/sideNav/sideNavDiscovery'),
+    }
   },
   page: {
     blogIndex: require('./page/blogIndex'),

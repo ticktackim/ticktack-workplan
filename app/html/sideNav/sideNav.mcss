@@ -1,0 +1,35 @@
+SideNav {
+  flex-shrink: 0
+  flex-grow: 0
+  overflow: hidden
+  $backgroundPrimaryText
+
+  display: flex
+
+  div.level {
+    width: 13rem
+    overflow-y: auto
+    overflow-x: hidden
+
+    border-right: 1px gainsboro solid
+
+    section {
+      header {
+        $colorFontSubtle
+        padding: .5rem 1rem
+      }
+
+      div.Option {}
+
+      hr {
+        border: 1px solid gainsboro
+        border-bottom: none
+        margin: 0
+      }
+    }
+
+    -one {}
+    -two {}
+  }
+}
+

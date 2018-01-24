@@ -5,7 +5,7 @@ const pull = require('pull-stream')
 exports.gives = nest('app.page.blogIndex')
 
 exports.needs = nest({
-  'app.html.context': 'first',
+  'app.html.sideNav': 'first',
   'app.html.blogCard': 'first',
   'app.html.blogNav': 'first',
   'app.html.scroller': 'first',
@@ -38,7 +38,7 @@ exports.create = (api) => {
         pull.filter(msg => !api.message.sync.isBlocked(msg))
       ),
       // FUTURE : if we need better perf, we can add a persistent cache. At the moment this page is fast enough though.
-      // See implementation of app.html.context for example
+      // See implementation of app.html.sideNav for example
       // store: recentMsgCache,
       // updateTop: updateRecentMsgCache,
       // updateBottom: updateRecentMsgCache,
@@ -46,7 +46,7 @@ exports.create = (api) => {
     })
 
     return h('Page -blogIndex', {title: strings.home}, [
-      api.app.html.context(location),
+      api.app.html.sideNav(location),
       blogs
     ])
   })
