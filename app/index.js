@@ -12,10 +12,12 @@ module.exports = {
     blogNav: require('./html/blogNav'),
     scroller: require('./html/scroller'),
     sideNav: {
+      addressBook: require('./html/sideNav/sideNavAddressBook'),
       discovery: require('./html/sideNav/sideNavDiscovery'),
     }
   },
   page: {
+    addressBook: require('./page/addressBook'),
     blogIndex: require('./page/blogIndex'),
     blogNew: require('./page/blogNew'),
     blogSearch: require('./page/blogSearch'),
