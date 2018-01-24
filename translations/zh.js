@@ -27,7 +27,7 @@ module.exports = {
       writeBlog: '撰文'
     }
   },
-  blogNav: {
+  topNav: {
     blogsAll: '最新',
     blogSearch: '搜索'
   },

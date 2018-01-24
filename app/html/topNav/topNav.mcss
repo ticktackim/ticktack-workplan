@@ -1,4 +1,4 @@
-BlogNav {
+TopNav {
   background-color: #fff
   height: 2.5rem
   padding: 1rem
@@ -21,11 +21,6 @@ BlogNav {
       -active {
         $colorFontBasic
         border-bottom: 2px solid #222
-      }
-
-      -discovery {
-        $colorFontBasic
-        i { margin-right: .5rem }
       }
     }
   }
