@@ -28,15 +28,21 @@ exports.create = (api) => {
     const { unblock, block } = api.contact.async
     const className = when(youBlockThem, '-blocking')
 
+    const isOpen = Value(false)
+
+    const blockAndClose = (feed) => {
+      block(feed)
+      isOpen.set(false)
+    }
+
     const confirmationDialog = h("div.dialog", [
       h("div.message",strings.userShow.action.blockConfirmationMessage), 
       h("div.actions", [
-        h('Button', strings.userShow.action.cancel),
-        h('Button -primary',{'ev-click': () => block(feed)}, strings.userShow.action.block)
+        h('Button', {'ev-click': () => isOpen.set(false)}, strings.userShow.action.cancel),
+        h('Button -primary', {'ev-click': () => blockAndClose(feed)}, strings.userShow.action.block)
       ])
     ])
 
-    const isOpen = Value(false)
     const lb = api.app.html.lightbox(confirmationDialog, isOpen)
 
     return h('Block', { className }, [
