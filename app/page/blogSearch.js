@@ -7,7 +7,7 @@ exports.gives = nest('app.page.blogSearch')
 exports.needs = nest({
   'app.html.sideNav': 'first',
   'app.html.blogCard': 'first',
-  'app.html.blogNav': 'first',
+  'app.html.topNav': 'first',
   'app.html.scroller': 'first',
   'channel.obs.recent': 'first',
   'feed.pull.channel': 'first',
@@ -65,7 +65,7 @@ exports.create = (api) => {
     var blogs = api.app.html.scroller({
       classList: ['content'],
       prepend: [
-        api.app.html.blogNav(location),
+        api.app.html.topNav(location),
         searchField
       ],
       stream: createStream,

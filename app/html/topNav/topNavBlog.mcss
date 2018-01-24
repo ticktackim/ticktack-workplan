@@ -1,0 +1,13 @@
+TopNav -blog {
+  div.left {
+    display: flex 
+    div {
+      font-size: 1rem 
+      /* dummy entry to stop mccs breaking */
+    }
+  }
+
+  div.right {
+  }
+}
+

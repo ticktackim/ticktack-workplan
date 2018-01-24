@@ -12,7 +12,7 @@ exports.needs = nest({
   'about.obs.description': 'first',
   'app.html.link': 'first',
   'app.html.blogCard': 'first',
-  'app.html.blogNav': 'first',
+  'app.html.topNav': 'first',
   'app.html.scroller': 'first',
   'app.html.sideNav': 'first',
   'contact.html.follow': 'first',
@@ -58,7 +58,7 @@ exports.create = (api) => {
     // }),
 
     const prepend = [
-      api.app.html.blogNav(location),
+      api.app.html.topNav(location),
       h('section.about', [
         api.about.html.avatar(feed, 'large'),
         h('h1', [

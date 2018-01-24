@@ -8,7 +8,7 @@ Building Honest Communication
   blogIndex: {
     title: 'Discover',
   },
-  blogNav: {
+  topNav: {
     blogsAll: 'Dynamics',
     blogSearch: 'Search'
   },

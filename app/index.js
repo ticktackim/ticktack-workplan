@@ -10,7 +10,10 @@ module.exports = {
     link: require('./html/link'),
     lightbox: require('./html/lightbox'),
     blogCard: require('./html/blogCard'),
-    blogNav: require('./html/blogNav'),
+    topNav: {
+      topNavBlog: require('./html/topNav/topNavBlog'),
+      topNavBack: require('./html/topNav/zz_topNavBack'),
+    },
     scroller: require('./html/scroller'),
     sideNav: {
       addressBook: require('./html/sideNav/sideNavAddressBook'),
