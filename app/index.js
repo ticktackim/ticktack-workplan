@@ -9,6 +9,7 @@ module.exports = {
     header: require('./html/header'),
     thread: require('./html/thread'),
     link: require('./html/link'),
+    lightbox: require('./html/lightbox'),
     blogCard: require('./html/blogCard'),
     blogNav: require('./html/blogNav'),
     scroller: require('./html/scroller'),

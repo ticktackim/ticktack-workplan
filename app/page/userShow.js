@@ -16,6 +16,7 @@ exports.needs = nest({
   'app.html.blogNav': 'first',
   'app.html.scroller': 'first',
   'contact.html.follow': 'first',
+  'contact.html.block': 'first',
   'feed.pull.profile': 'first',
   'feed.pull.rollup': 'first',
   'message.html.markdown': 'first',
@@ -70,7 +71,8 @@ exports.create = (api) => {
         feed !== myId
           ? h('div.actions', [
               api.contact.html.follow(feed),
-              h('div.directMessage', directMessageButton)
+              h('div.directMessage', directMessageButton),
+              api.contact.html.block(feed)
             ])
           : '',
       ]),

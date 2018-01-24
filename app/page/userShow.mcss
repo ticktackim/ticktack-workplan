@@ -37,6 +37,10 @@ Page -userShow {
 
           div.directMessage {
           }
+
+          div.Block {
+            margin-left: 1rem
+          }
         }
       }
     }

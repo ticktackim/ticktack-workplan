@@ -96,7 +96,11 @@ Building Honest Communication
     action: {
       follow: 'Follow',
       unfollow: 'Unfollow',
-      directMessage: 'New Direct Message'
+      directMessage: 'New Direct Message',
+      block: 'Block',
+      unblock: 'Unblock',
+      blockConfirmationMessage: 'block means you will never receive message from this user',
+      cancel: 'Cancel'
     },
     state: {
       friends: 'You are friends',
