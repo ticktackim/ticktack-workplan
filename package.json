@@ -69,7 +69,7 @@
   },
   "devDependencies": {
     "dependency-check": "^2.9.1",
-    "electron": "~1.6.11",
+    "electron": "~1.8.1",
     "flat": "^4.0.0"
   }
 }
