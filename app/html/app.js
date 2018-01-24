@@ -47,14 +47,16 @@ exports.create = (api) => {
   function startApp () {
     api.history.sync.push({page: 'splash'})
 
-    setTimeout(enterApp, 2000)
+    const delay = process.env.STARTUP_DELAY || 2000
+    setTimeout(enterApp, delay)
   }
 
   function enterApp() {
     const isOnboarded = api.settings.sync.get('onboarded')
+    const initialPage = process.env.STARTUP_PAGE || 'blogIndex'
     if (isOnboarded) {
       autoPub()
-      api.history.sync.push({page: 'blogIndex'})
+      api.history.sync.push({page: initialPage})
     }
     else {
       api.history.sync.push({
@@ -67,7 +69,7 @@ exports.create = (api) => {
           api.settings.sync.set({ onboarded: true })
 
           autoPub()
-          api.history.sync.push({ page: 'blogIndex' })
+          api.history.sync.push({page: initialPage})
         }
       })
     }
