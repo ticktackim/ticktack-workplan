@@ -98,7 +98,9 @@ Building Honest Communication
       unfollow: 'Unfollow',
       directMessage: 'New Direct Message',
       block: 'Block',
-      unblock: 'Unblock'
+      unblock: 'Unblock',
+      blockConfirmationMessage: 'block means you will never receive message from this user',
+      cancel: 'Cancel'
     },
     state: {
       friends: 'You are friends',

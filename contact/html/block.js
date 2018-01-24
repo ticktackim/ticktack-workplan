@@ -29,10 +29,10 @@ exports.create = (api) => {
     const className = when(youBlockThem, '-blocking')
 
     const confirmationDialog = h("div.dialog", [
-      h("div.message","block means you will never receive message from this user"), 
+      h("div.message",strings.userShow.action.blockConfirmationMessage), 
       h("div.actions", [
-        h('Button', 'Cancel'),
-        h('Button -primary',{'ev-click': () => block(feed)}, 'Block')
+        h('Button', strings.userShow.action.cancel),
+        h('Button -primary',{'ev-click': () => block(feed)}, strings.userShow.action.block)
       ])
     ])
 
