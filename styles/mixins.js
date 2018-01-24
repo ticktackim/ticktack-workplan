@@ -181,4 +181,9 @@ $code {
   border: 1px solid #e6e6e6
   border-radius: 2px
 }
+
+$dontSelect {
+  user-select: none !important
+  -webkit-touch-callout: none !important
+}
 `
