@@ -7,7 +7,7 @@ const isEmpty = require('lodash/isEmpty')
 const path = require('path')
 
 exports.gives = nest({
-  'app.html.context': true,
+  'app.html.sideNav': true,
   'unread.sync.markUnread': true
 })
 
@@ -16,8 +16,6 @@ exports.needs = nest({
   'about.html.avatar': 'first',
   'about.obs.name': 'first',
   'feed.pull.private': 'first',
-  'feed.pull.rollup': 'first',
-  'feed.pull.public': 'first',
   'keys.sync.id': 'first',
   'history.sync.push': 'first',
   'message.html.subject': 'first',
@@ -39,10 +37,10 @@ exports.create = (api) => {
       unreadMsgsCache.get(msg.value.author)
         .delete(msg.key)
     },
-    'app.html.context': context,
+    'app.html.sideNav': sideNav,
   })
 
-  function context (location) {
+  function sideNav (location) {
     const strings = api.translations.sync.strings()
     const myKey = api.keys.sync.id()
 
@@ -73,21 +71,13 @@ exports.create = (api) => {
       pull.drain(updateUnreadMsgsCache)
     )
 
-    //TODO: calculate unread state for public threads/blogs
-    //    pull(
-    //      next(api.feed.pull.public, {reverse: true, limit: 100, live: false, property: ['value', 'timestamp']}),
-    //      pull.drain(msg => {
-    //
-    //      })
-    //    )
-
-    return h('Context -feed', [
-      LevelOneContext(),
-      LevelTwoContext()
+    return h('SideNav -discovery', [
+      LevelOneSideNav(),
+      LevelTwoSideNav()
     ])
 
-    function LevelOneContext () {
-      function isDiscoverContext (loc) {
+    function LevelOneSideNav () {
+      function isDiscoverSideNav (loc) {
         const PAGES_UNDER_DISCOVER = ['blogIndex', 'blogShow', 'userShow']
 
         return PAGES_UNDER_DISCOVER.includes(location.page)
@@ -118,10 +108,10 @@ exports.create = (api) => {
           // notifications: '!', //TODO - count this! 
           // imageEl: h('i.fa.fa-binoculars'),
           imageEl: h('i', [
-            h('img', { src: path.join(__dirname, '../../assets', 'discover.png') })
+            h('img', { src: path.join(__dirname, '../../../assets', 'discover.png') })
           ]),
           label: strings.blogIndex.title,
-          selected: isDiscoverContext(location),
+          selected: isDiscoverSideNav(location),
           location: { page: 'blogIndex' },
         })
       ]
@@ -193,7 +183,7 @@ exports.create = (api) => {
       return computed(getUnreadMsgsCache(key), cache => cache.length)
     }
 
-    function LevelTwoContext () {
+    function LevelTwoSideNav () {
       const { key, value, feed: targetUser, page } = location
       const root = get(value, 'content.root', key)
       if (!targetUser) return

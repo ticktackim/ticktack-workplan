@@ -11,7 +11,7 @@ exports.needs = nest({
   'about.obs.name': 'first',
   'app.html.blogNav': 'first',
   'app.html.comments': 'first',
-  'app.html.context': 'first',
+  'app.html.sideNav': 'first',
   'contact.html.follow': 'first',
   'message.html.channel': 'first',
   'message.html.likes': 'first',
@@ -40,7 +40,7 @@ exports.create = (api) => {
     const { timeago, channel, markdown, compose } = api.message.html
 
     return h('Page -blogShow', [
-      api.app.html.context({ page: 'discover' }), // HACK to highlight discover
+      api.app.html.sideNav({ page: 'discover' }), // HACK to highlight discover
       h('div.content', [
         h('section.top', [
           api.app.html.blogNav(location)
