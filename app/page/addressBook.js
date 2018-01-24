@@ -26,7 +26,10 @@ exports.create = (api) => {
 
     return h('Page -addressBook', [
       api.app.html.sideNav(location, relationships),
-      '//// content here ////'
+      h('div.content', [
+        'pageNav',
+        '//// content here ////'
+      ])
     ])
   })
 }
