@@ -1,14 +1,14 @@
 const nest = require('depnest')
-const { h } = require('mutant')
+const { h, Value, resolve } = require('mutant')
 const pull = require('pull-stream')
 
 exports.gives = nest('app.page.blogIndex')
 
 exports.needs = nest({
-  'app.html.sideNav': 'first',
   'app.html.blogCard': 'first',
   'app.html.blogNav': 'first',
   'app.html.scroller': 'first',
+  'app.html.sideNav': 'first',
   // 'feed.pull.public': 'first',
   'feed.pull.type': 'first',
   'history.sync.push': 'first',
@@ -40,8 +40,8 @@ exports.create = (api) => {
       // FUTURE : if we need better perf, we can add a persistent cache. At the moment this page is fast enough though.
       // See implementation of app.html.sideNav for example
       // store: recentMsgCache,
-      // updateTop: updateRecentMsgCache,
-      // updateBottom: updateRecentMsgCache,
+      updateTop: update,
+      updateBottom: update,
       render
     })
 
@@ -51,6 +51,27 @@ exports.create = (api) => {
     ])
   })
 
+
+  function update (soFar, newBlog) {
+    soFar.transaction(() => { 
+      const { timestamp } = newBlog.value
+
+      var object = newBlog // Value(newBlog)
+      
+      // Orders by: time received
+      const justOlderPosition = indexOf(soFar, (msg) => newBlog.timestamp > resolve(msg).timestamp)
+
+      // Orders by: time published BUT the messagesByType stream streams _by time received_
+      // TODO - we need an index of all blogs otherwise the scroller doesn't work...
+      // const justOlderPosition = indexOf(soFar, (msg) => timestamp > resolve(msg).value.timestamp)
+
+      if (justOlderPosition > -1) {
+        soFar.insert(object, justOlderPosition)
+      } else {
+        soFar.push(object)
+      }
+    })
+  }
 
 
   function render (blog) {
@@ -62,6 +83,12 @@ exports.create = (api) => {
   }
 }
 
-
-
+function indexOf (array, fn) {
+  for (var i = 0; i < array.getLength(); i++) {
+    if (fn(array.get(i))) {
+      return i
+    }
+  }
+  return -1
+}
 
