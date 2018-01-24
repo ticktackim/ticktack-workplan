@@ -7,7 +7,7 @@ const marksum = require('markdown-summary')
 exports.gives = nest('app.page.blogNew')
 
 exports.needs = nest({
-  'app.html.context': 'first',
+  'app.html.sideNav': 'first',
   'channel.async.suggest': 'first',
   'history.sync.push': 'first',
   'message.html.compose': 'first',
@@ -60,7 +60,7 @@ exports.create = (api) => {
     })
 
     var page = h('Page -blogNew', [
-      api.app.html.context(location),
+      api.app.html.sideNav(location),
       h('div.content', [
         h('div.container', [
           h('div.field -channel', [

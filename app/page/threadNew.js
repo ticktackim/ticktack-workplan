@@ -6,7 +6,7 @@ exports.gives = nest('app.page.threadNew')
 exports.needs = nest({
   'about.html.image': 'first',
   'about.obs.name': 'first',
-  'app.html.context': 'first',
+  'app.html.sideNav': 'first',
   'app.html.thread': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
@@ -45,7 +45,7 @@ exports.create = (api) => {
     )
 
     return h('Page -threadNew', {title: strings.threadNew.pageTitle}, [
-      api.app.html.context(location),
+      api.app.html.sideNav(location),
       h('div.content', [
         h('div.container', [
           h('div.field -to', [

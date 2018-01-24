@@ -6,7 +6,7 @@ const get = require('lodash/get')
 exports.gives = nest('app.page.threadShow')
 
 exports.needs = nest({
-  'app.html.context': 'first',
+  'app.html.sideNav': 'first',
   'app.html.thread': 'first',
   'message.html.compose': 'first',
   'unread.sync.markRead': 'first',
@@ -35,7 +35,7 @@ exports.create = (api) => {
     const composer = api.message.html.compose({ meta, shrink: false })
 
     return h('Page -threadShow', [
-      api.app.html.context(location),
+      api.app.html.sideNav(location),
       h('div.content', [
         when(thread.subject, h('h1', thread.subject)),
         api.app.html.thread(thread),

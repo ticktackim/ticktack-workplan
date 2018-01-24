@@ -10,7 +10,7 @@ exports.needs = nest({
   'about.html.avatar': 'first',
   'about.obs.name': 'first',
   'about.obs.description': 'first',
-  'app.html.context': 'first',
+  'app.html.sideNav': 'first',
   'app.html.link': 'first',
   'app.html.blogCard': 'first',
   'app.html.blogNav': 'first',
@@ -82,7 +82,7 @@ exports.create = (api) => {
     // store(console.log)
 
     return h('Page -userShow', [
-      api.app.html.context(location),
+      api.app.html.sideNav(location),
       api.app.html.scroller({
         classList: ['content'],
         prepend, 
