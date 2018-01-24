@@ -1,0 +1,13 @@
+TopNav -back {
+  div.left {
+    div {
+      $colorFontBasic
+      i { margin-right: .5rem }
+    }
+  }
+
+  div.right {
+  }
+}
+
+
