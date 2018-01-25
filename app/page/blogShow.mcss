@@ -1,26 +1,26 @@
 Page -blogShow {
   // div.context {}
 
-  div.content {
+  div.Scroller.content {
     padding: 0
     section.top {
       position: sticky
-      left: 0
-      right: 0
-      /* top: 0 */
-      background-color: #fff
+      top: initial
 
       div.blogHeader {
       }
     }
 
     section.content {
-      $maxWidth
+      background-color: initial
       padding: .8rem
-      margin: 0 auto
+      margin: 1rem auto
+
+      display: flex
 
       header {
         $backgroundPrimaryText
+        flex-basis: 100%
         padding: 1.5rem
 
         display: flex
@@ -28,7 +28,7 @@ Page -blogShow {
         div.blog {
           display: flex
           flex-wrap: wrap
-          flex-grow: 1
+          flex-basis: 100%
           align-items: center
 
           h1 {
@@ -72,6 +72,7 @@ Page -blogShow {
 
       div.break {
         padding: 0 1.5rem
+        flex-basis: 100%
         $backgroundPrimaryText
 
         hr {
@@ -89,6 +90,7 @@ Page -blogShow {
       }
 
       div.Comments {
+        flex-basis: 100%
       }
     }
   }
