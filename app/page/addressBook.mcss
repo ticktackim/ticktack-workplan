@@ -1,5 +1,5 @@
-Page -blogIndex {
-  div.content.Scroller {
+Page -addressBook {
+  div.Scroller.content {
     padding: 0 
 
     section.top {
@@ -7,16 +7,41 @@ Page -blogIndex {
     }
 
     section.content {
-      div.BlogCard {
-        flex-basis: 100%
-        border-bottom: 1px solid rgba(0,0,0, .1)
+      div.results {
+        $maxWidthSmaller
+
+        div.result {
+          $backgroundPrimaryText
+          
+          padding: .5rem
+
+          display: flex
+          align-items: center
+
+          img { 
+            $circleSmall
+            margin-right: 1rem
+          }
+
+          div.alias {
+            flex-grow: 1
+            margin-right: 1rem
+          }
+
+          pre.key {
+            color: #999
+            
+          }
+
+          :hover {
+            background-color: #eee
+
+          } 
+        }
       }
     }
 
     section.bottom {
-      div.Button {
-        margin: 1rem 0
-      }
     }
   }
 }

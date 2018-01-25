@@ -11,6 +11,7 @@ module.exports = {
     lightbox: require('./html/lightbox'),
     blogCard: require('./html/blogCard'),
     topNav: {
+      topNavAddressBook: require('./html/topNav/topNavAddressBook'),
       topNavBlog: require('./html/topNav/topNavBlog'),
       topNavBack: require('./html/topNav/zz_topNavBack'),
     },

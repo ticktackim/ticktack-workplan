@@ -1,13 +1,22 @@
 const nest = require('depnest')
-const { h } = require('mutant')
+const { h, Value, computed, map } = require('mutant')
 const pull = require('pull-stream')
 
 exports.gives = nest('app.page.addressBook')
 
+//declare consts to avoid magic-string errors
+const FRIENDS = 'friends'
+const FOLLOWING = 'following'
+const FOLLOWERS = 'followers'
+const SEARCH = 'search'
+
 exports.needs = nest({
-  'app.html.blogNav': 'first',
+  'about.html.avatar': 'first',
+  'about.async.suggest': 'first',
+  'app.html.topNav': 'first',
   // 'app.html.scroller': 'first',
   'app.html.sideNav': 'first',
+  'app.html.topNav': 'first',
   'contact.obs.relationships': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
@@ -22,13 +31,34 @@ exports.create = (api) => {
     const myKey = api.keys.sync.id()
     const relationships = api.contact.obs.relationships(myKey)
 
-    
+    const SECTIONS = [FRIENDS, FOLLOWING, FOLLOWERS, SEARCH]
+    const section = location.section || FRIENDS
+    if (!SECTIONS.includes(section)) throw new Error('AddressBook location must include valid section, got:', location)
+
+    const input = Value()
+
+    const suggester = api.about.async.suggest()
+    const users = computed(input, input => suggester(input)) 
+    // might further prune this based on section
+
+
+    // const goTo = (loc) => () => api.history.sync.push(loc)
 
     return h('Page -addressBook', [
       api.app.html.sideNav(location, relationships),
-      h('div.content', [
-        'pageNav',
-        '//// content here ////'
+      h('Scroller.content', [
+        h('section.top', [
+          api.app.html.topNav(location, input),
+        ]),
+        h('section.content', [
+          h('div.results', map(users, user => {
+            return h('div.result', [
+              api.about.html.avatar(user.id),
+              h('div.alias', user.title),
+              h('pre.key', user.id),
+            ])
+          })),
+        ])
       ])
     ])
   })
