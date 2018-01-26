@@ -1,0 +1,47 @@
+ChannelCard {
+  $backgroundPrimaryText
+  padding: 4rem 1.5rem 4rem 1.5rem
+  width: 100%
+
+  border-bottom: 1px solid rgba(0,0,0, .1)
+  transition: all .5s ease
+
+  display: flex
+  flex-direction: column
+
+  div.content {
+    display: flex
+    flex-direction: row
+    flex-grow: 1
+
+    cursor: pointer
+
+    div.text {
+      display: flex
+      flex-wrap: wrap
+      justify-content: space-between;
+      width: 100%;
+
+      h2 {
+        $markdownLarge
+        margin: 0 .5rem 0 0
+      }
+      div.Button {
+          margin-left: auto
+      }
+      div.summary {
+        flex-basis: 100%
+      }
+    }
+  }
+  background-color: #fff
+
+  -unread {
+    div.content {
+      font-weight: bold
+    }
+    background-color: #fff
+  }
+}
+
+
