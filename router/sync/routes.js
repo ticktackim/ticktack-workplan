@@ -13,6 +13,7 @@ exports.needs = nest({
   'app.page.blogShow': 'first',
   'app.page.settings': 'first',
   'app.page.channelSubscriptions': 'first',
+  'app.page.channelShow': 'first',
   // 'app.page.channel': 'first',
   // 'app.page.groupFind': 'first',
   // 'app.page.groupIndex': 'first',
@@ -50,6 +51,8 @@ exports.create = (api) => {
 
       // Channel related pages
       [ location => location.page === 'channelSubscriptions', pages.channelSubscriptions],
+      [ location => location.page === 'channelShow', pages.channelShow ],
+
 
 
       // Private Thread pages

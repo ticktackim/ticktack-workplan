@@ -112,6 +112,12 @@ Building Honest Communication
       friendsInCommon: 'friends in common'
     }
   },
+  channelShow: {
+    action: {
+      subscribe: 'Subscribe',
+      unsubscribe: 'Unsubscribe'
+    }
+  },
   languages: {
     en: 'English',
     zh: '中文'

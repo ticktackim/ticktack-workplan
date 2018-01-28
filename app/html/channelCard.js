@@ -15,7 +15,7 @@ exports.needs = nest({
     'channel.obs.subscribed': 'first',
     'channel.async.subscribe': 'first',
     'channel.async.unsubscribe': 'first',
-    'channel.async.isSubscribed': 'first',
+    'channel.sync.isSubscribedTo': 'first',
 })
 
 exports.create = function (api) {
@@ -25,19 +25,20 @@ exports.create = function (api) {
 
         const myId = api.keys.sync.id()
         const { subscribed } = api.channel.obs
-        const { subscribe, unsubscribe, isSubscribed } = api.channel.async
+        const { subscribe, unsubscribe } = api.channel.async
+        const { isSubscribedTo } = api.channel.sync
         const myChannels = subscribed(myId)
         let cs = myChannels().values()
-        const youSubscribe = Value(isSubscribed(channel))
+        const youSubscribe = Value(isSubscribedTo(channel, myId))
 
         let cb = () => {
-            youSubscribe.set(isSubscribed(channel))
+            youSubscribe.set(isSubscribedTo(channel, myId))
         }
         
         const goToChannel = (e, channel) => {
             e.stopPropagation()
             
-            api.history.sync.push({ page: 'blogSearch', channel })
+            api.history.sync.push({ page: 'channelShow', channel: channel })
         }
         
         var b = h('ChannelCard', [
@@ -45,8 +46,8 @@ exports.create = function (api) {
                 h('div.text', [
                     h('h2', {'ev-click': ev => goToChannel(ev, channel)}, channel),
                     when(youSubscribe,
-                        h('Button', { 'ev-click': () => unsubscribe(channel, cb) }, "Unsubscribe"),
-                        h('Button', { 'ev-click': () => subscribe(channel, cb) }, "Subscribe")
+                        h('Button', { 'ev-click': () => unsubscribe(channel, cb) }, strings.channelShow.action.unsubscribe),
+                        h('Button', { 'ev-click': () => subscribe(channel, cb) }, strings.channelShow.action.subscribe)
                     ),
                 ])
             ])

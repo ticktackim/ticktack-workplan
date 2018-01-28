@@ -1,0 +1,67 @@
+Page -channelShow {
+  div.content { padding: 0 }
+
+  div.Scroller.content {
+
+    section.top {
+      position: sticky
+      left: 0
+      right: 0
+      top: 0
+      z-index: 99
+
+      
+
+      section.about {
+
+        display: flex
+        flex-direction: column
+        align-items: center
+        padding-bottom: 1rem
+    
+
+        h1 {
+          font-weight: bold
+          font-size: 1.5rem
+          padding: 1rem
+          
+          margin: auto
+          
+        }
+
+        div.actions {
+          display: flex
+
+          div.Button {
+            margin: auto
+          }
+
+        }
+      }
+
+    }
+
+    section.content {
+      background-color: #fff
+      $maxWidth
+      padding: .5rem 2rem
+
+      display: flex
+      flex-wrap: wrap
+
+      div.BlogCard {
+        flex-basis: 100%
+
+        border-bottom: 1px solid gainsboro
+      }
+    }
+
+    section.bottom {
+      div.Button {
+        margin: 1rem 0
+      }
+    }
+  }
+}
+
+

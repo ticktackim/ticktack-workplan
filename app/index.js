@@ -25,6 +25,7 @@ module.exports = {
     blogNew: require('./page/blogNew'),
     blogSearch: require('./page/blogSearch'),
     blogShow: require('./page/blogShow'),
+    channelShow: require('./page/channelShow'),
     error: require('./page/error'),
     settings: require('./page/settings'),
     channelSubscriptions: require('./page/channelSubscriptions'),
