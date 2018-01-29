@@ -44,6 +44,7 @@ Page -channelShow {
     section.content {
       background-color: #fff
       $maxWidth
+      margin: auto
       padding: .5rem 2rem
 
       display: flex
