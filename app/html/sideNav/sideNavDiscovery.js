@@ -122,7 +122,7 @@ exports.create = (api) => {
           ]),
           label: "My subscriptions",
           selected: isDiscoverSideNav(location),
-          location: { page: 'channelSubscriptions' },
+          location: { page: 'channelSubscriptions', scope: 'user' },
         }),
 
         // Friends subscriptions
@@ -132,7 +132,7 @@ exports.create = (api) => {
           ]),
           label: "Friends subscriptions",
           selected: isDiscoverSideNav(location),
-          location: { page: 'blogIndex' },
+          location: { page: 'channelSubscriptions', scope: 'friends' },
         })
       ]
 
