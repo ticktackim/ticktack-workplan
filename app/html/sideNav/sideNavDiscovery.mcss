@@ -1,6 +1,12 @@
 SideNav -discovery {
   div.level {
     section {
+      padding: 0
+      margin: 0
+
+      div.Option {
+        flex-grow: 1
+      }
     }
 
     -one {}

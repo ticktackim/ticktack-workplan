@@ -45,10 +45,9 @@ exports.create = (api) => {
         return suggester(input)
       else {
         const sectionRels = relationships[section]
-        if (!input)  // show all e.g. friends
-          return sectionRels.map(id => {
-            return { id, title: api.about.obs.name(id) }
-          })
+        if (!input) return sectionRels // show all e.g. friends
+          .reverse()
+          .map(id => { return { id, title: api.about.obs.name(id) } })
         else  // show suggestions, and filter just the ones we want e.g. friends
           return suggester(input).filter(user => sectionRels.includes(user.id))
       }
