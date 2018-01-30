@@ -18,7 +18,7 @@ exports.create = (api) => {
       h('div.search', [
         h('i.fa.fa-search'),
         h('input', { 
-          placeholder: strings.userFind.action.findAUser,
+          placeholder: strings.addressBook.action.find[location.section],
           autofocus: 'autofocus',
           'ev-input': e => input.set(e.target.value) 
         }),

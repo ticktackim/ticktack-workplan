@@ -13,10 +13,12 @@ const SEARCH = 'search'
 exports.needs = nest({
   'about.html.avatar': 'first',
   'about.async.suggest': 'first',
+  'about.obs.name': 'first',
   'app.html.topNav': 'first',
   // 'app.html.scroller': 'first',
   'app.html.sideNav': 'first',
   'app.html.topNav': 'first',
+  'contact.html.follow': 'first',
   'contact.obs.relationships': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
@@ -38,11 +40,21 @@ exports.create = (api) => {
     const input = Value()
 
     const suggester = api.about.async.suggest()
-    const users = computed(input, input => suggester(input)) 
-    // might further prune this based on section
+    const users = computed([relationships, input], (relationships, input) => {
+      if (section === SEARCH)
+        return suggester(input)
+      else {
+        const sectionRels = relationships[section]
+        if (!input)  // show all e.g. friends
+          return sectionRels.map(id => {
+            return { id, title: api.about.obs.name(id) }
+          })
+        else  // show suggestions, and filter just the ones we want e.g. friends
+          return suggester(input).filter(user => sectionRels.includes(user.id))
+      }
+    })
 
-
-    // const goTo = (loc) => () => api.history.sync.push(loc)
+    const goTo = (loc) => () => api.history.sync.push(loc)
 
     return h('Page -addressBook', [
       api.app.html.sideNav(location, relationships),
@@ -52,10 +64,11 @@ exports.create = (api) => {
         ]),
         h('section.content', [
           h('div.results', map(users, user => {
-            return h('div.result', [
+            return h('div.result', { 'ev-click': goTo({page: 'userShow', feed: user.id}) }, [
               api.about.html.avatar(user.id),
               h('div.alias', user.title),
-              h('pre.key', user.id),
+              // h('pre.key', user.id),
+              api.contact.html.follow(user.id)
             ])
           })),
         ])

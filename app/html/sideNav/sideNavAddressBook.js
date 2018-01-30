@@ -15,7 +15,7 @@ exports.needs = nest({
   // 'about.html.avatar': 'first',
   // 'about.obs.name': 'first',
   // 'feed.pull.private': 'first',
-  // 'history.sync.push': 'first',
+  'history.sync.push': 'first',
   // 'message.html.subject': 'first',
   // 'sbot.obs.localPeers': 'first',
   'translations.sync.strings': 'first',
@@ -29,8 +29,10 @@ exports.create = (api) => {
 
   function sideNav (location, relationships) {
     if (location.page !== 'addressBook') return
+    if (!location.section) location.section = 'friends'
 
     const strings = api.translations.sync.strings().addressBook
+    const goTo = (loc) => () => api.history.sync.push(loc)
 
     // TODO - show local peers?
     // var nearby = api.sbot.obs.localPeers()
@@ -40,14 +42,10 @@ exports.create = (api) => {
     ])
 
     function LevelOneSideNav () {
-      function count (relationshipType) {
-        return computed(relationships, rels => rels[relationshipType].length)
-      }
-
       return h('div.level.-one', [
         h('section', [
-          h('Option', [
-            h('Button -primary', {}, strings.action.addUser),
+          SectionOption('search', [
+            h('Button -primary', {}, strings.action.addUser)
           ]),
           h('hr'),
         ]),
@@ -55,24 +53,35 @@ exports.create = (api) => {
         //Friends
         h('section', [
           h('header',strings.heading.people),
-          h('Option', [
-            h('i.fa.fa-angle-right'),
-            strings.section.friends,
-            h('div.count', count('friends'))
-          ]),
-          h('Option',[
-            h('i.fa.fa-angle-right'),
-            strings.section.following,
-            h('div.count', count('following'))
-          ]),
-          h('Option',[
-            h('i.fa.fa-angle-right'),
-            strings.section.followers,
-            h('div.count', count('followers'))
-          ]),
+          SectionOption('friends'),
+          SectionOption('following'),
+          SectionOption('followers'),
         ])
       ])
     }
+
+    function SectionOption (section, body) {
+      const className = section === location.section
+        ? '-selected'
+        : ''
+      return h('Option', 
+        { className, 'ev-click': goTo({page: 'addressBook', section }) },
+        body || defaulBody(section)
+      )
+
+      function defaulBody (section) {
+        return [
+          h('i.fa.fa-angle-right'),
+          strings.section[section],
+          h('div.count', count(section))
+        ]
+      }
+    }
+
+    function count (relationshipType) {
+      return computed(relationships, rels => rels[relationshipType].length)
+    }
   }
 }
+
 

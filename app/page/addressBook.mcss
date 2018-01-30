@@ -7,11 +7,16 @@ Page -addressBook {
     }
 
     section.content {
+      $maxWidthSmaller
+
       div.results {
+        flex-grow: 1
+
         $maxWidthSmaller
 
         div.result {
           $backgroundPrimaryText
+          cursor: pointer
           
           padding: .5rem
 
@@ -32,6 +37,8 @@ Page -addressBook {
             color: #999
             
           }
+
+          div.Follow {}
 
           :hover {
             background-color: #eee

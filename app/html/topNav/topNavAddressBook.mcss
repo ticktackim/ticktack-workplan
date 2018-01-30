@@ -1,5 +1,6 @@
 TopNav -addressBook {
   div.search {
+    flex-grow: 1
     $backgroundPrimaryText
 
     margin-bottom: .5rem

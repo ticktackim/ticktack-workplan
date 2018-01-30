@@ -63,7 +63,13 @@ Building Honest Communication
   },
   addressBook: {
     action: {
-      addUser: 'Add a user'
+      addUser: 'Add a user',
+      find: {
+        friends: 'Search your friends',
+        following: "Search people you're following",
+        followers: 'Search your followers',
+        search: 'Search for a user',
+      }
     },
     heading: {
       people: 'People'
