@@ -18,6 +18,7 @@ exports.needs = nest({
   'feed.pull.private': 'first',
   'keys.sync.id': 'first',
   'history.sync.push': 'first',
+  'history.obs.store': 'first',
   'message.html.subject': 'first',
   'sbot.obs.localPeers': 'first',
   'translations.sync.strings': 'first',
@@ -40,7 +41,21 @@ exports.create = (api) => {
     'app.html.sideNav': sideNav,
   })
 
+  function isMatch (location) {
+    if (location.page) {
+      if (location.page.match(/^blog/)) return true
+      if (location.page.match(/^thread/)) return true
+      if (location.page.match(/^user/)) return true
+    }
+    if (location.key) {
+      return true
+    }
+    return false
+  }
+
   function sideNav (location) {
+    if (!isMatch(location)) return
+
     const strings = api.translations.sync.strings()
     const myKey = api.keys.sync.id()
 

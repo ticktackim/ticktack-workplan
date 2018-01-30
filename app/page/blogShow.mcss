@@ -83,6 +83,7 @@ Page -blogShow {
       }
 
       section.blog {
+        flex-basis: 100%
         $backgroundPrimaryText
         padding: 1.5rem
 

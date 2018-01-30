@@ -40,7 +40,7 @@ exports.create = (api) => {
     const { timeago, channel, markdown, compose } = api.message.html
 
     return h('Page -blogShow', [
-      api.app.html.sideNav({ page: 'discover' }), // HACK to highlight discover
+      api.app.html.sideNav({ page: 'blogShow' }), // HACK to highlight discover
       h('Scroller.content', [
         h('section.top', [
           api.app.html.topNav(location)
