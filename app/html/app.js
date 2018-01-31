@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, Value } = require('mutant')
+const { h, Value, onceTrue } = require('mutant')
 
 exports.gives = nest('app.html.app')
 
@@ -16,7 +16,8 @@ exports.needs = nest({
   'invite.async.autofollow': 'first',
   'config.sync.load': 'first',
   'sbot.async.friendsGet': 'first',
-  'sbot.async.get': 'first'
+  'sbot.async.get': 'first',
+  'sbot.obs.connection': 'first', // TODO rm
 })
 
 exports.create = (api) => {
@@ -24,6 +25,18 @@ exports.create = (api) => {
 
   return nest({
     'app.html.app': function app () {
+      // TODO rm this 
+
+      console.log('onceTrue starting')
+      onceTrue(
+        api.sbot.obs.connection,
+        sbot => sbot.channels.get((err, data) => {
+          if (err) throw err
+
+          console.log('CHANNELS!!!', data)
+        })
+      )
+
       api.app.sync.initialize()
 
       view = Value()
