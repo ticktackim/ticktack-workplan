@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, when, send, resolve, Value, computed } = require('mutant')
+const { h, when, send, resolve, Value, computed, map } = require('mutant')
 const assign = require('lodash/assign')
 const ssbMentions = require('ssb-mentions')
 const addSuggest = require('suggest-box')
@@ -25,14 +25,15 @@ exports.create = function (api) {
   function compose (options, cb) {
     var {
       meta, // required
+      feedIdsInThread = [],
       placeholder,
       shrink = true,
       canAttach = true, canPreview = true,
-      prepublish
+      prepublish,
     } = options
 
     const strings = api.translations.sync.strings()
-    const getProfileSuggestions = api.about.async.suggest()
+    const getUserSuggestions = api.about.async.suggest()
     const getChannelSuggestions = api.channel.async.suggest()
     const getEmojiSuggestions = api.emoji.async.suggest()
 
@@ -72,9 +73,9 @@ exports.create = function (api) {
         files.push(file)
         filesById[file.link] = file
 
-        var embed = file.type.match(/^image/) ? '!' : ''
-        var spacer = embed ? '\n' : ' '
-        var insertLink = spacer + embed + '[' + file.name + ']' + '(' + file.link + ')' + spacer
+        var imgPrefix = file.type.match(/^image/) ? '!' : ''
+        var spacer = imgPrefix ? '\n' : ' '
+        var insertLink = spacer + imgPrefix + '[' + file.name + ']' + '(' + file.link + ')' + spacer
 
         var pos = textArea.selectionStart
         var newText = textRaw().slice(0, pos) + insertLink + textRaw().slice(pos)
@@ -91,14 +92,18 @@ exports.create = function (api) {
     else
       fileInput = h('input', { style: {visibility: 'hidden'} })
 
-    var showPreview = Value(false)
-    var previewBtn = h('Button',
-      {
-        className: when(showPreview, '-strong', '-subtle'),
-        'ev-click': () => showPreview.set(!showPreview())
-      }, 
-      when(showPreview, strings.blogNew.actions.edit, strings.blogNew.actions.preview)
-    )
+    function PreviewSetup (strings) {
+      var showPreview = Value(false)
+      var previewBtn = h('Button',
+        {
+          className: when(showPreview, '-strong', '-subtle'),
+          'ev-click': () => showPreview.set(!showPreview())
+        }, 
+        when(showPreview, strings.blogNew.actions.edit, strings.blogNew.actions.preview)
+      )
+      return { previewBtn, showPreview }
+    }
+    var { previewBtn, showPreview } = PreviewSetup(strings)
     var preview = computed(textRaw, text => api.message.html.markdown(text))
 
     var publishBtn = h('Button -primary', { 'ev-click': publish }, strings.sendMessage)
@@ -120,7 +125,7 @@ exports.create = function (api) {
       const char = inputText[0]
       const wordFragment = inputText.slice(1)
 
-      if (char === '@') cb(null, getProfileSuggestions(wordFragment))
+      if (char === '@') cb(null, getUserSuggestions(wordFragment, feedIdsInThread))
       if (char === '#') cb(null, getChannelSuggestions(wordFragment))
       if (char === ':') cb(null, getEmojiSuggestions(wordFragment))
     }, {cls: 'PatchSuggest'})
