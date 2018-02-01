@@ -86,6 +86,10 @@ exports.create = (api) => {
           h('div.left', strings.settingsPage.section.zoom),
           h('div.right', [ zoomButton(-0.1, '-'), zoomButton(+0.1, '+') ])
         ]),
+        h('section -zoom', [
+          h('div.left', strings.settingsPage.section.zoom),
+          h('div.right', [ zoomButton(-0.1, '-'), zoomButton(+0.1, '+') ])
+        ]),
       ])
     ])
 

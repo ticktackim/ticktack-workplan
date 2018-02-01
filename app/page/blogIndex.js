@@ -9,7 +9,7 @@ exports.needs = nest({
   'app.html.topNav': 'first',
   'app.html.scroller': 'first',
   'app.html.sideNav': 'first',
-  // 'feed.pull.public': 'first',
+  'feed.pull.public': 'first',
   'feed.pull.type': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
@@ -17,6 +17,12 @@ exports.needs = nest({
   'translations.sync.strings': 'first',
   'unread.sync.isUnread': 'first'
 })
+
+// TODO extract to  global location
+const BLOG_TYPES = [
+  'blog',
+  // 'post'
+]
 
 exports.create = (api) => {
   return nest('app.page.blogIndex', function (location) {
@@ -27,21 +33,19 @@ exports.create = (api) => {
     var blogs = api.app.html.scroller({
       classList: ['content'],
       prepend: api.app.html.topNav(location),
-      // stream: api.feed.pull.public,
-      stream: api.feed.pull.type('blog'),
+      stream: api.feed.pull.type('blog'), // this delivers things in an odd order D:
+      indexProperty: ['value', 'timestamp'],
+      // stream: api.feed.pull.public, 
       filter: () => pull(
-        // pull.filter(msg => {
-        //   const type = msg.value.content.type
-        //   return type === 'post' || type === 'blog'
-        // }),
-        pull.filter(msg => !msg.value.content.root), // show only root messages
+        pull.filter(isRoot),
+        // pull.filter(isBlog), // don't need this if using feed.pull.type,
         pull.filter(msg => !api.message.sync.isBlocked(msg))
       ),
       // FUTURE : if we need better perf, we can add a persistent cache. At the moment this page is fast enough though.
       // See implementation of app.html.sideNav for example
       // store: recentMsgCache,
-      updateTop: update,
-      updateBottom: update,
+      // updateTop: update,
+      // updateBottom: update,
       render
     })
 
@@ -61,7 +65,7 @@ exports.create = (api) => {
       // Orders by: time received
       const justOlderPosition = indexOf(soFar, (msg) => newBlog.timestamp > resolve(msg).timestamp)
 
-      // Orders by: time published BUT the messagesByType stream streams _by time received_
+      // Orders by: time published BUT the messagesByType stream streams _by time received_ ??
       // TODO - we need an index of all blogs otherwise the scroller doesn't work...
       // const justOlderPosition = indexOf(soFar, (msg) => timestamp > resolve(msg).value.timestamp)
 
@@ -90,5 +94,15 @@ function indexOf (array, fn) {
     }
   }
   return -1
+}
+
+function isRoot (msg) {
+  return !msg.value.content.root
+}
+
+// TODO extract this
+function isBlog (msg) {
+  const type = msg.value.content.type
+  return BLOG_TYPES.includes(type)
 }
 
