@@ -22,8 +22,8 @@ exports.create = (api) => {
   return nest('app.html.comments', comments)
 
   function comments (thread) {
-    const { messages, channel, lastId: branch } = thread
     const strings = api.translations.sync.strings()
+    const { messages, channel, lastId: branch } = thread
 
     // TODO - move this up into Patchcore
     const messagesTree = computed(throttle(messages, 200), msgs => {
@@ -49,11 +49,14 @@ exports.create = (api) => {
     // })
     const { compose } = api.message.html
 
+    const feedIdsInThread = computed(thread.messages, msgs => {
+      return msgs.map(m => m.value.author)
+    })
 
     return h('Comments', [
       // when(twoComposers, compose({ meta, shrink: true, canAttach: false })),
       map(messagesTree, msg => Comment(msg, root, branch)),
-      compose({ meta, shrink: false, canAttach: true, placeholder: strings.writeComment }),
+      compose({ meta, feedIdsInThread, shrink: false, canAttach: true, placeholder: strings.writeComment }),
     ])
   }
 

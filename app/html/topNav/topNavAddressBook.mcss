@@ -1,0 +1,27 @@
+TopNav -addressBook {
+  div.search {
+    flex-grow: 1
+    $backgroundPrimaryText
+
+    margin-bottom: .5rem
+
+    display: flex
+    align-items: center
+
+    i.fa-search {
+      margin-left: .8rem
+    }
+
+    input {
+      flex-grow: 1
+
+      $fontBasic
+      margin: .6rem
+
+      border: none
+      outline: none
+    }
+  }
+
+}
+

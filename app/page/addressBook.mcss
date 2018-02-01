@@ -1,0 +1,56 @@
+Page -addressBook {
+  div.Scroller.content {
+    padding: 0 
+
+    section.top {
+      position: sticky
+    }
+
+    section.content {
+      $maxWidthSmaller
+
+      div.results {
+        flex-grow: 1
+
+        $maxWidthSmaller
+
+        div.result {
+          $backgroundPrimaryText
+          cursor: pointer
+          
+          padding: .5rem
+
+          display: flex
+          align-items: center
+
+          img { 
+            $circleSmall
+            margin-right: 1rem
+          }
+
+          div.alias {
+            flex-grow: 1
+            margin-right: 1rem
+          }
+
+          pre.key {
+            color: #999
+            
+          }
+
+          div.Follow {}
+
+          :hover {
+            background-color: #eee
+
+          } 
+        }
+      }
+    }
+
+    section.bottom {
+    }
+  }
+}
+
+

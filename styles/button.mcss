@@ -37,7 +37,6 @@ Button {
     $colorPrimary
     $font
     $borderPrimary
-
   }
 
   -channel {

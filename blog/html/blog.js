@@ -31,7 +31,7 @@ exports.create = function (api) {
       sbot => sbot.blobs.want(blog, (err, success) => {
         if (err) throw err
 
-        console.log(`want blog ${blog}, callback: ${success}`)
+        // console.log(`want blog ${blog}, callback: ${success}`)
       })
     )
   }

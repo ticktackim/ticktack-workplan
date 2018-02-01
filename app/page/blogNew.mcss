@@ -1,6 +1,5 @@
 Page -blogNew {
-  div.Context {}
-
+  div.SideNav {}
 
   div.content {
     display: flex
