@@ -1,10 +1,13 @@
 const nest = require('depnest')
-const { h, watch, when, computed, Value, Set: MutantSet } = require('mutant')
+const { h, watch, when, computed, Value, onceTrue } = require('mutant')
 const pull = require('pull-stream')
 const Pushable = require('pull-pushable')
 const ref = require('ssb-ref')
 const throttle = require('mutant/throttle')
 const MutantPullReduce = require('mutant-pull-reduce')
+const sortBy = require('lodash/sortBy')
+const get = require("lodash/get")
+const map = require("lodash/map")
 
 
 exports.gives = nest('app.page.channelSubscriptions')
@@ -14,14 +17,15 @@ exports.needs = nest({
   'app.html.topNav': 'first',
   'app.html.scroller': 'first',
   'app.html.channelCard': 'first',
-
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
   'channel.obs.subscribed': 'first',
+  'channel.obs.recent':'first',
   'channel.html.link': 'first',
   'translations.sync.strings': 'first',
   'sbot.async.friendsGet': 'first',
-  'sbot.pull.userFeed': 'first'
+  'sbot.pull.userFeed': 'first',
+  'sbot.obs.connection': 'first'
 })
 
 exports.create = (api) => {
@@ -47,39 +51,71 @@ exports.create = (api) => {
 
     if (location.scope === "friends") {
 
-      function createStream() {
-        var p = Pushable(true) // optionally pass `onDone` after it
+      // function createStream() {
+      //   var p = Pushable(true) // optionally pass `onDone` after it
 
-        api.sbot.async.friendsGet({ dest: myId }, (err, friends) => {
-          for (f in friends) {
-            var s = subscribed(f)
-            s(c => [...c].map(x => p.push(x)))
-          }
-        })
+      //   api.sbot.async.friendsGet({ dest: myId }, (err, friends) => {
+      //     for (f in friends) {
+      //       var s = subscribed(f)
+      //       s(c => [...c].map(x => p.push(x)))
+      //     }
+      //   })
 
-        return p.source
-      }
+      //   return p.source
+      // }
 
-      var stream = createStream()
-      var opts = {
-        startValue: new Set(),
-        nextTick: true
-      }
+      // var stream = createStream()
+      // var opts = {
+      //   startValue: new Set(),
+      //   nextTick: true
+      // }
 
-      var channelList = api.app.html.scroller({
-        classList: ['content'],
-        stream: createStream,
-        render
-      })
+      myChannels = Value(false)
 
-      function render(channel) {
-        return api.app.html.channelCard(channel)
+      onceTrue(
+        api.sbot.obs.connection,
+        sbot => {
+          sbot.channel.get((err, c) => {
+            if (err) throw err
+            let b = map(c, (v,k) => {return {channel: k, users: v}})
+            b = sortBy(b, o => o.users.length)
+            myChannels.set(b.reverse().slice(1,101))             
+            // console.log(`want blog ${blog}, callback: ${success}`)
+          })
+        }
+      )
+
+
+      displaySubscriptions = () => {
+        if (myChannels()) {
+          let subs = myChannels()
+          return subs.map(c => api.app.html.channelCard(c.channel))
+        }
       }
 
       return h('Page -channelSubscriptions', { title: strings.home }, [
         api.app.html.sideNav(location),
-        channelList
+        h('div.content', [
+          //api.app.html.topNav(location),
+          when(myChannels, displaySubscriptions, h("p", "Loading..."))
+        ])
       ])
+
+      // var channelList = api.app.html.scroller({
+      //   classList: ['content'],
+      //   stream: sbot.channel.stream,
+      //   render
+      // })
+
+      // function render(channel) {
+      //   console.assert.log("render", channel)
+      //   return api.app.html.channelCard(channel)
+      // }
+
+      // return h('Page -channelSubscriptions', { title: strings.home }, [
+      //   api.app.html.sideNav(location),
+      //   //channelList
+      // ])
     }
   })
 }
