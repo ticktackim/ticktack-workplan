@@ -46,6 +46,7 @@ exports.create = (api) => {
       if (location.page.match(/^blog/)) return true
       if (location.page.match(/^thread/)) return true
       if (location.page.match(/^user/)) return true
+      if (location.page.match(/^channel/)) return true
     }
     if (location.key) {
       return true
@@ -138,7 +139,7 @@ exports.create = (api) => {
             h('img', { src: path.join(__dirname, '../../../assets', 'discover.png') })
           ]),
           label: "My subscriptions",
-          selected: isDiscoverSideNav(location),
+          selected: isDiscoverLocation(location),
           location: { page: 'channelSubscriptions', scope: 'user' },
         }),
 
@@ -148,7 +149,7 @@ exports.create = (api) => {
             h('img', { src: path.join(__dirname, '../../../assets', 'discover.png') })
           ]),
           label: "Friends subscriptions",
-          selected: isDiscoverSideNav(location),
+          selected: isDiscoverLocation(location),
           location: { page: 'channelSubscriptions', scope: 'friends' },
         })
       ]
