@@ -130,6 +130,26 @@ exports.create = (api) => {
           label: strings.blogIndex.title,
           selected: isDiscoverLocation(location),
           location: { page: 'blogIndex' },
+        }),
+
+        // My subscriptions
+        Option({
+          imageEl: h('i', [
+            h('img', { src: path.join(__dirname, '../../../assets', 'discover.png') })
+          ]),
+          label: "My subscriptions",
+          selected: isDiscoverSideNav(location),
+          location: { page: 'channelSubscriptions', scope: 'user' },
+        }),
+
+        // Friends subscriptions
+        Option({
+          imageEl: h('i', [
+            h('img', { src: path.join(__dirname, '../../../assets', 'discover.png') })
+          ]),
+          label: "Friends subscriptions",
+          selected: isDiscoverSideNav(location),
+          location: { page: 'channelSubscriptions', scope: 'friends' },
         })
       ]
 

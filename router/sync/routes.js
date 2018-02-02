@@ -13,6 +13,8 @@ exports.needs = nest({
   'app.page.blogSearch': 'first',
   'app.page.blogShow': 'first',
   'app.page.settings': 'first',
+  'app.page.channelSubscriptions': 'first',
+  'app.page.channelShow': 'first',
   // 'app.page.channel': 'first',
   // 'app.page.groupFind': 'first',
   // 'app.page.groupIndex': 'first',
@@ -47,6 +49,11 @@ exports.create = (api) => {
           && get(location, 'value.content.type') === 'post'
           && !get(location, 'value.private') // treats public posts as 'blogs'
       }, pages.blogShow ],
+
+      // Channel related pages
+      [ location => location.page === 'channelSubscriptions', pages.channelSubscriptions],
+      [ location => location.page === 'channelShow', pages.channelShow ],
+
 
       // AddressBook pages
       [ location => location.page === 'addressBook', pages.addressBook ],

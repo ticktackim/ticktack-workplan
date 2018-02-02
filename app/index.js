@@ -10,6 +10,7 @@ module.exports = {
     link: require('./html/link'),
     lightbox: require('./html/lightbox'),
     blogCard: require('./html/blogCard'),
+    channelCard: require('./html/channelCard'),
     topNav: {
       topNavAddressBook: require('./html/topNav/topNavAddressBook'),
       topNavBlog: require('./html/topNav/topNavBlog'),
@@ -27,8 +28,10 @@ module.exports = {
     blogNew: require('./page/blogNew'),
     blogSearch: require('./page/blogSearch'),
     blogShow: require('./page/blogShow'),
+    channelShow: require('./page/channelShow'),
     error: require('./page/error'),
     settings: require('./page/settings'),
+    channelSubscriptions: require('./page/channelSubscriptions'),
     // channel: require('./page/channel'),
     // image: require('./page/image'),
     // groupFind: require('./page/groupFind'),
