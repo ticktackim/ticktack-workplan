@@ -25,9 +25,8 @@ exports.create = (api) => {
     if (loc().page === 'splash') return
 
     const isSettings = computed(loc, loc => SETTINGS_PAGES.includes(loc.page))
-    const isProfile = computed(loc, loc => loc.page === 'userShow' && loc.feed == myKey)
-
-    const isFeed = computed([isProfile, isSettings], (p, s) => !p && !s)
+    const isAddressBook = computed(loc, loc => loc.page === 'addressBook')
+    const isFeed = computed([isAddressBook, isSettings], (p, s) => !p && !s)
 
     return h('Header', [
       h('nav', [
@@ -35,9 +34,9 @@ exports.create = (api) => {
           src: when(isFeed, assetPath('feed_on.png'), assetPath('feed.png')),
           'ev-click': () => push({page: 'blogIndex'}),
         }),
-        h('img.profile', { 
-          src: when(isProfile, assetPath('address_bk_on.png'), assetPath('address_bk.png')),
-          'ev-click': () => push({page: 'userShow', feed: myKey})
+        h('img.addressBook', { 
+          src: when(isAddressBook, assetPath('address_bk_on.png'), assetPath('address_bk.png')),
+          'ev-click': () => push({page: 'addressBook'})
         }),
         h('img.settings', { 
           src: when(isSettings, assetPath('settings_on.png'), assetPath('settings.png')),

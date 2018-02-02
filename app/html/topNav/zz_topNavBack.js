@@ -5,7 +5,6 @@ const get = require('lodash/get')
 exports.gives = nest('app.html.topNav')
 
 exports.needs = nest({
-  'history.sync.push': 'first',
   'history.sync.back': 'first',
   'translations.sync.strings': 'first',
 })

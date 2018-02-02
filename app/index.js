@@ -12,15 +12,18 @@ module.exports = {
     blogCard: require('./html/blogCard'),
     channelCard: require('./html/channelCard'),
     topNav: {
+      topNavAddressBook: require('./html/topNav/topNavAddressBook'),
       topNavBlog: require('./html/topNav/topNavBlog'),
       topNavBack: require('./html/topNav/zz_topNavBack'),
     },
     scroller: require('./html/scroller'),
     sideNav: {
+      addressBook: require('./html/sideNav/sideNavAddressBook'),
       discovery: require('./html/sideNav/sideNavDiscovery'),
     }
   },
   page: {
+    addressBook: require('./page/addressBook'),
     blogIndex: require('./page/blogIndex'),
     blogNew: require('./page/blogNew'),
     blogSearch: require('./page/blogSearch'),

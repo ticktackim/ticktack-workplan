@@ -37,11 +37,11 @@ exports.create = (api) => {
     const comments = api.app.html.comments(thread)
     const branch = thread.lastId
 
-    const { timeago, channel, markdown, compose } = api.message.html
+    const { timeago, channel, markdown } = api.message.html
 
     return h('Page -blogShow', [
-      api.app.html.sideNav({ page: 'discover' }), // HACK to highlight discover
-      h('div.content', [
+      api.app.html.sideNav({ page: 'blogShow' }), // HACK to highlight discover
+      h('Scroller.content', [
         h('section.top', [
           api.app.html.topNav(location)
         ]),

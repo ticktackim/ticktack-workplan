@@ -18,6 +18,7 @@ exports.needs = nest({
   'feed.pull.private': 'first',
   'keys.sync.id': 'first',
   'history.sync.push': 'first',
+  'history.obs.store': 'first',
   'message.html.subject': 'first',
   'sbot.obs.localPeers': 'first',
   'translations.sync.strings': 'first',
@@ -40,7 +41,21 @@ exports.create = (api) => {
     'app.html.sideNav': sideNav,
   })
 
+  function isMatch (location) {
+    if (location.page) {
+      if (location.page.match(/^blog/)) return true
+      if (location.page.match(/^thread/)) return true
+      if (location.page.match(/^user/)) return true
+    }
+    if (location.key) {
+      return true
+    }
+    return false
+  }
+
   function sideNav (location) {
+    if (!isMatch(location)) return
+
     const strings = api.translations.sync.strings()
     const myKey = api.keys.sync.id()
 
@@ -77,11 +92,13 @@ exports.create = (api) => {
     ])
 
     function LevelOneSideNav () {
-      function isDiscoverSideNav (loc) {
+      function isDiscoverLocation (loc) {
         const PAGES_UNDER_DISCOVER = ['blogIndex', 'blogShow', 'userShow']
 
-        return PAGES_UNDER_DISCOVER.includes(location.page)
-          || get(location, 'value.private') === undefined
+        if (PAGES_UNDER_DISCOVER.includes(location.page)) return true
+        if (location.page === 'threadNew') return false        
+        if (get(location, 'value.private') === undefined) return true
+        return false
       }
 
       const prepend = [
@@ -91,7 +108,7 @@ exports.create = (api) => {
           notifications: notifications(feedId),
           imageEl: api.about.html.avatar(feedId, 'small'),
           label: api.about.obs.name(feedId),
-          selected: location.feed === feedId,
+          selected: location.feed === feedId && !isDiscoverLocation(location),
           location: computed(recentMsgCache, recent => {
             const lastMsg = recent.find(msg => msg.value.author === feedId)
             return lastMsg
@@ -111,7 +128,7 @@ exports.create = (api) => {
             h('img', { src: path.join(__dirname, '../../../assets', 'discover.png') })
           ]),
           label: strings.blogIndex.title,
-          selected: isDiscoverSideNav(location),
+          selected: isDiscoverLocation(location),
           location: { page: 'blogIndex' },
         }),
 

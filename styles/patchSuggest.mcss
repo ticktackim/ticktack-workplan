@@ -6,6 +6,7 @@ PatchSuggest {
       img { $circleSmall }
 
       small {
+        div.aliases { max-width: 14.5rem }
         div.key { font-size: 1rem }
       }
     }

@@ -30,9 +30,9 @@ exports.create = (api) => {
       root,
       branch: thread.lastId,
       channel,
-      recps: get(location, 'value.content.recps')
+      recps: get(location, 'value.content.recps'),
     }
-    const composer = api.message.html.compose({ meta, shrink: false })
+    const composer = api.message.html.compose({ meta, thread, shrink: false })
 
     return h('Page -threadShow', [
       api.app.html.sideNav(location),

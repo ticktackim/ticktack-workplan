@@ -29,6 +29,7 @@ exports.create = (api) => {
       view = Value()
       var app = h('App', view)
       api.history.obs.location()(renderLocation)
+      api.history.obs.location()(loc => console.log('location:', loc))
 
       startApp()
 

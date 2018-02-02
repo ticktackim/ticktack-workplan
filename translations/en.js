@@ -61,6 +61,25 @@ Building Honest Communication
       zoom: 'Zoom'
     }
   },
+  addressBook: {
+    action: {
+      addUser: 'Add a user',
+      find: {
+        friends: 'Search your friends',
+        following: "Search people you're following",
+        followers: 'Search your followers',
+        search: 'Search for a user',
+      }
+    },
+    heading: {
+      people: 'People'
+    },
+    section: {
+      friends: 'Friends',
+      following: 'Following',
+      followers: 'Followers'
+    }
+  },
   threadNew: {
     pageTitle: 'New Thread',
     field: {

@@ -7,6 +7,7 @@ exports.gives = nest('router.sync.routes')
 
 exports.needs = nest({
   'app.page.error': 'first',
+  'app.page.addressBook': 'first',
   'app.page.blogIndex': 'first',
   'app.page.blogNew': 'first',
   'app.page.blogSearch': 'first',
@@ -54,6 +55,8 @@ exports.create = (api) => {
       [ location => location.page === 'channelShow', pages.channelShow ],
 
 
+      // AddressBook pages
+      [ location => location.page === 'addressBook', pages.addressBook ],
 
       // Private Thread pages
       // [ location => location.page === 'threadNew' && location.channel, pages.threadNew ],
