@@ -19,6 +19,6 @@ exports.create = function (api) {
         
     const { subscribed } = api.channel.obs
     const myChannels = subscribed(id)
-    return computed([myChannels], (v) => [...v].includes(channel))
+    return computed([myChannels], (v) => v.has(channel))
   }
 }

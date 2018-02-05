@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, when, Value } = require('mutant')
+const { h, when } = require('mutant')
 
 
 exports.gives = nest('app.html.channelCard')
@@ -22,12 +22,8 @@ exports.create = function (api) {
         const { subscribe, unsubscribe } = api.channel.async
         const { isSubscribedTo } = api.channel.obs
         const youSubscribe = isSubscribedTo(channel, myId)
-
-        console.log("channel card for", channel)
-
         
         const goToChannel = () => {
-            
             api.history.sync.push({ page: 'channelShow', channel: channel })
         }
         
