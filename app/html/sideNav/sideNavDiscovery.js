@@ -138,7 +138,7 @@ exports.create = (api) => {
           imageEl: h('i', [
             h('img', { src: path.join(__dirname, '../../../assets', 'discover.png') })
           ]),
-          label: "My subscriptions",
+          label: strings.subscriptions.user,
           selected: isDiscoverLocation(location),
           location: { page: 'channelSubscriptions', scope: 'user' },
         }),
@@ -148,7 +148,7 @@ exports.create = (api) => {
           imageEl: h('i', [
             h('img', { src: path.join(__dirname, '../../../assets', 'discover.png') })
           ]),
-          label: "Friends subscriptions",
+          label: strings.subscriptions.friends,
           selected: isDiscoverLocation(location),
           location: { page: 'channelSubscriptions', scope: 'friends' },
         })

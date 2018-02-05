@@ -51,25 +51,6 @@ exports.create = (api) => {
 
     if (location.scope === "friends") {
 
-      // function createStream() {
-      //   var p = Pushable(true) // optionally pass `onDone` after it
-
-      //   api.sbot.async.friendsGet({ dest: myId }, (err, friends) => {
-      //     for (f in friends) {
-      //       var s = subscribed(f)
-      //       s(c => [...c].map(x => p.push(x)))
-      //     }
-      //   })
-
-      //   return p.source
-      // }
-
-      // var stream = createStream()
-      // var opts = {
-      //   startValue: new Set(),
-      //   nextTick: true
-      // }
-
       myChannels = Value(false)
 
       onceTrue(
@@ -79,8 +60,7 @@ exports.create = (api) => {
             if (err) throw err
             let b = map(c, (v,k) => {return {channel: k, users: v}})
             b = sortBy(b, o => o.users.length)
-            myChannels.set(b.reverse().slice(1,101))             
-            // console.log(`want blog ${blog}, callback: ${success}`)
+            myChannels.set(b.reverse().slice(0,100))
           })
         }
       )
@@ -96,26 +76,9 @@ exports.create = (api) => {
       return h('Page -channelSubscriptions', { title: strings.home }, [
         api.app.html.sideNav(location),
         h('div.content', [
-          //api.app.html.topNav(location),
-          when(myChannels, displaySubscriptions, h("p", "Loading..."))
+          when(myChannels, displaySubscriptions, h("p", strings.loading))
         ])
       ])
-
-      // var channelList = api.app.html.scroller({
-      //   classList: ['content'],
-      //   stream: sbot.channel.stream,
-      //   render
-      // })
-
-      // function render(channel) {
-      //   console.assert.log("render", channel)
-      //   return api.app.html.channelCard(channel)
-      // }
-
-      // return h('Page -channelSubscriptions', { title: strings.home }, [
-      //   api.app.html.sideNav(location),
-      //   //channelList
-      // ])
     }
   })
 }
