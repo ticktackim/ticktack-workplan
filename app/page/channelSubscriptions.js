@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, when, Value, onceTrue } = require('mutant')
+const { h, when, Value, onceTrue, computed, map: mutantMap } = require('mutant')
 const sortBy = require('lodash/sortBy')
 const map = require("lodash/map")
 
@@ -31,13 +31,17 @@ exports.create = (api) => {
 
     if (location.scope === "user") {
       myChannels = subscribed(myId)
-      displaySubscriptions = () => [...myChannels().values()].map(c => api.app.html.channelCard(c))
+      
+      const mySubscriptions = computed(myChannels, myChannels => [...myChannels.values()])
 
       return h('Page -channelSubscriptions', { title: strings.home }, [
         api.app.html.sideNav(location),
         h('div.content', [
           //api.app.html.topNav(location),
-          when(myChannels, displaySubscriptions, h("p", "Loading..."))
+          when(myChannels, 
+            mutantMap(mySubscriptions, api.app.html.channelCard), 
+            h("p", "Loading...")
+          )
         ])
       ])
 
