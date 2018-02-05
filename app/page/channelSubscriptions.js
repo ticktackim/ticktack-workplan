@@ -1,12 +1,6 @@
 const nest = require('depnest')
-const { h, watch, when, computed, Value, onceTrue } = require('mutant')
-const pull = require('pull-stream')
-const Pushable = require('pull-pushable')
-const ref = require('ssb-ref')
-const throttle = require('mutant/throttle')
-const MutantPullReduce = require('mutant-pull-reduce')
+const { h, when, Value, onceTrue } = require('mutant')
 const sortBy = require('lodash/sortBy')
-const get = require("lodash/get")
 const map = require("lodash/map")
 
 
