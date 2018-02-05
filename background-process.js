@@ -17,6 +17,7 @@ var createSbot = require('scuttlebot')
   .use(require('ssb-about'))
   // .use(require('ssb-ebt'))
   .use(require('ssb-ws'))
+  .use(require('ssb-server-channel'))
 
 // pull config options out of depject
 var config = require('./config').create().config.sync.load()
