@@ -138,7 +138,7 @@ exports.create = (api) => {
             h('img', { src: path.join(__dirname, '../../../assets', 'discover.png') })
           ]),
           label: "My subscriptions",
-          selected: isDiscoverSideNav(location),
+          selected: location.page === 'channelSubscriptions' && !location.scope,
           location: { page: 'channelSubscriptions', scope: 'user' },
         }),
 
@@ -148,7 +148,7 @@ exports.create = (api) => {
             h('img', { src: path.join(__dirname, '../../../assets', 'discover.png') })
           ]),
           label: "Friends subscriptions",
-          selected: isDiscoverSideNav(location),
+          selected: location.page === 'channelSubscriptions' && location.scope === 'friends',
           location: { page: 'channelSubscriptions', scope: 'friends' },
         })
       ]
