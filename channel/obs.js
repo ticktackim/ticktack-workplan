@@ -1,15 +1,16 @@
-var nest = require('depnest')
-var ref = require('ssb-ref')
+const nest = require('depnest')
+const ref = require('ssb-ref')
+const computed = require('mutant/computed')
 
 exports.needs = nest({
   'keys.sync.id': 'first',
   'channel.obs.subscribed': 'first',
 })
 
-exports.gives = nest('channel.sync.isSubscribedTo')
+exports.gives = nest('channel.obs.isSubscribedTo')
 
 exports.create = function (api) {
-  return nest('channel.sync.isSubscribedTo', isSubscribedTo)
+  return nest('channel.obs.isSubscribedTo', isSubscribedTo)
 
   function isSubscribedTo (channel, id) {
     if (!ref.isFeed(id)) {
@@ -18,7 +19,6 @@ exports.create = function (api) {
         
     const { subscribed } = api.channel.obs
     const myChannels = subscribed(id)
-    let v = myChannels().values()
-    return [...v].includes(channel)
+    return computed([myChannels], (v) => v.has(channel))
   }
 }

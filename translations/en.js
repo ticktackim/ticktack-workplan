@@ -138,6 +138,13 @@ Building Honest Communication
       unsubscribe: 'Unsubscribe'
     }
   },
+  subscriptions: {
+    user: "My subscriptions",
+    friends: "Friends subscriptions",
+    state: {
+      noSubscriptions: 'You have no subscriptions yet'
+    }
+  },
   languages: {
     en: 'English',
     zh: '中文'

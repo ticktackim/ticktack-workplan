@@ -11,16 +11,13 @@ exports.needs = nest({
   'app.html.blogCard': 'first',
   'channel.obs.recent': 'first',
   'feed.pull.channel': 'first',
-  'feed.pull.public': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
-  'message.html.channel': 'first',
   'translations.sync.strings': 'first',
-  'unread.sync.isUnread': 'first',
   'channel.obs.subscribed': 'first',
   'channel.async.subscribe': 'first',
   'channel.async.unsubscribe': 'first',
-  'channel.sync.isSubscribedTo': 'first'
+  'channel.obs.isSubscribedTo': 'first'
 })
 
 exports.create = (api) => {
@@ -32,21 +29,10 @@ exports.create = (api) => {
     const myId = api.keys.sync.id()
     const { subscribed } = api.channel.obs
     const { subscribe, unsubscribe } = api.channel.async
-    const { isSubscribedTo } = api.channel.sync
-    const myChannels = subscribed(myId)
-    let cs = myChannels().values()
-    const youSubscribe = Value(isSubscribedTo(location.channel, myId))
-
-    let cb = () => {
-      youSubscribe.set(isSubscribedTo(location.channel, myId))
-    }
+    const { isSubscribedTo } = api.channel.obs
+    const youSubscribe = isSubscribedTo(location.channel, myId)
 
     var searchVal = resolve(location.channel)
-    var searchResults = computed([api.channel.obs.recent(), searchVal], (channels, val) => {
-      if (val.length < 2) return []
-
-      return channels.filter(c => c.toLowerCase().indexOf(val.toLowerCase()) > -1)
-    })
   
 
     
@@ -59,8 +45,8 @@ exports.create = (api) => {
         h('h1', location.channel),
         h('div.actions', [
           when(youSubscribe,
-            h('Button', { 'ev-click': () => subscribe(location.channel, cb) }, strings.channelShow.action.unsubscribe),
-            h('Button', { 'ev-click': () => unsubscribe(location.channel, cb) }, strings.channelShow.action.subscribe)
+            h('Button', { 'ev-click': () => subscribe(location.channel) }, strings.channelShow.action.unsubscribe),
+            h('Button', { 'ev-click': () => unsubscribe(location.channel) }, strings.channelShow.action.subscribe)
           )
         ])
       ]),

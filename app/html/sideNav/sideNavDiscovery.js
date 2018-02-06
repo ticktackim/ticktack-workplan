@@ -46,6 +46,7 @@ exports.create = (api) => {
       if (location.page.match(/^blog/)) return true
       if (location.page.match(/^thread/)) return true
       if (location.page.match(/^user/)) return true
+      if (location.page.match(/^channel/)) return true
     }
     if (location.key) {
       return true
@@ -137,7 +138,7 @@ exports.create = (api) => {
           imageEl: h('i', [
             h('img', { src: path.join(__dirname, '../../../assets', 'discover.png') })
           ]),
-          label: "My subscriptions",
+          label: strings.subscriptions.user,
           selected: location.page === 'channelSubscriptions' && !location.scope,
           location: { page: 'channelSubscriptions', scope: 'user' },
         }),
@@ -147,7 +148,7 @@ exports.create = (api) => {
           imageEl: h('i', [
             h('img', { src: path.join(__dirname, '../../../assets', 'discover.png') })
           ]),
-          label: "Friends subscriptions",
+          label: strings.subscriptions.friends,
           selected: location.page === 'channelSubscriptions' && location.scope === 'friends',
           location: { page: 'channelSubscriptions', scope: 'friends' },
         })
