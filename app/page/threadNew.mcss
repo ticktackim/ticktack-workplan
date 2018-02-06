@@ -37,29 +37,37 @@ Page -threadNew {
         }
 
         div.recps {
+          flex-grow: 1
+          height: 2.5rem
+
+          $backgroundPrimaryText
+          padding-left: .5rem
+          $borderSubtle
+          border-radius: 6rem
+
           display: flex
         
           div.recp {
-            padding: .3rem
-            min-width: 5rem
-            $borderSubtle
-            border-radius: 6rem
-            $backgroundPrimaryText
-
             margin-right: 1rem
 
             display: flex
             align-items: center
 
-            img { 
-              width: 2rem
-              height: 2rem
-              border-radius: 2rem
+            img.Avatar { 
             }
 
             div.name {
               margin: 0 .5rem
             }
+          }
+
+          input {
+            flex-grow: 1
+
+            $fontBasic
+            margin-right: 1rem
+            border: none
+            outline: none
           }
         }      
 

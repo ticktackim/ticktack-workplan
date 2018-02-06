@@ -87,7 +87,8 @@ Building Honest Communication
       subject: 'Subject',
     },
     action: {
-      new: 'New Message'
+      new: 'New Message',
+      addMoreRecps: 'add more recipients (optional)'
     }
   },
   threadShow: 'Direct Messages',

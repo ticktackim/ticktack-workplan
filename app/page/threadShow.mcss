@@ -1,5 +1,20 @@
 Page -threadShow {
   div.content {
+    header {
+      display: flex
+      align-items: center
+      flex-wrap: wrap
+
+      h1 {
+        margin-right: 1rem
+      }
+
+      div.recps {
+        img.Avatar {
+          margin-right: .6rem
+        }
+      }
+    }
 
     div.Thread {}
 
