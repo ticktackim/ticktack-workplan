@@ -40,7 +40,7 @@ exports.create = (api) => {
           //api.app.html.topNav(location),
           when(myChannels, 
             mutantMap(mySubscriptions, api.app.html.channelCard), 
-            h("p", "Loading...")
+            h("p", strings.loading)
           )
         ])
       ])
@@ -58,23 +58,21 @@ exports.create = (api) => {
             if (err) throw err
             let b = map(c, (v,k) => {return {channel: k, users: v}})
             b = sortBy(b, o => o.users.length)
-            myChannels.set(b.reverse().slice(0,100))
+            let res = b.reverse().slice(0,100)
+
+            myChannels.set(res.map(c => c.channel))
           })
         }
       )
 
 
-      displaySubscriptions = () => {
-        if (myChannels()) {
-          let subs = myChannels()
-          return subs.map(c => api.app.html.channelCard(c.channel))
-        }
-      }
-
-      return h('Page -channelSubscriptions', { title: strings.home }, [
+        return h('Page -channelSubscriptions', { title: strings.home }, [
         api.app.html.sideNav(location),
         h('div.content', [
-          when(myChannels, displaySubscriptions, h("p", strings.loading))
+            when(myChannels,
+                mutantMap(myChannels, api.app.html.channelCard),
+                h("p", strings.loading)
+            )
         ])
       ])
     }

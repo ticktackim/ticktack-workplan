@@ -32,16 +32,7 @@ exports.create = (api) => {
     const { isSubscribedTo } = api.channel.obs
     const youSubscribe = isSubscribedTo(location.channel, myId)
 
-    let cb = () => {
-      youSubscribe.set(isSubscribedTo(location.channel, myId))
-    }
-
     var searchVal = resolve(location.channel)
-    var searchResults = computed([api.channel.obs.recent(), searchVal], (channels, val) => {
-      if (val.length < 2) return []
-
-      return channels.filter(c => c.toLowerCase().indexOf(val.toLowerCase()) > -1)
-    })
   
 
     
@@ -54,8 +45,8 @@ exports.create = (api) => {
         h('h1', location.channel),
         h('div.actions', [
           when(youSubscribe,
-            h('Button', { 'ev-click': () => subscribe(location.channel, cb) }, strings.channelShow.action.unsubscribe),
-            h('Button', { 'ev-click': () => unsubscribe(location.channel, cb) }, strings.channelShow.action.subscribe)
+            h('Button', { 'ev-click': () => subscribe(location.channel) }, strings.channelShow.action.unsubscribe),
+            h('Button', { 'ev-click': () => unsubscribe(location.channel) }, strings.channelShow.action.subscribe)
           )
         ])
       ]),
