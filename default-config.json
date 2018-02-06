@@ -3,9 +3,10 @@
   "_blobsPort": 43751,
   "_ws": { "port": 43751 },
   "_caps": {"shs": "ErgQF85hFQpUXp69IXtLW+nXDgFIOKKDOWFX/st2aWk="},
-  "autoinvite": "net:128.199.76.241:8008~shs:7xMrWP8708+LDvaJrRMRQJEixWYp4Oipa9ohqY7+NyQ=:oxWZicO67cnXBRyL/VorYknQK8BHkBnj6IRQFXgjGoA="
+  "autoinvites": [
+    "net:128.199.76.241:8008~shs:7xMrWP8708+LDvaJrRMRQJEixWYp4Oipa9ohqY7+NyQ=:oxWZicO67cnXBRyL/VorYknQK8BHkBnj6IRQFXgjGoA=",
+
+    "138.68.27.255:8008:@MflVZCcOBOUe6BLrm/8TyirkTu9/JtdnIJALcd8v5bc=.ed25519~Mfz6xcajHDtH3Z2Dp4I7HT7K1l0MWxJxOftlEBct8jU="
+  ]
 }
-
-
-
 
