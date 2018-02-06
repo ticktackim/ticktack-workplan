@@ -98,6 +98,7 @@ exports.create = (api) => {
 
         if (PAGES_UNDER_DISCOVER.includes(location.page)) return true
         if (location.page === 'threadNew') return false        
+        if (location.page === 'channelSubscriptions') return false        
         if (get(location, 'value.private') === undefined) return true
         return false
       }
@@ -139,7 +140,7 @@ exports.create = (api) => {
             h('img', { src: path.join(__dirname, '../../../assets', 'discover.png') })
           ]),
           label: strings.subscriptions.user,
-          selected: location.page === 'channelSubscriptions' && !location.scope,
+          selected: location.page === 'channelSubscriptions' && location.scope === 'user',
           location: { page: 'channelSubscriptions', scope: 'user' },
         }),
 
