@@ -139,8 +139,11 @@ Building Honest Communication
     }
   },
   subscriptions: {
-      user: "My subscriptions",
-      friends: "Friends subscriptions"
+    user: "My subscriptions",
+    friends: "Friends subscriptions",
+    state: {
+      noSubscriptions: 'You have no subscriptions yet'
+    }
   },
   languages: {
     en: 'English',

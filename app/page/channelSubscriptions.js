@@ -39,6 +39,11 @@ exports.create = (api) => {
         h('div.content', [
           //api.app.html.topNav(location),
           when(myChannels, 
+            myChannels().size === 0
+              ? strings.subscriptions.state.noSubscriptions
+            :''
+          ),
+          when(myChannels, 
             mutantMap(mySubscriptions, api.app.html.channelCard), 
             h("p", strings.loading)
           )
