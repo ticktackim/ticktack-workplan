@@ -137,7 +137,7 @@ exports.create = (api) => {
         // My subscriptions
         Option({
           imageEl: h('i', [
-            h('img', { src: path.join(__dirname, '../../../assets', 'discover.png') })
+            h('img', { src: path.join(__dirname, '../../../assets', 'my_subscribed.png') })
           ]),
           label: strings.subscriptions.user,
           selected: location.page === 'channelSubscriptions' && location.scope === 'user',
@@ -147,7 +147,7 @@ exports.create = (api) => {
         // Friends subscriptions
         Option({
           imageEl: h('i', [
-            h('img', { src: path.join(__dirname, '../../../assets', 'discover.png') })
+            h('img', { src: path.join(__dirname, '../../../assets', 'friends_subscribed.png') })
           ]),
           label: strings.subscriptions.friends,
           selected: location.page === 'channelSubscriptions' && location.scope === 'friends',

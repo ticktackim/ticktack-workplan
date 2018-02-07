@@ -71,8 +71,7 @@ Option {
   }
 
   div.circle {
-    width: 3.6rem
-    position: relative
+    margin-right: .6rem
 
     div.alert {
       position: absolute
@@ -100,6 +99,7 @@ Option {
       $circleSmall
       $colorPrimary
       font-size: 1.3rem
+
       display: flex
       justify-content: center
       align-items: center
