@@ -1,0 +1,17 @@
+Page -channelSubscriptions {
+  div.content {
+    background-color: #fff
+    $maxWidth
+    margin: 0 auto
+    padding: .5rem 2rem
+
+    display: flex
+    flex-direction: column
+
+    div.BlogCard {
+      flex-basis: 100%
+      border-bottom: 1px solid rgba(0,0,0, .1)
+    }
+  }
+}
+

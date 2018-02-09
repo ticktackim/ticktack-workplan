@@ -7,7 +7,8 @@ SideNav {
   display: flex
 
   div.level {
-    width: 13rem
+    min-width: 13rem
+    max-width: 13rem
     overflow-y: auto
     overflow-x: hidden
 
