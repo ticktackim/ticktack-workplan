@@ -1,4 +1,3 @@
-
 module.exports = {
   loading: '加载中...',
   optionalField: '可选',
@@ -13,6 +12,25 @@ module.exports = {
   writeMessage: '发私信',
   writeComment: '留言',
   peopleNearby: '附件的朋友',
+  addressBook: {
+    heading: {
+      people: '用户',
+    },
+    section: {
+      friends: '好友',
+      following: '我关注的',
+      followers: '关注我的',
+    },
+    action: {
+      addUser: '添加好友',
+      find: {
+        friends: '查找好友',
+        following: '查找我关注的人',
+        followers: '查找关注我的人',
+        search: '查找用户',
+      }
+    },
+  },
   blogIndex: {
     title: '发现'
   },
@@ -25,6 +43,12 @@ module.exports = {
       edit: '编辑',
       preview: '预览',
       writeBlog: '撰文'
+    }
+  },
+  channelShow: {
+    action: {
+      subscribe: '订阅',
+      unsubscribe: '取消订阅',
     }
   },
   topNav: {
@@ -64,7 +88,8 @@ module.exports = {
       subject: '主题',
     },
     action: {
-      new: '创建私信'
+      new: '创建私信',
+      addMoreRecps: '添加多个用户（可选）',
     }
   },
   threadShow: '所有私信',
@@ -92,7 +117,11 @@ module.exports = {
     action: {
       follow: '关注',
       unfollow: '取消关注',
-      directMessage: '创建私信'
+      directMessage: '创建私信',
+      block: '拉黑',
+      unblock: '原谅',
+      blockConfirmationMessage: '拉黑意味着您再也不会接收到此用户的信息',
+      cancel: '取消',
     },
     state: {
       friends: '你们成为了好友',
@@ -102,6 +131,13 @@ module.exports = {
       userConversationsWith: '参与的话题',
       follow: '关注',
       friendsInCommon: '共同的好友'
+    }
+  },
+  subscriptions: {
+    user: '我的订阅',
+    friends: '朋友的订阅',
+    state: {
+      noSubscriptions: '您还没有任何订阅',
     }
   },
   languages: {
