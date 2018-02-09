@@ -1,6 +1,12 @@
 # Ticktack
 
-A blogging platform for the Scuttleverse
+A decentralized social platform enable people to share knowledge and exchange value, with p2p messaging encrypted feature. 
+
+You can find [installers for Linux, Mac, and Windows on the Releases page](https://github.com/ticktackim/ticktack-workplan/releases).
+
+#### Please read the [Code of Conduct](https://github.com/ticktackim/ticktack-network/wiki/Code-of-Conduct) and [Reminder](https://github.com/ticktackim/ticktack-network/wiki/REMINDER) before your installation. 
+
+
 
 ## Development
 

@@ -5,12 +5,15 @@ Page -channelSubscriptions {
     margin: 0 auto
     padding: .5rem 2rem
 
-    display: flex
-    flex-wrap: wrap
-
-    div.BlogCard {
-      flex-basis: 100%
+    div.ChannelCard {
       border-bottom: 1px solid rgba(0,0,0, .1)
+    }
+
+    div {
+      :last-child {
+        padding-bottom: 2rem !important
+        /* TODO fix - eww gross */
+      }
     }
   }
 }

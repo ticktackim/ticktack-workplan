@@ -9,7 +9,9 @@ SideNav -discovery {
       }
     }
 
-    -one {}
+    -one {
+      max-width: 15rem
+    }
     -two {
       section {
         div.Option {
