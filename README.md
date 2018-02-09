@@ -1,6 +1,8 @@
 # Ticktack
 
-A blogging platform for the Scuttleverse
+A decentralized social platform enable people to share knowledge and exchange value, with p2p messaging encrypted feature. 
+
+
 
 ## Development
 
