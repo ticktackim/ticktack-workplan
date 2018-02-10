@@ -74,6 +74,8 @@ Option {
   div.circle {
     margin-right: .6rem
 
+    position: relative
+
     div.alert {
       position: absolute
       width: 1.2rem
