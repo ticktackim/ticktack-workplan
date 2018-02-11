@@ -110,12 +110,12 @@ exports.create = (api) => {
           notifications: notifications(feedId),
           imageEl: api.about.html.avatar(feedId, 'small'),
           label: api.about.obs.name(feedId),
-          selected: location.feed === feedId && !isDiscoverLocation(location),
+          selected: get(location, 'participants', []).join() === feedId && !isDiscoverLocation(location),
           location: computed(recentMsgCache, recent => {
             const lastMsg = recent.find(msg => msg.value.author === feedId)
             return lastMsg
-              ? Object.assign(lastMsg, { feed: feedId })
-              : { page: 'threadNew', feed: feedId }
+              ? Object.assign(lastMsg, { participants: [feedId] })
+              : { page: 'threadNew', participants: [feedId] }
           }),
         }), { comparer: (a, b) => a === b }),
 
@@ -124,8 +124,6 @@ exports.create = (api) => {
 
         // Discover
         Option({
-          // notifications: '!', //TODO - count this! 
-          // imageEl: h('i.fa.fa-binoculars'),
           imageEl: h('i', [
             h('img', { src: path.join(__dirname, '../../../assets', 'discover.png') })
           ]),
@@ -165,24 +163,48 @@ exports.create = (api) => {
         updateBottom: updateRecentMsgCache,
         render: (msgObs) => {
           const msg = resolve(msgObs)
-          const { author } = msg.value
-          if (nearby.has(author)) return
+          const participants = getParticipants(msg)
+          // TODO msg has been decorated with a flat participantsKey, could re-hydrate
 
-          return Option({
-            //the number of threads with each peer
-            notifications: notifications(author),
-            imageEl: api.about.html.avatar(author),
-            label: api.about.obs.name(author),
-            selected: location.feed === author,
-            location: Object.assign({}, msg, { feed: author }) // TODO make obs?
-          })
+          if (participants.length === 1 && nearby.has(participants.key)) return
+          const locParticipantsKey = get(location, 'participants', []).join(' ') //TODO collection logic
+
+          if (participants.length === 1) {
+            const author = participants.key
+            return Option({
+              //the number of threads with each peer
+              notifications: notifications(author),
+              imageEl: api.about.html.avatar(author),
+              label: api.about.obs.name(author),
+              selected: locParticipantsKey === author,
+              location: Object.assign({}, msg, { participants }) // TODO make obs?
+            })
+          }
+          else {
+            return Option({
+              //the number of threads with each peer
+              notifications: notifications(participants),
+              imageEl: participants.map(p => api.about.html.avatar(p)),
+              label: getSubject(msg),
+              selected: locParticipantsKey === participants.key,
+              location: Object.assign({}, msg, { participants }) // TODO make obs?
+            })
+
+            function getSubject (msg) {
+              var subject = get(msg, 'value.content.subject') 
+              // TODO improve subject getting for group threads...
+              if (!subject) subject = msg.value.content.text.splice(0, 24)
+              return subject
+            }
+          }
         }
       })
 
       function updateRecentMsgCache (soFar, newMsg) {
         soFar.transaction(() => { 
-          const { author, timestamp } = newMsg.value
-          const index = indexOf(soFar, (msg) => author === resolve(msg).value.author)
+          const { timestamp } = newMsg.value
+          newMsg.participantsKey = getParticipants(newMsg).key
+          const index = indexOf(soFar, (msg) => newMsg.participantsKey === resolve(msg).participantsKey)
           var object = Value()
 
           if (index >= 0) {
@@ -223,22 +245,22 @@ exports.create = (api) => {
     }
 
     function LevelTwoSideNav () {
-      const { key, value, feed: targetUser, page } = location
+      const { key, value, participants, page } = location
       const root = get(value, 'content.root', key)
-      if (!targetUser) return
+      if (isEmpty(participants)) return
       if (page === 'userShow') return
-
 
       const prepend = Option({
         selected: page === 'threadNew',
-        location: {page: 'threadNew', feed: targetUser},
+        location: {page: 'threadNew', participants},
         label: h('Button', strings.threadNew.action.new),
       })
 
-      var userLastMsgCache = usersLastMsgCache.get(targetUser)
+      var participantsKey = participants.join(' ') // TODO collect this repeated logic
+      var userLastMsgCache = usersLastMsgCache.get(participantsKey)
       if (!userLastMsgCache) {
         userLastMsgCache = MutantArray()
-        usersLastMsgCache.put(targetUser, userLastMsgCache)
+        usersLastMsgCache.put(participantsKey, userLastMsgCache)
       }
 
       return api.app.html.scroller({
@@ -248,22 +270,19 @@ exports.create = (api) => {
         filter: () => pull(
           pull.filter(msg => !msg.value.content.root),
           pull.filter(msg => msg.value.content.type === 'post'),
-          pull.filter(msg => msg.value.content.recps),
-          pull.filter(msg => msg.value.content.recps
-            .map(recp => typeof recp === 'object' ? recp.link : recp)
-            .some(recp => recp === targetUser)
-          )
+          pull.filter(msg => getParticipants(msg).key === participantsKey)
         ),
         store: userLastMsgCache,
         updateTop: updateLastMsgCache,
         updateBottom: updateLastMsgCache,
         render: (rootMsgObs) => {
           const rootMsg = resolve(rootMsgObs)
+          const participants = getParticipants(rootMsg)
           return Option({
             notifications: notifications(rootMsg.key),
             label: api.message.html.subject(rootMsg),
             selected: rootMsg.key === root,
-            location: Object.assign(rootMsg, { feed: targetUser }),
+            location: Object.assign(rootMsg, { participants }),
           })
         }
       })
@@ -315,9 +334,18 @@ exports.create = (api) => {
     function privateMsgFilter () {
       return pull(
         pull.filter(msg => msg.value.content.type === 'post'),
-        pull.filter(msg => msg.value.author != myKey),
         pull.filter(msg => msg.value.content.recps)
       )
+    }
+
+    function getParticipants (msg) {
+      var participants = get(msg, 'value.content.recps')
+        .map(r => typeof r === 'string' ? r : r.link)
+        .filter(r => r != myKey)
+        .sort()
+
+      participants.key = participants.join(' ')
+      return participants
     }
   }
 }
