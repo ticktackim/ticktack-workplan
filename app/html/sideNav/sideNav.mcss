@@ -93,11 +93,15 @@ Option {
       align-items: center
     }
 
-    
-    a img {
-   
-    }
+    img {}
+    div.many-images {
+      display: flex
+      flex-wrap: wrap
 
+      img {
+      }
+    }
+    
     i {
       $circleSmall
       $colorPrimary

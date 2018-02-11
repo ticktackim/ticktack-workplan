@@ -42,7 +42,7 @@ exports.create = (api) => {
       // h('i.fa.fa-pencil')
       h('img', { src: path.join(__dirname, '../../assets', 'edit.png') })
     )
-    const directMessageButton = Link({ page: 'threadNew', feed }, h('Button', strings.userShow.action.directMessage))
+    const directMessageButton = Link({ page: 'threadNew', participants: [feed] }, h('Button', strings.userShow.action.directMessage))
 
     const BLOG_TYPES = ['blog', 'post']
 

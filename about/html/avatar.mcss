@@ -6,6 +6,10 @@ Avatar {
     $circleTiny
   }
 
+  -halfSmall {
+    $circleHalfSmall
+  }
+
   -small {
     $circleSmall
   }

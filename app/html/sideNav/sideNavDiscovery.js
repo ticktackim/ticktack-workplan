@@ -185,7 +185,7 @@ exports.create = (api) => {
             return Option({
               //the number of threads with each peer
               notifications: notifications(participants),
-              imageEl: participants.map(p => api.about.html.avatar(p)),
+              imageEl: participants.map(p => api.about.html.avatar(p, 'halfSmall')),
               label: getSubject(msg),
               selected: locParticipantsKey === participants.key,
               location: Object.assign({}, msg, { participants }) // TODO make obs?
@@ -326,7 +326,9 @@ exports.create = (api) => {
       return h('Option', { className }, [
         h('div.circle', [
           when(notifications, h('div.alert', notifications)),
-          imageEl
+          Array.isArray(imageEl)
+            ? h('div.many-images', imageEl.slice(0,4)) // not ideal? not enough space to show more though
+            : imageEl
         ]),
         h('div.label', { 'ev-click': goToLocation }, label)
       ])
