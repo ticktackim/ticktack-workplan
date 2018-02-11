@@ -60,7 +60,7 @@ exports.create = (api) => {
 
       // Private Thread pages
       // [ location => location.page === 'threadNew' && location.channel, pages.threadNew ],
-      [ location => location.page === 'threadNew' && isFeed(location.feed), pages.threadNew ],
+      [ location => location.page === 'threadNew' && location.participants.every(isFeed), pages.threadNew ],
       [ location => isMsg(location.key), pages.threadShow ],
 
       // User pages

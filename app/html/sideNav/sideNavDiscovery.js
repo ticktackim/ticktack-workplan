@@ -20,6 +20,7 @@ exports.needs = nest({
   'history.sync.push': 'first',
   'history.obs.store': 'first',
   'message.html.subject': 'first',
+  'message.sync.getParticipants': 'first',
   'sbot.obs.localPeers': 'first',
   'translations.sync.strings': 'first',
   'unread.sync.isUnread': 'first'
@@ -59,8 +60,8 @@ exports.create = (api) => {
 
     const strings = api.translations.sync.strings()
     const myKey = api.keys.sync.id()
-
     var nearby = api.sbot.obs.localPeers()
+    const getParticipants = api.message.sync.getParticipants
 
     // Unread message counts
     function updateCache (cache, msg) {
@@ -338,15 +339,6 @@ exports.create = (api) => {
       )
     }
 
-    function getParticipants (msg) {
-      var participants = get(msg, 'value.content.recps')
-        .map(r => typeof r === 'string' ? r : r.link)
-        .filter(r => r != myKey)
-        .sort()
-
-      participants.key = participants.join(' ')
-      return participants
-    }
   }
 }
 

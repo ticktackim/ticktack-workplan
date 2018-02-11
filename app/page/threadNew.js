@@ -1,6 +1,7 @@
 const nest = require('depnest')
 const { h, Struct, Value, Array: MutantArray, computed, map, resolve } = require('mutant')
 const suggestBox = require('suggest-box')
+const isEmpty = require('lodash/isEmpty')
 
 exports.gives = nest('app.page.threadNew')
 
@@ -22,22 +23,27 @@ exports.create = (api) => {
   return nest('app.page.threadNew', threadNew)
 
   function threadNew (location) {
-    const { feed, channel } = location
-
-    if (feed) return threadNewFeed(location)
+    if (isEmpty(location.participants)) return
+    
+    return threadNewFeed(location)
   }
 
   function threadNewFeed (location) {
     const strings = api.translations.sync.strings()
     const myId = api.keys.sync.id()
 
-    const { feed } = location
+    const { participants } = location
 
     const meta = Struct({
       type: 'post',
       recps: MutantArray ([
         myId,
-        { link: feed, name: resolve(api.about.obs.name(feed)) }
+        ...participants.map(p => {
+          return { 
+            link: p, 
+            name: resolve(api.about.obs.name(p)) 
+          }
+        })
       ]),
       subject: Value()
     })
