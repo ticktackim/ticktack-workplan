@@ -86,6 +86,8 @@ function openMainWindow () {
       height: windowState.height,
       autoHideMenuBar: true,
       title: 'Ticktack',
+      frame: false,
+      titleBarStyle: 'hidden',
       show: true,
       backgroundColor: '#EEE',
       icon: './assets/icon.png'
@@ -133,4 +135,3 @@ function openWindow (path, opts) {
   window.loadURL('file://' + Path.join(__dirname, 'assets', 'base.html'))
   return window
 }
-

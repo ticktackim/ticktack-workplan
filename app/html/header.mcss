@@ -1,7 +1,22 @@
 Header {
+  div.window-controls {
+    position: fixed
+    right: 0
+    z-index: 100
+
+    display: flex
+
+    img {
+      padding: .5rem
+      cursor: pointer
+      :hover {
+        filter: drop-shadow(rgba(255, 255, 255, .5) 0 0 2px)
+      }
+    }
+  }
+
   nav {
     $colorPrimary
-    $navFA
     padding: 1rem 0
 
     width: 100%
@@ -30,4 +45,3 @@ Header {
       }
     }
 }
-
