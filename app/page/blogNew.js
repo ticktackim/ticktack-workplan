@@ -5,7 +5,7 @@ const pull = require('pull-stream')
 const marksum = require('markdown-summary')
 const MediumEditor = require('medium-editor').MediumEditor
 const MediumToMD = require('medium-editor-markdown')
-const CustomHtml = require('medium-editor-custom-async')
+// const CustomHtml = require('medium-editor-custom-async')
 
 exports.gives = nest('app.page.blogNew')
 
