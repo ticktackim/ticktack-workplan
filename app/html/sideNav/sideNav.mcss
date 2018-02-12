@@ -57,7 +57,7 @@ Option {
       width: 1.2rem
       height: 1.2rem
       border-radius: 1rem
-      top: -.2rem
+      /* top: -.2rem */
       left: -.2rem
 
       background-color: red
@@ -95,8 +95,14 @@ Option {
 
     img {}
     div.many-images {
+      /* this width refernces avatarSmall */
+      width: 2.8rem
+      height: 2.8rem
+
       display: flex
       flex-wrap: wrap
+      justify-content: center
+      align-items: center
 
       img {
       }

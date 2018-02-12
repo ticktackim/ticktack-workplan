@@ -72,8 +72,11 @@ exports.create = (api) => {
     }
 
     function updateUnreadMsgsCache (msg) {
-      updateCache(getUnreadMsgsCache(msg.value.author), msg)
-      updateCache(getUnreadMsgsCache(msg.value.content.root || msg.key), msg)
+      const participantsKey = getParticipants(msg).key
+      updateCache(getUnreadMsgsCache(participantsKey), msg)
+
+      const rootKey = get(msg, 'value.content.root', msg.key)
+      updateCache(getUnreadMsgsCache(rootKey), msg)
     }
 
     pull(
@@ -162,44 +165,40 @@ exports.create = (api) => {
         store: recentMsgCache,
         updateTop: updateRecentMsgCache,
         updateBottom: updateRecentMsgCache,
-        render: (msgObs) => {
-          const msg = resolve(msgObs)
-          const participants = getParticipants(msg)
-          // TODO msg has been decorated with a flat participantsKey, could re-hydrate
-
-          if (participants.length === 1 && nearby.has(participants.key)) return
-          const locParticipantsKey = get(location, 'participants', []).join(' ') //TODO collection logic
-
-          if (participants.length === 1) {
-            const author = participants.key
-            return Option({
-              //the number of threads with each peer
-              notifications: notifications(author),
-              imageEl: api.about.html.avatar(author),
-              label: api.about.obs.name(author),
-              selected: locParticipantsKey === author,
-              location: Object.assign({}, msg, { participants }) // TODO make obs?
-            })
-          }
-          else {
-            return Option({
-              //the number of threads with each peer
-              notifications: notifications(participants),
-              imageEl: participants.map(p => api.about.html.avatar(p, 'halfSmall')),
-              label: getSubject(msg),
-              selected: locParticipantsKey === participants.key,
-              location: Object.assign({}, msg, { participants }) // TODO make obs?
-            })
-
-            function getSubject (msg) {
-              var subject = get(msg, 'value.content.subject') 
-              // TODO improve subject getting for group threads...
-              if (!subject) subject = msg.value.content.text.splice(0, 24)
-              return subject
-            }
-          }
-        }
+        render
       })
+      
+      function render (msgObs) {
+        const msg = resolve(msgObs)
+        const participants = getParticipants(msg)
+        // TODO msg has been decorated with a flat participantsKey, could re-hydrate
+
+        if (participants.length === 1 && nearby.has(participants.key)) return
+        const locParticipantsKey = get(location, 'participants', []).join(' ') //TODO collect logic
+
+        if (participants.length === 1) {
+          const author = participants[0]
+          return Option({
+            //the number of threads with each peer
+            notifications: notifications(author),
+            imageEl: api.about.html.avatar(author),
+            label: api.about.obs.name(author),
+            selected: locParticipantsKey === author,
+            location: Object.assign({}, msg, { participants }) // TODO make obs?
+          })
+        }
+        else {
+          const rootMsg = get(msg, 'value.content.root', msg)
+          return Option({
+            //the number of threads with each peer
+            notifications: notifications(participants),
+            imageEl: participants.map(p => api.about.html.avatar(p, 'halfSmall')),
+            label: api.message.html.subject(rootMsg),
+            selected: locParticipantsKey === participants.key,
+            location: Object.assign({}, msg, { participants }) // TODO make obs?
+          })
+        }
+      }
 
       function updateRecentMsgCache (soFar, newMsg) {
         soFar.transaction(() => { 
@@ -242,6 +241,9 @@ exports.create = (api) => {
     }
 
     function notifications (key) {
+      key = typeof key === 'string'
+        ? key
+        : key.key // participants.key case
       return computed(getUnreadMsgsCache(key), cache => cache.length)
     }
 
@@ -276,17 +278,19 @@ exports.create = (api) => {
         store: userLastMsgCache,
         updateTop: updateLastMsgCache,
         updateBottom: updateLastMsgCache,
-        render: (rootMsgObs) => {
-          const rootMsg = resolve(rootMsgObs)
-          const participants = getParticipants(rootMsg)
-          return Option({
-            notifications: notifications(rootMsg.key),
-            label: api.message.html.subject(rootMsg),
-            selected: rootMsg.key === root,
-            location: Object.assign(rootMsg, { participants }),
-          })
-        }
+        render
       })
+
+      function render (rootMsgObs) {
+        const rootMsg = resolve(rootMsgObs)
+        const participants = getParticipants(rootMsg)
+        return Option({
+          notifications: notifications(rootMsg.key),
+          label: api.message.html.subject(rootMsg),
+          selected: rootMsg.key === root,
+          location: Object.assign(rootMsg, { participants }),
+        })
+      }
 
       function updateLastMsgCache (soFar, newMsg) {
         soFar.transaction(() => { 
@@ -340,7 +344,6 @@ exports.create = (api) => {
         pull.filter(msg => msg.value.content.recps)
       )
     }
-
   }
 }
 

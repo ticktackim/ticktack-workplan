@@ -29,16 +29,18 @@ Page -userShow {
 
         div.actions {
           display: flex
+        
+          div {
+            margin: 0 .5rem
+          }
 
           div.Follow {
-            margin-right: 1rem
           }
 
           div.directMessage {
           }
 
           div.Block {
-            margin-left: 1rem
           }
         }
       }

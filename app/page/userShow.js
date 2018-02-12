@@ -70,8 +70,8 @@ exports.create = (api) => {
         h('div.introduction', computed(api.about.obs.description(feed), d => api.message.html.markdown(d || ''))),
         feed !== myId
           ? h('div.actions', [
-              api.contact.html.follow(feed),
               h('div.directMessage', directMessageButton),
+              api.contact.html.follow(feed),
               api.contact.html.block(feed)
             ])
           : '',
