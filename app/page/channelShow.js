@@ -9,45 +9,29 @@ exports.needs = nest({
   'app.html.topNav': 'first',
   'app.html.scroller': 'first',
   'app.html.blogCard': 'first',
-  'channel.obs.recent': 'first',
   'feed.pull.channel': 'first',
   'history.sync.push': 'first',
-  'keys.sync.id': 'first',
   'translations.sync.strings': 'first',
-  'channel.obs.subscribed': 'first',
-  'channel.async.subscribe': 'first',
-  'channel.async.unsubscribe': 'first',
-  'channel.obs.isSubscribedTo': 'first'
+  'channel.obs.recent': 'first',
+  'channel.html.subscribe': 'first'
 })
 
 exports.create = (api) => {
   return nest('app.page.channelShow', channelShow)
 
   function channelShow(location) {
-    
     var strings = api.translations.sync.strings()
-    const myId = api.keys.sync.id()
-    const { subscribed } = api.channel.obs
-    const { subscribe, unsubscribe } = api.channel.async
-    const { isSubscribedTo } = api.channel.obs
-    const youSubscribe = isSubscribedTo(location.channel, myId)
 
     var searchVal = resolve(location.channel)
   
-
-    
     createStream = api.feed.pull.channel(location.channel)
-    
 
     const prepend = [
       api.app.html.topNav(location),
       h('section.about', [
         h('h1', location.channel),
         h('div.actions', [
-          when(youSubscribe,
-            h('Button', { 'ev-click': () => subscribe(location.channel) }, strings.channelShow.action.unsubscribe),
-            h('Button', { 'ev-click': () => unsubscribe(location.channel) }, strings.channelShow.action.subscribe)
-          )
+          api.channel.html.subscribe(location.channel)
         ])
       ]),
     ]

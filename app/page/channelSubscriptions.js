@@ -1,8 +1,8 @@
 const nest = require('depnest')
-const { h, when, Value, onceTrue, computed, map: mutantMap } = require('mutant')
+const { h, when, Value, Array: MutantArray, onceTrue, computed, map: mutantMap } = require('mutant')
 const sortBy = require('lodash/sortBy')
-const map = require("lodash/map")
-
+const map = require('lodash/map')
+const difference = require('lodash/difference')
 
 exports.gives = nest('app.page.channelSubscriptions')
 
@@ -23,67 +23,69 @@ exports.needs = nest({
 })
 
 exports.create = (api) => {
+  const otherChannels = MutantArray ()
+
   return nest('app.page.channelSubscriptions', function (location) {
     const strings = api.translations.sync.strings()
     const myId = api.keys.sync.id()
-    const { subscribed } = api.channel.obs
-    let myChannels, displaySubscriptions
+
+    const rawSubs = api.channel.obs.subscribed(myId)
+    const mySubs = computed(rawSubs, myChannels => [...myChannels.values()].reverse() )
 
     if (location.scope === "user") {
-      myChannels = subscribed(myId)
-      
-      const mySubscriptions = computed(myChannels, myChannels => [...myChannels.values()])
 
       return h('Page -channelSubscriptions', { title: strings.home }, [
         api.app.html.sideNav(location),
         h('div.content', [
-          //api.app.html.topNav(location),
-          when(myChannels, 
-            myChannels().size === 0
-              ? strings.subscriptions.state.noSubscriptions
-            :''
-          ),
-          when(myChannels, 
-            mutantMap(mySubscriptions, api.app.html.channelCard), 
-            h("p", strings.loading)
+          when(rawSubs.sync, 
+            [
+              computed(mySubs, mys => mys.length === 0 ? strings.subscriptions.state.noSubscriptions : ''),
+              mutantMap(mySubs, api.app.html.channelCard), 
+            ],
+            h('p', strings.loading)
           )
         ])
       ])
-
     }
 
     if (location.scope === "friends") {
-
-      myChannels = Value(false)
-
+      // update list of other all channels
       onceTrue(
         api.sbot.obs.connection,
         sbot => {
-          sbot.channel.get((err, c) => {
+          sbot.channel.subscriptions((err, c) => {
             if (err) throw err
             let b = map(c, (v,k) => {return {channel: k, users: v}})
             b = sortBy(b, o => o.users.length)
-            let res = b.reverse().slice(0,100)
+            let res = b.reverse()
 
-            myChannels.set(res.map(c => c.channel))
+            otherChannels.set(res.map(c => c.channel))
           })
         }
       )
 
+      const showMoreCounter = Value(1)
+      const newChannels = computed([otherChannels, mySubs, showMoreCounter], (other, mine, more) => {
+        return difference(other, mine)
+          .slice(0, 10*more)
+      })
 
-        return h('Page -channelSubscriptions', { title: strings.home }, [
+      return h('Page -channelSubscriptions', { title: strings.home }, [
         api.app.html.sideNav(location),
         h('div.content', [
-            when(myChannels,
-                mutantMap(myChannels, api.app.html.channelCard),
-                h("p", strings.loading)
-            )
+          when(otherChannels,
+            [
+              mutantMap(newChannels, api.app.html.channelCard),
+              h('Button', { 'ev-click': () => showMoreCounter.set(showMoreCounter()+1) },
+                strings.showMore
+              )
+            ],
+            h('p', strings.loading)
+          )
         ])
       ])
     }
   })
 }
-
-
 
 
