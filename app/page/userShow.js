@@ -42,7 +42,7 @@ exports.create = (api) => {
       // h('i.fa.fa-pencil')
       h('img', { src: path.join(__dirname, '../../assets', 'edit.png') })
     )
-    const directMessageButton = Link({ page: 'threadNew', feed }, h('Button', strings.userShow.action.directMessage))
+    const directMessageButton = Link({ page: 'threadNew', participants: [feed] }, h('Button', strings.userShow.action.directMessage))
 
     const BLOG_TYPES = ['blog', 'post']
 
@@ -70,8 +70,8 @@ exports.create = (api) => {
         h('div.introduction', computed(api.about.obs.description(feed), d => api.message.html.markdown(d || ''))),
         feed !== myId
           ? h('div.actions', [
-              api.contact.html.follow(feed),
               h('div.directMessage', directMessageButton),
+              api.contact.html.follow(feed),
               api.contact.html.block(feed)
             ])
           : '',

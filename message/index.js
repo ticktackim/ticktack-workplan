@@ -8,6 +8,9 @@ module.exports = {
     likes: require('./html/likes'),
     subject: require('./html/subject'),
     timeago: require('./html/timeago')
-  }
+  },
+  sync: {
+    getParticipants: require('./sync/getParticipants'),
+  },
 }
 

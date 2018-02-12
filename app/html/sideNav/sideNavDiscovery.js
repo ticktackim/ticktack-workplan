@@ -20,6 +20,7 @@ exports.needs = nest({
   'history.sync.push': 'first',
   'history.obs.store': 'first',
   'message.html.subject': 'first',
+  'message.sync.getParticipants': 'first',
   'sbot.obs.localPeers': 'first',
   'translations.sync.strings': 'first',
   'unread.sync.isUnread': 'first'
@@ -59,8 +60,8 @@ exports.create = (api) => {
 
     const strings = api.translations.sync.strings()
     const myKey = api.keys.sync.id()
-
     var nearby = api.sbot.obs.localPeers()
+    const getParticipants = api.message.sync.getParticipants
 
     // Unread message counts
     function updateCache (cache, msg) {
@@ -71,8 +72,11 @@ exports.create = (api) => {
     }
 
     function updateUnreadMsgsCache (msg) {
-      updateCache(getUnreadMsgsCache(msg.value.author), msg)
-      updateCache(getUnreadMsgsCache(msg.value.content.root || msg.key), msg)
+      const participantsKey = getParticipants(msg).key
+      updateCache(getUnreadMsgsCache(participantsKey), msg)
+
+      const rootKey = get(msg, 'value.content.root', msg.key)
+      updateCache(getUnreadMsgsCache(rootKey), msg)
     }
 
     pull(
@@ -110,12 +114,12 @@ exports.create = (api) => {
           notifications: notifications(feedId),
           imageEl: api.about.html.avatar(feedId, 'small'),
           label: api.about.obs.name(feedId),
-          selected: location.feed === feedId && !isDiscoverLocation(location),
+          selected: get(location, 'participants', []).join() === feedId && !isDiscoverLocation(location),
           location: computed(recentMsgCache, recent => {
             const lastMsg = recent.find(msg => msg.value.author === feedId)
             return lastMsg
-              ? Object.assign(lastMsg, { feed: feedId })
-              : { page: 'threadNew', feed: feedId }
+              ? Object.assign(lastMsg, { participants: [feedId] })
+              : { page: 'threadNew', participants: [feedId] }
           }),
         }), { comparer: (a, b) => a === b }),
 
@@ -124,8 +128,6 @@ exports.create = (api) => {
 
         // Discover
         Option({
-          // notifications: '!', //TODO - count this! 
-          // imageEl: h('i.fa.fa-binoculars'),
           imageEl: h('i', [
             h('img', { src: path.join(__dirname, '../../../assets', 'discover.png') })
           ]),
@@ -163,26 +165,46 @@ exports.create = (api) => {
         store: recentMsgCache,
         updateTop: updateRecentMsgCache,
         updateBottom: updateRecentMsgCache,
-        render: (msgObs) => {
-          const msg = resolve(msgObs)
-          const { author } = msg.value
-          if (nearby.has(author)) return
+        render
+      })
+      
+      function render (msgObs) {
+        const msg = resolve(msgObs)
+        const participants = getParticipants(msg)
+        // TODO msg has been decorated with a flat participantsKey, could re-hydrate
 
+        if (participants.length === 1 && nearby.has(participants.key)) return
+        const locParticipantsKey = get(location, 'participants', []).join(' ') //TODO collect logic
+
+        if (participants.length === 1) {
+          const author = participants[0]
           return Option({
             //the number of threads with each peer
             notifications: notifications(author),
             imageEl: api.about.html.avatar(author),
             label: api.about.obs.name(author),
-            selected: location.feed === author,
-            location: Object.assign({}, msg, { feed: author }) // TODO make obs?
+            selected: locParticipantsKey === author,
+            location: Object.assign({}, msg, { participants }) // TODO make obs?
           })
         }
-      })
+        else {
+          const rootMsg = get(msg, 'value.content.root', msg)
+          return Option({
+            //the number of threads with each peer
+            notifications: notifications(participants),
+            imageEl: participants.map(p => api.about.html.avatar(p, 'halfSmall')),
+            label: api.message.html.subject(rootMsg),
+            selected: locParticipantsKey === participants.key,
+            location: Object.assign({}, msg, { participants }) // TODO make obs?
+          })
+        }
+      }
 
       function updateRecentMsgCache (soFar, newMsg) {
         soFar.transaction(() => { 
-          const { author, timestamp } = newMsg.value
-          const index = indexOf(soFar, (msg) => author === resolve(msg).value.author)
+          const { timestamp } = newMsg.value
+          newMsg.participantsKey = getParticipants(newMsg).key
+          const index = indexOf(soFar, (msg) => newMsg.participantsKey === resolve(msg).participantsKey)
           var object = Value()
 
           if (index >= 0) {
@@ -219,26 +241,29 @@ exports.create = (api) => {
     }
 
     function notifications (key) {
+      key = typeof key === 'string'
+        ? key
+        : key.key // participants.key case
       return computed(getUnreadMsgsCache(key), cache => cache.length)
     }
 
     function LevelTwoSideNav () {
-      const { key, value, feed: targetUser, page } = location
+      const { key, value, participants, page } = location
       const root = get(value, 'content.root', key)
-      if (!targetUser) return
+      if (isEmpty(participants)) return
       if (page === 'userShow') return
-
 
       const prepend = Option({
         selected: page === 'threadNew',
-        location: {page: 'threadNew', feed: targetUser},
+        location: {page: 'threadNew', participants},
         label: h('Button', strings.threadNew.action.new),
       })
 
-      var userLastMsgCache = usersLastMsgCache.get(targetUser)
+      var participantsKey = participants.join(' ') // TODO collect this repeated logic
+      var userLastMsgCache = usersLastMsgCache.get(participantsKey)
       if (!userLastMsgCache) {
         userLastMsgCache = MutantArray()
-        usersLastMsgCache.put(targetUser, userLastMsgCache)
+        usersLastMsgCache.put(participantsKey, userLastMsgCache)
       }
 
       return api.app.html.scroller({
@@ -248,25 +273,24 @@ exports.create = (api) => {
         filter: () => pull(
           pull.filter(msg => !msg.value.content.root),
           pull.filter(msg => msg.value.content.type === 'post'),
-          pull.filter(msg => msg.value.content.recps),
-          pull.filter(msg => msg.value.content.recps
-            .map(recp => typeof recp === 'object' ? recp.link : recp)
-            .some(recp => recp === targetUser)
-          )
+          pull.filter(msg => getParticipants(msg).key === participantsKey)
         ),
         store: userLastMsgCache,
         updateTop: updateLastMsgCache,
         updateBottom: updateLastMsgCache,
-        render: (rootMsgObs) => {
-          const rootMsg = resolve(rootMsgObs)
-          return Option({
-            notifications: notifications(rootMsg.key),
-            label: api.message.html.subject(rootMsg),
-            selected: rootMsg.key === root,
-            location: Object.assign(rootMsg, { feed: targetUser }),
-          })
-        }
+        render
       })
+
+      function render (rootMsgObs) {
+        const rootMsg = resolve(rootMsgObs)
+        const participants = getParticipants(rootMsg)
+        return Option({
+          notifications: notifications(rootMsg.key),
+          label: api.message.html.subject(rootMsg),
+          selected: rootMsg.key === root,
+          location: Object.assign(rootMsg, { participants }),
+        })
+      }
 
       function updateLastMsgCache (soFar, newMsg) {
         soFar.transaction(() => { 
@@ -306,7 +330,9 @@ exports.create = (api) => {
       return h('Option', { className }, [
         h('div.circle', [
           when(notifications, h('div.alert', notifications)),
-          imageEl
+          Array.isArray(imageEl)
+            ? h('div.many-images', imageEl.slice(0,4)) // not ideal? not enough space to show more though
+            : imageEl
         ]),
         h('div.label', { 'ev-click': goToLocation }, label)
       ])
@@ -315,7 +341,6 @@ exports.create = (api) => {
     function privateMsgFilter () {
       return pull(
         pull.filter(msg => msg.value.content.type === 'post'),
-        pull.filter(msg => msg.value.author != myKey),
         pull.filter(msg => msg.value.content.recps)
       )
     }

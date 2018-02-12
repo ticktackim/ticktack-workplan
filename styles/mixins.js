@@ -84,6 +84,13 @@ $circleSmall {
   height: 2.8rem
   border-radius: 4rem
 }
+$circleHalfSmall {
+  min-width: 1.4rem
+  min-height: 1.4rem
+  width: 1.4rem
+  height: 1.4rem
+  border-radius: 2rem
+}
 
 $circleMedium {
   min-width: 3.5rem
