@@ -9,11 +9,10 @@ Page -channelSubscriptions {
       border-bottom: 1px solid rgba(0,0,0, .1)
     }
 
-    div {
-      :last-child {
-        padding-bottom: 2rem !important
-        /* TODO fix - eww gross */
-      }
+    div.Button {
+      max-width: 20rem
+
+      margin: 2rem auto 12rem
     }
   }
 }

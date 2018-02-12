@@ -23,7 +23,7 @@ Page {
 
     div, section {
       :last-child {
-        padding-bottom: 6rem !important
+        /* padding-bottom: 6rem !important */
       }
     }
   }
