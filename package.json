@@ -64,7 +64,7 @@
     "ssb-query": "^0.1.2",
     "ssb-reduce-stream": "^1.0.2",
     "ssb-ref": "^2.7.1",
-    "ssb-server-channel": "^1.0.1",
+    "ssb-server-channel": "^1.0.2",
     "ssb-ws": "^1.0.3",
     "suggest-box": "^2.2.3",
     "url": "^0.11.0"
