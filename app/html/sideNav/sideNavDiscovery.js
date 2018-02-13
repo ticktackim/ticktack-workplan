@@ -18,6 +18,7 @@ exports.needs = nest({
   'feed.pull.private': 'first',
   'history.sync.push': 'first',
   'history.obs.store': 'first',
+  'keys.sync.id': 'first',
   'message.html.subject': 'first',
   'message.sync.getParticipants': 'first',
   'sbot.obs.localPeers': 'first',
@@ -32,34 +33,26 @@ exports.create = (api) => {
 
   return nest({
     // intercept markUnread and remove them from the cache.
-    'unread.sync.markUnread': function (msg) {
-      unreadMsgsCache.get(msg.value.content.root || msg.key)
-        .delete(msg.key)
-      unreadMsgsCache.get(msg.value.author)
-        .delete(msg.key)
-    },
+    'unread.sync.markUnread': markUnread,
     'app.html.sideNav': sideNav
   })
 
-  function isMatch (location) {
-    if (location.page) {
-      if (location.page.match(/^blog/)) return true
-      if (location.page.match(/^thread/)) return true
-      if (location.page.match(/^user/)) return true
-      if (location.page.match(/^channel/)) return true
-    }
-    if (location.key) {
-      return true
-    }
-    return false
+  function markUnread (msg) {
+    unreadMsgsCache.get(msg.value.content.root || msg.key)
+      .delete(msg.key)
+    
+    const participants = api.message.sync.getParticipants(msg)
+    unreadMsgsCache.get(participants.key)
+      .delete(msg.key)
   }
 
   function sideNav (location) {
-    if (!isMatch(location)) return
+    if (!isSideNavDiscovery(location)) return
 
     const strings = api.translations.sync.strings()
     var nearby = api.sbot.obs.localPeers()
     const getParticipants = api.message.sync.getParticipants
+    const myKey = api.keys.sync.id()
 
     // Unread message counts
     function updateCache (cache, msg) {
@@ -67,6 +60,8 @@ exports.create = (api) => {
     }
 
     function updateUnreadMsgsCache (msg) {
+      if (msg.value.author === myKey) return
+
       const participantsKey = getParticipants(msg).key
       updateCache(getUnreadMsgsCache(participantsKey), msg)
 
@@ -197,8 +192,8 @@ exports.create = (api) => {
       function updateRecentMsgCache (soFar, newMsg) {
         soFar.transaction(() => {
           const { timestamp } = newMsg.value
-          newMsg.participantsKey = getParticipants(newMsg).key
-          const index = indexOf(soFar, (msg) => newMsg.participantsKey === resolve(msg).participantsKey)
+          newMsg.participants = getParticipants(newMsg)
+          const index = indexOf(soFar, (msg) => newMsg.participants.key === resolve(msg).participants.key)
           var object = Value()
 
           if (index >= 0) {
@@ -348,3 +343,17 @@ function indexOf (array, fn) {
   }
   return -1
 }
+
+function isSideNavDiscovery (location) {
+  if (location.page) {
+    if (location.page.match(/^blog/)) return true
+    if (location.page.match(/^thread/)) return true
+    if (location.page.match(/^user/)) return true
+    if (location.page.match(/^channel/)) return true
+  }
+  if (location.key) {
+    return true
+  }
+  return false
+}
+
