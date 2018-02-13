@@ -20,7 +20,6 @@ exports.create = (api) => {
     onceTrue(
       api.sbot.obs.connection,
       sbot => {
-        console.log('nope', sbot.channel)
         if (!sbot.channel) warnings.set(true) // TODO could build a list of missing plugins + effects
         else warnings.set(false)
       }

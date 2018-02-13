@@ -5,7 +5,8 @@ exports.gives = nest('app.html.warning')
 
 exports.needs = nest({
   'app.html.lightbox': 'first',
-  'app.obs.pluginWarnings': 'first'
+  'app.obs.pluginWarnings': 'first',
+  'translations.sync.strings': 'first'
 })
 
 exports.create = (api) => {
@@ -14,17 +15,19 @@ exports.create = (api) => {
   return nest('app.html.warning', function warning () {
     if (seenWarning) return 
 
+    const t = api.translations.sync.strings().pluginWarnings
+
     const lightbox = api.app.html.lightbox(
       h('div', [
-        h('h1', 'Ticktack running in limited mode'),
-        h('p', 'Another scuttlebutt app is managing your shared database. Core functionality will work, but you may find there are some features that do not work.'),
-        h('p', 'If you are running Patchwork, close Patchwork before running Ticktack to get the full set of features'),
+        h('h1', t.heading),
+        h('p', t.description),
+        h('p', t.advice),
         h('Button', {
           'ev-click': () => {
             lightbox.close() 
             seenWarning = true
           }},
-          'okay'
+          t.action.ok
         )
       ])
     )
