@@ -13,21 +13,25 @@ exports.needs = nest({
 })
 
 exports.create = function (api) {
+  var subjectCache = {}
+
   return nest('message.html.subject', subject)
 
   function subject (msg) {
     if (msg === undefined) debugger
     // test if it's a message ref, or a full message object
+    // a message ref is generally passed in if we're fetching the subject of a root message
     if (isMsg(msg)) {
+      if (subjectCache[msg]) return subjectCache[msg]
+
       var subject = Value()
 
       api.sbot.async.get(msg, (err, value) => {
         if (err) throw err
-
-        subject.set(getMsgSubject({
-          key: msg,
-          value: api.message.sync.unbox(value)
-        }))
+        
+        var _subject = getMsgSubject({ key: msg, value: api.message.sync.unbox(value) })
+        subject.set(_subject)
+        subjectCache[msg] = _subject
       })
 
       return subject
