@@ -11,6 +11,7 @@ exports.needs = nest({
   'app.html.topNav': 'first',
   'app.html.scroller': 'first',
   'app.html.channelCard': 'first',
+  'app.obs.pluginWarnings': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
   'channel.obs.subscribed': 'first',
@@ -51,16 +52,12 @@ exports.create = (api) => {
     if (location.scope === "friends") {
       // update list of other all channels
       onceTrue(
-        api.sbot.obs.connection,
-        sbot => {
-          sbot.channel.subscriptions((err, c) => {
-            if (err) throw err
-            let b = map(c, (v,k) => {return {channel: k, users: v}})
-            b = sortBy(b, o => o.users.length)
-            let res = b.reverse()
-
-            otherChannels.set(res.map(c => c.channel))
-          })
+        api.app.obs.pluginWarnings,
+        isWarnings => {
+          if (isWarnings) {
+            return
+          }
+          onceTrue(api.sbot.obs.connection, getChannels)
         }
       )
 
@@ -86,6 +83,16 @@ exports.create = (api) => {
       ])
     }
   })
-}
 
+  function getChannels (sbot) {
+    sbot.channel.subscriptions((err, c) => {
+      if (err) throw err
+      let b = map(c, (v,k) => {return {channel: k, users: v}})
+      b = sortBy(b, o => o.users.length)
+      let res = b.reverse()
+
+      otherChannels.set(res.map(c => c.channel))
+    })
+  }
+}
 
