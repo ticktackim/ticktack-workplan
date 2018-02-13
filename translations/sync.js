@@ -17,4 +17,3 @@ exports.create = (api) => {
     return merge({}, languages.en, languages[language])
   })
 }
-

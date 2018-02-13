@@ -21,15 +21,16 @@ exports.needs = nest({
 })
 
 exports.create = (api) => {
-  var view = Value()
+  var view
 
   return nest({
     'app.html.app': function app () {
       api.app.sync.initialize()
 
+      view = Value()
       var app = h('App', view)
       api.history.obs.location()(renderLocation)
-      api.history.obs.location()(logLocation)
+      api.history.obs.location()(loc => console.log('location:', loc))
 
       startApp()
 
@@ -39,11 +40,13 @@ exports.create = (api) => {
 
   function renderLocation (loc) {
     var page = api.router.sync.router(loc)
-    if (page) view.set([
-      api.app.html.header({location: loc, push: api.history.sync.push}),
-      api.app.html.warning(),
-      page
-    ])
+    if (page) {
+      view.set([
+        api.app.html.header({location: loc, push: api.history.sync.push}),
+        api.app.html.warning(),
+        page
+      ])
+    }
   }
 
   function startApp () {
@@ -51,59 +54,50 @@ exports.create = (api) => {
 
     const delay = process.env.STARTUP_DELAY || 2000
     setTimeout(enterApp, delay)
+  }
 
-    function enterApp() {
-      const isOnboarded = api.settings.sync.get('onboarded')
-      const initialPage = process.env.STARTUP_PAGE || 'blogIndex'
-      if (isOnboarded) {
-        autoPub()
-        api.history.sync.push({page: initialPage})
-      }
-      else {
-        api.history.sync.push({
-          page:'userEdit',
-          feed: api.keys.sync.id(),
-          callback: (err, didEdit) => {
-            if (err) throw new Error ('Error editing profile', err)
+  function enterApp () {
+    const isOnboarded = api.settings.sync.get('onboarded')
+    const initialPage = process.env.STARTUP_PAGE || 'blogIndex'
+    if (isOnboarded) {
+      autoPub()
+      api.history.sync.push({page: initialPage})
+    } else {
+      api.history.sync.push({
+        page: 'userEdit',
+        feed: api.keys.sync.id(),
+        callback: (err, didEdit) => {
+          if (err) throw new Error('Error editing profile', err)
 
-            // if they clicked something, just mark them onboarded
-            api.settings.sync.set({ onboarded: true })
+          // if they clicked something, just mark them onboarded
+          api.settings.sync.set({ onboarded: true })
 
-            autoPub()
-            api.history.sync.push({page: initialPage})
-          }
-        })
-      }
-    }
-
-    function autoPub () {
-      var invites = api.config.sync.load().autoinvites
-      if(!invites) {
-        console.log('no invites')
-        return
-      }
-
-      var self_id = api.config.sync.load().keys.id
-      api.sbot.async.friendsGet({dest: self_id}, function (err, friends) {
-        //if you have less than 5 followers, maybe use the autoinvite
-        if(Object.keys(friends).length <= 5)
-          invites.forEach(invite => {
-            console.log('using invite:', invite)
-            api.invite.async.autofollow(invite, (err, follows) => {
-              if (err) console.error('Autofollow error:', err)
-              else console.log('Autofollow success', follows)
-            })
-          })
-        else
-          console.log('no autoinvite - you have friends already')
+          autoPub()
+          api.history.sync.push({page: initialPage})
+        }
       })
     }
   }
-}
 
-function logLocation (loc) {
-  console.groupCollapsed('%c location', 'color: #00f')
-  console.log(loc)
-  console.groupEnd()
+  function autoPub () {
+    var invites = api.config.sync.load().autoinvites
+    if (!invites) {
+      console.log('no invites')
+      return
+    }
 
+    var self_id = api.config.sync.load().keys.id
+    api.sbot.async.friendsGet({dest: self_id}, function (err, friends) {
+      // if you have less than 5 followers, maybe use the autoinvite
+      if (Object.keys(friends).length <= 5) {
+        invites.forEach(invite => {
+          console.log('using invite:', invite)
+          api.invite.async.autofollow(invite, (err, follows) => {
+            if (err) console.error('Autofollow error:', err)
+            else console.log('Autofollow success', follows)
+          })
+        })
+      } else { console.log('no autoinvite - you have friends already') }
+    })
+  }
 }

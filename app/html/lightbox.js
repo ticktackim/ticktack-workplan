@@ -1,11 +1,10 @@
 const nest = require('depnest')
-const { h, computed, when, Value } = require('mutant')
+const { h, when, Value } = require('mutant')
 
 exports.gives = nest('app.html.lightbox')
 
 exports.create = (api) => {
   return nest('app.html.lightbox', (content, isOpen) => {
-
     if (typeof isOpen !== 'function') isOpen = Value(false)
 
     const openMe = () => isOpen.set(true)
@@ -22,4 +21,3 @@ exports.create = (api) => {
     return lb
   })
 }
-

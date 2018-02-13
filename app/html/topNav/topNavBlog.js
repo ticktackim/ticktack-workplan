@@ -1,12 +1,11 @@
 const nest = require('depnest')
-const { h, computed, when } = require('mutant')
-const get = require('lodash/get')
+const { h } = require('mutant')
 
 exports.gives = nest('app.html.topNav')
 
 exports.needs = nest({
   'history.sync.push': 'first',
-  'translations.sync.strings': 'first',
+  'translations.sync.strings': 'first'
 })
 
 exports.create = (api) => {
@@ -14,23 +13,22 @@ exports.create = (api) => {
     const strings = api.translations.sync.strings()
     const goTo = (loc) => () => api.history.sync.push(loc)
 
-    if (!['blogIndex', 'blogSearch'].includes(location.page)) return 
+    if (!['blogIndex', 'blogSearch'].includes(location.page)) return
 
     return h('TopNav -blog', [
-      h('div.left', [ 
-        h('div', { 
+      h('div.left', [
+        h('div', {
           className: location.page === 'blogIndex' ? '-active' : '',
-          'ev-click': goTo({ page: 'blogIndex' }) 
+          'ev-click': goTo({ page: 'blogIndex' })
         }, strings.topNav.blogsAll),
-        h('div', { 
+        h('div', {
           className: location.page === 'blogSearch' ? '-active' : '',
-          'ev-click': goTo({ page: 'blogSearch' }) 
-        }, strings.topNav.blogSearch),
+          'ev-click': goTo({ page: 'blogSearch' })
+        }, strings.topNav.blogSearch)
       ]),
-      h('div.right', [ 
-        h('Button -strong', { 'ev-click': () => api.history.sync.push({ page: 'blogNew' }) }, strings.blogNew.actions.writeBlog),
+      h('div.right', [
+        h('Button -strong', { 'ev-click': () => api.history.sync.push({ page: 'blogNew' }) }, strings.blogNew.actions.writeBlog)
       ])
     ])
   })
 }
-

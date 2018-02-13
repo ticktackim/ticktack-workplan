@@ -1,6 +1,6 @@
-module.exports = { 
+module.exports = {
   async: {
-    publish: require('./async/publish'),
+    publish: require('./async/publish')
   },
   html: {
     channel: require('./html/channel'),
@@ -10,7 +10,6 @@ module.exports = {
     timeago: require('./html/timeago')
   },
   sync: {
-    getParticipants: require('./sync/getParticipants'),
-  },
+    getParticipants: require('./sync/getParticipants')
+  }
 }
-

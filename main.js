@@ -10,11 +10,11 @@ require('./context-menu')
 
 // from more specialized to more general
 const sockets = combine(
-  //need some modules first
-  { 
+  // need some modules first
+  {
     settings: require('patch-settings'),
     translations: require('./translations/sync'),
-    suggestions: require('patch-suggest'), // so that styles can be over-ridden
+    suggestions: require('patch-suggest') // so that styles can be over-ridden
   },
   {
     about: require('./about'),
@@ -22,7 +22,7 @@ const sockets = combine(
     blob: require('./blob'),
     blog: require('./blog'),
     contact: require('./contact'),
-    //config: require('./ssb-config'),
+    // config: require('./ssb-config'),
     config: require('./config'),
     // group: require('./group'),
     message: require('./message'),
@@ -40,9 +40,8 @@ const sockets = combine(
 )
 
 const api = entry(sockets, nest({
-  'app.html.app': 'first',
+  'app.html.app': 'first'
 }))
 
 document.body.appendChild(api.app.html.app())
 // console.log(api.config.sync.load())
-

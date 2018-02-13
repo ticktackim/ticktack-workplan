@@ -10,16 +10,17 @@ exports.needs = nest({
 exports.create = function (api) {
   return nest('message.html.channel', channel)
 
-  function channel (msgOrChannel, opts = {} ) {
-    const channel = typeof msgOrChannel === 'string'
+  function channel (msgOrChannel, opts = {}) {
+    var channel = typeof msgOrChannel === 'string'
       ? msgOrChannel
       : msgOrChannel.value.content.channel
+    channel = channel.replace(/^#/, '')
 
     if (!channel) return
 
-    const { 
+    const {
       classList = [],
-      location = { page: 'blogSearch', channel }
+      location = { page: 'channelShow', channel }
     } = opts
 
     const goToChannel = (e) => {
@@ -34,5 +35,3 @@ exports.create = function (api) {
     }, channel)
   }
 }
-
-

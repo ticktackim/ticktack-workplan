@@ -42,4 +42,3 @@ exports.create = (api) => {
     api.sbot.async.publish(like)
   }
 }
-

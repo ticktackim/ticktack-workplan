@@ -10,10 +10,9 @@ function customizer (objVal, srcVal, key, obj, src, stack) {
   // See docs https://lodash.com/docs/4.17.4#mergeWith
 
   if (objVal == undefined) { // implies zh is missing key
-    if (typeof srcVal == 'string') console.log(key, '=', srcVal)
+    if (typeof srcVal === 'string') console.log(key, '=', srcVal)
   }
 }
-
 
 merge(zh, en, customizer)
 // signature: obj, src, customizer

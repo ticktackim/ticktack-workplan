@@ -1,8 +1,5 @@
 const nest = require('depnest')
-const { h, computed, when } = require('mutant')
-const { title: getTitle } = require('markdown-summary')
-const last = require('lodash/last')
-const get = require('lodash/get')
+const { h } = require('mutant')
 
 exports.gives = nest('app.page.blogShow')
 
@@ -15,11 +12,10 @@ exports.needs = nest({
   'contact.html.follow': 'first',
   'message.html.channel': 'first',
   'message.html.likes': 'first',
-  'message.html.markdown': 'first',
   'message.html.timeago': 'first',
   'feed.obs.thread': 'first',
   'blog.html.title': 'first',
-  'blog.html.content': 'first',
+  'blog.html.content': 'first'
 })
 
 exports.create = (api) => {
@@ -28,16 +24,15 @@ exports.create = (api) => {
   function blogShow (blogMsg) {
     // blogMsg = a thread (message, may be decorated with replies)
 
-    const { author, content } = blogMsg.value
+    const { author } = blogMsg.value
 
     const blog = api.blog.html.content(blogMsg)
     const title = api.blog.html.title(blogMsg)
 
     const thread = api.feed.obs.thread(blogMsg.key)
     const comments = api.app.html.comments(thread)
-    const branch = thread.lastId
 
-    const { timeago, channel, markdown } = api.message.html
+    const { timeago, channel } = api.message.html
 
     return h('Page -blogShow', [
       api.app.html.sideNav({ page: 'blogShow' }), // HACK to highlight discover
@@ -58,19 +53,14 @@ exports.create = (api) => {
               h('div.rightCol', [
                 h('div.name', api.about.obs.name(author)),
                 api.contact.html.follow(author)
-              ]),
+              ])
             ])
           ]),
           h('div.break', h('hr')),
           h('section.blog', blog),
-          comments,
-        ]),
+          comments
+        ])
       ])
     ])
   }
 }
-
-
-
-
-

@@ -17,8 +17,8 @@ exports.needs = nest({
 
 exports.create = (api) => {
   return nest('app.html.thread', function (thread) {
-    //catch any code that still uses this the old way...
-    if('string' === typeof thread) throw new Error('thread should be observable')
+    // catch any code that still uses this the old way...
+    if (typeof thread === 'string') throw new Error('thread should be observable')
     const myId = api.keys.sync.id()
     const chunkedMessages = buildChunkedMessages(thread.messages)
 
@@ -54,7 +54,7 @@ exports.create = (api) => {
       const raw = get(msg, 'value.content.text')
       var unread = api.unread.sync.isUnread(msg) ? ' -unread' : ''
       api.unread.sync.markRead(msg)
-      return h('div.msg'+unread, api.message.html.markdown(raw))
+      return h('div.msg' + unread, api.message.html.markdown(raw))
     }
 
     threadView.subject = computed(thread.messages, msgs => {
@@ -99,7 +99,3 @@ function isSameAuthor (msgA, msgB) {
   // TODO (mix) use lodash/get
   return msgA.value.author === msgB.value.author
 }
-
-
-
-

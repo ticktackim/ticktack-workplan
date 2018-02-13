@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, Array: MutantArray, Value, map, computed, when, resolve, throttle } = require('mutant')
+const { h, Value, map, computed, when, resolve, throttle } = require('mutant')
 const get = require('lodash/get')
 
 exports.gives = nest('app.html.comments')
@@ -15,7 +15,7 @@ exports.needs = nest({
   'message.html.likes': 'first',
   'unread.sync.markRead': 'first',
   'unread.sync.isUnread': 'first',
-  'translations.sync.strings': 'first',
+  'translations.sync.strings': 'first'
 })
 
 exports.create = (api) => {
@@ -29,7 +29,7 @@ exports.create = (api) => {
     const messagesTree = computed(throttle(messages, 200), msgs => {
       return msgs
         .filter(msg => forkOf(msg) === undefined)
-        .map(threadMsg => { 
+        .map(threadMsg => {
           const nestedReplies = msgs.filter(msg => forkOf(msg) === threadMsg.key)
           threadMsg.replies = nestedReplies
           return threadMsg
@@ -56,7 +56,7 @@ exports.create = (api) => {
     return h('Comments', [
       // when(twoComposers, compose({ meta, shrink: true, canAttach: false })),
       map(messagesTree, msg => Comment(msg, root, branch)),
-      compose({ meta, feedIdsInThread, shrink: false, canAttach: true, placeholder: strings.writeComment }),
+      compose({ meta, feedIdsInThread, shrink: false, canAttach: true, placeholder: strings.writeComment })
     ])
   }
 
@@ -74,7 +74,7 @@ exports.create = (api) => {
 
     // // TODO - move this upstream into patchcore:feed.obs.thread ??
     // // OR change strategy to use forks
-    // const backlinks = api.backlinks.obs.for(msg.key) 
+    // const backlinks = api.backlinks.obs.for(msg.key)
     // const nestedReplies = computed(backlinks, backlinks => {
     //   return backlinks.filter(backlinker => {
     //     const { type, root } = backlinker.value.content
@@ -95,7 +95,7 @@ exports.create = (api) => {
       shrink: false,
       canAttach: true,
       canPreview: false,
-      placeholder: strings.writeComment 
+      placeholder: strings.writeComment
     }, toggleCompose)
 
     return h('Comment', { className }, [
@@ -106,18 +106,18 @@ exports.create = (api) => {
           api.message.html.timeago(msg)
         ]),
         h('section.content', api.message.html.markdown(raw)),
-        when(msgObs.replies, 
-          h('section.replies', 
+        when(msgObs.replies,
+          h('section.replies',
             map(msgObs.replies, NestedComment)
           )
         ),
         h('section.actions', [
-          h('div.reply', { 'ev-click': toggleCompose }, [ 
-            h('i.fa.fa-commenting-o'),
+          h('div.reply', { 'ev-click': toggleCompose }, [
+            h('i.fa.fa-commenting-o')
           ]),
           api.message.html.likes(msg)
         ]),
-        when(nestedReplyCompose, nestedReplyComposer),
+        when(nestedReplyCompose, nestedReplyComposer)
       ])
     ])
   }
@@ -136,7 +136,7 @@ exports.create = (api) => {
           h('div.name', api.about.obs.name(author)),
           api.message.html.timeago(msg)
         ]),
-        h('section.content', api.message.html.markdown(raw)),
+        h('section.content', api.message.html.markdown(raw))
       ])
     ])
 
@@ -147,7 +147,3 @@ exports.create = (api) => {
 function forkOf (msg) {
   return get(msg, 'value.content.fork')
 }
-
-
-
-

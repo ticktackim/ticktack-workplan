@@ -28,7 +28,7 @@ exports.create = (api) => {
       type: 'blog',
       channel: Value(),
       title: Value(),
-      summary: Value(),
+      summary: Value()
     })
 
     const composer = api.message.html.compose(
@@ -44,14 +44,14 @@ exports.create = (api) => {
           var stream = pull.values([content.text])
           delete content.text
           api.sbot.async.addBlob(stream, function (err, hash) {
-            if(err) return cb(err)
-            if(!hash) throw new Error('missing hash')
+            if (err) return cb(err)
+            if (!hash) throw new Error('missing hash')
             content.blog = hash
             cb(null, content)
           })
         }
       },
-      (err, msg) => api.history.sync.push(err ? err : { page: 'blogIndex' })
+      (err, msg) => api.history.sync.push(err || { page: 'blogIndex' })
     )
 
     const channelInput = h('input', {
@@ -72,14 +72,14 @@ exports.create = (api) => {
             h('input', {
               'ev-input': e => meta.title.set(e.target.value),
               placeholder: strings.blogNew.field.title
-            }),
+            })
           ]),
           h('div.field -summary', [
             h('div.label', strings.blogNew.field.summary),
             h('input', {
               'ev-input': e => meta.summary.set(e.target.value),
               placeholder: strings.blogNew.field.summary
-            }),
+            })
           ]),
           composer
         ])
@@ -94,8 +94,7 @@ exports.create = (api) => {
           return s
         })
         .map(s => {
-          if (s.subtitle === 'subscribed')
-            s.subtitle = h('i.fa.fa-heart') // TODO - translation-friendly subscribed
+          if (s.subtitle === 'subscribed') { s.subtitle = h('i.fa.fa-heart') } // TODO - translation-friendly subscribed
           return s
         })
 
@@ -118,8 +117,3 @@ exports.create = (api) => {
     return page
   }
 }
-
-
-
-
-
