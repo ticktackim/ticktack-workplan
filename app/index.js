@@ -20,7 +20,11 @@ module.exports = {
     sideNav: {
       addressBook: require('./html/sideNav/sideNavAddressBook'),
       discovery: require('./html/sideNav/sideNavDiscovery')
-    }
+    },
+    warning: require('./html/warning'),
+  },
+  obs: {
+    pluginWarnings: require('./obs/pluginWarnings'),
   },
   page: {
     addressBook: require('./page/addressBook'),

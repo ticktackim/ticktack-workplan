@@ -6,6 +6,7 @@ exports.gives = nest('app.html.app')
 exports.needs = nest({
   'app.sync.initialize': 'map',
   'app.html.header': 'first',
+  'app.html.warning': 'first',
   'history.obs.location': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
@@ -42,6 +43,7 @@ exports.create = (api) => {
     if (page) {
       view.set([
         api.app.html.header({location: loc, push: api.history.sync.push}),
+        api.app.html.warning(),
         page
       ])
     }

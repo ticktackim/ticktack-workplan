@@ -7,6 +7,7 @@ exports.create = (api) => {
   return nest('app.html.lightbox', (content, isOpen) => {
     if (typeof isOpen !== 'function') isOpen = Value(false)
 
+    const openMe = () => isOpen.set(true)
     const closeMe = () => isOpen.set(false)
 
     const lb = h('Lightbox', { className: when(isOpen, '-open', '-close'), 'ev-click': closeMe },
@@ -14,6 +15,7 @@ exports.create = (api) => {
         content
       ]))
 
+    lb.open = openMe
     lb.close = closeMe
 
     return lb

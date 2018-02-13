@@ -26,7 +26,7 @@ exports.create = function (api) {
     }
 
     onceTrue(
-      api.sbot.obs.connection(),
+      api.sbot.obs.connection,
       sbot => sbot.blobs.want(blog, (err, success) => {
         if (err) throw err
 

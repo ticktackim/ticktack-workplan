@@ -1,7 +1,7 @@
 const nest = require('depnest')
 const { h, computed, when } = require('mutant')
 const path = require('path')
-const remote = require('electron').remote
+const { remote } = require('electron')
 
 exports.gives = nest('app.html.header')
 
@@ -69,3 +69,4 @@ exports.create = (api) => {
 function assetPath (name) {
   return path.join(__dirname, '../../assets', name)
 }
+
