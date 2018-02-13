@@ -6,7 +6,7 @@ Reconstructing a trusty social network
 `
   },
   blogIndex: {
-    title: 'Discover',
+    title: 'Discover'
   },
   topNav: {
     blogsAll: 'Dynamics',
@@ -20,7 +20,7 @@ Reconstructing a trusty social network
     actions: {
       edit: 'Edit',
       preview: 'Preview',
-      writeBlog: 'Write a blog',
+      writeBlog: 'Write a blog'
     }
   },
   channel: 'Channel',
@@ -32,10 +32,10 @@ Reconstructing a trusty social network
   sendMessage: 'Send',
   showMore: 'Show More',
   directMessages: 'Direct Messages',
-  home: "Home",
-  error: "Error",
+  home: 'Home',
+  error: 'Error',
   errorNotFound: "The page wasn't found",
-  groupNew: "New Group",
+  groupNew: 'New Group',
   groupFind: {
     action: {
       findAGroup: 'Find Group',
@@ -48,11 +48,11 @@ Reconstructing a trusty social network
       createFirstThread: 'Start this group by posting the first thread.'
     }
   },
-  groupIndex: "Group Index",
+  groupIndex: 'Group Index',
   settingsPage: {
-    title: "Settings",
+    title: 'Settings',
     action: {
-      edit: 'Edit',
+      edit: 'Edit'
     },
     section: {
       name: 'Name',
@@ -68,7 +68,7 @@ Reconstructing a trusty social network
         friends: 'Search your friends',
         following: "Search people you're following",
         followers: 'Search your followers',
-        search: 'Search for a user',
+        search: 'Search for a user'
       }
     },
     heading: {
@@ -84,7 +84,7 @@ Reconstructing a trusty social network
     pageTitle: 'New Thread',
     field: {
       to: 'To',
-      subject: 'Subject',
+      subject: 'Subject'
     },
     action: {
       new: 'New Message',
@@ -96,7 +96,7 @@ Reconstructing a trusty social network
     section: {
       avatar: 'Avatar',
       name: 'Name',
-      introduction: 'Introduction',
+      introduction: 'Introduction'
     },
     instruction: {
       crop: 'Click and drag to crop your avatar'
@@ -109,7 +109,7 @@ Reconstructing a trusty social network
   },
   userFind: {
     action: {
-      findAUser: 'Find a user',
+      findAUser: 'Find a user'
     }
   },
   userShow: {
@@ -126,9 +126,9 @@ Reconstructing a trusty social network
       friends: 'You are friends',
       youFollow: 'You follow them',
       theyFollow: 'They follow you',
-      userIsInGroups: "is in groups:",
+      userIsInGroups: 'is in groups:',
       userConversationsWith: 'conversations you\'ve had with',
-      follow: "Follow",
+      follow: 'Follow',
       friendsInCommon: 'friends in common'
     }
   },
@@ -139,8 +139,8 @@ Reconstructing a trusty social network
     }
   },
   subscriptions: {
-    user: "My subscriptions",
-    friends: "Friends subscriptions",
+    user: 'My subscriptions',
+    friends: 'Friends subscriptions',
     state: {
       noSubscriptions: 'You have no subscriptions yet'
     }

@@ -29,7 +29,7 @@ exports.create = function (api) {
       placeholder,
       shrink = true,
       canAttach = true, canPreview = true,
-      prepublish,
+      prepublish
     } = options
 
     const strings = api.translations.sync.strings()
@@ -68,7 +68,7 @@ exports.create = function (api) {
     textArea.publish = publish // TODO: fix - clunky api for the keyboard shortcut to target
 
     var fileInput
-    if(!meta.recps) {
+    if (!meta.recps) {
       fileInput = api.blob.html.input(file => {
         files.push(file)
         filesById[file.link] = file
@@ -89,8 +89,7 @@ exports.create = function (api) {
     }
     // if fileInput is null, send button moves to the left side
     // and we don't want that.
-    else
-      fileInput = h('input', { style: {visibility: 'hidden'} })
+    else { fileInput = h('input', { style: {visibility: 'hidden'} }) }
 
     function PreviewSetup (strings) {
       var showPreview = Value(false)
@@ -98,7 +97,7 @@ exports.create = function (api) {
         {
           className: when(showPreview, '-strong', '-subtle'),
           'ev-click': () => showPreview.set(!showPreview())
-        }, 
+        },
         when(showPreview, strings.blogNew.actions.edit, strings.blogNew.actions.preview)
       )
       return { previewBtn, showPreview }
@@ -152,8 +151,7 @@ exports.create = function (api) {
         text,
         mentions
       })
-      for(var k in content)
-          content[k] = resolve(content[k])
+      for (var k in content) { content[k] = resolve(content[k]) }
 
       if (!content.channel) delete content.channel
       if (!mentions.length) delete content.mentions
@@ -161,17 +159,15 @@ exports.create = function (api) {
 
       if (typeof prepublish === 'function') {
         prepublish(content, function (err, content) {
-          if(err) handleErr(err)
+          if (err) handleErr(err)
           else api.message.async.publish(content, done)
         })
-      }
-      else
-        api.message.async.publish(content, done)
+      } else { api.message.async.publish(content, done) }
 
       function done (err, msg) {
         publishBtn.disabled = false
         if (err) handleErr(err)
-        else if (msg) { 
+        else if (msg) {
           textRaw.set('')
           textArea.value = ''
         }
@@ -186,5 +182,3 @@ exports.create = function (api) {
     }
   }
 }
-
-

@@ -4,7 +4,7 @@ const get = require('lodash/get')
 exports.gives = nest('message.sync.getParticipants')
 
 exports.needs = nest({
-  'keys.sync.id': 'first',
+  'keys.sync.id': 'first'
 })
 
 exports.create = function (api) {
@@ -22,6 +22,3 @@ exports.create = function (api) {
     return participants
   }
 }
-
-
-

@@ -8,7 +8,7 @@ exports.needs = nest({
   'contact.async.unfollow': 'first',
   'contact.obs.followers': 'first',
   'keys.sync.id': 'first',
-  'translations.sync.strings': 'first',
+  'translations.sync.strings': 'first'
 })
 
 exports.create = (api) => {
@@ -33,16 +33,15 @@ exports.create = (api) => {
       ev.stopPropagation()
       api.contact.async.unfollow(feed)
     }
-    
+
     return h('Follow', { className },
       when(theirFollowers.sync,
         when(youFollowThem,
           h('Button', { 'ev-click': unfollow(feed) }, strings.userShow.action.unfollow),
           h('Button -strong', { 'ev-click': follow(feed) }, strings.userShow.action.follow)
         ),
-        h('Button', { disabled: 'disabled' }, strings.loading )
+        h('Button', { disabled: 'disabled' }, strings.loading)
       )
     )
   }
 }
-

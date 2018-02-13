@@ -4,7 +4,7 @@ const pull = require('pull-stream')
 
 exports.gives = nest('app.page.addressBook')
 
-//declare consts to avoid magic-string errors
+// declare consts to avoid magic-string errors
 const FRIENDS = 'friends'
 const FOLLOWING = 'following'
 const FOLLOWERS = 'followers'
@@ -22,13 +22,13 @@ exports.needs = nest({
   'contact.obs.relationships': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
-  'translations.sync.strings': 'first',
+  'translations.sync.strings': 'first'
 })
 
 exports.create = (api) => {
   return nest('app.page.addressBook', function (location) {
     // location here can expected to be: { page: 'addressBook'}
- 
+
     const strings = api.translations.sync.strings()
     const myKey = api.keys.sync.id()
     const relationships = api.contact.obs.relationships(myKey)
@@ -41,16 +41,13 @@ exports.create = (api) => {
 
     const suggester = api.about.async.suggest()
     const users = computed([relationships, input], (relationships, input) => {
-      if (section === SEARCH)
-        return suggester(input)
-      else {
+      if (section === SEARCH) { return suggester(input) } else {
         const sectionRels = relationships[section]
         if (!input) {
           return sectionRels // show all e.g. friends
             .reverse()
             .map(id => { return { id, title: api.about.obs.name(id) } })
-        }
-        else { // show suggestions, and filter just the ones we want e.g. friends
+        } else { // show suggestions, and filter just the ones we want e.g. friends
           return suggester(input, relationships.followers)  // add extraIds to suggester
             .filter(user => sectionRels.includes(user.id))
         }
@@ -63,7 +60,7 @@ exports.create = (api) => {
       api.app.html.sideNav(location, relationships),
       h('Scroller.content', [
         h('section.top', [
-          api.app.html.topNav(location, input),
+          api.app.html.topNav(location, input)
         ]),
         h('section.content', [
           h('div.results', map(users, user => {
@@ -73,10 +70,9 @@ exports.create = (api) => {
               // h('pre.key', user.id),
               api.contact.html.follow(user.id)
             ])
-          })),
+          }))
         ])
       ])
     ])
   })
 }
-

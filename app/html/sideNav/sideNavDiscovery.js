@@ -16,7 +16,6 @@ exports.needs = nest({
   'about.html.avatar': 'first',
   'about.obs.name': 'first',
   'feed.pull.private': 'first',
-  'keys.sync.id': 'first',
   'history.sync.push': 'first',
   'history.obs.store': 'first',
   'message.html.subject': 'first',
@@ -32,14 +31,14 @@ exports.create = (api) => {
   var unreadMsgsCache = Dict() // { id: [ msgs ] }
 
   return nest({
-    //intercept markUnread and remove them from the cache.
+    // intercept markUnread and remove them from the cache.
     'unread.sync.markUnread': function (msg) {
       unreadMsgsCache.get(msg.value.content.root || msg.key)
         .delete(msg.key)
       unreadMsgsCache.get(msg.value.author)
         .delete(msg.key)
     },
-    'app.html.sideNav': sideNav,
+    'app.html.sideNav': sideNav
   })
 
   function isMatch (location) {
@@ -59,16 +58,12 @@ exports.create = (api) => {
     if (!isMatch(location)) return
 
     const strings = api.translations.sync.strings()
-    const myKey = api.keys.sync.id()
     var nearby = api.sbot.obs.localPeers()
     const getParticipants = api.message.sync.getParticipants
 
     // Unread message counts
     function updateCache (cache, msg) {
-      if(api.unread.sync.isUnread(msg)) 
-        cache.add(msg.key)
-      else
-        cache.delete(msg.key)
+      if (api.unread.sync.isUnread(msg)) { cache.add(msg.key) } else { cache.delete(msg.key) }
     }
 
     function updateUnreadMsgsCache (msg) {
@@ -101,8 +96,8 @@ exports.create = (api) => {
         const PAGES_UNDER_DISCOVER = ['blogIndex', 'blogShow', 'userShow']
 
         if (PAGES_UNDER_DISCOVER.includes(location.page)) return true
-        if (location.page === 'threadNew') return false        
-        if (location.page === 'channelSubscriptions') return false        
+        if (location.page === 'threadNew') return false
+        if (location.page === 'channelSubscriptions') return false
         if (get(location, 'value.private') === undefined) return true
         return false
       }
@@ -120,11 +115,11 @@ exports.create = (api) => {
             return lastMsg
               ? Object.assign(lastMsg, { participants: [feedId] })
               : { page: 'threadNew', participants: [feedId] }
-          }),
+          })
         }), { comparer: (a, b) => a === b }),
 
         // ---------------------
-        computed(nearby, n => !isEmpty(n) ?  h('hr') : null),
+        computed(nearby, n => !isEmpty(n) ? h('hr') : null),
 
         // Discover
         Option({
@@ -133,7 +128,7 @@ exports.create = (api) => {
           ]),
           label: strings.blogIndex.title,
           selected: isDiscoverLocation(location),
-          location: { page: 'blogIndex' },
+          location: { page: 'blogIndex' }
         }),
 
         // My subscriptions
@@ -143,7 +138,7 @@ exports.create = (api) => {
           ]),
           label: strings.subscriptions.user,
           selected: location.page === 'channelSubscriptions' && location.scope === 'user',
-          location: { page: 'channelSubscriptions', scope: 'user' },
+          location: { page: 'channelSubscriptions', scope: 'user' }
         }),
 
         // Friends subscriptions
@@ -153,7 +148,7 @@ exports.create = (api) => {
           ]),
           label: strings.subscriptions.friends,
           selected: location.page === 'channelSubscriptions' && location.scope === 'friends',
-          location: { page: 'channelSubscriptions', scope: 'friends' },
+          location: { page: 'channelSubscriptions', scope: 'friends' }
         })
       ]
 
@@ -167,30 +162,29 @@ exports.create = (api) => {
         updateBottom: updateRecentMsgCache,
         render
       })
-      
+
       function render (msgObs) {
         const msg = resolve(msgObs)
         const participants = getParticipants(msg)
         // TODO msg has been decorated with a flat participantsKey, could re-hydrate
 
         if (participants.length === 1 && nearby.has(participants.key)) return
-        const locParticipantsKey = get(location, 'participants', []).join(' ') //TODO collect logic
+        const locParticipantsKey = get(location, 'participants', []).join(' ') // TODO collect logic
 
         if (participants.length === 1) {
           const author = participants[0]
           return Option({
-            //the number of threads with each peer
+            // the number of threads with each peer
             notifications: notifications(author),
             imageEl: api.about.html.avatar(author),
             label: api.about.obs.name(author),
             selected: locParticipantsKey === author,
             location: Object.assign({}, msg, { participants }) // TODO make obs?
           })
-        }
-        else {
+        } else {
           const rootMsg = get(msg, 'value.content.root', msg)
           return Option({
-            //the number of threads with each peer
+            // the number of threads with each peer
             notifications: notifications(participants),
             imageEl: participants.map(p => api.about.html.avatar(p, 'halfSmall')),
             label: api.message.html.subject(rootMsg),
@@ -201,7 +195,7 @@ exports.create = (api) => {
       }
 
       function updateRecentMsgCache (soFar, newMsg) {
-        soFar.transaction(() => { 
+        soFar.transaction(() => {
           const { timestamp } = newMsg.value
           newMsg.participantsKey = getParticipants(newMsg).key
           const index = indexOf(soFar, (msg) => newMsg.participantsKey === resolve(msg).participantsKey)
@@ -211,7 +205,7 @@ exports.create = (api) => {
             // reference already exists, lets use this instead!
             const existingMsg = soFar.get(index)
 
-            if (resolve(existingMsg).value.timestamp > timestamp) return 
+            if (resolve(existingMsg).value.timestamp > timestamp) return
             // but abort if the existing reference is newer
 
             object = existingMsg
@@ -228,13 +222,12 @@ exports.create = (api) => {
           }
         })
       }
-
     }
 
     function getUnreadMsgsCache (key) {
       var cache = unreadMsgsCache.get(key)
       if (!cache) {
-        cache = Set ()
+        cache = Set()
         unreadMsgsCache.put(key, cache)
       }
       return cache
@@ -256,7 +249,7 @@ exports.create = (api) => {
       const prepend = Option({
         selected: page === 'threadNew',
         location: {page: 'threadNew', participants},
-        label: h('Button', strings.threadNew.action.new),
+        label: h('Button', strings.threadNew.action.new)
       })
 
       var participantsKey = participants.join(' ') // TODO collect this repeated logic
@@ -288,12 +281,12 @@ exports.create = (api) => {
           notifications: notifications(rootMsg.key),
           label: api.message.html.subject(rootMsg),
           selected: rootMsg.key === root,
-          location: Object.assign(rootMsg, { participants }),
+          location: Object.assign(rootMsg, { participants })
         })
       }
 
       function updateLastMsgCache (soFar, newMsg) {
-        soFar.transaction(() => { 
+        soFar.transaction(() => {
           const { timestamp } = newMsg.value
           const index = indexOf(soFar, (msg) => timestamp === resolve(msg).value.timestamp)
 
@@ -313,7 +306,7 @@ exports.create = (api) => {
     }
 
     function Option ({ notifications = 0, imageEl, label, location, selected }) {
-      const className = selected ? '-selected' : '' 
+      const className = selected ? '-selected' : ''
       function goToLocation (e) {
         e.preventDefault()
         e.stopPropagation()
@@ -331,7 +324,7 @@ exports.create = (api) => {
         h('div.circle', [
           when(notifications, h('div.alert', notifications)),
           Array.isArray(imageEl)
-            ? h('div.many-images', imageEl.slice(0,4)) // not ideal? not enough space to show more though
+            ? h('div.many-images', imageEl.slice(0, 4)) // not ideal? not enough space to show more though
             : imageEl
         ]),
         h('div.label', { 'ev-click': goToLocation }, label)
@@ -355,5 +348,3 @@ function indexOf (array, fn) {
   }
   return -1
 }
-
-

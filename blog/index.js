@@ -4,4 +4,3 @@ module.exports = {
     blog: require('./html/blog')
   }
 }
-

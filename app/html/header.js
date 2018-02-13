@@ -1,25 +1,21 @@
 const nest = require('depnest')
 const { h, computed, when } = require('mutant')
-const get = require('lodash/get')
 const path = require('path')
 const remote = require('electron').remote
 
 exports.gives = nest('app.html.header')
 
-exports.needs = nest('keys.sync.id', 'first')
-
 const SETTINGS_PAGES = [
   'settings',
-  'userEdit',
+  'userEdit'
 ]
 
 exports.create = (api) => {
   return nest('app.html.header', (nav) => {
     const { location, push } = nav
-    const myKey = api.keys.sync.id()
 
     const loc = computed(location, location => {
-      if (typeof location != 'object') return {}
+      if (typeof location !== 'object') return {}
       return location
     })
 
@@ -55,7 +51,7 @@ exports.create = (api) => {
       h('nav', [
         h('img.feed', {
           src: when(isFeed, assetPath('feed_on.png'), assetPath('feed.png')),
-          'ev-click': () => push({page: 'blogIndex'}),
+          'ev-click': () => push({page: 'blogIndex'})
         }),
         h('img.addressBook', {
           src: when(isAddressBook, assetPath('address_bk_on.png'), assetPath('address_bk.png')),
@@ -64,8 +60,8 @@ exports.create = (api) => {
         h('img.settings', {
           src: when(isSettings, assetPath('settings_on.png'), assetPath('settings.png')),
           'ev-click': () => push({page: 'settings'})
-        }),
-      ]),
+        })
+      ])
     ])
   })
 }

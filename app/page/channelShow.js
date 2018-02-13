@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, Value, computed, map, when, resolve } = require('mutant')
+const { h } = require('mutant')
 const pull = require('pull-stream')
 
 exports.gives = nest('app.page.channelShow')
@@ -18,7 +18,7 @@ exports.needs = nest({
 exports.create = (api) => {
   return nest('app.page.channelShow', channelShow)
 
-  function channelShow(location) {
+  function channelShow (location) {
     const strings = api.translations.sync.strings()
     const { channel } = location
 
@@ -31,7 +31,7 @@ exports.create = (api) => {
         h('div.actions', [
           api.channel.html.subscribe(channel)
         ])
-      ]),
+      ])
     ]
 
     var channelPosts = api.app.html.scroller({
@@ -63,15 +63,11 @@ exports.create = (api) => {
     ])
   }
 
-
-  function render(blog) {
+  function render (blog) {
     const { recps, channel } = blog.value.content
     var onClick
-    if (channel && !recps)
-      onClick = (ev) => api.history.sync.push(Object.assign({}, blog, { page: 'blogShow' }))
+    if (channel && !recps) { onClick = (ev) => api.history.sync.push(Object.assign({}, blog, { page: 'blogShow' })) }
 
     return api.app.html.blogCard(blog, { onClick })
   }
 }
-
-

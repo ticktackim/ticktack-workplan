@@ -31,7 +31,7 @@ exports.create = (api) => {
       ]),
       h('div.bottom', { style }, [
         h('div.about', strings.splash.about),
-        h('pre.slogan', strings.splash.slogan),
+        h('pre.slogan', strings.splash.slogan)
       ])
     ])
   }

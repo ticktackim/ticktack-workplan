@@ -7,11 +7,10 @@ exports.needs = nest({
   'translations.sync.strings': 'first',
   'channel.obs.isSubscribedTo': 'first',
   'channel.async.subscribe': 'first',
-  'channel.async.unsubscribe': 'first',
+  'channel.async.unsubscribe': 'first'
 })
 
 exports.create = function (api) {
-    
   return nest('channel.html.subscribe', (channel) => {
     channel = channel.replace(/^#/, '')
     const strings = api.translations.sync.strings()
@@ -28,4 +27,3 @@ exports.create = function (api) {
     )
   })
 }
-

@@ -1,6 +1,6 @@
 module.exports = {
   async: {
-    catchLinkClick: require('./async/catch-link-click'),
+    catchLinkClick: require('./async/catch-link-click')
   },
   html: {
     app: require('./html/app'),
@@ -14,12 +14,12 @@ module.exports = {
     topNav: {
       topNavAddressBook: require('./html/topNav/topNavAddressBook'),
       topNavBlog: require('./html/topNav/topNavBlog'),
-      topNavBack: require('./html/topNav/zz_topNavBack'),
+      topNavBack: require('./html/topNav/zz_topNavBack')
     },
     scroller: require('./html/scroller'),
     sideNav: {
       addressBook: require('./html/sideNav/sideNavAddressBook'),
-      discovery: require('./html/sideNav/sideNavDiscovery'),
+      discovery: require('./html/sideNav/sideNavDiscovery')
     }
   },
   page: {
@@ -44,15 +44,14 @@ module.exports = {
     userShow: require('./page/userShow'),
     splash: require('./page/splash'),
     threadNew: require('./page/threadNew'),
-    threadShow: require('./page/threadShow'),
+    threadShow: require('./page/threadShow')
   },
   sync: {
     initialize: {
       clickHandler: require('./sync/initialize/clickHandler'),
       styles: require('./sync/initialize/styles'),
       suggests: require('./sync/initialize/suggests'),
-      zoomMemory: require('./sync/initialize/zoomMemory'),
-    },
+      zoomMemory: require('./sync/initialize/zoomMemory')
+    }
   }
 }
-

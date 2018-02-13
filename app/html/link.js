@@ -4,15 +4,14 @@ const { h } = require('mutant')
 exports.gives = nest('app.html.link')
 
 exports.needs = nest({
-  'history.sync.push': 'first',
+  'history.sync.push': 'first'
 })
 
 exports.create = (api) => {
   return nest('app.html.link', (location, body) => {
-    return h('Link', { 
+    return h('Link', {
       'ev-click': () => api.history.sync.push(location),
       className: typeof body === 'string' ? '-string' : ''
     }, body)
   })
 }
-

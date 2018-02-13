@@ -4,7 +4,7 @@ var ref = require('ssb-ref')
 exports.needs = nest({
   'keys.sync.id': 'first',
   'sbot.async.publish': 'first',
-  'channel.obs.subscribed': 'first',
+  'channel.obs.subscribed': 'first'
 })
 
 exports.gives = nest({
@@ -35,5 +35,4 @@ exports.create = function (api) {
       subscribed: false
     }, cb)
   }
-
 }

@@ -11,13 +11,13 @@ exports.needs = nest({
 exports.create = (api) => {
   return nest('app.sync.initialize', zoomMemory)
 
-  function zoomMemory() {
+  function zoomMemory () {
     const { getCurrentWebContents, getCurrentWindow } = electron.remote
 
     window.addEventListener('resize', () => {
       var wc = getCurrentWebContents()
       wc && wc.getZoomFactor(zf => {
-      console.log(zf)
+        console.log(zf)
         api.settings.sync.set({
           ticktack: {
             electron: {
@@ -30,12 +30,9 @@ exports.create = (api) => {
     })
 
     var zoomFactor = api.settings.sync.get('ticktack.electron.zoomFactor')
-    if (zoomFactor)
-      getCurrentWebContents().setZoomFactor(zoomFactor)
+    if (zoomFactor) { getCurrentWebContents().setZoomFactor(zoomFactor) }
 
     var bounds = api.settings.sync.get('ticktack.electron.windowBounds')
-    if (bounds)
-      getCurrentWindow().setBounds(bounds)
+    if (bounds) { getCurrentWindow().setBounds(bounds) }
   }
 }
-

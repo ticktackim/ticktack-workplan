@@ -5,7 +5,7 @@ const { computed, onceTrue } = require('mutant')
 exports.needs = nest({
   'keys.sync.id': 'first',
   'channel.obs.subscribed': 'first',
-  'sbot.obs.connection': 'first',
+  'sbot.obs.connection': 'first'
 })
 
 exports.gives = nest('channel.obs.isSubscribedTo')
@@ -28,7 +28,7 @@ exports.create = function (api) {
     })
   }
 
-  //cache getters
+  // cache getters
 
   function getMyId () {
     if (!myId) myId = api.keys.sync.id()
@@ -40,4 +40,3 @@ exports.create = function (api) {
     return subscriptions[id]
   }
 }
-

@@ -15,4 +15,3 @@ exports.create = function (api) {
     return h('Timeago', humanTime(new Date(timestamp)))
   }
 }
-

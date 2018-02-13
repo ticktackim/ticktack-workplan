@@ -39,10 +39,12 @@ exports.create = (api) => {
 
   function renderLocation (loc) {
     var page = api.router.sync.router(loc)
-    if (page) view.set([
-      api.app.html.header({location: loc, push: api.history.sync.push}),
-      page
-    ])
+    if (page) {
+      view.set([
+        api.app.html.header({location: loc, push: api.history.sync.push}),
+        page
+      ])
+    }
   }
 
   function startApp () {
@@ -52,19 +54,18 @@ exports.create = (api) => {
     setTimeout(enterApp, delay)
   }
 
-  function enterApp() {
+  function enterApp () {
     const isOnboarded = api.settings.sync.get('onboarded')
     const initialPage = process.env.STARTUP_PAGE || 'blogIndex'
     if (isOnboarded) {
       autoPub()
       api.history.sync.push({page: initialPage})
-    }
-    else {
+    } else {
       api.history.sync.push({
-        page:'userEdit',
+        page: 'userEdit',
         feed: api.keys.sync.id(),
         callback: (err, didEdit) => {
-          if (err) throw new Error ('Error editing profile', err)
+          if (err) throw new Error('Error editing profile', err)
 
           // if they clicked something, just mark them onboarded
           api.settings.sync.set({ onboarded: true })
@@ -74,20 +75,19 @@ exports.create = (api) => {
         }
       })
     }
-
   }
 
   function autoPub () {
     var invites = api.config.sync.load().autoinvites
-    if(!invites) {
+    if (!invites) {
       console.log('no invites')
       return
     }
 
     var self_id = api.config.sync.load().keys.id
     api.sbot.async.friendsGet({dest: self_id}, function (err, friends) {
-      //if you have less than 5 followers, maybe use the autoinvite
-      if(Object.keys(friends).length <= 5)
+      // if you have less than 5 followers, maybe use the autoinvite
+      if (Object.keys(friends).length <= 5) {
         invites.forEach(invite => {
           console.log('using invite:', invite)
           api.invite.async.autofollow(invite, (err, follows) => {
@@ -95,9 +95,7 @@ exports.create = (api) => {
             else console.log('Autofollow success', follows)
           })
         })
-      else
-        console.log('no autoinvite - you have friends already')
+      } else { console.log('no autoinvite - you have friends already') }
     })
   }
 }
-

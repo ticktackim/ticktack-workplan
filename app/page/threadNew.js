@@ -15,16 +15,15 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'message.html.compose': 'first',
   'message.sync.unbox': 'first',
-  'translations.sync.strings': 'first',
+  'translations.sync.strings': 'first'
 })
 
 exports.create = (api) => {
-
   return nest('app.page.threadNew', threadNew)
 
   function threadNew (location) {
     if (isEmpty(location.participants)) return
-    
+
     return threadNewFeed(location)
   }
 
@@ -36,12 +35,12 @@ exports.create = (api) => {
 
     const meta = Struct({
       type: 'post',
-      recps: MutantArray ([
+      recps: MutantArray([
         myId,
         ...participants.map(p => {
-          return { 
-            link: p, 
-            name: resolve(api.about.obs.name(p)) 
+          return {
+            link: p,
+            name: resolve(api.about.obs.name(p))
           }
         })
       ]),
@@ -64,7 +63,7 @@ exports.create = (api) => {
             h('input', {
               'ev-input': e => meta.subject.set(e.target.value),
               placeholder: strings.optionalField
-            }),
+            })
           ]),
           Composer(meta)
         ])
@@ -92,8 +91,7 @@ exports.create = (api) => {
 
       input.addEventListener('suggestselect', (e) => {
         const { id, title: name } = e.detail
-        if (!recps.find(r => r === id || r.link === id))
-          recps.push({ link: id, name })
+        if (!recps.find(r => r === id || r.link === id)) { recps.push({ link: id, name }) }
 
         boxActive = false
         e.target.value = ''
@@ -149,6 +147,4 @@ exports.create = (api) => {
       )
     }
   }
-
 }
-

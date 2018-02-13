@@ -6,7 +6,7 @@ exports.gives = nest('app.page.userEdit')
 exports.needs = nest({
   'about.page.edit': 'first',
   'history.sync.push': 'first',
-  'translations.sync.strings': 'first',
+  'translations.sync.strings': 'first'
 })
 
 exports.create = (api) => {
@@ -27,16 +27,16 @@ exports.create = (api) => {
         instructionCrop: strings.userEdit.instruction.crop,
         okay: strings.userEdit.action.okay,
         cancel: strings.userEdit.action.cancel,
-        save: strings.userEdit.action.save,
+        save: strings.userEdit.action.save
       }
     })
 
     const defaultCallback = (err, didEdit) => {
-      if (err) throw new Error ('Error editing profile', err)
+      if (err) throw new Error('Error editing profile', err)
 
       api.history.sync.push({ page: 'userShow', feed })
     }
-    callback = typeof callback == 'function'
+    callback = typeof callback === 'function'
       ? callback
       : defaultCallback
 
@@ -47,4 +47,3 @@ exports.create = (api) => {
     ])
   }
 }
-

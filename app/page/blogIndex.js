@@ -21,7 +21,7 @@ exports.needs = nest({
 exports.create = (api) => {
   return nest('app.page.blogIndex', function (location) {
     // location here can expected to be: { page: 'blogIndex'}
- 
+
     var strings = api.translations.sync.strings()
 
     var blogs = api.app.html.scroller({
@@ -51,13 +51,12 @@ exports.create = (api) => {
     ])
   })
 
-
   function update (soFar, newBlog) {
-    soFar.transaction(() => { 
+    soFar.transaction(() => {
       const { timestamp } = newBlog.value
 
       var object = newBlog // Value(newBlog)
-      
+
       // Orders by: time received
       const justOlderPosition = indexOf(soFar, (msg) => newBlog.timestamp > resolve(msg).timestamp)
 
@@ -73,12 +72,10 @@ exports.create = (api) => {
     })
   }
 
-
   function render (blog) {
     const { recps, channel } = blog.value.content
     var onClick
-    if (channel && !recps)
-      onClick = (ev) => api.history.sync.push(Object.assign({}, blog, { page: 'blogShow' }))
+    if (channel && !recps) { onClick = (ev) => api.history.sync.push(Object.assign({}, blog, { page: 'blogShow' })) }
     return api.app.html.blogCard(blog, { onClick })
   }
 }
@@ -91,4 +88,3 @@ function indexOf (array, fn) {
   }
   return -1
 }
-

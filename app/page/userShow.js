@@ -38,7 +38,7 @@ exports.create = (api) => {
 
     const Link = api.app.html.link
     const userEditButton = Link(
-      { page: 'userEdit', feed }, 
+      { page: 'userEdit', feed },
       // h('i.fa.fa-pencil')
       h('img', { src: path.join(__dirname, '../../assets', 'edit.png') })
     )
@@ -48,7 +48,7 @@ exports.create = (api) => {
 
     // TODO return some of this ?
     // but maybe this shouldn't be done here ?
-    // pull.through(function (blog) { 
+    // pull.through(function (blog) {
     //   if(isUnread(blog))
     //     blog.unread = true
     //   blog.replies.forEach(function (data) {  // this was fed rollups
@@ -70,12 +70,12 @@ exports.create = (api) => {
         h('div.introduction', computed(api.about.obs.description(feed), d => api.message.html.markdown(d || ''))),
         feed !== myId
           ? h('div.actions', [
-              h('div.directMessage', directMessageButton),
-              api.contact.html.follow(feed),
-              api.contact.html.block(feed)
-            ])
-          : '',
-      ]),
+            h('div.directMessage', directMessageButton),
+            api.contact.html.follow(feed),
+            api.contact.html.block(feed)
+          ])
+          : ''
+      ])
     ]
 
     const store = MutantArray()
@@ -85,7 +85,7 @@ exports.create = (api) => {
       api.app.html.sideNav(location),
       api.app.html.scroller({
         classList: ['content'],
-        prepend, 
+        prepend,
         // stream: api.feed.pull.profile(feed),
         stream: opts => api.sbot.pull.userFeed(Object.assign({}, { id: feed }, opts)),
         indexProperty: ['value', 'sequence'],
@@ -103,4 +103,3 @@ exports.create = (api) => {
     ])
   }
 }
-

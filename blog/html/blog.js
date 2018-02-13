@@ -8,7 +8,7 @@ exports.gives = nest({
   'blog.html.title': true,
   'blog.html.summary': true,
   'blog.html.thumbnail': true,
-  'blog.html.content': true,
+  'blog.html.content': true
 })
 
 exports.needs = nest({
@@ -17,11 +17,10 @@ exports.needs = nest({
   'sbot.obs.connection': 'first'
 })
 
-
 exports.create = function (api) {
   function loadBlob (data) {
     const { blog } = data.value.content
-    if (!isBlob(blog)) { 
+    if (!isBlob(blog)) {
       console.log(`malformed Blog blog: ${blog}`, data)
       return
     }
@@ -38,22 +37,22 @@ exports.create = function (api) {
 
   return nest({
     'blog.html.title': function (data) {
-      if(!isBlog(data)) return
+      if (!isBlog(data)) return
 
       return data.value.content.title
     },
     'blog.html.summary': function (data) {
-      if(!isBlog(data)) return
+      if (!isBlog(data)) return
 
       loadBlob(data)
       return data.value.content.summary
     },
     'blog.html.thumbnail': function (data) {
-      if(!isBlog(data)) return
+      if (!isBlog(data)) return
       return data.value.content.thumbnail
     },
     'blog.html.content': function (data) {
-      if(!isBlog(data)) return
+      if (!isBlog(data)) return
 
       loadBlob(data)
       var div = h('Markdown')
@@ -62,7 +61,7 @@ exports.create = function (api) {
           return sbot.blobs.get(data.value.content.blog)
         }),
         pull.collect(function (err, ary) {
-          if(err) return
+          if (err) return
           var md = api.message.html.markdown({text: Buffer.concat(ary).toString()})
           div.innerHTML = md.innerHTML
         })
@@ -75,4 +74,3 @@ exports.create = function (api) {
 function isBlog (msg) {
   return get(msg, 'value.content.type') === 'blog'
 }
-

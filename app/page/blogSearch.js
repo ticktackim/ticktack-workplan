@@ -21,15 +21,15 @@ exports.needs = nest({
 
 exports.create = (api) => {
   return nest('app.page.blogSearch', blogSearch)
-  
+
   function blogSearch (location) {
     // location here can expected to be: { page: 'blogSearch'}
     // OR { page: 'blogSearch', channel: 'scuttlebutt', searchVal: 'scutt'}
- 
+
     var strings = api.translations.sync.strings()
 
     var searchVal = Value(resolve(location.searchVal) || resolve(location.channel) || '')
-    var searchResults = computed([api.channel.obs.recent(), searchVal],  (channels, val) => {
+    var searchResults = computed([api.channel.obs.recent(), searchVal], (channels, val) => {
       if (val.length < 2) return []
 
       return channels.filter(c => c.toLowerCase().indexOf(val.toLowerCase()) > -1)
@@ -37,13 +37,13 @@ exports.create = (api) => {
     var searchField = h('div.search', [
       h('div.input', [
         h('i.fa.fa-search'),
-        h('input', { 
+        h('input', {
           'ev-input': e => searchVal.set(e.target.value),
-          value: searchVal 
+          value: searchVal
         })
       ]),
-      when(searchResults, 
-        h('div.results', map(searchResults, channel => { 
+      when(searchResults,
+        h('div.results', map(searchResults, channel => {
           const classList = channel === location.channel
             ? ['-channelActive']
             : ''
@@ -90,15 +90,11 @@ exports.create = (api) => {
     ])
   }
 
-
   function render (blog) {
     const { recps, channel } = blog.value.content
     var onClick
-    if (channel && !recps)
-      onClick = (ev) => api.history.sync.push(Object.assign({}, blog, { page: 'blogShow' }))
+    if (channel && !recps) { onClick = (ev) => api.history.sync.push(Object.assign({}, blog, { page: 'blogShow' })) }
 
     return api.app.html.blogCard(blog, { onClick })
   }
 }
-
-
