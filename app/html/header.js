@@ -21,33 +21,12 @@ exports.create = (api) => {
 
     if (loc().page === 'splash') return
 
-    const window = remote.getCurrentWindow()
-    const minimize = () => window.minimize()
-    const maximize = () => {
-      if (!window.isMaximized()) window.maximize()
-      else window.unmaximize()
-    }
-    const close = () => window.close()
-
     const isSettings = computed(loc, loc => SETTINGS_PAGES.includes(loc.page))
     const isAddressBook = computed(loc, loc => loc.page === 'addressBook')
     const isFeed = computed([isAddressBook, isSettings], (p, s) => !p && !s)
 
     return h('Header', [
-      h('div.window-controls', [
-        h('img.min', {
-          src: assetPath('minimize.png'),
-          'ev-click': minimize
-        }),
-        h('img.max', {
-          src: assetPath('maximize.png'),
-          'ev-click': maximize
-        }),
-        h('img.close', {
-          src: assetPath('close.png'),
-          'ev-click': close
-        })
-      ]),
+      windowControls(),
       h('nav', [
         h('img.feed', {
           src: when(isFeed, assetPath('feed_on.png'), assetPath('feed.png')),
@@ -64,6 +43,33 @@ exports.create = (api) => {
       ])
     ])
   })
+
+  function windowControls () {
+    if (process.platform === 'darwin') return
+
+    const window = remote.getCurrentWindow()
+    const minimize = () => window.minimize()
+    const maximize = () => {
+      if (!window.isMaximized()) window.maximize()
+      else window.unmaximize()
+    }
+    const close = () => window.close()
+
+    return h('div.window-controls', [
+      h('img.min', {
+        src: assetPath('minimize.png'),
+        'ev-click': minimize
+      }),
+      h('img.max', {
+        src: assetPath('maximize.png'),
+        'ev-click': maximize
+      }),
+      h('img.close', {
+        src: assetPath('close.png'),
+        'ev-click': close
+      })
+    ])
+  }
 }
 
 function assetPath (name) {
