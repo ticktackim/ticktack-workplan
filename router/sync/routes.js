@@ -53,7 +53,7 @@ exports.create = (api) => {
       // Channel related pages
       [ location => location.page === 'channelSubscriptions', pages.channelSubscriptions],
       [ location => location.page === 'channelShow', pages.channelShow ],
-
+      [ location => location.channel, pages.channelShow ],
 
       // AddressBook pages
       [ location => location.page === 'addressBook', pages.addressBook ],

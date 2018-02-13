@@ -48,6 +48,10 @@ Page -blogSearch {
         flex-basis: 100%
 
         border-bottom: 1px solid gainsboro
+        
+        :last-child {
+          border-bottom: none
+        }
       }
     }
 

@@ -17,6 +17,7 @@ exports.create = function (api) {
   })
 
   function subscribe (channel, cb) {
+    channel = channel.replace(/^#/, '')
     if (!channel) throw new Error('a channel must be specified')
     api.sbot.async.publish({
       type: 'channel',
@@ -26,6 +27,7 @@ exports.create = function (api) {
   }
 
   function unsubscribe (channel, cb) {
+    channel = channel.replace(/^#/, '')
     if (!channel) throw new Error('a channel must be specified')
     api.sbot.async.publish({
       type: 'channel',
