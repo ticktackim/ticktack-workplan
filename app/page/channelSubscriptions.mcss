@@ -6,7 +6,7 @@ Page -channelSubscriptions {
     padding: .5rem 2rem
 
     div.ChannelCard {
-      border-bottom: 1px solid rgba(0,0,0, .1)
+      $borderBottomLight
     }
 
     div.Button {

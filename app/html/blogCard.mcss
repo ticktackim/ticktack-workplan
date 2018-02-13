@@ -1,4 +1,9 @@
 BlogCard {
+  -arriving {
+    opacity: 0
+    $borderBottomLight
+  }
+
   padding: 1.5rem 0
   $backgroundPrimaryText
 
