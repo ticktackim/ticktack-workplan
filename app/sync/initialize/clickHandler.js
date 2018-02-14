@@ -5,7 +5,7 @@ exports.gives = nest('app.sync.initialize')
 
 exports.needs = nest({
   'app.async.catchLinkClick': 'first',
-  'history.sync.push': 'first',
+  'history.sync.push': 'first'
 })
 
 exports.create = (api) => {
@@ -21,4 +21,3 @@ exports.create = (api) => {
     }
   })
 }
-

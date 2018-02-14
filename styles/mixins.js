@@ -69,6 +69,10 @@ $borderPrimary {
   border: 1px #2f63ad solid
 }
 
+$borderBottomLight {
+  border-bottom: 1px rgba(224, 224, 224 , 0.8) solid
+}
+
 $circleTiny {
   min-width: 2rem
   min-height: 2rem

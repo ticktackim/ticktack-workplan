@@ -11,15 +11,14 @@ exports.needs = nest({
   'app.html.blogCard': 'first',
   'history.sync.push': 'first',
   'state.obs.channel': 'first',
-  'translations.sync.strings': 'first',
+  'translations.sync.strings': 'first'
 })
 
-function latestUpdate(thread) {
+function latestUpdate (thread) {
   var m = thread.timestamp
-  if(!thread.replies) return m
+  if (!thread.replies) return m
 
-  for(var i = 0; i < thread.replies.length; i++)
-    m = Math.max(thread.replies[i].timestamp, m)
+  for (var i = 0; i < thread.replies.length; i++) { m = Math.max(thread.replies[i].timestamp, m) }
   return m
 }
 
@@ -30,7 +29,7 @@ exports.create = (api) => {
 
     var channelObs = api.state.obs.channel(channel)
 
-    //disable "Show More" button when we are at the last thread.
+    // disable "Show More" button when we are at the last thread.
     var disableShowMore = computed([channelObs], threads => !!threads.ended)
 
     var updates = h('div.threads', [])
@@ -57,10 +56,8 @@ exports.create = (api) => {
       h('div.content', [ threadsHtmlObs ]),
       h('Button -showMore', {
         'ev-click': threadsHtmlObs.more,
-         disabled: disableShowMore
+        disabled: disableShowMore
       }, [strings.showMore])
     ])
   })
 }
-
-

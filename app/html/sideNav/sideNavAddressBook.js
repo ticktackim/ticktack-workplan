@@ -1,13 +1,8 @@
 const nest = require('depnest')
-const { h, computed, Struct, map, when, Dict, Array: MutantArray, Value, Set, resolve } = require('mutant')
-const pull = require('pull-stream')
-const next = require('pull-next-step')
-const get = require('lodash/get')
-const isEmpty = require('lodash/isEmpty')
-const path = require('path')
+const { h, computed } = require('mutant')
 
 exports.gives = nest({
-  'app.html.sideNav': true,
+  'app.html.sideNav': true
 })
 
 exports.needs = nest({
@@ -18,13 +13,13 @@ exports.needs = nest({
   'history.sync.push': 'first',
   // 'message.html.subject': 'first',
   // 'sbot.obs.localPeers': 'first',
-  'translations.sync.strings': 'first',
+  'translations.sync.strings': 'first'
   // 'unread.sync.isUnread': 'first'
 })
 
 exports.create = (api) => {
   return nest({
-    'app.html.sideNav': sideNav,
+    'app.html.sideNav': sideNav
   })
 
   function sideNav (location, relationships) {
@@ -38,7 +33,7 @@ exports.create = (api) => {
     // var nearby = api.sbot.obs.localPeers()
 
     return h('SideNav -addressBook', [
-      LevelOneSideNav(),
+      LevelOneSideNav()
     ])
 
     function LevelOneSideNav () {
@@ -47,15 +42,15 @@ exports.create = (api) => {
           SectionOption('search', [
             h('Button -primary', {}, strings.action.addUser)
           ]),
-          h('hr'),
+          h('hr')
         ]),
-        
-        //Friends
+
+        // Friends
         h('section', [
-          h('header',strings.heading.people),
+          h('header', strings.heading.people),
           SectionOption('friends'),
           SectionOption('following'),
-          SectionOption('followers'),
+          SectionOption('followers')
         ])
       ])
     }
@@ -64,7 +59,7 @@ exports.create = (api) => {
       const className = section === location.section
         ? '-selected'
         : ''
-      return h('Option', 
+      return h('Option',
         { className, 'ev-click': goTo({page: 'addressBook', section }) },
         body || defaulBody(section)
       )
@@ -83,5 +78,3 @@ exports.create = (api) => {
     }
   }
 }
-
-

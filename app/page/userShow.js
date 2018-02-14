@@ -15,6 +15,7 @@ exports.needs = nest({
   'app.html.topNav': 'first',
   'app.html.scroller': 'first',
   'app.html.sideNav': 'first',
+  'blog.sync.isBlog': 'first',
   'contact.html.follow': 'first',
   'contact.html.block': 'first',
   'feed.pull.profile': 'first',
@@ -38,17 +39,15 @@ exports.create = (api) => {
 
     const Link = api.app.html.link
     const userEditButton = Link(
-      { page: 'userEdit', feed }, 
+      { page: 'userEdit', feed },
       // h('i.fa.fa-pencil')
       h('img', { src: path.join(__dirname, '../../assets', 'edit.png') })
     )
     const directMessageButton = Link({ page: 'threadNew', participants: [feed] }, h('Button', strings.userShow.action.directMessage))
 
-    const BLOG_TYPES = ['blog', 'post']
-
     // TODO return some of this ?
     // but maybe this shouldn't be done here ?
-    // pull.through(function (blog) { 
+    // pull.through(function (blog) {
     //   if(isUnread(blog))
     //     blog.unread = true
     //   blog.replies.forEach(function (data) {  // this was fed rollups
@@ -70,12 +69,12 @@ exports.create = (api) => {
         h('div.introduction', computed(api.about.obs.description(feed), d => api.message.html.markdown(d || ''))),
         feed !== myId
           ? h('div.actions', [
-              h('div.directMessage', directMessageButton),
-              api.contact.html.follow(feed),
-              api.contact.html.block(feed)
-            ])
-          : '',
-      ]),
+            h('div.directMessage', directMessageButton),
+            api.contact.html.follow(feed),
+            api.contact.html.block(feed)
+          ])
+          : ''
+      ])
     ]
 
     const store = MutantArray()
@@ -85,7 +84,7 @@ exports.create = (api) => {
       api.app.html.sideNav(location),
       api.app.html.scroller({
         classList: ['content'],
-        prepend, 
+        prepend,
         // stream: api.feed.pull.profile(feed),
         stream: opts => api.sbot.pull.userFeed(Object.assign({}, { id: feed }, opts)),
         indexProperty: ['value', 'sequence'],
@@ -93,7 +92,7 @@ exports.create = (api) => {
           // pull.filter(msg => get(msg, 'value.author') === feed),
           pull.filter(msg => typeof msg.value.content !== 'string'),
           pull.filter(msg => get(msg, 'value.content.root') === undefined),
-          pull.filter(msg => BLOG_TYPES.includes(get(msg, 'value.content.type')))
+          pull.filter(api.blog.sync.isBlog)
         ),
         render: blog => {
           return api.app.html.blogCard(blog)
@@ -103,4 +102,3 @@ exports.create = (api) => {
     ])
   }
 }
-

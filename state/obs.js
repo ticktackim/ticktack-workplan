@@ -26,8 +26,8 @@ exports.create = function (api) {
     var firstTimestamp = opts.first || Date.now()
 
     function unbox (data) {
-      if(data.sync) return data
-      if(isObject(data.value.content)) return data
+      if (data.sync) return data
+      if (isObject(data.value.content)) return data
       return api.message.sync.unbox(data)
     }
 
@@ -44,20 +44,20 @@ exports.create = function (api) {
         pull.filter(Boolean),
         api.feed.pull.rollup()
       ),
-      //value recovered from localStorage
+      // value recovered from localStorage
       initial
     )
 
-    //stream live messages. this *should* work.
-    //there is no back pressure on new events
-    //only a show more on the top (currently)
+    // stream live messages. this *should* work.
+    // there is no back pressure on new events
+    // only a show more on the top (currently)
     pull(
       Next(function () {
         return createStream({limit: 500, gt: firstTimestamp, live: true})
       }),
       pull.map(unbox), pull.filter(Boolean),
       pull.drain(function (data) {
-        if(data.sync) return
+        if (data.sync) return
         firstTimestamp = data.timestamp
         obs.set(reduce(obs.value, data))
       })
@@ -66,17 +66,15 @@ exports.create = function (api) {
     return obs
   }
 
-
   return nest({
-  'state.obs.channel': function (channel) {
-
+    'state.obs.channel': function (channel) {
       return createStateObs(
         threadReduce,
         function (opts) {
-          return opts.reverse ?
-          api.feed.pull.channel(channel)(opts):
-          pull(api.sbot.pull.log(opts), pull.filter(function (data) {
-            if(data.sync) return false
+          return opts.reverse
+          ? api.feed.pull.channel(channel)(opts)
+          : pull(api.sbot.pull.log(opts), pull.filter(function (data) {
+            if (data.sync) return false
             return data.value.content.channel === channel
           }))
         },
@@ -87,11 +85,9 @@ exports.create = function (api) {
     //   threadReduce,
     //   createChannelStream({reverse: true, limit: 1000})
     // )
+    },
 
-
-  },
-
-  'state.obs.threads': function buildThreadObs() {
+    'state.obs.threads': function buildThreadObs () {
       if (threadsObs) return threadsObs
 
   // DISABLE localStorage cache. mainly disabling this to make debugging the other stuff
@@ -106,8 +102,7 @@ exports.create = function (api) {
       threadsObs = createStateObs(threadReduce, api.sbot.pull.log, initial, {})
 
       threadsObs(function (threadsState) {
-        if(threadsState.ended && threadsState.ended !== true)
-          console.error('threadObs error:', threadsState.ended)
+        if (threadsState.ended && threadsState.ended !== true) { console.error('threadObs error:', threadsState.ended) }
       })
 
   //    var timer
@@ -126,13 +121,3 @@ exports.create = function (api) {
     }
   })
 }
-
-
-
-
-
-
-
-
-
-

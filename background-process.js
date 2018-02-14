@@ -1,6 +1,10 @@
-var fs = require('fs')
-var Path = require('path')
-var electron = require('electron')
+const fs = require('fs')
+const Path = require('path')
+const electron = require('electron')
+const Client = require('ssb-client')
+
+// pull config options out of depject
+const config = require('./config').create().config.sync.load()
 
 var createSbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/master'))
@@ -19,10 +23,21 @@ var createSbot = require('scuttlebot')
   .use(require('ssb-ws'))
   .use(require('ssb-server-channel'))
 
-// pull config options out of depject
-var config = require('./config').create().config.sync.load()
+Client(config.keys, config, (err, ssbServer) => {
+  if (ssbServer === undefined) {
+    console.log('> starting sbot')
+    var sbot = createSbot(config)
 
-var sbot = createSbot(config)
-var manifest = sbot.getManifest()
-fs.writeFileSync(Path.join(config.path, 'manifest.json'), JSON.stringify(manifest))
-electron.ipcRenderer.send('server-started')
+    console.log('  > updating updating manifest.json')
+    var manifest = sbot.getManifest()
+    fs.writeFileSync(Path.join(config.path, 'manifest.json'), JSON.stringify(manifest))
+    electron.ipcRenderer.send('server-started')
+  }
+  else {
+    console.log('> sbot running elsewhere')
+    electron.ipcRenderer.send('server-started')
+    // TODO send some warning to the client side
+  }
+})
+
+

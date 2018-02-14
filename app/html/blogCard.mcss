@@ -1,9 +1,14 @@
 BlogCard {
+  -arriving {
+    opacity: 0
+    $borderBottomLight
+  }
+
   padding: 1.5rem 0
   $backgroundPrimaryText
 
   border: 1px solid #fff
-  transition: all .5s ease
+  transition: all .5s ease-in
 
   display: flex
   flex-direction: column

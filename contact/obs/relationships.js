@@ -27,5 +27,4 @@ exports.create = function (api) {
       return { friends, followers, following }
     })
   }
-} 
-
+}

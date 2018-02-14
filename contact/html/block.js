@@ -13,7 +13,6 @@ exports.needs = nest({
 })
 
 exports.create = (api) => {
-
   return nest('contact.html.block', block)
 
   function block (feed) {
@@ -35,9 +34,9 @@ exports.create = (api) => {
       isOpen.set(false)
     }
 
-    const confirmationDialog = h("div.dialog", [
-      h("div.message",strings.userShow.action.blockConfirmationMessage), 
-      h("div.actions", [
+    const confirmationDialog = h('div.dialog', [
+      h('div.message', strings.userShow.action.blockConfirmationMessage),
+      h('div.actions', [
         h('Button', {'ev-click': () => isOpen.set(false)}, strings.userShow.action.cancel),
         h('Button -primary', {'ev-click': () => blockAndClose(feed)}, strings.userShow.action.block)
       ])
@@ -51,10 +50,9 @@ exports.create = (api) => {
           h('Button', { 'ev-click': () => unblock(feed) }, strings.userShow.action.unblock),
           h('Button', { 'ev-click': () => isOpen.set(true) }, strings.userShow.action.block)
         ),
-        h('Button', { disabled: 'disabled' }, strings.loading )
+        h('Button', { disabled: 'disabled' }, strings.loading)
       ),
       lb
     ])
   }
 }
-

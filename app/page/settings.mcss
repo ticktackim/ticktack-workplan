@@ -11,7 +11,7 @@ Page -settings {
       font-weight: 300
 
       padding-bottom: 1rem
-      border-bottom: 1px solid gainsboro
+      $borderBottomLight
       margin-top: 0
       margin-bottom: 4rem
     }

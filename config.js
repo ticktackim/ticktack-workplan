@@ -21,4 +21,3 @@ exports.create = (api) => {
     return config
   })
 }
-

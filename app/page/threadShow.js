@@ -23,7 +23,7 @@ exports.create = (api) => {
     const root = get(value, 'content.root', key)
     const channel = get(value, 'content.channel')
 
-    //unread state is set in here...
+    // unread state is set in here...
     const thread = api.feed.obs.thread(root)
     const subject = get(location, 'value.content.subject')
     const recps = get(location, 'value.content.recps')
@@ -42,20 +42,20 @@ exports.create = (api) => {
       h('div.content', [
         h('header', [
           when(subject, h('h1', subject)),
-          Recipients(recps),
+          Recipients(recps)
         ]),
         api.app.html.thread(thread),
         composer
-      ]),
+      ])
     ])
   }
 
   function Recipients (recps) {
-    if (recps && recps.length > 2)
+    if (recps && recps.length > 2) {
       return h('div.recps', recps.map(r => {
         const recp = typeof r === 'string' ? r : r.link
         return api.about.html.avatar(recp, 'tiny')
       }))
+    }
   }
 }
-

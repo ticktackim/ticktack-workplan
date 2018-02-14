@@ -31,14 +31,14 @@ exports.create = function (api) {
       if (!href) return
 
       const url = Url.parse(href)
-      const opts = { 
+      const opts = {
         isExternal: !!url.host
       }
 
       if (isMsg(href)) {
         api.sbot.async.get(href, (err, data) => {
           // NOTE the catchLinkClick cb has signature (link, opts)
-          cb(err || {key:href, value: data}, opts)
+          cb(err || {key: href, value: data}, opts)
         })
         return
       }
@@ -47,5 +47,3 @@ exports.create = function (api) {
     })
   }
 }
-
-

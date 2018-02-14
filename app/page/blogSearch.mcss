@@ -47,7 +47,11 @@ Page -blogSearch {
       div.BlogCard {
         flex-basis: 100%
 
-        border-bottom: 1px solid gainsboro
+        $borderBottomLight
+        
+        :last-child {
+          border-bottom: none
+        }
       }
     }
 

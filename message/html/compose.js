@@ -1,6 +1,7 @@
 const nest = require('depnest')
 const { h, when, send, resolve, Value, computed, map } = require('mutant')
 const assign = require('lodash/assign')
+const isEmpty = require('lodash/isEmpty')
 const ssbMentions = require('ssb-mentions')
 const addSuggest = require('suggest-box')
 
@@ -29,7 +30,7 @@ exports.create = function (api) {
       placeholder,
       shrink = true,
       canAttach = true, canPreview = true,
-      prepublish,
+      prepublish
     } = options
 
     const strings = api.translations.sync.strings()
@@ -89,8 +90,9 @@ exports.create = function (api) {
     }
     // if fileInput is null, send button moves to the left side
     // and we don't want that.
-    else
-      fileInput = h('input', { style: { visibility: 'hidden' } })
+    else { 
+      fileInput = h('input', { style: {visibility: 'hidden'} }) 
+    }
 
     function PreviewSetup(strings) {
       var showPreview = Value(false)
@@ -142,7 +144,11 @@ exports.create = function (api) {
 
     function publish() {
       isBusyPublishing.set(true)
+
       const text = resolve(textRaw)
+      if (isEmpty(text)) return
+
+      publishBtn.disabled = true
 
       const mentions = ssbMentions(text).map(mention => {
         // merge markdown-detected mention with file info
@@ -193,5 +199,3 @@ exports.create = function (api) {
     }
   }
 }
-
-

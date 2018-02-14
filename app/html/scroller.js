@@ -1,5 +1,4 @@
 const nest = require('depnest')
-const { h } = require('mutant')
 const pull = require('pull-stream')
 const Scroller = require('mutant-scroll')
 const next = require('pull-next-step')
@@ -14,7 +13,7 @@ exports.create = function (api) {
   return nest('app.html.scroller', createScroller)
 
   function createScroller (opts = {}) {
-    const { 
+    const {
       stream,
       filter = () => pull.filter((msg) => true),
       indexProperty = ['value', 'timestamp']
@@ -42,40 +41,5 @@ exports.create = function (api) {
     //   updateBottom = updateBottomDefault,
     //   store = MutantArray(),
     //   cb = (err) => { if (err) throw err }
-  }
-}
-
-function keyscroll (content) {
-  var curMsgEl
-
-  if (!content) return () => {}
-
-  content.addEventListener('click', onActivateChild, false)
-  content.addEventListener('focus', onActivateChild, true)
-
-  function onActivateChild (ev) {
-    for (var el = ev.target; el; el = el.parentNode) {
-      if (el.parentNode === content) {
-        curMsgEl = el
-        return
-      }
-    }
-  }
-
-  function selectChild (el) {
-    if (!el) { return }
-
-    ;(el.scrollIntoViewIfNeeded || el.scrollIntoView).call(el)
-    el.focus()
-    curMsgEl = el
-  }
-
-  return function scroll (d) {
-    selectChild((!curMsgEl || d === 'first') ? content.firstChild
-      : d < 0 ? curMsgEl.previousElementSibling || content.firstChild
-      : d > 0 ? curMsgEl.nextElementSibling || content.lastChild
-      : curMsgEl)
-
-    return curMsgEl
   }
 }

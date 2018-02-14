@@ -27,7 +27,7 @@ exports.needs = nest({
   'app.page.threadNew': 'first',
   'app.page.threadShow': 'first',
   // 'app.page.image': 'first',
-  'blob.sync.url': 'first',
+  'blob.sync.url': 'first'
 })
 
 exports.create = (api) => {
@@ -44,16 +44,16 @@ exports.create = (api) => {
       [ location => location.page === 'blogSearch', pages.blogSearch ],
       [ location => location.page === 'blogShow', pages.blogShow ],
       [ location => isMsg(location.key) && get(location, 'value.content.type') === 'blog', pages.blogShow ],
-      [ location => { 
-        return isMsg(location.key)
-          && get(location, 'value.content.type') === 'post'
-          && !get(location, 'value.private') // treats public posts as 'blogs'
+      [ location => {
+        return isMsg(location.key) &&
+          get(location, 'value.content.type') === 'post' &&
+          !get(location, 'value.private') // treats public posts as 'blogs'
       }, pages.blogShow ],
 
       // Channel related pages
       [ location => location.page === 'channelSubscriptions', pages.channelSubscriptions],
       [ location => location.page === 'channelShow', pages.channelShow ],
-
+      [ location => location.channel, pages.channelShow ],
 
       // AddressBook pages
       [ location => location.page === 'addressBook', pages.addressBook ],
@@ -89,4 +89,3 @@ exports.create = (api) => {
     return [...routes, ...sofar]
   })
 }
-

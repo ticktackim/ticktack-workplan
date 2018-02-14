@@ -1,12 +1,11 @@
 const nest = require('depnest')
-const { h, computed, when } = require('mutant')
-const get = require('lodash/get')
+const { h } = require('mutant')
 
 exports.gives = nest('app.html.topNav')
 
 exports.needs = nest({
   'history.sync.back': 'first',
-  'translations.sync.strings': 'first',
+  'translations.sync.strings': 'first'
 })
 
 exports.create = (api) => {
@@ -15,15 +14,14 @@ exports.create = (api) => {
     const back = () => api.history.sync.back()
 
     return h('TopNav -back', [
-      h('div.left', [ 
-        h('div', { 'ev-click': back }, [ 
-          h('i.fa.fa-chevron-left'),
+      h('div.left', [
+        h('div', { 'ev-click': back }, [
+          h('i.fa.fa-chevron-left')
           // strings.blogIndex.title
-        ]),
+        ])
       ]),
-      h('div.right', [ 
+      h('div.right', [
       ])
     ])
   })
 }
-

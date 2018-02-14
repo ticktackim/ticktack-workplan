@@ -1,10 +1,11 @@
 const nest = require('depnest')
 const ref = require('ssb-ref')
-const computed = require('mutant/computed')
+const { computed, onceTrue } = require('mutant')
 
 exports.needs = nest({
   'keys.sync.id': 'first',
   'channel.obs.subscribed': 'first',
+  'sbot.obs.connection': 'first'
 })
 
 exports.gives = nest('channel.obs.isSubscribedTo')
@@ -16,14 +17,18 @@ exports.create = function (api) {
   return nest('channel.obs.isSubscribedTo', isSubscribedTo)
 
   function isSubscribedTo (channel, id) {
+    channel = channel.replace(/^#/, '')
     if (!ref.isFeed(id)) {
       id = getMyId()
     }
-        
-    return computed(getSubscriptions(id), (v) => v.has(channel))
+
+    // TODO - use ssb-server-channel index to make a better subscribed obs
+    return computed(getSubscriptions(id), set => {
+      return set.has(channel)
+    })
   }
 
-  //cache getters
+  // cache getters
 
   function getMyId () {
     if (!myId) myId = api.keys.sync.id()
@@ -31,8 +36,7 @@ exports.create = function (api) {
   }
 
   function getSubscriptions (id) {
-    if (!subscriptions[id]) subscriptions[id] = api.channel.obs.subscribed(id)
+    if (subscriptions[id] === undefined) subscriptions[id] = api.channel.obs.subscribed(id)
     return subscriptions[id]
   }
 }
-

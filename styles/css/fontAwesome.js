@@ -9,4 +9,3 @@ exports.create = function (api) {
     return assign(sofar, { css: requireStyle('font-awesome') })
   })
 }
-

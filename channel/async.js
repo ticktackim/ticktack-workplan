@@ -4,7 +4,7 @@ var ref = require('ssb-ref')
 exports.needs = nest({
   'keys.sync.id': 'first',
   'sbot.async.publish': 'first',
-  'channel.obs.subscribed': 'first',
+  'channel.obs.subscribed': 'first'
 })
 
 exports.gives = nest({
@@ -17,6 +17,7 @@ exports.create = function (api) {
   })
 
   function subscribe (channel, cb) {
+    channel = channel.replace(/^#/, '')
     if (!channel) throw new Error('a channel must be specified')
     api.sbot.async.publish({
       type: 'channel',
@@ -26,6 +27,7 @@ exports.create = function (api) {
   }
 
   function unsubscribe (channel, cb) {
+    channel = channel.replace(/^#/, '')
     if (!channel) throw new Error('a channel must be specified')
     api.sbot.async.publish({
       type: 'channel',
@@ -33,5 +35,4 @@ exports.create = function (api) {
       subscribed: false
     }, cb)
   }
-
 }

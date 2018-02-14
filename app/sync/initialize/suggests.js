@@ -4,7 +4,7 @@ exports.gives = nest('app.sync.initialize')
 
 exports.needs = nest({
   'about.async.suggest': 'first',
-  'channel.async.suggest': 'first',
+  'channel.async.suggest': 'first'
   // 'channel.obs.recent': 'first'
 })
 
@@ -19,4 +19,3 @@ exports.create = (api) => {
     }
   })
 }
-

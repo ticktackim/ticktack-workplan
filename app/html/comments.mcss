@@ -20,7 +20,7 @@ Comment {
   div.right {
     flex-grow: 1
 
-    border-bottom: 1px solid gainsboro
+    $borderBottomLight
     padding-bottom: 1rem
     margin-bottom: 1rem
 

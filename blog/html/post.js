@@ -5,19 +5,18 @@ exports.gives = nest({
   'blog.html.title': true,
   'blog.html.summary': true,
   'blog.html.thumbnail': true,
-  'blog.html.content': true,
+  'blog.html.content': true
 })
 
 exports.needs = nest({
-  'message.html.markdown': 'first',
+  'message.html.markdown': 'first'
 })
 
 exports.create = function (api) {
-
-  function fromPost(fn) {
+  function fromPost (fn) {
     return function (data) {
-      if('post' !== data.value.content.type) return
-      return api.message.html.markdown ({text: fn(data.value.content)})
+      if (data.value.content.type !== 'post') return
+      return api.message.html.markdown({text: fn(data.value.content)})
     }
   }
 
@@ -31,18 +30,16 @@ exports.create = function (api) {
       if (content.text) return marksum.summary(content.text)
     }),
     'blog.html.thumbnail': function (data) {
-      const { type, thumbnail, text }  = data.value.content
-      if('post' !== type) return
+      const { type, thumbnail, text } = data.value.content
+      if (type !== 'post') return
       if (thumbnail) return thumbnail
 
       if (text) {
         var img = marksum.image(text)
         var m = /\!\[[^]+\]\(([^\)]+)\)/.exec(img)
-        if(m) return m[1]
+        if (m) return m[1]
       }
     },
     'blog.html.content': fromPost(content => content.text)
   })
 }
-
-
