@@ -107,10 +107,11 @@ exports.create = function (api) {
     var { previewBtn, showPreview } = PreviewSetup(strings)
     var preview = computed(textRaw, text => api.message.html.markdown(text))
 
-    var isPublishEnabled = computed(textRaw, content => content.length > 0)
-    var publishBtn = when(isPublishEnabled, 
-      h('Button -primary', {'ev-click': publish}, strings.sendMessage),
-      h('Button -subtle -disabled', strings.sendMessage)
+    var isBusyPublishing = Value(false)
+    var isPublishEnabled = computed([textRaw, isBusyPublishing], (content, busy) => !busy && (content.length > 0))
+    var publishBtn = when(isPublishEnabled,
+      h('Button -primary', { 'ev-click': publish }, strings.sendMessage),
+      h('Button -subtle -disabled', { disabled: true }, strings.sendMessage)
     )
 
     var actions = h('section.actions', [
@@ -140,7 +141,7 @@ exports.create = function (api) {
     // scoped
 
     function publish() {
-      publishBtn.disabled = true
+      isBusyPublishing.set(true)
       const text = resolve(textRaw)
 
       const mentions = ssbMentions(text).map(mention => {
@@ -170,11 +171,12 @@ exports.create = function (api) {
           else api.message.async.publish(content, done)
         })
       }
-      else
+      else {
         api.message.async.publish(content, done)
+      }
 
       function done(err, msg) {
-        publishBtn.disabled = false
+       isBusyPublishing.set(false)
         if (err) handleErr(err)
         else if (msg) {
           textRaw.set('')
@@ -184,7 +186,7 @@ exports.create = function (api) {
       }
 
       function handleErr(err) {
-        publishBtn.disabled = false
+       isBusyPublishing.set(false)
         if (cb) cb(err)
         else throw err
       }
