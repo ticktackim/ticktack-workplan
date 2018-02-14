@@ -9,6 +9,7 @@ exports.needs = nest({
   'app.html.topNav': 'first',
   'app.html.scroller': 'first',
   'app.html.blogCard': 'first',
+  'blog.sync.isBlog': 'first',
   'channel.html.subscribe': 'first',
   'feed.pull.channel': 'first',
   'history.sync.push': 'first',
@@ -39,10 +40,7 @@ exports.create = (api) => {
       prepend,
       stream: createStream,
       filter: () => pull(
-        pull.filter(msg => {
-          const type = msg.value.content.type
-          return type === 'post' || type === 'blog'
-        }),
+        pull.filter(api.blog.sync.isBlog),
         pull.filter(msg => !msg.value.content.root) // show only root messages
       ),
       // FUTURE : if we need better perf, we can add a persistent cache. At the moment this page is fast enough though.

@@ -15,6 +15,7 @@ exports.needs = nest({
   'app.html.topNav': 'first',
   'app.html.scroller': 'first',
   'app.html.sideNav': 'first',
+  'blog.sync.isBlog': 'first',
   'contact.html.follow': 'first',
   'contact.html.block': 'first',
   'feed.pull.profile': 'first',
@@ -43,8 +44,6 @@ exports.create = (api) => {
       h('img', { src: path.join(__dirname, '../../assets', 'edit.png') })
     )
     const directMessageButton = Link({ page: 'threadNew', participants: [feed] }, h('Button', strings.userShow.action.directMessage))
-
-    const BLOG_TYPES = ['blog', 'post']
 
     // TODO return some of this ?
     // but maybe this shouldn't be done here ?
@@ -93,7 +92,7 @@ exports.create = (api) => {
           // pull.filter(msg => get(msg, 'value.author') === feed),
           pull.filter(msg => typeof msg.value.content !== 'string'),
           pull.filter(msg => get(msg, 'value.content.root') === undefined),
-          pull.filter(msg => BLOG_TYPES.includes(get(msg, 'value.content.type')))
+          pull.filter(api.blog.sync.isBlog)
         ),
         render: blog => {
           return api.app.html.blogCard(blog)

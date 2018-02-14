@@ -14,8 +14,9 @@ exports.create = function (api) {
     var channel = typeof msgOrChannel === 'string'
       ? msgOrChannel
       : msgOrChannel.value.content.channel
-    channel = channel.replace(/^#/, '')
+    if (!channel) return
 
+    channel = channel.replace(/^#/, '')
     if (!channel) return
 
     const {
