@@ -106,7 +106,6 @@ exports.create = function (api) {
 
     var classList = MutantArray(['-arriving'])
     if (blog.unread) classList.push('-unread')
-    setImmediate(() => classList.delete('-arriving'))
 
     var b = h('BlogCard', { id, classList, 'ev-click': onClick }, [
       h('div.context', [
@@ -126,6 +125,12 @@ exports.create = function (api) {
       ])
     ])
 
+    arrive()
     return b
+
+    function arrive () {
+      if (!b.parentNode) return setTimeout(arrive, 100)
+      classList.delete('-arriving')
+    }
   })
 }
