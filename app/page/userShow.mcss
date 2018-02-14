@@ -49,7 +49,7 @@ Page -userShow {
     section.content {
       div.BlogCard {
         flex-basis: 100%
-        border-bottom: 1px solid rgba(0,0,0, .1)
+        $borderBottomLight
 
         div.context {
           div.Link { display: none }

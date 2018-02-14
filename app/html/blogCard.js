@@ -1,5 +1,5 @@
 var nest = require('depnest')
-var h = require('mutant/h')
+var { h, Array: MutantArray } = require('mutant')
 // var maxBy = require('lodash/maxBy')
 // var markdown = require('ssb-markdown')
 // var ref = require('ssb-ref')
@@ -104,9 +104,10 @@ exports.create = function (api) {
       ])
     }
 
-    const className = blog.unread ? '-unread' : ''
+    var classList = MutantArray(['-arriving'])
+    if (blog.unread) classList.push('-unread')
 
-    var b = h('BlogCard', { id, className, 'ev-click': onClick }, [
+    var b = h('BlogCard', { id, classList, 'ev-click': onClick }, [
       h('div.context', [
         api.about.html.avatar(author, 'tiny'),
         h('div.name', api.about.obs.name(author)),
@@ -124,6 +125,12 @@ exports.create = function (api) {
       ])
     ])
 
+    arrive()
     return b
+
+    function arrive () {
+      if (!b.parentNode) return setTimeout(arrive, 100)
+      classList.delete('-arriving')
+    }
   })
 }

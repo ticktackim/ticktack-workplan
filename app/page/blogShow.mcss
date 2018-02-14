@@ -78,7 +78,7 @@ Page -blogShow {
         hr {
           margin: 0
           border: none
-          border-bottom: 1px solid gainsboro
+          $borderBottomLight
         }
       }
 

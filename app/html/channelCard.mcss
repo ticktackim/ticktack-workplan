@@ -3,7 +3,7 @@ ChannelCard {
   padding: 2rem 1.5rem 2rem 1.5rem
   flex-basis: 100%
 
-  border-bottom: 1px solid rgba(0,0,0, .1)
+  $borderBottomLight
   transition: all .5s ease
 
   div.content {
