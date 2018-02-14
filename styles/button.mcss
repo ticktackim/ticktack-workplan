@@ -63,5 +63,9 @@ Button {
     border-right: none
     border-bottom: none
   }
+
+  -disabled {
+    cursor: default
+  }
 }
 

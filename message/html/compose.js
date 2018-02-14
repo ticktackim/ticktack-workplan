@@ -22,7 +22,7 @@ exports.needs = nest({
 exports.create = function (api) {
   return nest('message.html.compose', compose)
 
-  function compose (options, cb) {
+  function compose(options, cb) {
     var {
       meta, // required
       feedIdsInThread = [],
@@ -68,7 +68,7 @@ exports.create = function (api) {
     textArea.publish = publish // TODO: fix - clunky api for the keyboard shortcut to target
 
     var fileInput
-    if(!meta.recps) {
+    if (!meta.recps) {
       fileInput = api.blob.html.input(file => {
         files.push(file)
         filesById[file.link] = file
@@ -90,23 +90,28 @@ exports.create = function (api) {
     // if fileInput is null, send button moves to the left side
     // and we don't want that.
     else
-      fileInput = h('input', { style: {visibility: 'hidden'} })
+      fileInput = h('input', { style: { visibility: 'hidden' } })
 
-    function PreviewSetup (strings) {
+    function PreviewSetup(strings) {
       var showPreview = Value(false)
       var previewBtn = h('Button',
         {
           className: when(showPreview, '-strong', '-subtle'),
           'ev-click': () => showPreview.set(!showPreview())
-        }, 
+        },
         when(showPreview, strings.blogNew.actions.edit, strings.blogNew.actions.preview)
       )
       return { previewBtn, showPreview }
     }
+
     var { previewBtn, showPreview } = PreviewSetup(strings)
     var preview = computed(textRaw, text => api.message.html.markdown(text))
 
-    var publishBtn = h('Button -primary', { 'ev-click': publish }, strings.sendMessage)
+    var isPublishEnabled = computed(textRaw, content => content.length > 0)
+    var publishBtn = when(isPublishEnabled, 
+      h('Button -primary', {'ev-click': publish}, strings.sendMessage),
+      h('Button -subtle -disabled', strings.sendMessage)
+    )
 
     var actions = h('section.actions', [
       canAttach ? fileInput : '',
@@ -117,9 +122,9 @@ exports.create = function (api) {
     var composer = h('Compose', {
       classList: when(expanded, '-expanded', '-contracted')
     }, [
-      when(showPreview, preview, textArea),
-      actions
-    ])
+        when(showPreview, preview, textArea),
+        actions
+      ])
 
     addSuggest(textArea, (inputText, cb) => {
       const char = inputText[0]
@@ -128,13 +133,13 @@ exports.create = function (api) {
       if (char === '@') cb(null, getUserSuggestions(wordFragment, feedIdsInThread))
       if (char === '#') cb(null, getChannelSuggestions(wordFragment))
       if (char === ':') cb(null, getEmojiSuggestions(wordFragment))
-    }, {cls: 'PatchSuggest'})
+    }, { cls: 'PatchSuggest' })
 
     return composer
 
     // scoped
 
-    function publish () {
+    function publish() {
       publishBtn.disabled = true
       const text = resolve(textRaw)
 
@@ -152,8 +157,8 @@ exports.create = function (api) {
         text,
         mentions
       })
-      for(var k in content)
-          content[k] = resolve(content[k])
+      for (var k in content)
+        content[k] = resolve(content[k])
 
       if (!content.channel) delete content.channel
       if (!mentions.length) delete content.mentions
@@ -161,24 +166,24 @@ exports.create = function (api) {
 
       if (typeof prepublish === 'function') {
         prepublish(content, function (err, content) {
-          if(err) handleErr(err)
+          if (err) handleErr(err)
           else api.message.async.publish(content, done)
         })
       }
       else
         api.message.async.publish(content, done)
 
-      function done (err, msg) {
+      function done(err, msg) {
         publishBtn.disabled = false
         if (err) handleErr(err)
-        else if (msg) { 
+        else if (msg) {
           textRaw.set('')
           textArea.value = ''
         }
         if (cb) cb(err, msg)
       }
 
-      function handleErr (err) {
+      function handleErr(err) {
         publishBtn.disabled = false
         if (cb) cb(err)
         else throw err
