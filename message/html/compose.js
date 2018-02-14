@@ -1,6 +1,7 @@
 const nest = require('depnest')
 const { h, when, send, resolve, Value, computed, map } = require('mutant')
 const assign = require('lodash/assign')
+const isEmpty = require('lodash/isEmpty')
 const ssbMentions = require('ssb-mentions')
 const addSuggest = require('suggest-box')
 
@@ -134,8 +135,12 @@ exports.create = function (api) {
     // scoped
 
     function publish () {
-      publishBtn.disabled = true
+      if (publishBtn.disabled) return
+
       const text = resolve(textRaw)
+      if (isEmpty(text)) return
+
+      publishBtn.disabled = true
 
       const mentions = ssbMentions(text).map(mention => {
         // merge markdown-detected mention with file info
