@@ -17,10 +17,6 @@ exports.create = function (api) {
     const { subscribe, unsubscribe } = api.channel.async
     const isSubscribed = api.channel.obs.isSubscribedTo(channel)
 
-    isSubscribed(val => {
-      console.log(channel, 'subscribed:', val)
-    })
-
     return when(isSubscribed,
       h('Button', { 'ev-click': () => unsubscribe(channel) }, strings.channelShow.action.unsubscribe),
       h('Button -primary', { 'ev-click': () => subscribe(channel) }, strings.channelShow.action.subscribe)

@@ -1,6 +1,9 @@
 module.exports = {
   async: require('./async'),
-  obs: require('./obs'),
+  obs: {
+    subscribed: require('./obs/subscribed'),
+    subscribedTo: require('./obs/subscribedTo'),
+  },
   html: {
     subscribe: require('./html/subscribe')
   }

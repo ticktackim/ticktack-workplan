@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, Value, resolve } = require('mutant')
+const { h, Value, Array: MutantArray, resolve } = require('mutant')
 const pull = require('pull-stream')
 
 exports.gives = nest('app.page.blogIndex')
@@ -9,7 +9,8 @@ exports.needs = nest({
   'app.html.topNav': 'first',
   'app.html.scroller': 'first',
   'app.html.sideNav': 'first',
-  // 'feed.pull.public': 'first',
+  'blog.sync.isBlog': 'first',
+  'feed.pull.public': 'first',
   'feed.pull.type': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
@@ -19,6 +20,8 @@ exports.needs = nest({
 })
 
 exports.create = (api) => {
+  var blogsCache = MutantArray()
+
   return nest('app.page.blogIndex', function (location) {
     // location here can expected to be: { page: 'blogIndex'}
 
@@ -30,16 +33,13 @@ exports.create = (api) => {
       // stream: api.feed.pull.public,
       stream: api.feed.pull.type('blog'),
       filter: () => pull(
-        // pull.filter(msg => {
-        //   const type = msg.value.content.type
-        //   return type === 'post' || type === 'blog'
-        // }),
+        // pull.filter(api.blog.sync.isBlog),
         pull.filter(msg => !msg.value.content.root), // show only root messages
         pull.filter(msg => !api.message.sync.isBlocked(msg))
       ),
       // FUTURE : if we need better perf, we can add a persistent cache. At the moment this page is fast enough though.
       // See implementation of app.html.sideNav for example
-      // store: recentMsgCache,
+      store: blogsCache,
       updateTop: update,
       updateBottom: update,
       render
@@ -56,6 +56,10 @@ exports.create = (api) => {
       const { timestamp } = newBlog.value
 
       var object = newBlog // Value(newBlog)
+
+      const index = indexOf(soFar, (blog) => newBlog.key === resolve(blog).key)
+      // if blog already in cache, not needed again
+      if (index >= 0) return
 
       // Orders by: time received
       const justOlderPosition = indexOf(soFar, (msg) => newBlog.timestamp > resolve(msg).timestamp)

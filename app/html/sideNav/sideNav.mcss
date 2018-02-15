@@ -49,6 +49,14 @@ Option {
     $backgroundSelected
   }
 
+  -disabled {
+    filter: saturate(0)
+    opacity: .5
+    :hover {
+      cursor: not-allowed
+    }
+  }
+
   div.spacer {
     display: flex
     align-self: center

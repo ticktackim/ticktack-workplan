@@ -13,6 +13,7 @@ exports.gives = nest({
 
 exports.needs = nest({
   'app.html.scroller': 'first',
+  'app.obs.pluginWarnings': 'first',
   'about.html.avatar': 'first',
   'about.obs.name': 'first',
   'feed.pull.private': 'first',
@@ -125,25 +126,30 @@ exports.create = (api) => {
           selected: isDiscoverLocation(location),
           location: { page: 'blogIndex' }
         }),
+        computed(api.app.obs.pluginWarnings(), isWarning => {
+          return [
+            // My subscriptions
+            Option({
+              imageEl: h('i', [
+                h('img', { src: path.join(__dirname, '../../../assets', 'my_subscribed.png') })
+              ]),
+              label: strings.subscriptions.user,
+              selected: location.page === 'channelSubscriptions' && location.scope === 'user',
+              disabled: isWarning,
+              location: { page: 'channelSubscriptions', scope: 'user' }
+            }),
 
-        // My subscriptions
-        Option({
-          imageEl: h('i', [
-            h('img', { src: path.join(__dirname, '../../../assets', 'my_subscribed.png') })
-          ]),
-          label: strings.subscriptions.user,
-          selected: location.page === 'channelSubscriptions' && location.scope === 'user',
-          location: { page: 'channelSubscriptions', scope: 'user' }
-        }),
-
-        // Friends subscriptions
-        Option({
-          imageEl: h('i', [
-            h('img', { src: path.join(__dirname, '../../../assets', 'friends_subscribed.png') })
-          ]),
-          label: strings.subscriptions.friends,
-          selected: location.page === 'channelSubscriptions' && location.scope === 'friends',
-          location: { page: 'channelSubscriptions', scope: 'friends' }
+            // Friends subscriptions
+            Option({
+              imageEl: h('i', [
+                h('img', { src: path.join(__dirname, '../../../assets', 'friends_subscribed.png') })
+              ]),
+              label: strings.subscriptions.friends,
+              selected: location.page === 'channelSubscriptions' && location.scope === 'friends',
+              disabled: isWarning,
+              location: { page: 'channelSubscriptions', scope: 'friends' }
+            })
+          ]
         })
       ]
 
@@ -300,22 +306,27 @@ exports.create = (api) => {
       }
     }
 
-    function Option ({ notifications = 0, imageEl, label, location, selected }) {
-      const className = selected ? '-selected' : ''
+    function Option ({ notifications = 0, imageEl, label, location, selected, disabled }) {
+      const classList = []
+      if (selected) classList.push('-selected')
+      if (disabled) classList.push('-disabled')
+
       function goToLocation (e) {
+        if (disabled) return
+
         e.preventDefault()
         e.stopPropagation()
         api.history.sync.push(resolve(location))
       }
 
       if (!imageEl) {
-        return h('Option', { className, 'ev-click': goToLocation }, [
+        return h('Option', { classList, 'ev-click': goToLocation }, [
           when(notifications, h('div.spacer', h('div.alert', notifications))),
           h('div.label', label)
         ])
       }
 
-      return h('Option', { className }, [
+      return h('Option', { classList }, [
         h('div.circle', [
           when(notifications, h('div.alert', notifications)),
           Array.isArray(imageEl)

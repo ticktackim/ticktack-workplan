@@ -24,7 +24,7 @@ exports.needs = nest({
 })
 
 exports.create = (api) => {
-  const otherChannels = MutantArray()
+  const allChannels = MutantArray()
 
   return nest('app.page.channelSubscriptions', function (location) {
     const strings = api.translations.sync.strings()
@@ -62,15 +62,15 @@ exports.create = (api) => {
       )
 
       const showMoreCounter = Value(1)
-      const newChannels = computed([otherChannels, mySubs, showMoreCounter], (other, mine, more) => {
-        return difference(other, mine)
+      const newChannels = computed([allChannels, mySubs, showMoreCounter], (all, mine, more) => {
+        return difference(all, mine)
           .slice(0, 10 * more)
       })
 
       return h('Page -channelSubscriptions', { title: strings.home }, [
         api.app.html.sideNav(location),
         h('div.content', [
-          when(otherChannels,
+          when(allChannels,
             [
               mutantMap(newChannels, api.app.html.channelCard),
               h('Button', { 'ev-click': () => showMoreCounter.set(showMoreCounter() + 1) },
@@ -88,11 +88,11 @@ exports.create = (api) => {
     console.log('fetching channel subscriptions')
     sbot.channel.subscriptions((err, c) => {
       if (err) throw err
-      let b = map(c, (v,k) => {return {channel: k, users: v}})
+      let b = map(c, (v,k) => {return {channel: k, users: v.map(e=> e[0]) }})
       b = sortBy(b, o => o.users.length)
       let res = b.reverse()
 
-      otherChannels.set(res.map(c => c.channel))
+      allChannels.set(res.map(c => c.channel))
     })
   }
 }

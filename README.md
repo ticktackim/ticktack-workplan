@@ -66,3 +66,10 @@ Remember that you will need the right sbot plugins installed on your global sbot
 Theses are in `/translations`.
 There's a helper script in there called `checker.js` which looks for translations in `en` (english) that are missing from `zh` (mandarin).
 
+
+### TODO
+
+There are some issues with some lower level scuttlebutt deps (scuttlebot, muxrpc?). For the moment we've pinned these deps:
+- "scuttlebot": "10.4.10",
+- "secret-stack": "4.0.1", (added in order to stop version of muxrpc drifting up. can remove later)
+- "ssb-client": "4.5.2", (added in order to stop version of muxrpc drifting up. can remove later)

@@ -17,14 +17,14 @@ exports.create = function (api) {
   return nest('channel.obs.isSubscribedTo', isSubscribedTo)
 
   function isSubscribedTo (channel, id) {
-    channel = channel.replace(/^#/, '')
+    // channel = channel.replace(/^#/, '')
     if (!ref.isFeed(id)) {
       id = getMyId()
     }
 
     // TODO - use ssb-server-channel index to make a better subscribed obs
-    return computed(getSubscriptions(id), set => {
-      return set.has(channel)
+    return computed(getSubscriptions(id), channels => {
+      return channels.has(channel)
     })
   }
 
@@ -40,3 +40,4 @@ exports.create = function (api) {
     return subscriptions[id]
   }
 }
+
