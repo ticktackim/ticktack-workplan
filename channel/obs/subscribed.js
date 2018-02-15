@@ -59,7 +59,6 @@ exports.create = function (api) {
       }),
       pull.drain(val => {
         if (val === null) {
-          debugger
           return 
         }
 

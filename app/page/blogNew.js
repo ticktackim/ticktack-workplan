@@ -56,6 +56,7 @@ exports.create = (api) => {
 
     const channelInput = h('input', {
       'ev-input': e => meta.channel.set(e.target.value),
+      value: meta.channel,
       placeholder: strings.channel
     })
 
