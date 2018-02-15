@@ -11,7 +11,7 @@ exports.needs = nest({
   'app.html.topNav': 'first',
   'app.html.scroller': 'first',
   'app.html.channelCard': 'first',
-  'app.obs.pluginWarnings': 'first',
+  'app.obs.pluginsOk': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
   'channel.obs.subscribed': 'first',
@@ -52,14 +52,13 @@ exports.create = (api) => {
       // update list of other all channels
       // NOTE can't use onceTrue right now, because warnings are true/ false
       watch(
-        api.app.obs.pluginWarnings(),
-        isWarnings => {
-          if (isWarnings) {
-            return
-          }
+        api.app.obs.pluginsOk(),
+        ok => {
+          if (!ok) return
           onceTrue(api.sbot.obs.connection, getChannels)
         }
       )
+      // TODO - refactor this to use the cache in channel.obs.subscribed
 
       const showMoreCounter = Value(1)
       const newChannels = computed([allChannels, mySubs, showMoreCounter], (all, mine, more) => {

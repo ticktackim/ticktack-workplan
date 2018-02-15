@@ -1,5 +1,5 @@
 var pull = require('pull-stream')
-var { Dict, Value, computed, resolve } = require('mutant')
+var { Dict, Value, computed, resolve, onceTrue } = require('mutant')
 var get = require('lodash/get')
 var MutantPullReduce = require('mutant-pull-reduce')
 var nest = require('depnest')
@@ -8,7 +8,8 @@ var ref = require('ssb-ref')
 var throttle = require('mutant/throttle')
 
 exports.needs = nest({
-  'sbot.pull.stream': 'first'
+  'sbot.pull.stream': 'first',
+  'app.obs.pluginsOk': 'first',
 })
 
 exports.gives = nest({
@@ -53,33 +54,37 @@ exports.create = function (api) {
   function startCache () {
     var initialReceived = false
 
-    pull(
-      api.sbot.pull.stream(sbot => {
-        return sbot.channel.stream({ live: true })
-      }),
-      pull.drain(val => {
-        if (val === null) {
-          return 
-        }
+    onceTrue(api.app.obs.pluginsOk(), startStream)
+    
+    function startStream (val) {
+      pull(
+        api.sbot.pull.stream(sbot => {
+          return sbot.channel.stream({ live: true })
+        }),
+        pull.drain(val => {
+          if (val === null) {
+            return 
+          }
 
-        if (!initialReceived) {
-          initialReceived = true
-          cache.set(val)
-          cache.sync.set(true)
-          return
-        }
+          if (!initialReceived) {
+            initialReceived = true
+            cache.set(val)
+            cache.sync.set(true)
+            return
+          }
 
-        if (val.sync === true) {
-          cache.sync.set(true)
-          return
-        }
-         
-        // Object.assign seems to bee needed otherwise the cache.set hits some codition where the resolved value gets over-ridden
-        // before and set to {} right before the actual set happens!
-        var newCache = reduce(Object.assign({}, resolve(cache)), val)
-        cache.set(newCache)
-      })
-    )
+          if (val.sync === true) {
+            cache.sync.set(true)
+            return
+          }
+           
+          // Object.assign seems to bee needed otherwise the cache.set hits some codition where the resolved value gets over-ridden
+          // before and set to {} right before the actual set happens!
+          var newCache = reduce(Object.assign({}, resolve(cache)), val)
+          cache.set(newCache)
+        })
+      )
+    }
   }
 }
 

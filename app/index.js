@@ -24,7 +24,7 @@ module.exports = {
     warning: require('./html/warning'),
   },
   obs: {
-    pluginWarnings: require('./obs/pluginWarnings'),
+    pluginsOk: require('./obs/pluginsOk'),
   },
   page: {
     addressBook: require('./page/addressBook'),

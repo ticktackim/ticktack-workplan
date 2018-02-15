@@ -1,11 +1,11 @@
 const nest = require('depnest')
-const { h, onceTrue } = require('mutant')
+const { h, watch } = require('mutant')
 
 exports.gives = nest('app.html.warning')
 
 exports.needs = nest({
   'app.html.lightbox': 'first',
-  'app.obs.pluginWarnings': 'first',
+  'app.obs.pluginsOk': 'first',
   'translations.sync.strings': 'first'
 })
 
@@ -15,7 +15,7 @@ exports.create = (api) => {
   return nest('app.html.warning', function warning () {
     if (seenWarning) return 
 
-    const t = api.translations.sync.strings().pluginWarnings
+    const t = api.translations.sync.strings().pluginsOk
 
     const lightbox = api.app.html.lightbox(
       h('div', [
@@ -32,10 +32,10 @@ exports.create = (api) => {
       ])
     )
 
-    onceTrue(
-      api.app.obs.pluginWarnings(),
-      shouldWarn => {
-        shouldWarn ? lightbox.open() : null
+    watch(
+      api.app.obs.pluginsOk(),
+      isOk => {
+        if (isOk === false) lightbox.open()
       }
     )
 

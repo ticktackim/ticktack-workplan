@@ -13,7 +13,7 @@ exports.gives = nest({
 
 exports.needs = nest({
   'app.html.scroller': 'first',
-  'app.obs.pluginWarnings': 'first',
+  'app.obs.pluginsOk': 'first',
   'about.html.avatar': 'first',
   'about.obs.name': 'first',
   'feed.pull.private': 'first',
@@ -126,7 +126,7 @@ exports.create = (api) => {
           selected: isDiscoverLocation(location),
           location: { page: 'blogIndex' }
         }),
-        computed(api.app.obs.pluginWarnings(), isWarning => {
+        computed(api.app.obs.pluginsOk(), ok => {
           return [
             // My subscriptions
             Option({
@@ -135,7 +135,7 @@ exports.create = (api) => {
               ]),
               label: strings.subscriptions.user,
               selected: location.page === 'channelSubscriptions' && location.scope === 'user',
-              disabled: isWarning,
+              disabled: !ok,
               location: { page: 'channelSubscriptions', scope: 'user' }
             }),
 
@@ -146,7 +146,7 @@ exports.create = (api) => {
               ]),
               label: strings.subscriptions.friends,
               selected: location.page === 'channelSubscriptions' && location.scope === 'friends',
-              disabled: isWarning,
+              disabled: !ok,
               location: { page: 'channelSubscriptions', scope: 'friends' }
             })
           ]

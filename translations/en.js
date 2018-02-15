@@ -5,7 +5,7 @@ module.exports = {
 Reconstructing a trusty social network
 `
   },
-  pluginWarnings: {
+  pluginsOk: {
     heading: 'Ticktack running in limited mode',
     description: 'Another scuttlebutt app is managing your shared database. Core functionality will work, but you may find there are some features that do not work.',
     advice: 'If you are running Patchwork, close Patchwork before running Ticktack to get the full set of features',
