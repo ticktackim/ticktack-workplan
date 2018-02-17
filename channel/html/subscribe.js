@@ -17,7 +17,7 @@ exports.create = function (api) {
     const strings = api.translations.sync.strings()
     const { subscribe, unsubscribe } = api.channel.async
 
-    when(api.app.obs.pluginsOk(),
+    return when(api.app.obs.pluginsOk(),
       when(api.channel.obs.isSubscribedTo(channel),
         h('Button', { 'ev-click': () => unsubscribe(channel) }, strings.channelShow.action.unsubscribe),
         h('Button -primary', { 'ev-click': () => subscribe(channel) }, strings.channelShow.action.subscribe)
