@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, Struct, Value } = require('mutant')
+const { h, Struct, Value, when } = require('mutant')
 const addSuggest = require('suggest-box')
 const pull = require('pull-stream')
 const marksum = require('markdown-summary')
@@ -55,16 +55,20 @@ exports.create = (api) => {
       api.app.html.sideNav(location),
       h('div.content', [
         h('div.container', [
+          h('div.field -title', [
+            h('input', {
+              'ev-input': e => meta.title.set(e.target.value),
+              className: when(meta.title, '', '-empty'),
+              placeholder: strings.blogNew.field.title
+            })
+          ]),
+          mediumComposer,
+          h('div.field -attachment',
+            AddFileButton({ api, filesById, meta, textArea: mediumComposer })
+          ),
           h('div.field -channel', [
             h('div.label', strings.channel),
             channelInput
-          ]),
-          h('div.field -title', [
-            h('div.label', strings.blogNew.field.title),
-            h('input', {
-              'ev-input': e => meta.title.set(e.target.value),
-              placeholder: strings.blogNew.field.title
-            })
           ]),
           h('div.field -summary', [
             h('div.label', strings.blogNew.field.summary),
@@ -73,8 +77,6 @@ exports.create = (api) => {
               placeholder: strings.blogNew.field.summary
             })
           ]),
-          mediumComposer,
-          AddFileButton({ api, filesById, meta, textArea: mediumComposer }),
           composer
         ])
       ])
