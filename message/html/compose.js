@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, when, send, resolve, Value, computed, map } = require('mutant')
+const { h, when, send, resolve, Value, computed } = require('mutant')
 const assign = require('lodash/assign')
 const isEmpty = require('lodash/isEmpty')
 const ssbMentions = require('ssb-mentions')
@@ -30,6 +30,7 @@ exports.create = function (api) {
       placeholder,
       shrink = true,
       canAttach = true, canPreview = true,
+      filesById = {},
       prepublish
     } = options
 
@@ -40,8 +41,6 @@ exports.create = function (api) {
 
     placeholder = placeholder || strings.writeMessage
 
-    var files = []
-    var filesById = {}
     var textAreaFocused = Value(false)
     var focused = textAreaFocused
     var hasContent = Value(false)
@@ -67,12 +66,11 @@ exports.create = function (api) {
     })
     textRaw(text => hasContent.set(!!text))
 
-    textArea.publish = publish // TODO: fix - clunky api for the keyboard shortcut to target
+    textArea.publish = () => publish({ filesById }) // TODO: fix - clunky api for the keyboard shortcut to target
 
     var fileInput
     if (!meta.recps) {
       fileInput = api.blob.html.input(file => {
-        files.push(file)
         filesById[file.link] = file
 
         var imgPrefix = file.type.match(/^image/) ? '!' : ''
@@ -107,7 +105,7 @@ exports.create = function (api) {
     var { previewBtn, showPreview } = PreviewSetup(strings)
     var preview = computed(textRaw, text => api.message.html.markdown(text))
 
-    var publishBtn = h('Button -primary', { 'ev-click': publish }, strings.sendMessage)
+    var publishBtn = h('Button -primary', { 'ev-click': () => publish({ filesById }) }, strings.sendMessage)
 
     var actions = h('section.actions', [
       canAttach ? fileInput : '',
@@ -133,7 +131,7 @@ exports.create = function (api) {
 
     // scoped
 
-    function publish () {
+    function publish ({ filesById }) {
       if (publishBtn.disabled) return
 
       const text = resolve(textRaw)
