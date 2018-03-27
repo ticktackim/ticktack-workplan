@@ -94,24 +94,19 @@ function AddFileButton ({ api, filesById, meta, textArea }) {
     filesById[file.link] = file
 
     const isImage = file.type.match(/^image/)
-    const imgPrefix = isImage ? '!' : ''
-    const spacer = isImage ? '\n' : ' '
-    const insertLink = spacer + imgPrefix + '[' + file.name + ']' + '(' + file.link + ')' + spacer
 
-    const pos = textArea.selectionStart
-    // var newText = textRaw().slice(0, pos) + insertLink + textRaw().slice(pos)
-    // textArea.value = newText
-    // textRaw.set(newText)
+    var content
 
-    // TODO pivot on image to insert link, or image
-    const img = h('p', [
-      h('img', {
+    if (isImage) {
+      content = h('img', {
         src: `http://localhost:8989/blobs/get/${encodeURIComponent(file.link)}`,
         alt: file.name
       })
-    ])
+    } else {
+      content = h('a', { href: file.link }, file.name)
+    }
     // TODO - insert where the mouse is yo
-    textArea.appendChild(img)
+    textArea.appendChild(h('p', content))
 
     console.log('added:', file)
   })
