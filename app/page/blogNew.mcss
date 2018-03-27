@@ -33,15 +33,65 @@ Page -blogNew {
           outline: none
         }
 
+        -title {
+          margin: 0
+
+          input {
+            font-size: 2em
+            font-weight: bold
+
+            padding-top: 2rem
+            border: none
+            border-radius: 0
+
+            -empty {
+              font-weight: normal
+              font-style: italic
+            }
+          }
+        }
+
+        -attachment {
+          margin-top: .5rem
+          margin-left: 0
+
+          /* copied from message.html.compose */
+          input[type="file"] {
+            border: none
+            flex-grow: 0
+
+            color: transparent
+
+            ::-webkit-file-upload-button {
+              visibility: hidden
+            }
+
+            ::before {
+              $attachButton
+              /* padding-top: .3rem */
+
+              /* content: '📎' */
+              content: url('file.png')
+              font-size: 1rem
+
+              outline: none
+              white-space: nowrap
+              -webkit-user-select: none
+            }
+
+            :active, :focus {
+              outline: none
+              box-shadow: none
+            }
+          }
+        }
 
         -channel {}
-        -title {}
       }
 
       div.editor{
         background-color: #fff
         padding: 1rem
-        margin-top: 2rem
         min-height: 30rem
         outline: none
       }
