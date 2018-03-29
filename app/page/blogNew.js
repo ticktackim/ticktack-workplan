@@ -173,13 +173,34 @@ function initialiseChannelSuggests ({ input, suggester, meta }) {
 }
 
 function initialiseMedium ({ page, el, meta }) {
+  // el.addEventListener('keyup', ev => {
+  //   debugger
+  // })
   var editor = new MediumEditor(el, {
     elementsContainer: page,
+    // autoLink: true,
+    buttonLabels: 'fontawesome',
+    imageDragging: true,
     toolbar: {
       allowMultiParagraphSelection: true,
-      buttons: ['bold', 'italic', 'underline', 'anchor', 'h2', 'h3', 'quote'],
+      buttons: [
+        'bold',
+        'italic',
+        'anchor',
+        {
+          name: 'h2',
+          contentFA: '<i class="fa fa-header" />',
+          classList: ['custom-button-h2']
+        },
+        {
+          name: 'h3',
+          contentFA: '<i class="fa fa-header" />',
+          classList: ['custom-button-h3']
+        },
+        'quote'
+      ],
       diffLeft: 0,
-      diffTop: -10,
+      diffTop: 10,
       firstButtonClass: 'medium-editor-button-first',
       lastButtonClass: 'medium-editor-button-last',
       relativeContainer: null,
