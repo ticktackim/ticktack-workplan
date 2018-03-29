@@ -9,7 +9,6 @@ Page -blogNew {
       $maxWidth
       margin: 0 auto
 
-
       div.field {
         margin-bottom: .5rem
         $maxWidth
@@ -45,7 +44,6 @@ Page -blogNew {
             border-radius: 0
 
             -empty {
-              font-weight: normal
               font-style: italic
             }
           }
@@ -94,6 +92,12 @@ Page -blogNew {
         padding: 1rem
         min-height: 30rem
         outline: none
+
+        p, h2, h3 {
+          :first-child {
+            margin-top: 0
+          }
+        }
       }
 
       div.Compose {

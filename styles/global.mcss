@@ -23,3 +23,11 @@ img {
   max-width: 100%
 }
 
+ul.medium-editor-toolbar-actions {
+  li {
+    button.custom-button-h2 {
+      font-size: 20px
+      padding-top: 10px
+    }
+  }
+}
