@@ -34,10 +34,7 @@ exports.create = (api) => {
       text: Value('')
     })
 
-    const mediumComposer = h('div.editor.Markdown', {
-      'ev-input': e => {
-      }
-    })
+    const mediumComposer = h('Markdown.editor')
     var filesById = {}
     const composer = initialiseDummyComposer({ filesById, meta, api })
     // NOTE we are bootstrapping off the message.html.compose logic
@@ -50,16 +47,26 @@ exports.create = (api) => {
       value: meta.channel,
       placeholder: strings.channel
     })
+    const updateTitle = e => {
+      if (e.target.childElementCount) {
+        // catch people pasting html in here!
+        e.target.innerHTML = e.target.innerText
+      }
+      meta.title.set(e.target.innerText)
+    }
 
     var page = h('Page -blogNew', [
       api.app.html.sideNav(location),
       h('div.content', [
         h('div.container', [
           h('div.field -title', [
-            h('input', {
-              'ev-input': e => meta.title.set(e.target.value),
-              className: when(meta.title, '', '-empty'),
-              placeholder: strings.blogNew.field.title
+            h('h1.input', {
+              attributes: {
+                contenteditable: true,
+                'data-placeholder': strings.blogNew.field.title
+              },
+              'ev-input': updateTitle,
+              className: when(meta.title, '', '-empty')
             })
           ]),
           mediumComposer,
@@ -91,6 +98,7 @@ exports.create = (api) => {
 
 function AddFileButton ({ api, filesById, meta, textArea }) {
   // var textRaw = meta.text
+  //
 
   const fileInput = api.blob.html.input(file => {
     filesById[file.link] = file
@@ -108,7 +116,12 @@ function AddFileButton ({ api, filesById, meta, textArea }) {
       content = h('a', { href: file.link }, file.name)
     }
     // TODO - insert where the mouse is yo
-    textArea.appendChild(h('p', content))
+    var editor = MediumEditor.getEditorFromElement(textArea)
+    debugger
+    textArea.insertBefore(
+      h('p', content),
+      editor.currentEl || null
+    )
 
     console.log('added:', file)
   })
@@ -122,6 +135,9 @@ function initialiseDummyComposer ({ meta, api, filesById }) {
       meta,
       // placeholder: strings.blogNew.actions.writeBlog,
       shrink: false,
+      canAttach: false,
+      canPreview: false,
+      publishString: api.translations.sync.strings().publishBlog,
       filesById,
       prepublish: function (content, cb) {
         var m = /\!\[[^]+\]\(([^\)]+)\)/.exec(marksum.image(content.text))
@@ -173,9 +189,6 @@ function initialiseChannelSuggests ({ input, suggester, meta }) {
 }
 
 function initialiseMedium ({ page, el, meta }) {
-  // el.addEventListener('keyup', ev => {
-  //   debugger
-  // })
   var editor = new MediumEditor(el, {
     elementsContainer: page,
     // autoLink: true,
@@ -221,6 +234,9 @@ function initialiseMedium ({ page, el, meta }) {
                 var blob = decodeURIComponent(node.src.replace('http://localhost:8989/blobs/get/', ''))
                 return `![${node.alt}](${blob})`
               }
+            }, {
+              filter: 'span',
+              replacement: (content, node) => content
             }]
           },
           events: ['input', 'change', 'DOMNodeInserted']
@@ -229,6 +245,17 @@ function initialiseMedium ({ page, el, meta }) {
       )
     }
   })
+
+  editor.on(el, 'keyup', setCurrentEl)
+  editor.on(el, 'click', setCurrentEl)
+
+  function setCurrentEl (ev) {
+    var sel = window.getSelection()
+    var container = sel.getRangeAt(0).commonAncestorContainer
+    editor.currentEl = container.textContent === '' // NOTE this could be a brittle check
+      ? container
+      : container.parentElement
+  }
 
   return editor
 }

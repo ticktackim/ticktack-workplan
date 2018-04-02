@@ -28,6 +28,7 @@ exports.create = function (api) {
       meta, // required
       feedIdsInThread = [],
       placeholder,
+      publishString,
       shrink = true,
       canAttach = true, canPreview = true,
       filesById = {},
@@ -40,6 +41,7 @@ exports.create = function (api) {
     const getEmojiSuggestions = api.emoji.async.suggest()
 
     placeholder = placeholder || strings.writeMessage
+    publishString = publishString || strings.sendMessage
 
     var textAreaFocused = Value(false)
     var focused = textAreaFocused
@@ -105,7 +107,7 @@ exports.create = function (api) {
     var { previewBtn, showPreview } = PreviewSetup(strings)
     var preview = computed(textRaw, text => api.message.html.markdown(text))
 
-    var publishBtn = h('Button -primary', { 'ev-click': () => publish({ filesById }) }, strings.sendMessage)
+    var publishBtn = h('Button -primary', { 'ev-click': () => publish({ filesById }) }, publishString)
 
     var actions = h('section.actions', [
       canAttach ? fileInput : '',
@@ -164,7 +166,9 @@ exports.create = function (api) {
           if (err) handleErr(err)
           else api.message.async.publish(content, done)
         })
-      } else { api.message.async.publish(content, done) }
+      } else {
+        api.message.async.publish(content, done)
+      }
 
       function done (err, msg) {
         publishBtn.disabled = false

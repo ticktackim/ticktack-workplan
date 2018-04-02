@@ -34,17 +34,25 @@ Page -blogNew {
 
         -title {
           margin: 0
+          background-color: #fff
 
-          input {
-            font-size: 2em
-            font-weight: bold
+          h1.input {
+            flex-grow: 1
+            $fontTitle
 
-            padding-top: 2rem
+            padding: 2rem 1rem .6rem 1rem
             border: none
             border-radius: 0
+            margin: 0
+            outline: none
 
             -empty {
               font-style: italic
+              color: #b3b3b1
+
+              ::after {
+                content: attr(data-placeholder)
+              }
             }
           }
         }
@@ -87,7 +95,9 @@ Page -blogNew {
         -channel {}
       }
 
-      div.editor{
+      div.editor.Makdown {
+        $markdownBlog
+
         background-color: #fff
         padding: 1rem
         min-height: 30rem
@@ -101,9 +111,10 @@ Page -blogNew {
       }
 
       div.Compose {
+        margin-bottom: 4rem
+
         textarea {
-          margin-top: 2rem
-          min-height: 30rem
+          display: none
         }
       }
     }

@@ -38,7 +38,7 @@ exports.create = (api) => {
       api.app.html.sideNav({ page: 'blogShow' }), // HACK to highlight discover
       h('Scroller.content', [
         h('section.top', [
-          api.app.html.topNav(location)
+          api.app.html.topNav(blogMsg)
         ]),
         h('section.content', [
           h('header', [

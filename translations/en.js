@@ -38,6 +38,7 @@ Reconstructing a trusty social network
   writeComment: 'Write a comment',
   peopleNearby: 'People nearby',
   sendMessage: 'Send',
+  publishBlog: 'Publish',
   showMore: 'Show More',
   directMessages: 'Direct Messages',
   home: 'Home',
