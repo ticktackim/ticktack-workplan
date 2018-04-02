@@ -101,9 +101,10 @@ Page -blogNew {
       }
 
       div.Compose {
+        margin-bottom: 4rem
+
         textarea {
-          margin-top: 2rem
-          min-height: 30rem
+          display: none
         }
       }
     }

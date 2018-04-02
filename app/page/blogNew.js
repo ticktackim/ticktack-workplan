@@ -34,10 +34,7 @@ exports.create = (api) => {
       text: Value('')
     })
 
-    const mediumComposer = h('div.editor.Markdown', {
-      'ev-input': e => {
-      }
-    })
+    const mediumComposer = h('div.editor.Markdown')
     var filesById = {}
     const composer = initialiseDummyComposer({ filesById, meta, api })
     // NOTE we are bootstrapping off the message.html.compose logic
@@ -91,6 +88,7 @@ exports.create = (api) => {
 
 function AddFileButton ({ api, filesById, meta, textArea }) {
   // var textRaw = meta.text
+  //
 
   const fileInput = api.blob.html.input(file => {
     filesById[file.link] = file
@@ -108,7 +106,11 @@ function AddFileButton ({ api, filesById, meta, textArea }) {
       content = h('a', { href: file.link }, file.name)
     }
     // TODO - insert where the mouse is yo
-    textArea.appendChild(h('p', content))
+    var editor = MediumEditor.getEditorFromElement(textArea)
+    textArea.insertBefore(
+      h('p', content),
+      editor.currentEl || null
+    )
 
     console.log('added:', file)
   })
@@ -122,6 +124,9 @@ function initialiseDummyComposer ({ meta, api, filesById }) {
       meta,
       // placeholder: strings.blogNew.actions.writeBlog,
       shrink: false,
+      canAttach: false,
+      canPreview: false,
+      publishString: api.translations.sync.strings().publishBlog,
       filesById,
       prepublish: function (content, cb) {
         var m = /\!\[[^]+\]\(([^\)]+)\)/.exec(marksum.image(content.text))
@@ -173,9 +178,6 @@ function initialiseChannelSuggests ({ input, suggester, meta }) {
 }
 
 function initialiseMedium ({ page, el, meta }) {
-  // el.addEventListener('keyup', ev => {
-  //   debugger
-  // })
   var editor = new MediumEditor(el, {
     elementsContainer: page,
     // autoLink: true,
@@ -229,6 +231,17 @@ function initialiseMedium ({ page, el, meta }) {
       )
     }
   })
+
+  editor.on(el, 'keyup', setCurrentEl)
+  editor.on(el, 'click', setCurrentEl)
+
+  function setCurrentEl (ev) {
+    var sel = window.getSelection()
+    var container = sel.getRangeAt(0).commonAncestorContainer
+    editor.currentEl = container.textContent === '' // NOTE this could be a brittle check
+      ? container
+      : container.parentElement
+  }
 
   return editor
 }
