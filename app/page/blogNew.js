@@ -117,7 +117,6 @@ function AddFileButton ({ api, filesById, meta, textArea }) {
     }
     // TODO - insert where the mouse is yo
     var editor = MediumEditor.getEditorFromElement(textArea)
-    debugger
     textArea.insertBefore(
       h('p', content),
       editor.currentEl || null
