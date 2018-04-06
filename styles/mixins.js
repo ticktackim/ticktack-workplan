@@ -10,10 +10,24 @@ exports.create = (api) => {
 }
 
 const mainMixins = `
+$fontSerif {
+  font-family: Georgia,Cambria,"Times New Roman",Times,serif
+}
+
+$fontSansSerif {
+  font-family: "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Arial,sans-serif
+}
+
 $fontBasic {
-  font-family: arial
-  line-height: 1.2
+  color: rgba(0,0,0,.84)
+  $fontSansSerif
   font-size: 1rem
+  line-height: 1.2
+}
+
+$fontTitle {
+  $fontSansSerif
+  font-size: 2.5rem
 }
 
 $maxWidth {
@@ -115,21 +129,21 @@ $circleLarge {
 $markdownSmall {
   div.Markdown {
     h1, h2, h3, h4, h5, h6, p {
-      font-size: .9rem
+      font-size: 1rem
       font-weight: 300
       margin: 0
     }
     (img.emoji) {
-      height: .9rem
+      height: 1rem
     }
   }
   h1, h2, h3, h4, h5, h6, p {
-    font-size: .9rem
+    font-size: 1rem
     font-weight: 300
     margin: 0
   }
   (img.emoji) {
-    height: .9rem
+    height: 1rem
   }
 }
 
@@ -160,6 +174,18 @@ $markdownBold {
   h1, h2, h3, h4, h5, h6, p {
     font-weight: bold
   }
+}
+
+$markdownBlog {
+  $fontSerif
+  line-height: 1.58
+
+  h1, h2, h3, h4, h5, h6 {
+    $fontSansSerif
+    letter-spacing: -.015rem
+  }
+
+  font-size: 1.25rem
 }
 
 $borderSubtle {
