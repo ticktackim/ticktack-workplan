@@ -28,7 +28,10 @@ exports.create = function (api) {
       api.sbot.async.get(msg, (err, value) => {
         if (err) throw err
 
-        var _subject = getMsgSubject({ key: msg, value: api.message.sync.unbox(value) })
+        var _subject = getMsgSubject({ 
+          key: msg, 
+          value: typeof value === "string" ? api.message.sync.unbox(value) : value 
+        })
         subject.set(_subject)
         subjectCache[msg] = _subject
       })

@@ -23,7 +23,7 @@ exports.needs = nest({
 exports.create = function (api) {
   return nest('message.html.compose', compose)
 
-  function compose (options, cb) {
+  function compose(options, cb) {
     var {
       meta, // required
       feedIdsInThread = [],
@@ -90,9 +90,11 @@ exports.create = function (api) {
     }
     // if fileInput is null, send button moves to the left side
     // and we don't want that.
-    else { fileInput = h('input', { style: {visibility: 'hidden'} }) }
+    else { 
+      fileInput = h('input', { style: {visibility: 'hidden'} }) 
+    }
 
-    function PreviewSetup (strings) {
+    function PreviewSetup(strings) {
       var showPreview = Value(false)
       var previewBtn = h('Button',
         {
@@ -103,10 +105,16 @@ exports.create = function (api) {
       )
       return { previewBtn, showPreview }
     }
+
     var { previewBtn, showPreview } = PreviewSetup(strings)
     var preview = computed(textRaw, text => api.message.html.markdown(text))
 
-    var publishBtn = h('Button -primary', { 'ev-click': publish }, strings.sendMessage)
+    var isBusyPublishing = Value(false)
+    var isPublishEnabled = computed([textRaw, isBusyPublishing], (content, busy) => !busy && (content.length > 0))
+    var publishBtn = when(isPublishEnabled,
+      h('Button -primary', { 'ev-click': publish }, strings.sendMessage),
+      h('Button -subtle -disabled', { disabled: true }, strings.sendMessage)
+    )
 
     var actions = h('section.actions', [
       canAttach ? fileInput : '',
@@ -117,9 +125,9 @@ exports.create = function (api) {
     var composer = h('Compose', {
       classList: when(expanded, '-expanded', '-contracted')
     }, [
-      when(showPreview, preview, textArea),
-      actions
-    ])
+        when(showPreview, preview, textArea),
+        actions
+      ])
 
     addSuggest(textArea, (inputText, cb) => {
       const char = inputText[0]
@@ -128,14 +136,14 @@ exports.create = function (api) {
       if (char === '@') cb(null, getUserSuggestions(wordFragment, feedIdsInThread))
       if (char === '#') cb(null, getChannelSuggestions(wordFragment))
       if (char === ':') cb(null, getEmojiSuggestions(wordFragment))
-    }, {cls: 'PatchSuggest'})
+    }, { cls: 'PatchSuggest' })
 
     return composer
 
     // scoped
 
-    function publish () {
-      if (publishBtn.disabled) return
+    function publish() {
+      isBusyPublishing.set(true)
 
       const text = resolve(textRaw)
       if (isEmpty(text)) return
@@ -156,7 +164,8 @@ exports.create = function (api) {
         text,
         mentions
       })
-      for (var k in content) { content[k] = resolve(content[k]) }
+      for (var k in content)
+        content[k] = resolve(content[k])
 
       if (!content.channel) delete content.channel
       if (!mentions.length) delete content.mentions
@@ -167,10 +176,13 @@ exports.create = function (api) {
           if (err) handleErr(err)
           else api.message.async.publish(content, done)
         })
-      } else { api.message.async.publish(content, done) }
+      }
+      else {
+        api.message.async.publish(content, done)
+      }
 
-      function done (err, msg) {
-        publishBtn.disabled = false
+      function done(err, msg) {
+       isBusyPublishing.set(false)
         if (err) handleErr(err)
         else if (msg) {
           textRaw.set('')
@@ -179,8 +191,8 @@ exports.create = function (api) {
         if (cb) cb(err, msg)
       }
 
-      function handleErr (err) {
-        publishBtn.disabled = false
+      function handleErr(err) {
+       isBusyPublishing.set(false)
         if (cb) cb(err)
         else throw err
       }
