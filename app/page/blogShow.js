@@ -42,7 +42,7 @@ exports.create = (api) => {
         ]),
         h('section.content', [
           h('header', [
-            h('div.blog', [
+            h('div.blog-details', [
               h('h1', title),
               timeago(blogMsg),
               channel(blogMsg),

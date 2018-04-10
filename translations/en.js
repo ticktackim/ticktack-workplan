@@ -6,9 +6,6 @@ module.exports = {
       "Let's do it right this time. A Web 3.0 social network, connecting the next billion with a decentralized platform built for openness, freedom, and equality.",
       'An open, equal and free social network.'
     ],
-//     slogan: `Connecting the Unconnected
-// Reconstructing a trusty social network
-// `
     slogan: 'Ticktack: blogging for the decentralized era'
   },
   pluginsOk: {

@@ -95,7 +95,7 @@ Page -blogNew {
         -channel {}
       }
 
-      div.editor.Makdown {
+      div.editor.Markdown {
         $markdownBlog
 
         background-color: #fff

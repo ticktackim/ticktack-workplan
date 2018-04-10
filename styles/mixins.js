@@ -180,9 +180,21 @@ $markdownBlog {
   $fontSerif
   line-height: 1.58
 
+  h1 {
+    font-size: 2.3rem
+  }
+
   h1, h2, h3, h4, h5, h6 {
     $fontSansSerif
     letter-spacing: -.015rem
+  }
+
+  h1, h2, h3, h4 {
+    margin: 2rem 0 .5rem 0
+  }
+
+  p {
+    margin: 0 0 1rem 0
   }
 
   font-size: 1.25rem

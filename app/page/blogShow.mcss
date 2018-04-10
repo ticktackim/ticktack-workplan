@@ -25,7 +25,7 @@ Page -blogShow {
 
         display: flex
 
-        div.blog {
+        div.blog-details {
           display: flex
           flex-wrap: wrap
           flex-basis: 100%
