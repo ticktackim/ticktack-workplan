@@ -1,9 +1,15 @@
 module.exports = {
   splash: {
-    about: `A new era social network for people who have faith in a decentralized world that values openness, equality, and freedom`,
-    slogan: `Connecting the Unconnected
-Reconstructing a trusty social network
-`
+    about: [
+      'A social network that values openness, equality, and freedom.',
+      'A new social network for people seeking an equitable world that values the value people create and successfully balances freedom, solidarity, privacy, and openness.',
+      "Let's do it right this time. A Web 3.0 social network, connecting the next billion with a decentralized platform built for openness, freedom, and equality.",
+      'An open, equal and free social network.'
+    ],
+//     slogan: `Connecting the Unconnected
+// Reconstructing a trusty social network
+// `
+    slogan: 'Ticktack: blogging for the decentralized era'
   },
   pluginsOk: {
     heading: 'Ticktack running in limited mode',

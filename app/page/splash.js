@@ -30,7 +30,7 @@ exports.create = (api) => {
         h('img.logoName', { src: assetPath('logo_and_name.png') })
       ]),
       h('div.bottom', { style }, [
-        h('div.about', strings.splash.about),
+        h('div.about', random(strings.splash.about)),
         h('pre.slogan', strings.splash.slogan)
       ])
     ])
@@ -40,3 +40,9 @@ exports.create = (api) => {
 function assetPath (name) {
   return path.join(__dirname, '../../assets', name)
 }
+
+function random (arr) {
+  const i = Math.floor(Math.random() * arr.length)
+  return arr[i]
+}
+

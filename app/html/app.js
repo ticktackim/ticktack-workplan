@@ -52,7 +52,7 @@ exports.create = (api) => {
   function startApp () {
     api.history.sync.push({page: 'splash'})
 
-    const delay = process.env.STARTUP_DELAY || 2000
+    const delay = process.env.STARTUP_DELAY || 3500
     setTimeout(enterApp, delay)
   }
 
