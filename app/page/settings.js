@@ -2,6 +2,7 @@ const nest = require('depnest')
 const { h, computed } = require('mutant')
 const electron = require('electron')
 const path = require('path')
+const { version } = require('../../package.json')
 
 exports.gives = nest('app.page.settings')
 
@@ -84,6 +85,10 @@ exports.create = (api) => {
         h('section -zoom', [
           h('div.left', strings.settingsPage.section.zoom),
           h('div.right', [ zoomButton(-0.1, '-'), zoomButton(+0.1, '+') ])
+        ]),
+        h('section -version', [
+          h('div.left', strings.settingsPage.section.version),
+          h('div.right', version)
         ])
       ])
     ])

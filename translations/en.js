@@ -67,7 +67,8 @@ Reconstructing a trusty social network
       name: 'Name',
       introduction: 'Introduction',
       language: 'Language',
-      zoom: 'Zoom'
+      zoom: 'Zoom',
+      version: 'Version'
     }
   },
   addressBook: {

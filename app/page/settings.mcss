@@ -50,10 +50,18 @@ Page -settings {
         flex-basis: 60%
         justify-content: flex-start
       }
-    }
 
-    section -introduction {
-      margin-bottom: 2rem
+      -introduction {
+        margin-bottom: 2rem
+      }
+
+      -version {
+        margin-top: 2rem
+
+        div.right {
+          $colorFontSubtle
+        }
+      }
     }
   }
 }
