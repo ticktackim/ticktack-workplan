@@ -49,7 +49,10 @@ exports.create = (api) => {
     })
     const updateTitle = e => {
       if (e.target.childElementCount) {
-        // catch people pasting html in here!
+        // the title h1 is contenteditable, meaning people can paste html elements in here!
+        // this is designed to strip down to heading content text
+        //   - I went with contenteditable because it handles wrapping of long titles,
+        //   whereas a styled input field just pushes content off the page!
         e.target.innerHTML = e.target.innerText
       }
       meta.title.set(e.target.innerText)
