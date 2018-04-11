@@ -31,7 +31,7 @@ module.exports = {
     actions: {
       edit: 'Edit',
       preview: 'Preview',
-      writeBlog: 'Write a blog'
+      writeBlog: 'Write your blog here'
     }
   },
   channel: 'Channel',
