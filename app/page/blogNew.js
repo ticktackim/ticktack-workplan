@@ -191,7 +191,10 @@ function initialiseDummyComposer ({ meta, api, filesById }) {
         })
       }
     },
-    (err, msg) => api.history.sync.push(err || { page: 'blogIndex' })
+    (err, msg) => {
+      api.drafts.sync.remove(DRAFT_LOCATION)
+      api.history.sync.push(err || { page: 'blogIndex' })
+    }
   )
 }
 
