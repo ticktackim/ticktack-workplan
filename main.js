@@ -34,6 +34,7 @@ const sockets = combine(
   },
   {
     profile: require('patch-profile'),
+    drafts: require('patch-drafts'),
     history: require('patch-history'),
     core: require('patchcore')
   }
