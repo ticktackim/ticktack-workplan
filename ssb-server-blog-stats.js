@@ -98,11 +98,10 @@ module.exports = {
       )
     }
 
-    function readComments (options = {}) {
+    function readComments (blog, options = {}) {
       var key
-      if (!options.blog) key = null
-      else if (isMsgRef(options.blog)) key = options.blog
-      else if (isMsgRef(options.blog.key) && isBlog(options.blog)) key = options.blog.key
+      if (isMsgRef(blog)) key = blog
+      else if (isMsgRef(blog.key) && isBlog(blog)) key = blog.key
 
       const query = Object.assign({}, {
         gt: ['C', key, null],
@@ -114,16 +113,13 @@ module.exports = {
         seqs: false
       }, options)
 
-      delete query.blog
-
       return view.read(query)
     }
 
-    function readLikes (options = {}) {
+    function readLikes (blog, options = {}) {
       var key
-      if (!options.blog) key = null
-      else if (isMsgRef(options.blog)) key = options.blog
-      else if (isMsgRef(options.blog.key) && isBlog(options.blog)) key = options.blog.key
+      if (isMsgRef(blog)) key = blog
+      else if (isMsgRef(blog.key) && isBlog(blog)) key = blog.key
 
       const query = Object.assign({}, {
         // gt: ['L', key, null],
@@ -135,8 +131,6 @@ module.exports = {
         keys: false,
         seqs: false
       }, options)
-
-      delete query.blog
 
       return view.read(query)
     }
