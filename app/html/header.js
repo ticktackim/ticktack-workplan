@@ -39,6 +39,9 @@ exports.create = (api) => {
         h('img.settings', {
           src: when(isSettings, assetPath('settings_on.png'), assetPath('settings.png')),
           'ev-click': () => push({page: 'settings'})
+        }),
+        h('i.fa.fa-bell', {
+          'ev-click': () => push({page: 'statsShow'})
         })
       ])
     ])
