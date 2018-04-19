@@ -2,6 +2,8 @@ const nest = require('depnest')
 const { h, Value, Struct, Array: MutantArray, Dict, onceTrue, map, computed, dictToCollection, throttle } = require('mutant')
 const pull = require('pull-stream')
 const marksum = require('markdown-summary')
+const Chart = require('chart.js')
+const groupBy = require('lodash/groupBy')
 
 exports.gives = nest('app.page.statsShow')
 
@@ -22,14 +24,14 @@ exports.create = (api) => {
 
     var howFarBack = Value(0)
     // stats show a moving window of 30 days
-    const thirtyDays = 30 * 24 * 60 * 60 * 1000
+    const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000
 
     // TODO
     var range = computed([howFarBack], howFarBack => {
       const now = Date.now()
       return {
-        upper: now - howFarBack * thirtyDays,
-        lower: now - (howFarBack + 1) * thirtyDays
+        upper: now - howFarBack * THIRTY_DAYS,
+        lower: now - (howFarBack + 1) * THIRTY_DAYS
       }
     })
 
@@ -78,8 +80,9 @@ exports.create = (api) => {
       // )
       /// ///// test code /////
     })
+    const canvas = h('canvas')
 
-    return h('Page -statsShow', [
+    const page = h('Page -statsShow', [
       h('div.content', [
         h('h1', 'Stats'),
         h('section.totals', [
@@ -97,16 +100,16 @@ exports.create = (api) => {
           ])
         ]),
         h('section.graph', [
+          canvas,
           // TODO insert actual graph
           h('div', [
             // h('div', [ 'Comments ', map(rangeComments, msg => [new Date(msg.value.timestamp).toDateString(), ' ']) ]),
             // h('div', [ 'Likes ', map(rangeLikes, msg => [new Date(msg.value.timestamp).toDateString(), ' ']) ])
           ]),
-          h('div', [
+          h('div.changeRange', [
             h('a', { href: '#', 'ev-click': () => howFarBack.set(howFarBack() + 1) }, '< Prev 30 days'),
             ' | ',
-            h('a', { href: '#', 'ev-click': () => howFarBack.set(howFarBack() - 1) }, 'Next 30 days >'),
-            h('div', ['howFarBack:', howFarBack]) // TODO change - this is temporary
+            h('a', { href: '#', 'ev-click': () => howFarBack.set(howFarBack() - 1) }, 'Next 30 days >')
           ])
         ]),
         h('table.blogs', [
@@ -135,6 +138,82 @@ exports.create = (api) => {
         ])
       ])
     ])
+
+    Chart.scaleService.updateScaleDefaults('linear', {
+      ticks: { min: 0 }
+    })
+    var chart = new Chart(canvas.getContext('2d'), {
+      type: 'bar',
+      data: {
+        datasets: [{
+          // label: 'My First dataset',
+          backgroundColor: 'hsla(215, 57%, 60%, 1)', // 'hsla(215, 57%, 43%, 1)',
+          borderColor: 'hsla(215, 57%, 60%, 1)',
+          // TODO set initial data as empty to make a good range
+          data: [
+          ]
+        }]
+      },
+      options: {
+        legend: {
+          display: false
+        },
+        scales: {
+          xAxes: [{
+            type: 'time',
+            distribution: 'linear',
+            time: {
+              unit: 'day',
+              min: new Date(range().lower),
+              max: new Date(range().upper)
+            },
+            bounds: 'ticks',
+            ticks: {
+              maxTicksLimit: 4
+            },
+            gridLines: {
+              display: false
+            },
+            maxBarThickness: 20
+          }],
+
+          yAxes: [{
+            ticks: {
+              suggestedMin: 0,
+              suggestedMax: 10,
+              maxTicksLimit: 5
+            }
+          }]
+        },
+        animation: {
+          duration: 300
+        }
+      }
+    })
+
+    const toDay = ts => Math.floor(ts / (24 * 60 * 60 * 1000))
+    const rangeCommentData = computed(rangeComments, msgs => {
+      const grouped = groupBy(msgs, m => toDay(m.value.timestamp))
+
+      var data = Object.keys(grouped)
+        .map(day => {
+          return {
+            t: day * 24 * 60 * 60 * 1000,
+            y: grouped[day].length
+          }
+        })
+      return data
+    })
+    rangeCommentData((newData) => {
+      chart.data.datasets[0].data = newData
+
+      chart.options.scales.xAxes[0].time.min = new Date(range().lower)
+      chart.options.scales.xAxes[0].time.max = new Date(range().upper)
+
+      chart.update()
+    })
+
+    return page
   }
 
   function viewBlog (blog) {

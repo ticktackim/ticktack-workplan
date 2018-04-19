@@ -27,7 +27,18 @@ Page -statsShow {
     }
 
     section.graph {
+      display: flex
+      flex-wrap: wrap
+      justify-content: center
+
       margin: 2rem 0
+
+      canvas {
+        margin-bottom: 1rem
+      }
+      div.changeRange {
+        
+      }
     }
 
     table.blogs {

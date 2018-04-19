@@ -10,7 +10,7 @@ const getCommentRoot = (msg) => get(msg, 'value.content.root')
 const getLikeRoot = (msg) => get(msg, 'value.content.vote.link')
 const getTimestamp = (msg) => get(msg, 'value.timestamp')
 
-const FLUME_VIEW_VERSION = 1
+const FLUME_VIEW_VERSION = 2
 
 module.exports = {
   name: 'blogStats',
@@ -89,7 +89,7 @@ module.exports = {
       const query = Object.assign({}, {
         gte: ['B', null, null],
         // null is the 'minimum' structure in bytewise ordering
-        lte: ['B~', undefined, undefined],
+        lte: ['B', undefined, undefined],
         reverse: true,
         values: true,
         keys: false,
@@ -126,10 +126,8 @@ module.exports = {
       var key = getBlogKey(blog)
 
       const query = Object.assign({}, {
-        // gt: ['L', key, null],
-        // lt: ['L', key, undefined], // why doesn't this work?
-        gt: ['L', key, null],            // null is minimum in bytewise ordering
-        lt: ['L', key + '~', undefined], // undefinted in maximum in bytewise ordering
+        gt: ['L', key, null],
+        lt: ['L', key, undefined],
         reverse: true,
         values: true,
         keys: false,
