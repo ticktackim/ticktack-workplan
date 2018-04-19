@@ -10,7 +10,7 @@ const getCommentRoot = (msg) => get(msg, 'value.content.root')
 const getLikeRoot = (msg) => get(msg, 'value.content.vote.link')
 const getTimestamp = (msg) => get(msg, 'value.timestamp')
 
-const FLUME_VIEW_VERSION = 5
+const FLUME_VIEW_VERSION = 1
 
 module.exports = {
   name: 'blogStats',
@@ -48,7 +48,7 @@ module.exports = {
 
       switch (getType(msg)) {
         case 'blog':
-          if (isBlog(msg) && myBlog(msg)) return [['B', msg.key, getTimestamp(msg)]]
+          if (isBlog(msg) && isMyMsg(msg)) return [['B', msg.key, getTimestamp(msg)]]
           else return []
 
         case 'vote':
@@ -63,10 +63,11 @@ module.exports = {
           //   - likes AND unlikes
 
         case 'post':
-          // process.stdout.write('C')
+          // process.stdout.write('POST ')
           root = getCommentRoot(msg)
-          // TODO figure out how to only store likes I care about
-          if (root) return [['C', root, getTimestamp(msg)]]
+          // TODO figure out how to only store comments I care about
+          if (!root && isMyMsg(msg) && isPlog(msg)) return [['B', msg.key, getTimestamp(msg)]]
+          else if (root) return [['C', root, getTimestamp(msg)]]
           else return []
 
           // Note this catches:
@@ -75,6 +76,13 @@ module.exports = {
         default:
           return []
       }
+    }
+
+    // a Plog is a Blog shaped Post
+    function isPlog (msg) {
+      // return false // Disable plogs
+      if (get(msg, 'value.content.text', '').length >= 3000) console.log(get(msg, 'value.content.text', '').length)
+      return get(msg, 'value.content.text', '').length >= 3000
     }
 
     function readBlogs (options = {}) {
@@ -99,9 +107,7 @@ module.exports = {
     }
 
     function readComments (blog, options = {}) {
-      var key
-      if (isMsgRef(blog)) key = blog
-      else if (isMsgRef(blog.key) && isBlog(blog)) key = blog.key
+      var key = getBlogKey(blog)
 
       const query = Object.assign({}, {
         gt: ['C', key, null],
@@ -117,9 +123,7 @@ module.exports = {
     }
 
     function readLikes (blog, options = {}) {
-      var key
-      if (isMsgRef(blog)) key = blog
-      else if (isMsgRef(blog.key) && isBlog(blog)) key = blog.key
+      var key = getBlogKey(blog)
 
       const query = Object.assign({}, {
         // gt: ['L', key, null],
@@ -135,7 +139,13 @@ module.exports = {
       return view.read(query)
     }
 
-    function myBlog (msg) {
+    function getBlogKey (blog) {
+      if (isMsgRef(blog)) return blog
+      // else if (isMsgRef(blog.key) && isBlog(blog)) return blog.key
+      else if (isMsgRef(blog.key) && (isBlog(blog) || isPlog(blog))) return blog.key
+    }
+
+    function isMyMsg (msg) {
       return getAuthor(msg) === myKey
     }
   }

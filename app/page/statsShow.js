@@ -1,6 +1,7 @@
 const nest = require('depnest')
-const { h, Value, Struct, Array: MutantArray, Dict, onceTrue, map, computed, dictToCollection } = require('mutant')
+const { h, Value, Struct, Array: MutantArray, Dict, onceTrue, map, computed, dictToCollection, throttle } = require('mutant')
 const pull = require('pull-stream')
+const marksum = require('markdown-summary')
 
 exports.gives = nest('app.page.statsShow')
 
@@ -21,18 +22,18 @@ exports.create = (api) => {
 
     var howFarBack = Value(0)
     // stats show a moving window of 30 days
-    const now = Date.now()
     const thirtyDays = 30 * 24 * 60 * 60 * 1000
 
     // TODO
     var range = computed([howFarBack], howFarBack => {
+      const now = Date.now()
       return {
         upper: now - howFarBack * thirtyDays,
         lower: now - (howFarBack + 1) * thirtyDays
       }
     })
 
-    var rangeComments = computed([dictToCollection(store.comments), range], (comments, range) => {
+    var rangeComments = computed([throttle(dictToCollection(store.comments), 1000), range], (comments, range) => {
       return comments
         .map(c => c.value)
         .reduce((n, sofar) => [...n, ...sofar], [])
@@ -42,7 +43,7 @@ exports.create = (api) => {
         })
     })
 
-    var rangeLikes = computed([dictToCollection(store.likes), range], (likes, range) => {
+    var rangeLikes = computed([throttle(dictToCollection(store.likes), 1000), range], (likes, range) => {
       return likes
         .map(c => c.value)
         .reduce((n, sofar) => [...n, ...sofar], [])
@@ -98,8 +99,8 @@ exports.create = (api) => {
         h('section.graph', [
           // TODO insert actual graph
           h('div', [
-            h('div', [ 'Comments ', map(rangeComments, msg => [new Date(msg.value.timestamp).toDateString(), ' ']) ]),
-            h('div', [ 'Likes ', map(rangeLikes, msg => [new Date(msg.value.timestamp).toDateString(), ' ']) ])
+            // h('div', [ 'Comments ', map(rangeComments, msg => [new Date(msg.value.timestamp).toDateString(), ' ']) ]),
+            // h('div', [ 'Likes ', map(rangeLikes, msg => [new Date(msg.value.timestamp).toDateString(), ' ']) ])
           ]),
           h('div', [
             h('a', { href: '#', 'ev-click': () => howFarBack.set(howFarBack() + 1) }, '< Prev 30 days'),
@@ -116,9 +117,9 @@ exports.create = (api) => {
               h('th.likes', 'Likes')
             ])
           ]),
-          h('tbody', map(store.blogs, blog => h('tr.blog', [
+          h('tbody', map(store.blogs, blog => h('tr.blog', { id: blog.key }, [
             h('td.details', [
-              h('div.title', {}, blog.value.content.title),
+              h('div.title', {}, getTitle(blog)),
               h('a',
                 {
                   href: '#',
@@ -129,6 +130,7 @@ exports.create = (api) => {
             ]),
             h('td.comments', computed(store.comments.get(blog.key), msgs => msgs ? msgs.length : 0)),
             h('td.likes', computed(store.likes.get(blog.key), msgs => msgs ? msgs.length : 0))
+          // ]), { comparer: (a, b) => a === b }))
           ])))
         ])
       ])
@@ -138,6 +140,12 @@ exports.create = (api) => {
   function viewBlog (blog) {
     return () => api.history.sync.push(blog)
   }
+}
+
+function getTitle (blog) {
+  if (blog.value.content.title) return blog.value.content.title
+  else if (blog.value.content.text) return marksum.title(blog.value.content.text)
+  else return blog.key
 }
 
 function fetchBlogs ({ server, store }) {
@@ -157,8 +165,8 @@ function fetchComments ({ server, store, blog }) {
 
   pull(
     server.blogStats.readComments(blog),
-    pull.drain(comment => {
-      store.comments.get(blog.key).push(comment)
+    pull.drain(msg => {
+      store.comments.get(blog.key).push(msg)
       // TODO remove my comments from count?
     })
   )
@@ -169,8 +177,8 @@ function fetchLikes ({ server, store, blog }) {
 
   pull(
     server.blogStats.readLikes(blog),
-    pull.drain(comment => {
-      store.likes.get(blog.key).push(comment)
+    pull.drain(msg => {
+      store.likes.get(blog.key).push(msg)
       // TODO this needs reducing... like + unlike are muddled in here
       //   find any thing by same author
       //   if exists - over-write or delete

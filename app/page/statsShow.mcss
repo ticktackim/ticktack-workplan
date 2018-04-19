@@ -3,7 +3,7 @@ Page -statsShow {
     flex-grow: 0
     $backgroundPrimaryText
     margin-top: 1rem
-    width: 800px
+    width: 1000px
 
     h1 {
       font-size: .8rem
