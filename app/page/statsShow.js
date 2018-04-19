@@ -80,7 +80,7 @@ exports.create = (api) => {
       // )
       /// ///// test code /////
     })
-    const canvas = h('canvas')
+    const canvas = h('canvas', { height: 200, width: 600, style: { height: '200px', width: '600px' } })
 
     const page = h('Page -statsShow', [
       h('div.content', [
