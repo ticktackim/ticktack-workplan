@@ -1,91 +1,101 @@
 Page -statsShow {
-  div.content {
-    flex-grow: 0
-    $backgroundPrimaryText
-    margin-top: 1rem
-    width: 1000px
+  div.Scroller {
+    display: flex
+    justify-content: center
 
-    h1 {
-      font-size: .8rem
-      letter-spacing: 4px
-    }
+    div.content {
+      flex-grow: 0
+      $backgroundPrimaryText
+      padding: 1rem
+      width: 1000px
 
-    section.totals {
-      display: flex
-      justify-content: space-between
-
-      div {
-        div.count {
-          font-size: 3rem
-          font-weight: 600
-          margin-right: .5rem
-        }
-        strong {
-          margin-right: .5rem
-        }
+      h1 {
+        font-size: .8rem
+        letter-spacing: 4px
       }
-    }
 
-    section.graph {
-      display: flex
-      flex-wrap: wrap
-      justify-content: center
+      section.totals {
+        display: flex
+        justify-content: space-between
 
-      margin: 2rem 0
-
-      canvas {
-        margin-bottom: 1rem
-      }
-      div.changeRange {
-        
-      }
-    }
-
-    table.blogs {
-      margin: 1rem 0
-
-      thead {
-        tr {
-          margin-bottom: 1rem
-          color: hsl(0, 0%, 25%)
-          td {
-
+        div {
+          div.count {
+            font-size: 3rem
+            font-weight: 600
+            margin-right: .5rem
+          }
+          strong {
+            margin-right: .5rem
           }
         }
       }
-      tbody {
-        tr.blog {
+
+      section.graph {
+        display: flex
+        flex-wrap: wrap
+        justify-content: center
+
+        margin: 2rem 0
+
+        canvas {
           margin-bottom: 1rem
-          td.details {
-            width: 100%
-            padding: .8rem 2rem .8rem 0
-            border-bottom: 1px solid rgba(0, 0, 0, .05)
-            
-            div.title {
-              font-size: 1.3rem
-              font-weight: 600
-              margin-bottom: .5rem
+        }
+        div.changeRange {
+          a {
+            cursor: pointer
+            :hover { text-decoration: underline }
+          }
+          span {
+            $colorFontSubtle
+          }
+        }
+      }
+
+      table.blogs {
+        margin: 1rem 0
+
+        thead {
+          tr {
+            margin-bottom: 1rem
+            color: hsl(0, 0%, 25%)
+            td {
+
             }
+          }
+        }
+        tbody {
+          tr.blog {
+            margin-bottom: 1rem
+            td.details {
+              width: 100%
+              padding: .8rem 2rem .8rem 0
+              border-bottom: 1px solid rgba(0, 0, 0, .05)
+              
+              div.title {
+                font-size: 1.3rem
+                font-weight: 600
+                margin-bottom: .5rem
+              }
 
-            a { 
-              color: hsl(0, 0%, 15%)
-              font-size: .8rem
-              text-decoration: none
+              a { 
+                color: hsl(0, 0%, 15%)
+                font-size: .8rem
+                text-decoration: none
 
-              :hover {
-                text-decoration: underline
+                :hover {
+                  text-decoration: underline
+                }
               }
             }
-          }
-          td.comments, td.likes {
-            padding: 0 2.5rem
-            font-size: 1.3rem
-            font-weight: 600
-            text-align: center
+            td.comments, td.likes {
+              padding: 0 2.5rem
+              font-size: 1.3rem
+              font-weight: 600
+              text-align: center
+            }
           }
         }
       }
     }
   }
-
 }
