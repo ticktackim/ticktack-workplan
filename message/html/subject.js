@@ -16,7 +16,7 @@ exports.create = function (api) {
 
   return nest('message.html.subject', subject)
 
-  function subject (msg) {
+  function subject(msg) {
     if (msg === undefined) debugger
     // test if it's a message ref, or a full message object
     // a message ref is generally passed in if we're fetching the subject of a root message
@@ -27,17 +27,21 @@ exports.create = function (api) {
 
       api.sbot.async.get(msg, (err, value) => {
         if (err) throw err
+        try {
+          var _subject = getMsgSubject({ key: msg, value: api.message.sync.unbox(value) })
+          subject.set(_subject)
+          subjectCache[msg] = _subject
+        } catch (n) {
+          subject.set("broken message")
+        }
 
-        var _subject = getMsgSubject({ key: msg, value: api.message.sync.unbox(value) })
-        subject.set(_subject)
-        subjectCache[msg] = _subject
       })
 
       return subject
     } else { return getMsgSubject(msg) }
   }
 
-  function getMsgSubject (msg) {
+  function getMsgSubject(msg) {
     const { subject, text } = msg.value.content
     if (!(subject || text)) return
 
