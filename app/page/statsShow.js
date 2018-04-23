@@ -14,6 +14,10 @@ exports.needs = nest({
   'history.sync.push': 'first'
 })
 
+const COMMENTS = 'comments'
+const LIKES = 'likes'
+const DAY = 24 * 60 * 60 * 1000
+
 exports.create = (api) => {
   return nest('app.page.statsShow', statsShow)
 
@@ -23,67 +27,49 @@ exports.create = (api) => {
       comments: Dict(),
       likes: Dict()
     })
-    onceTrue(api.sbot.obs.connection, server => {
-      fetchBlogs({ server, store })
-    })
+    onceTrue(api.sbot.obs.connection, server => fetchBlogs({ server, store }))
 
     var howFarBack = Value(0)
     // stats show a moving window of 30 days
-    const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000
-
-    const COMMENTS = 'comments'
-    const LIKES = 'likes'
     var context = Struct({
       focus: Value(COMMENTS),
       blog: Value(),
       range: computed([howFarBack], howFarBack => {
         const now = Date.now()
+        const endOfDay = (Math.floor(now / DAY) + 1) * DAY
         return {
-          upper: now - howFarBack * THIRTY_DAYS,
-          lower: now - (howFarBack + 1) * THIRTY_DAYS
+          upper: endOfDay - howFarBack * 30 * DAY,
+          lower: endOfDay - (howFarBack + 1) * 30 * DAY
         }
       })
     })
 
-    var commentsAll = computed(throttle(dictToCollection(store.comments), 1000), (msgs) => {
-      return msgs
-        .map(c => c.value)
-        .reduce((n, sofar) => [...n, ...sofar], [])
-    })
-    // var commentsAll = computed([throttle(store.comments, 1000)], (msgs) => {
-    //   return flatMap(msgs, (val, key) => {
-    //     console.log(key, val)
-    //     return val
-    //   })
-    // })
+    var foci = Struct({
+      [COMMENTS]: computed([throttle(store.comments, 1000)], (msgs) => {
+        return flatMap(msgs, (val, key) => val)
+      }),
+      [LIKES]: computed([throttle(store.likes, 1000)], (msgs) => {
+        return flatMap(msgs, (val, key) => val)
+      })
 
-    var visibleCommentsCount = computed([commentsAll, context.range], (msgs, range) => {
+    })
+
+    var visibleCommentsCount = computed([foci.comments, context.range], (msgs, range) => {
       return msgs
         .filter(msg => {
           const ts = msg.value.timestamp
-          return ts >= range.lower && ts <= range.upper
+          return ts > range.lower && ts <= range.upper
         })
         .length
     })
 
-    var likesAll = computed(throttle(dictToCollection(store.likes), 1000), (msgs) => {
-      return msgs
-        .map(c => c.value)
-        .reduce((n, sofar) => [...n, ...sofar], [])
-    })
-
-    var visibleLikesCount = computed([likesAll, context.range], (msgs, range) => {
+    var visibleLikesCount = computed([foci.likes, context.range], (msgs, range) => {
       return msgs
         .filter(msg => {
           const ts = msg.value.timestamp
-          return ts >= range.lower && ts <= range.upper
+          return ts > range.lower && ts <= range.upper
         })
         .length
-    })
-
-    var focused = Struct({
-      [LIKES]: commentsAll,
-      [COMMENTS]: likesAll
     })
 
     const canvas = h('canvas', { height: 200, width: 600, style: { height: '200px', width: '600px' } })
@@ -170,8 +156,6 @@ exports.create = (api) => {
 
     var chart = new Chart(canvas.getContext('2d'), chartConfig({ context, chartData: [] }))
 
-    const toDay = ts => Math.floor(ts / (24 * 60 * 60 * 1000))
-
     // HACK - if the focus has changed, then zero the data
     // this prevents the graph from showing some confusing animations when transforming between foci
     var lastFocus = context.focus()
@@ -182,15 +166,16 @@ exports.create = (api) => {
         lastFocus = focus
       }
     }
-    const chartData = computed([context.focus, focused], (focus, focused) => {
+    const toDay = ts => Math.floor(ts / DAY)
+    const chartData = computed([context.focus, foci], (focus, foci) => {
       zeroGraphOnFocusChange(focus)
-      const msgs = focused[focus]
+      const msgs = foci[focus]
       const grouped = groupBy(msgs, m => toDay(m.value.timestamp))
 
       var data = Object.keys(grouped)
         .map(day => {
           return {
-            t: day * 24 * 60 * 60 * 1000,
+            t: day * DAY,
             y: grouped[day].length
           }
         })
@@ -203,27 +188,35 @@ exports.create = (api) => {
       chart.update()
     })
 
-    const graphHeight = computed([chartData, context.range], (data, range) => {
+    watchAll([chartData, context.range], (data, range) => {
+    // const graphHeight = computed([chartData, context.range], (data, range) => {
       const { lower, upper } = range
       const slice = data
-        .filter(d => d.t >= lower && d.t <= upper)
+        .filter(d => d.t > lower && d.t <= upper)
         .map(d => d.y)
         .sort((a, b) => a < b)
-      const localMax = slice[0] ? Math.max(slice[0], 10) : 10
 
-      return localMax + (5 - localMax % 5)
-    })
-    graphHeight(h => {
+      var h = slice[0]
+      if (!h || h < 10) h = 10
+      else h = h + (5 - h % 5)
+
       chart.options.scales.yAxes[0].ticks.max = h
 
       chart.update()
     })
+    // graphHeight(h => {
+    //   chart.options.scales.yAxes[0].ticks.max = h
+    //   console.log('listen', h)
+
+    //   chart.update()
+    // })
 
     context.range(range => {
       const { lower, upper } = range
 
-      chart.options.scales.xAxes[0].time.min = new Date(lower)
-      chart.options.scales.xAxes[0].time.max = new Date(upper)
+      chart.options.scales.xAxes[0].time.min = new Date(lower + DAY / 2)
+      chart.options.scales.xAxes[0].time.max = new Date(upper - DAY / 2)
+      // the squeezing in by DAY/2 is to stop data outside range from half showing
 
       chart.update()
     })
@@ -280,15 +273,9 @@ function fetchLikes ({ server, store, blog }) {
   )
 }
 
-function chartConfig ({ context, chartData }) {
+// TODO rm chartData and other overly smart things which didn't work from here
+function chartConfig ({ context }) {
   const { lower, upper } = resolve(context.range)
-
-  const data = resolve(chartData) || []
-  const slice = data
-    .filter(d => d.t >= lower && d.t <= upper)
-    .map(d => d.y)
-    .sort((a, b) => a < b)
-  const localMax = slice[0] ? Math.max(slice[0], 10) : 10
 
   return {
     type: 'bar',
@@ -297,7 +284,7 @@ function chartConfig ({ context, chartData }) {
         backgroundColor: 'hsla(215, 57%, 60%, 1)',
         // Ticktack Primary color:'hsla(215, 57%, 43%, 1)',
         borderColor: 'hsla(215, 57%, 60%, 1)',
-        data
+        data: []
       }]
     },
     options: {
