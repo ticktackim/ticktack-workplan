@@ -1,10 +1,11 @@
 const nest = require('depnest')
-const { h, resolve, when, Value, Struct, Array: MutantArray, Dict, onceTrue, map, computed, dictToCollection, throttle } = require('mutant')
+const { h, resolve, when, Value, Struct, Array: MutantArray, Dict, onceTrue, map, computed, dictToCollection, throttle, watchAll } = require('mutant')
 const pull = require('pull-stream')
 const marksum = require('markdown-summary')
 const Chart = require('chart.js')
 const groupBy = require('lodash/groupBy')
-const merge = require('lodash/merge')
+const mergeWith = require('lodash/mergeWith')
+const flatMap = require('lodash/flatMap')
 
 exports.gives = nest('app.page.statsShow')
 
@@ -22,78 +23,109 @@ exports.create = (api) => {
       comments: Dict(),
       likes: Dict()
     })
+    onceTrue(api.sbot.obs.connection, server => {
+      fetchBlogs({ server, store })
+    })
 
     var howFarBack = Value(0)
     // stats show a moving window of 30 days
     const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000
 
-    // TODO
-    var range = computed([howFarBack], howFarBack => {
-      const now = Date.now()
-      return {
-        upper: now - howFarBack * THIRTY_DAYS,
-        lower: now - (howFarBack + 1) * THIRTY_DAYS
-      }
+    const COMMENTS = 'comments'
+    const LIKES = 'likes'
+    var context = Struct({
+      focus: Value(COMMENTS),
+      blog: Value(),
+      range: computed([howFarBack], howFarBack => {
+        const now = Date.now()
+        return {
+          upper: now - howFarBack * THIRTY_DAYS,
+          lower: now - (howFarBack + 1) * THIRTY_DAYS
+        }
+      })
     })
 
-    var commentsAll = computed(throttle(dictToCollection(store.comments), 1000), (comments) => {
-      return comments
+    var commentsAll = computed(throttle(dictToCollection(store.comments), 1000), (msgs) => {
+      return msgs
         .map(c => c.value)
         .reduce((n, sofar) => [...n, ...sofar], [])
     })
+    // var commentsAll = computed([throttle(store.comments, 1000)], (msgs) => {
+    //   return flatMap(msgs, (val, key) => {
+    //     console.log(key, val)
+    //     return val
+    //   })
+    // })
 
-    // this should perhaps be reduced to just return commentsContextCount
-    var visibleComments = computed([commentsAll, range], (comments, range) => {
-      return comments
+    var visibleCommentsCount = computed([commentsAll, context.range], (msgs, range) => {
+      return msgs
         .filter(msg => {
           const ts = msg.value.timestamp
           return ts >= range.lower && ts <= range.upper
         })
+        .length
     })
 
-    var rangeLikes = computed([throttle(dictToCollection(store.likes), 1000), range], (likes, range) => {
-      return likes
+    var likesAll = computed(throttle(dictToCollection(store.likes), 1000), (msgs) => {
+      return msgs
         .map(c => c.value)
         .reduce((n, sofar) => [...n, ...sofar], [])
-        // .filter(msg => {
-        //   const ts = msg.value.timestamp
-        //   return ts >= range.lower && ts <= range.upper
-        // })
     })
 
-    onceTrue(api.sbot.obs.connection, server => {
-      fetchBlogs({ server, store })
-
-      // const query = {
-      //   gt: ['C', null, range().lower],
-      //   lt: ['C', undefined, range().upper],
-      //   reverse: true,
-      //   values: true,
-      //   keys: false,
-      //   seqs: false
-      // }
-      // console.log('test query', query)
-      // pull(server.blogStats.read(query), pull.log(() => console.log('DONE')))
+    var visibleLikesCount = computed([likesAll, context.range], (msgs, range) => {
+      return msgs
+        .filter(msg => {
+          const ts = msg.value.timestamp
+          return ts >= range.lower && ts <= range.upper
+        })
+        .length
     })
+
+    var focused = Struct({
+      [LIKES]: commentsAll,
+      [COMMENTS]: likesAll
+    })
+
     const canvas = h('canvas', { height: 200, width: 600, style: { height: '200px', width: '600px' } })
+
+    const displayComments = () => context.focus.set(COMMENTS)
+    const displayLikes = () => context.focus.set(LIKES)
 
     const page = h('Page -statsShow', [
       h('Scroller.content', [
-        h('div.content', [ 
+        h('div.content', [
           h('h1', 'Stats'),
           h('section.totals', [
-            h('div.comments', [
-              h('div.count', computed(visibleComments, msgs => msgs.length)),
-              h('strong', 'Comments'),
-              '(30 days)'
-            ]),
-            h('div.likes', [
-              h('div.count', computed(rangeLikes, msgs => msgs.length)),
-              h('strong', 'Likes'),
-              '(30 days)'
-            ]),
-            h('div.shares', [
-            ])
+            h('div.comments',
+              {
+                className: computed(context.focus, focus => focus === COMMENTS ? '-selected' : ''),
+                'ev-click': displayComments
+              }, [
+                h('div.count', visibleCommentsCount),
+                h('strong', 'Comments'),
+                '(30 days)'
+              ]),
+            h('div.likes',
+              {
+                className: computed(context.focus, focus => focus === LIKES ? '-selected' : ''),
+                'ev-click': displayLikes
+              }, [
+                h('div.count', visibleLikesCount),
+                h('strong', 'Likes'),
+                '(30 days)'
+              ]
+            ),
+            h('div.shares',
+              {
+                className: when(context.shares, '-selected')
+                // 'ev-click': displayShares
+              }, [
+                // h('div.count', computed(rangeLikes, msgs => msgs.length)),
+                h('div.count', '--'),
+                h('strong', 'Shares'),
+                '(30 days)'
+              ]
+            )
           ]),
           h('section.graph', [
             canvas,
@@ -136,15 +168,23 @@ exports.create = (api) => {
       ])
     ])
 
-    // Chart.scaleService.updateScaleDefaults('linear', {
-    //   ticks: { min: 0 }
-    // })
-    var chart = new Chart(canvas.getContext('2d'), chartConfig({ range, chartData: [] }))
+    var chart = new Chart(canvas.getContext('2d'), chartConfig({ context, chartData: [] }))
 
     const toDay = ts => Math.floor(ts / (24 * 60 * 60 * 1000))
 
-    // TODO take in context (comments/ likes / shares)
-    const chartData = computed(commentsAll, msgs => {
+    // HACK - if the focus has changed, then zero the data
+    // this prevents the graph from showing some confusing animations when transforming between foci
+    var lastFocus = context.focus()
+    const zeroGraphOnFocusChange = (focus) => {
+      if (focus !== lastFocus) {
+        chart.data.datasets[0].data = []
+        chart.update()
+        lastFocus = focus
+      }
+    }
+    const chartData = computed([context.focus, focused], (focus, focused) => {
+      zeroGraphOnFocusChange(focus)
+      const msgs = focused[focus]
       const grouped = groupBy(msgs, m => toDay(m.value.timestamp))
 
       var data = Object.keys(grouped)
@@ -157,13 +197,34 @@ exports.create = (api) => {
       return data
     })
 
-    chartData(() => {
-      chart = merge(chart, chartConfig({ range, chartData }))
+    chartData(data => {
+      chart.data.datasets[0].data = data
+
       chart.update()
     })
 
-    range(() => {
-      chart = merge(chart, chartConfig({ range, chartData }))
+    const graphHeight = computed([chartData, context.range], (data, range) => {
+      const { lower, upper } = range
+      const slice = data
+        .filter(d => d.t >= lower && d.t <= upper)
+        .map(d => d.y)
+        .sort((a, b) => a < b)
+      const localMax = slice[0] ? Math.max(slice[0], 10) : 10
+
+      return localMax + (5 - localMax % 5)
+    })
+    graphHeight(h => {
+      chart.options.scales.yAxes[0].ticks.max = h
+
+      chart.update()
+    })
+
+    context.range(range => {
+      const { lower, upper } = range
+
+      chart.options.scales.xAxes[0].time.min = new Date(lower)
+      chart.options.scales.xAxes[0].time.max = new Date(upper)
+
       chart.update()
     })
 
@@ -219,8 +280,8 @@ function fetchLikes ({ server, store, blog }) {
   )
 }
 
-function chartConfig ({ range, chartData }) {
-  const { lower, upper } = resolve(range)
+function chartConfig ({ context, chartData }) {
+  const { lower, upper } = resolve(context.range)
 
   const data = resolve(chartData) || []
   const slice = data
@@ -233,10 +294,9 @@ function chartConfig ({ range, chartData }) {
     type: 'bar',
     data: {
       datasets: [{
-        // label: 'My First dataset',
-        backgroundColor: 'hsla(215, 57%, 60%, 1)', // 'hsla(215, 57%, 43%, 1)',
+        backgroundColor: 'hsla(215, 57%, 60%, 1)',
+        // Ticktack Primary color:'hsla(215, 57%, 43%, 1)',
         borderColor: 'hsla(215, 57%, 60%, 1)',
-        // TODO set initial data as empty to make a good range
         data
       }]
     },
@@ -268,13 +328,14 @@ function chartConfig ({ range, chartData }) {
         yAxes: [{
           ticks: {
             min: 0,
-            max: Math.max(localMax, 10),
+            suggestedMax: 10,
+            // max: Math.max(localMax, 10),
             stepSize: 5
           }
         }]
       },
       animation: {
-          // duration: 300
+        // duration: 300
       }
     }
   }

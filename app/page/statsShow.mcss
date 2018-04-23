@@ -16,9 +16,28 @@ Page -statsShow {
 
       section.totals {
         display: flex
-        justify-content: space-between
 
         div {
+          flex-grow: 1
+
+          cursor: pointer
+          padding: 0 0 .5rem .5rem
+          $colorFontSubtle
+          padding: 0 0 .5rem .5rem
+          border-bottom: 1px solid gainsboro
+          border-right: 1px solid gainsboro
+
+          transition: all ease-out .5s
+          :hover {
+            $colorFontBasic
+            transition: all ease-out .5s
+          }
+
+          -selected {
+            $colorFontBasic
+            border-bottom: 1px solid #fff
+          }
+          
           div.count {
             font-size: 3rem
             font-weight: 600
@@ -27,6 +46,11 @@ Page -statsShow {
           strong {
             margin-right: .5rem
           }
+        }
+
+        
+        div.shares {
+          border-right: none
         }
       }
 
