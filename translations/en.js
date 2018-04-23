@@ -158,6 +158,13 @@ module.exports = {
       noSubscriptions: 'You have no subscriptions yet'
     }
   },
+  share: {
+    captionPlaceholder: 'Type an optional caption here',
+    dialogLabel: 'Do you to share this post with your followers?',
+    action: {
+      share: 'Share'
+    }
+  },
   languages: {
     en: 'English',
     zh: '中文'

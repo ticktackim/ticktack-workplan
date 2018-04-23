@@ -30,21 +30,21 @@ exports.create = (api) => {
       style: {
         width: '90%'
       },
-      placeholder: 'Type an optional caption here',
+      placeholder: strings.share.captionPlaceholder,
       value: computed(captionRaw, t => t),
       'ev-input': () => captionRaw.set(captionInput.value),
     })
 
     var confirmationDialog = h('div.dialog', [
       h('div.message', [
-        h('p', 'Do you to share this post with your followers?'),
+        h('p', strings.share.dialogLabel),
       ]),
       h('div.form', [
         captionInput
       ]),
       h('div.actions', [
         h('Button', { 'ev-click': () => isOpen.set(false) }, strings.userShow.action.cancel),
-        h('Button -primary', { 'ev-click': () => publishAndClose(msg, true) }, "Share")
+        h('Button -primary', { 'ev-click': () => publishAndClose(msg, true) }, strings.share.action.share)
       ])
     ])
 
