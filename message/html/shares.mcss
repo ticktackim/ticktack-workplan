@@ -1,0 +1,20 @@
+Shares {
+  cursor: pointer
+  min-width: 2.5rem
+
+  display: flex
+  align-items: center
+
+  i {
+    margin-right: .4rem
+  }
+  i.fa-retweet {
+    $colorFontPrimary
+  }
+
+  i.faint {
+    color: #b9b9b9
+  }
+
+}
+
