@@ -37,7 +37,7 @@ exports.create = (api) => {
 
     var confirmationDialog = h('div.dialog', [
       h('div.message', [
-        h('p', strings.share.dialogLabel),
+        h('p', strings.share.shareLabel),
       ]),
       h('div.form', [
         captionInput

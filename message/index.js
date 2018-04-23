@@ -7,6 +7,7 @@ module.exports = {
     compose: require('./html/compose'),
     likes: require('./html/likes'),
     shares: require('./html/shares'),
+    webshares: require('./html/webshares'),
     subject: require('./html/subject'),
     timeago: require('./html/timeago')
   },
@@ -14,6 +15,7 @@ module.exports = {
     getParticipants: require('./sync/getParticipants')
   },
   obs: {
-    shares: require('./obs/shares')
+    shares: require('./obs/shares'),
+    webshares: require('./obs/webshares')
   }
 }
