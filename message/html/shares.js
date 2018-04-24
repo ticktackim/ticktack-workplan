@@ -1,6 +1,7 @@
 var { h, computed, when, Value, resolve } = require('mutant')
 var nest = require('depnest')
 
+
 exports.needs = nest({
   'keys.sync.id': 'first',
   'message.obs.shares': 'first',
@@ -20,18 +21,13 @@ exports.create = (api) => {
     var count = computed(shares, shares => shares.length ? shares.length : '')
     var isOpen = Value(false)
     var strings = api.translations.sync.strings()
-    var publishAndClose = (msg) => {
-      publishShare(msg, resolve(captionRaw))
-      isOpen.set(false)
-    }
-
     var captionRaw = Value('')
     var captionInput = h('textarea#caption', {
       style: {
         width: '90%'
       },
       placeholder: strings.share.captionPlaceholder,
-      value: computed(captionRaw, t => t),
+      value: captionRaw,
       'ev-input': () => captionRaw.set(captionInput.value),
     })
 
@@ -44,7 +40,7 @@ exports.create = (api) => {
       ]),
       h('div.actions', [
         h('Button', { 'ev-click': () => isOpen.set(false) }, strings.userShow.action.cancel),
-        h('Button -primary', { 'ev-click': () => publishAndClose(msg, true) }, strings.share.action.share)
+        h('Button -primary', { 'ev-click': () => publishShare(msg, resolve(captionRaw), () => isOpen.set(false)) }, strings.share.action.share)
       ])
     ])
 
@@ -52,25 +48,24 @@ exports.create = (api) => {
 
 
     return h('Shares', { 'ev-click': () => isOpen.set(!iShared()) }, [
-      h('i.fa', { className: when(iShared, 'fa-retweet', 'fa-retweet faint') }),
+      h('i.fa.fa-retweet', { className: when(iShared, '', 'faint') }),
       h('div.count', count),
       lb
     ])
   })
 
-  function publishShare(msg, text, status = true) {
-    if (status) {
-      var share = {
-        type: 'share',
-        share: { link: msg.key, content: "blog", text: text }
-      }
-      if (msg.value.content.recps) {
-        share.recps = msg.value.content.recps.map(function (e) {
-          return e && typeof e !== 'string' ? e.link : e
-        })
-        share.private = true
-      }
-      api.sbot.async.publish(share)
+  function publishShare(msg, text, cb) {
+    var share = {
+      type: 'share',
+      share: { link: msg.key, content: "blog", text: text }
     }
+    if (msg.value.content.recps) {
+      share.recps = msg.value.content.recps.map(function (e) {
+        return e && typeof e !== 'string' ? e.link : e
+      })
+      share.private = true
+    }
+    console.log("publishing share", share)
+    api.sbot.async.publish(share, cb)
   }
 }

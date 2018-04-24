@@ -15,6 +15,16 @@ exports.gives = nest({
   'message.obs.shares': true
 })
 
+function isShare(c) {
+  if (c.type !== 'share') return false
+
+  if (!c.share || !c.share.link || !ref.isMsg(c.share.link) || !c.share.hasOwnProperty('text')) {
+    return false
+  }
+
+  return true
+}
+
 exports.create = function (api) {
   var activeShares = new Set()
   return nest({
@@ -27,7 +37,7 @@ exports.create = function (api) {
 
       var c = msg.value.content
       if (c.type !== 'share') return
-      if (!c.share || !c.share.link || !c.share.text) return
+      if (!isShare(c)) return
 
       activeShares.forEach((shares) => {
         if (shares.id === c.share.link) {
@@ -57,7 +67,7 @@ exports.create = function (api) {
       if (sync) {
         return backlinks.reduce((result, msg) => {
           var c = msg.value.content
-          if (c.type === 'share' && c.share && c.share.text && c.share.link === id) {
+          if (isShare(c) && c.share.link === id) {
             var value = result[msg.value.author]
             if (!value || value[0] < msg.value.timestamp) {
               result[msg.value.author] = [msg.value.timestamp, c.share.text]

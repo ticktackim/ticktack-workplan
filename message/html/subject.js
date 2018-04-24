@@ -17,7 +17,6 @@ exports.create = function (api) {
   return nest('message.html.subject', subject)
 
   function subject(msg) {
-    if (msg === undefined) debugger
     // test if it's a message ref, or a full message object
     // a message ref is generally passed in if we're fetching the subject of a root message
     if (isMsg(msg)) {

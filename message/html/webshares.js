@@ -1,7 +1,6 @@
 var { h, computed, when, Value, resolve } = require('mutant')
 var nest = require('depnest')
-var { clipboard } = require('electron')
-var { shell } = require('electron')
+var { clipboard, shell } = require('electron')
 
 exports.needs = nest({
   'keys.sync.id': 'first',
