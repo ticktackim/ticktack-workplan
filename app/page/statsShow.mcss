@@ -1,7 +1,8 @@
 Page -statsShow {
   div.Scroller {
     display: flex
-    justify-content: center
+    flex-direction: column
+    align-items: center
 
     div.content {
       flex-grow: 0
@@ -78,7 +79,7 @@ Page -statsShow {
 
       table.blogs {
         width: 100%
-        margin: 1rem 0
+        margin: 1rem 0 4rem
 
         thead {
           tr {
