@@ -38,9 +38,8 @@ module.exports = {
       readBlogs,
       getBlogs,
       readComments,
-      readLikes,
-      // getLikes
-      // getComments
+      readLikes
+      // readShares
     }
 
     function map (msg, seq) {
@@ -52,7 +51,6 @@ module.exports = {
           else return []
 
         case 'vote':
-          // process.stdout.write('L')
           root = getLikeRoot(msg)
           // TODO figure out how to only store likes I care about
           if (root) return [['L', root, getTimestamp(msg)]]
@@ -63,7 +61,6 @@ module.exports = {
           //   - likes AND unlikes
 
         case 'post':
-          // process.stdout.write('POST ')
           root = getCommentRoot(msg)
           // TODO figure out how to only store comments I care about
           if (!root && isMyMsg(msg) && isPlog(msg)) return [['B', msg.key, getTimestamp(msg)]]
@@ -78,10 +75,9 @@ module.exports = {
       }
     }
 
-    // a Plog is a Blog shaped Post
+    // a Plog is a Blog shaped Post!
     function isPlog (msg) {
-      // return false // Disable plogs
-      if (get(msg, 'value.content.text', '').length >= 3000) console.log(get(msg, 'value.content.text', '').length)
+      // if (get(msg, 'value.content.text', '').length >= 3000) console.log(get(msg, 'value.content.text', '').length)
       return get(msg, 'value.content.text', '').length >= 3000
     }
 

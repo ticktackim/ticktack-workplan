@@ -18,6 +18,7 @@ Page -statsShow {
         display: flex
 
         div {
+          flex-basis: 33%
           flex-grow: 1
 
           cursor: pointer
@@ -76,14 +77,19 @@ Page -statsShow {
       }
 
       table.blogs {
+        width: 100%
         margin: 1rem 0
 
         thead {
           tr {
             margin-bottom: 1rem
             color: hsl(0, 0%, 25%)
-            td {
-
+            th.details {
+              width: 70%
+              padding: 0 2rem 0 0
+            }
+            th.comments, th.likes, th.shares {
+              width: 10%
             }
           }
         }
@@ -91,7 +97,7 @@ Page -statsShow {
           tr.blog {
             margin-bottom: 1rem
             td.details {
-              width: 100%
+              width: 70%
               padding: .8rem 2rem .8rem 0
               border-bottom: 1px solid rgba(0, 0, 0, .05)
               
@@ -111,8 +117,9 @@ Page -statsShow {
                 }
               }
             }
-            td.comments, td.likes {
-              padding: 0 2.5rem
+            td.comments, td.likes, td.shares {
+              width: 10%
+              /* padding: 0 2.5rem */
               font-size: 1.3rem
               font-weight: 600
               text-align: center
