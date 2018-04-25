@@ -43,6 +43,8 @@ exports.create = (api) => {
         }
       })
     })
+    console.log(context.range())
+    context.range(console.log)
 
     var foci = Struct({
       [COMMENTS]: computed([throttle(store.comments, 1000)], (msgs) => {
@@ -189,7 +191,6 @@ exports.create = (api) => {
     })
 
     watchAll([chartData, context.range], (data, range) => {
-    // const graphHeight = computed([chartData, context.range], (data, range) => {
       const { lower, upper } = range
       const slice = data
         .filter(d => d.t > lower && d.t <= upper)
@@ -199,22 +200,18 @@ exports.create = (api) => {
       var h = slice[0]
       if (!h || h < 10) h = 10
       else h = h + (5 - h % 5)
+      // set the height of the graph to a minimum or 10,
+      // or some multiple of 5 above the max height
 
       chart.options.scales.yAxes[0].ticks.max = h
 
       chart.update()
     })
-    // graphHeight(h => {
-    //   chart.options.scales.yAxes[0].ticks.max = h
-    //   console.log('listen', h)
-
-    //   chart.update()
-    // })
 
     context.range(range => {
       const { lower, upper } = range
 
-      chart.options.scales.xAxes[0].time.min = new Date(lower + DAY / 2)
+      chart.options.scales.xAxes[0].time.min = new Date(lower - DAY / 2)
       chart.options.scales.xAxes[0].time.max = new Date(upper - DAY / 2)
       // the squeezing in by DAY/2 is to stop data outside range from half showing
 
@@ -297,8 +294,8 @@ function chartConfig ({ context }) {
           distribution: 'linear',
           time: {
             unit: 'day',
-            min: new Date(lower),
-            max: new Date(upper),
+            min: new Date(lower - DAY / 2),
+            max: new Date(upper - DAY / 2),
             tooltipFormat: 'MMMM D',
             stepSize: 7
           },
