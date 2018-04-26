@@ -90,6 +90,7 @@ Page -statsShow {
               padding: 0 2rem 0 0
             }
             th.comments, th.likes, th.shares {
+              $colorFontSubtle
               width: 10%
             }
           }
@@ -105,12 +106,13 @@ Page -statsShow {
               div.title {
                 font-size: 1.3rem
                 font-weight: 600
-                margin-bottom: .5rem
+                cursor: pointer
               }
 
               a { 
-                color: hsl(0, 0%, 15%)
-                font-size: .8rem
+                $colorFontSubtle
+                letter-spacing: .8px
+                font-size: .7rem
                 text-decoration: none
 
                 :hover {
@@ -124,6 +126,10 @@ Page -statsShow {
               font-size: 1.3rem
               font-weight: 600
               text-align: center
+            }
+
+            -background {
+              filter: opacity(40%)
             }
           }
         }

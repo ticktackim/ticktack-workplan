@@ -64,7 +64,7 @@ $colorFontPrimary {
 }
 
 $colorFontSubtle {
-  color: #999
+  color: hsla(0, 0%, 52%, 1)
 }
 
 $backgroundPrimary {

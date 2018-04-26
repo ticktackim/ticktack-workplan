@@ -5,6 +5,7 @@ const marksum = require('markdown-summary')
 const Chart = require('chart.js')
 const groupBy = require('lodash/groupBy')
 const flatMap = require('lodash/flatMap')
+const get = require('lodash/get')
 
 exports.gives = nest('app.page.statsShow')
 
@@ -18,6 +19,11 @@ const COMMENTS = 'comments'
 const LIKES = 'likes'
 const SHARES = 'shares'
 const DAY = 24 * 60 * 60 * 1000
+
+const getRoot = {
+  [COMMENTS]: (msg) => get(msg, 'value.content.root'),
+  [LIKES]: (msg) => get(msg, 'value.content.vote.link')
+}
 
 exports.create = (api) => {
   return nest('app.page.statsShow', statsShow)
@@ -57,9 +63,12 @@ exports.create = (api) => {
     })
 
     function totalOnscreenData (focus) {
-      return computed([foci[focus], context.range], (msgs, range) => {
+      return computed([foci[focus], context], (msgs, context) => {
+        const { range, blog } = context
         return msgs
           .filter(msg => {
+            if (blog && getRoot[focus](msg) !== blog) return false
+
             const ts = msg.value.timestamp
             return ts > range.lower && ts <= range.upper
           })
@@ -113,19 +122,26 @@ exports.create = (api) => {
     ])
 
     function BlogRow (blog) {
-      return h('tr.blog', { id: blog.key }, [
+      const className = computed(context.blog, b => {
+        if (!b) return ''
+        if (b !== blog.key) return '-background'
+      })
+
+      return h('tr.blog', { id: blog.key, className }, [
         h('td.details', [
-          h('div.title', {}, getTitle({ blog, mdRenderer: api.message.html.markdown })),
-          h('a',
-            {
-              href: '#',
-              'ev-click': ev => {
-                ev.stopPropagation() // stop the click catcher!
-                api.history.sync.push(blog)
-              }
-            },
-            'View blog'
-          )
+          h('div.title', {
+            'ev-click': () => {
+              if (context.blog() === blog.key) context.blog.set('')
+              else context.blog.set(blog.key)
+            }
+          }, getTitle({ blog, mdRenderer: api.message.html.markdown })),
+          h('a', {
+            href: '#',
+            'ev-click': ev => {
+              ev.stopPropagation() // stop the click catcher!
+              api.history.sync.push(blog)
+            }
+          }, 'View blog')
         ]),
         h('td.comments', computed(store.comments.get(blog.key), msgs => msgs ? msgs.length : 0)),
         h('td.likes', computed(store.likes.get(blog.key), msgs => msgs ? msgs.length : 0)),
@@ -190,9 +206,15 @@ function fetchBlogData ({ server, store }) {
 function initialiseChart ({ canvas, context, foci }) {
   var chart = new Chart(canvas.getContext('2d'), chartConfig({ context }))
 
-  const chartData = computed([context.focus, foci], (focus, foci) => {
-    zeroGraphOnFocusChange(focus)
-    const msgs = foci[focus]
+  const chartData = computed([context, foci], (context, foci) => {
+    fixAnimationWhenNeeded(context)
+
+    const msgs = foci[context.focus]
+      .filter(msg => {
+        if (!context.blog) return true
+
+        return context.blog === getRoot[context.focus](msg)
+      })
     const grouped = groupBy(msgs, m => toDay(m.value.timestamp))
 
     return Object.keys(grouped)
@@ -241,13 +263,15 @@ function initialiseChart ({ canvas, context, foci }) {
   // ///// HELPERS /////
 
   // HACK - if the focus has changed, then zero the data
-  // this prevents the graph from showing some confusing animations when transforming between foci
-  var lastFocus = context.focus()
-  function zeroGraphOnFocusChange (focus) {
-    if (focus !== lastFocus) {
+  // this prevents the graph from showing some confusing animations when transforming between foci / selecting blog
+  var prevFocus = context.focus()
+  var prevBlog = context.blog()
+  function fixAnimationWhenNeeded (context) {
+    if (context.focus !== prevFocus || context.blog !== prevBlog) {
       chart.data.datasets[0].data = []
       chart.update()
-      lastFocus = focus
+      prevFocus = context.focus
+      prevBlog = context.blog
     }
   }
   function toDay (ts) { return Math.floor(ts / DAY) }
