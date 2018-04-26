@@ -29,7 +29,7 @@ Header {
     align-items: center
     justify-content: center
 
-    img {
+    img, i {
       cursor: pointer
       text-decoration: none
 

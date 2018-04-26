@@ -55,6 +55,7 @@ exports.create = (api) => {
       range: computed([howFarBack], howFarBack => {
         const now = Date.now()
         const endOfDay = (Math.floor(now / DAY) + 1) * DAY
+
         return {
           upper: endOfDay - howFarBack * 30 * DAY,
           lower: endOfDay - (howFarBack + 1) * 30 * DAY
@@ -64,13 +65,21 @@ exports.create = (api) => {
 
     function totalOnscreenData (focus) {
       return computed([foci[focus], context], (msgs, context) => {
-        const { range, blog } = context
+        // NOTE this filter logic is repeated in chartData
         return msgs
           .filter(msg => {
-            if (blog && getRoot[focus](msg) !== blog) return false
-
+            if (!context.blog) return true
+            // if context.blog is set, filter down to only msgs about that blog
+            return getRoot[focus](msg) === context.blog
+          })
+          .filter(msg => {
+            // don't count unlikes
+            if (focus === LIKES) return get(msg, 'value.content.vote.value') > 0
+            else return true
+          })
+          .filter(msg => {
             const ts = msg.value.timestamp
-            return ts > range.lower && ts <= range.upper
+            return ts > context.range.lower && ts <= context.range.upper
           })
           .length
       })
@@ -166,6 +175,7 @@ function getTitle ({ blog, mdRenderer }) {
 }
 
 function fetchBlogData ({ server, store }) {
+  const myKey = server.id
   pull(
     server.blogStats.readBlogs({ reverse: false }),
     pull.drain(blog => {
@@ -182,8 +192,8 @@ function fetchBlogData ({ server, store }) {
     pull(
       server.blogStats.readComments(blog),
       pull.drain(msg => {
+        if (msg.value.author === myKey) return
         store.comments.get(blog.key).push(msg)
-        // TODO remove my comments from count?
       })
     )
   }
@@ -194,10 +204,23 @@ function fetchBlogData ({ server, store }) {
     pull(
       server.blogStats.readLikes(blog),
       pull.drain(msg => {
-        store.likes.get(blog.key).push(msg)
-        // TODO this needs reducing... like + unlike are muddled in here
-        //   find any thing by same author
-        //   if exists - over-write or delete
+        if (msg.value.author === myKey) return
+
+        const isUnlike = get(msg, 'value.content.vote.value', 1) < 1
+
+        var likes = store.likes.get(blog.key)
+        var extantLike = likes.find(m => m.value.author === msg.value.author)
+        // extant means existing
+
+        if (!extantLike) return likes.push(msg)
+        else {
+          if (msg.value.timestamp < extantLike.value.timestamp) return
+          else {
+            // case: we have a new like/ unlike value
+            if (isUnlike) likes.delete(extantLike)
+            else likes.put(likes.indexOf(extantLike), msg)
+          }
+        }
       })
     )
   }
@@ -209,20 +232,32 @@ function initialiseChart ({ canvas, context, foci }) {
   const chartData = computed([context, foci], (context, foci) => {
     fixAnimationWhenNeeded(context)
 
-    const msgs = foci[context.focus]
+    const { focus } = context
+    // NOTE this filter logic is repeated in totalOnscreenData
+    const msgs = foci[focus]
       .filter(msg => {
         if (!context.blog) return true
-
-        return context.blog === getRoot[context.focus](msg)
+        // if context.blog is set, filter down to only msgs about that blog
+        return getRoot[focus](msg) === context.blog
       })
+      .filter(msg => {
+        // don't count unlikes
+        if (focus === LIKES) return get(msg, 'value.content.vote.value') > 0
+        else return true
+      })
+
     const grouped = groupBy(msgs, m => toDay(m.value.timestamp))
 
     return Object.keys(grouped)
       .map(day => {
         return {
-          t: day * DAY,
+          t: day * DAY + 10,
           y: grouped[day].length
         }
+        // NOTE - this collects the data points for a day at t = 10ms into the day
+        // this is necessary for getting counts to line up (bars, and daily count)
+        // I think because total counts for totalOnscreenData don't collect data in the same way?
+        // TODO - refactor this, to be tidier
       })
   })
 
@@ -232,12 +267,13 @@ function initialiseChart ({ canvas, context, foci }) {
     chart.update()
   })
 
+  // Scales the height of the graph (to the visible data)!
   watchAll([chartData, context.range], (data, range) => {
     const { lower, upper } = range
     const slice = data
-          .filter(d => d.t > lower && d.t <= upper)
-          .map(d => d.y)
-          .sort((a, b) => a < b)
+      .filter(d => d.t > lower && d.t <= upper)
+      .map(d => d.y)
+      .sort((a, b) => a < b)
 
     var h = slice[0]
     if (!h || h < 10) h = 10
@@ -250,6 +286,7 @@ function initialiseChart ({ canvas, context, foci }) {
     chart.update()
   })
 
+  // Update the x-axes bounds of the graph!
   context.range(range => {
     const { lower, upper } = range
 
@@ -281,13 +318,15 @@ function initialiseChart ({ canvas, context, foci }) {
 function chartConfig ({ context }) {
   const { lower, upper } = resolve(context.range)
 
+  // Ticktack Primary color:'hsla(215, 57%, 43%, 1)',
+  const barColor = 'hsla(215, 57%, 60%, 1)'
+
   return {
     type: 'bar',
     data: {
       datasets: [{
-        backgroundColor: 'hsla(215, 57%, 60%, 1)',
-        // Ticktack Primary color:'hsla(215, 57%, 43%, 1)',
-        borderColor: 'hsla(215, 57%, 60%, 1)',
+        backgroundColor: barColor,
+        borderColor: barColor,
         data: []
       }]
     },
