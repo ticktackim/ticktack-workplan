@@ -12,7 +12,8 @@ exports.gives = nest('app.page.statsShow')
 exports.needs = nest({
   'sbot.obs.connection': 'first',
   'history.sync.push': 'first',
-  'message.html.markdown': 'first'
+  'message.html.markdown': 'first',
+  'translations.sync.strings': 'first'
 })
 
 const COMMENTS = 'comments'
@@ -29,6 +30,9 @@ exports.create = (api) => {
   return nest('app.page.statsShow', statsShow)
 
   function statsShow (location) {
+    const strings = api.translations.sync.strings()
+    const t = strings.statsShow
+
     var store = Struct({
       blogs: MutantArray([]),
       comments: Dict(),
@@ -90,7 +94,7 @@ exports.create = (api) => {
     const page = h('Page -statsShow', [
       h('Scroller.content', [
         h('div.content', [
-          h('h1', 'Stats'),
+          h('h1', t.title),
           h('section.totals', [COMMENTS, LIKES, SHARES].map(focus => {
             return h('div',
               {
@@ -98,19 +102,21 @@ exports.create = (api) => {
                 'ev-click': () => context.focus.set(focus)
               }, [
                 h('div.count', totalOnscreenData(focus)),
-                h('strong', focus),
-                '(30 days)'
+                h('strong', strings[focus]),
+                '(',
+                t.thirtyDays,
+                ')'
               ])
           })),
           h('section.graph', [
             canvas,
             h('div.changeRange', [
               '< ',
-              h('a', { 'ev-click': () => howFarBack.set(howFarBack() + 1) }, 'Prev 30 days'),
+              h('a', { 'ev-click': () => howFarBack.set(howFarBack() + 1) }, t.prevMonth),
               ' | ',
               when(howFarBack,
-                h('a', { 'ev-click': () => howFarBack.set(howFarBack() - 1) }, 'Next 30 days'),
-                h('span', 'Next 30 days')
+                h('a', { 'ev-click': () => howFarBack.set(howFarBack() - 1) }, t.nextMonth),
+                h('span', t.nextMonth)
               ),
               ' >'
             ])
@@ -119,9 +125,9 @@ exports.create = (api) => {
             h('thead', [
               h('tr', [
                 h('th.details'),
-                h('th.comments', 'Comments'),
-                h('th.likes', 'Likes'),
-                h('th.shares', 'Shares')
+                h('th.comments', strings.comments),
+                h('th.likes', strings.likes),
+                h('th.shares', strings.shares)
               ])
             ]),
             h('tbody', map(store.blogs, BlogRow))

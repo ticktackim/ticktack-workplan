@@ -23,9 +23,8 @@ Page -statsShow {
           flex-grow: 1
 
           cursor: pointer
-          padding: 0 0 .5rem .5rem
           $colorFontSubtle
-          padding: 0 0 .5rem .5rem
+          padding: 0 0 .5rem .8rem
           border-bottom: 1px solid gainsboro
           border-right: 1px solid gainsboro
 
@@ -98,10 +97,13 @@ Page -statsShow {
         tbody {
           tr.blog {
             margin-bottom: 1rem
+            td {
+              border-bottom: 1px solid rgba(0, 0, 0, .05)
+            }
+
             td.details {
               width: 70%
               padding: .8rem 2rem .8rem 0
-              border-bottom: 1px solid rgba(0, 0, 0, .05)
               
               div.title {
                 font-size: 1.3rem
