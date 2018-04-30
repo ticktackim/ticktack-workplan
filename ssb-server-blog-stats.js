@@ -1,6 +1,7 @@
 const FlumeView = require('flumeview-level')
 const get = require('lodash/get')
 const pull = require('pull-stream')
+const defer = require('pull-defer')
 const isBlog = require('scuttle-blog/isBlog')
 const { isMsg: isMsgRef } = require('ssb-ref')
 
@@ -21,6 +22,7 @@ module.exports = {
     readBlogs: 'source',
     getBlogs: 'async',
     readComments: 'source',
+    readAllComments: 'source', // TEMP
     readLikes: 'source'
   },
   init: (server, config) => {
@@ -38,6 +40,7 @@ module.exports = {
       readBlogs,
       getBlogs,
       readComments,
+      readAllComments,
       readLikes
       // readShares
     }
@@ -96,6 +99,11 @@ module.exports = {
     }
 
     function getBlogs (options, cb) {
+      if (typeof options === 'function') {
+        cb = options
+        options = {}
+      }
+
       pull(
         readBlogs(options),
         pull.collect(cb)
@@ -116,6 +124,43 @@ module.exports = {
       }, options)
 
       return view.read(query)
+    }
+
+    function readAllComments () {
+      var source = defer.source()
+
+      getBlogs({ keys: true, values: false }, (err, data) => {
+        if (err) throw err
+
+        const blogIds = data.map(d => d[1])
+
+        const _source = pull(
+          view.read({
+            // live: true,
+            gt: [ 'B~', undefined, undefined ],
+            lt: [ 'C~', null, null ],
+            reverse: true,
+            values: true,
+            keys: true,
+            seqs: false
+          }),
+          pull.filter(result => {
+            return blogIds.includes(result.key[1])
+          }),
+          pull.map(result => result.value)
+        )
+
+        // pull(
+        //   _source,
+        //   pull.log()
+        // )
+        source.resolve(_source)
+        // source.resolve(pull.values([1, 2, 3, 4, ':)']))
+      })
+
+      return pull(
+        source
+      )
     }
 
     function readLikes (blog, options = {}) {

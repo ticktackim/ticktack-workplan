@@ -19,7 +19,8 @@ module.exports = {
     scroller: require('./html/scroller'),
     sideNav: {
       addressBook: require('./html/sideNav/sideNavAddressBook'),
-      discovery: require('./html/sideNav/sideNavDiscovery')
+      discovery: require('./html/sideNav/sideNavDiscovery'),
+      notifications: require('./html/sideNav/sideNavNotifications')
     },
     warning: require('./html/warning'),
   },
@@ -33,8 +34,6 @@ module.exports = {
     blogSearch: require('./page/blogSearch'),
     blogShow: require('./page/blogShow'),
     channelShow: require('./page/channelShow'),
-    error: require('./page/error'),
-    settings: require('./page/settings'),
     channelSubscriptions: require('./page/channelSubscriptions'),
     // channel: require('./page/channel'),
     // image: require('./page/image'),
@@ -43,9 +42,12 @@ module.exports = {
     // groupNew: require('./page/groupNew'),
     // groupShow: require('./page/groupShow'),
     // threadShow: require('./page/threadShow'),
+    notifications: require('./page/notifications'),
+    error: require('./page/error'),
     userEdit: require('./page/userEdit'),
     // userFind: require('./page/userFind'),
     userShow: require('./page/userShow'),
+    settings: require('./page/settings'),
     splash: require('./page/splash'),
     statsShow: require('./page/statsShow'),
     threadNew: require('./page/threadNew'),

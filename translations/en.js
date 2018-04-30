@@ -1,4 +1,5 @@
 module.exports = {
+  stats: 'Stats',
   comments: 'Comments',
   likes: 'Likes',
   shares: 'Shares',

@@ -10,9 +10,10 @@ const get = require('lodash/get')
 exports.gives = nest('app.page.statsShow')
 
 exports.needs = nest({
-  'sbot.obs.connection': 'first',
+  'app.html.sideNav': 'first',
   'history.sync.push': 'first',
   'message.html.markdown': 'first',
+  'sbot.obs.connection': 'first',
   'translations.sync.strings': 'first'
 })
 
@@ -92,6 +93,7 @@ exports.create = (api) => {
     const canvas = h('canvas', { height: 200, width: 600, style: { height: '200px', width: '600px' } })
 
     const page = h('Page -statsShow', [
+      api.app.html.sideNav(location),
       h('Scroller.content', [
         h('div.content', [
           h('h1', t.title),
