@@ -22,9 +22,10 @@ var createSbot = require('scuttlebot')
   // .use(require('ssb-ebt'))
   .use(require('ssb-ws'))
   .use(require('ssb-server-channel'))
+  .use(require('./ssb-server-blog-stats'))
 
 Client(config.keys, config, (err, ssbServer) => {
-  if (ssbServer === undefined) {
+  if (err) {
     console.log('> starting sbot')
     var sbot = createSbot(config)
 
@@ -32,12 +33,9 @@ Client(config.keys, config, (err, ssbServer) => {
     var manifest = sbot.getManifest()
     fs.writeFileSync(Path.join(config.path, 'manifest.json'), JSON.stringify(manifest))
     electron.ipcRenderer.send('server-started')
-  }
-  else {
+  } else {
     console.log('> sbot running elsewhere')
     electron.ipcRenderer.send('server-started')
     // TODO send some warning to the client side
   }
 })
-
-

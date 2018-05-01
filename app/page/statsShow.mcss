@@ -1,0 +1,141 @@
+Page -statsShow {
+  div.Scroller {
+    display: flex
+    flex-direction: column
+    align-items: center
+
+    div.content {
+      flex-grow: 0
+      $backgroundPrimaryText
+      padding: 1rem
+      width: 1000px
+
+      h1 {
+        font-size: .8rem
+        letter-spacing: 4px
+      }
+
+      section.totals {
+        display: flex
+
+        div {
+          flex-basis: 33%
+          flex-grow: 1
+
+          cursor: pointer
+          $colorFontSubtle
+          padding: 0 0 .5rem .8rem
+          border-bottom: 1px solid gainsboro
+          border-right: 1px solid gainsboro
+
+          transition: all ease-out .5s
+          :hover {
+            $colorFontBasic
+            transition: all ease-out .5s
+          }
+
+          -selected {
+            $colorFontBasic
+            border-bottom: 1px solid #fff
+          }
+          
+          div.count {
+            font-size: 3rem
+            font-weight: 600
+            margin-right: .5rem
+          }
+          strong {
+            margin-right: .5rem
+          }
+        }
+
+        
+        div.shares {
+          border-right: none
+        }
+      }
+
+      section.graph {
+        display: flex
+        flex-wrap: wrap
+        justify-content: center
+
+        margin: 2rem 0
+
+        canvas {
+          margin-bottom: 1rem
+        }
+        div.changeRange {
+          a {
+            cursor: pointer
+            :hover { text-decoration: underline }
+          }
+          span {
+            $colorFontSubtle
+          }
+        }
+      }
+
+      table.blogs {
+        width: 100%
+        margin: 1rem 0 4rem
+
+        thead {
+          tr {
+            margin-bottom: 1rem
+            color: hsl(0, 0%, 25%)
+            th.details {
+              width: 70%
+              padding: 0 2rem 0 0
+            }
+            th.comments, th.likes, th.shares {
+              $colorFontSubtle
+              width: 10%
+            }
+          }
+        }
+        tbody {
+          tr.blog {
+            margin-bottom: 1rem
+            td {
+              border-bottom: 1px solid rgba(0, 0, 0, .05)
+            }
+
+            td.details {
+              width: 70%
+              padding: .8rem 2rem .8rem 0
+              
+              div.title {
+                font-size: 1.3rem
+                font-weight: 600
+                cursor: pointer
+              }
+
+              a { 
+                $colorFontSubtle
+                letter-spacing: .8px
+                font-size: .7rem
+                text-decoration: none
+
+                :hover {
+                  text-decoration: underline
+                }
+              }
+            }
+            td.comments, td.likes, td.shares {
+              width: 10%
+              /* padding: 0 2.5rem */
+              font-size: 1.3rem
+              font-weight: 600
+              text-align: center
+            }
+
+            -background {
+              filter: opacity(40%)
+            }
+          }
+        }
+      }
+    }
+  }
+}

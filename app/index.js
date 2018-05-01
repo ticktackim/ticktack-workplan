@@ -47,6 +47,7 @@ module.exports = {
     // userFind: require('./page/userFind'),
     userShow: require('./page/userShow'),
     splash: require('./page/splash'),
+    statsShow: require('./page/statsShow'),
     threadNew: require('./page/threadNew'),
     threadShow: require('./page/threadShow')
   },

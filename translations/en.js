@@ -1,4 +1,7 @@
 module.exports = {
+  comments: 'Comments',
+  likes: 'Likes',
+  shares: 'Shares',
   splash: {
     about: [
       'A social network that values openness, equality, and freedom.',
@@ -157,6 +160,12 @@ module.exports = {
     state: {
       noSubscriptions: 'You have no subscriptions yet'
     }
+  },
+  statsShow: {
+    title: 'Stats',
+    prevMonth: 'Prev 30 days',
+    nextMonth: 'Next 30 days',
+    thirtyDays: '30 days',
   },
   languages: {
     en: 'English',
