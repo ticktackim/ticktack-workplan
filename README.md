@@ -9,6 +9,7 @@ You can find [installers for Linux, Mac, and Windows on the Releases page](https
 
 
 ## Development
+There is [documentation available](docs/index.md).
 
 ### Repos
 
