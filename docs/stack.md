@@ -1,7 +1,3 @@
----
-title: "Ticktack :: Stack"
----
-
 # Ticktack stack
 As with other popular scuttlebutt clients, ticktack relies on the proven combination of:
 

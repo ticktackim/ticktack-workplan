@@ -1,6 +1,4 @@
----
-title: Ticktack documentation
----
+# Documentation
 
 Welcome to Ticktack documentation. 
 

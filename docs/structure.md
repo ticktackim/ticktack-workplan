@@ -1,7 +1,3 @@
----
-title: "Ticktack :: Folder structure"
----
-
 # Folder structure
 Ticktack follows a similar folder structure like other popular scuttlebutt clients such as patchwork and patchbay. 
 

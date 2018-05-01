@@ -1,7 +1,3 @@
----
-title: "Ticktack :: kickstart
----
-
 # Ticktack Kickstart
 
 The application begins with [index.js](https://github.com/ticktackim/ticktack-workplan/blob/master/index.js) which launches _electron_ to host the application UI and a background process to start the p2p replication with _sbot_.
