@@ -8,4 +8,4 @@ Welcome to Ticktack documentation.
 * [Releases](https://github.com/ticktackim/ticktack-workplan/releases)
 * [Issues](https://github.com/ticktackim/ticktack-workplan/issues)
 
-To contribute to ticktack, you might want first to [become familiar with the folder structure](structure.md) and the [stack used](stack.md), then check out how [they fit together](boot.md).
+To contribute to ticktack, you might want first to [become familiar with the folder structure](structure.md) and the [stack used](stack.md), then check out how [they fit together](kickstart.md).

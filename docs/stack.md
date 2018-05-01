@@ -12,4 +12,4 @@ As with other popular scuttlebutt clients, ticktack relies on the proven combina
 * [mutant](https://github.com/mmckegg/mutant): Framework used to create the UI of Ticktack. 
 * [pull-streams](https://pull-stream.github.io/): A minimal pipeable stream system. Used heavily in most ssb apps together with mutant to provide reactive observables to build the UI.
 
-Now that you know what is the stack, why not check [how the application works](boot.md). 
+Now that you know what is the stack, why not check [how the application works](kickstart.md). 
