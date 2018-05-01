@@ -41,7 +41,7 @@ exports.create = (api) => {
 
 
     return h('WebShares', { 'ev-click': () => isOpen.set(true) }, [
-      h('i.fa', { className: when(iShared, 'fa-globe', 'fa-globe faint') }),
+      h('i.fa.fa-share-alt', { className: when(iShared, '', 'faint') }),
       h('div.count', count),
       lb
     ])

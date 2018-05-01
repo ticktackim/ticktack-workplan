@@ -8,7 +8,7 @@ WebShares {
   i {
     margin-right: .4rem
   }
-  i.fa-globe {
+  i.fa-share-alt {
     $colorFontPrimary
   }
 
