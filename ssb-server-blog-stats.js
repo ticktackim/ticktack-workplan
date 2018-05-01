@@ -10,7 +10,7 @@ const getCommentRoot = (msg) => get(msg, 'value.content.root')
 const getLikeRoot = (msg) => get(msg, 'value.content.vote.link')
 const getTimestamp = (msg) => get(msg, 'value.timestamp')
 
-const FLUME_VIEW_VERSION = 2
+const FLUME_VIEW_VERSION = 1
 
 module.exports = {
   name: 'blogStats',
@@ -77,8 +77,8 @@ module.exports = {
 
     // a Plog is a Blog shaped Post!
     function isPlog (msg) {
-      // if (get(msg, 'value.content.text', '').length >= 3000) console.log(get(msg, 'value.content.text', '').length)
-      return get(msg, 'value.content.text', '').length >= 3000
+      // if (get(msg, 'value.content.text', '').length >= 2500) console.log(get(msg, 'value.content.text', '').length)
+      return get(msg, 'value.content.text', '').length >= 2500
     }
 
     function readBlogs (options = {}) {

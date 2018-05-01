@@ -1,11 +1,13 @@
 const nest = require('depnest')
-const { h, resolve, when, Value, Struct, Array: MutantArray, Dict, onceTrue, map, computed, throttle, watchAll } = require('mutant')
+const { h, when, Value, Struct, Array: MutantArray, Dict, onceTrue, map, computed, throttle, watchAll } = require('mutant')
 const pull = require('pull-stream')
 const marksum = require('markdown-summary')
 const Chart = require('chart.js')
 const groupBy = require('lodash/groupBy')
 const flatMap = require('lodash/flatMap')
 const get = require('lodash/get')
+
+const chartConfig = require('../../config/chart')
 
 exports.gives = nest('app.page.statsShow')
 
@@ -182,15 +184,21 @@ function getTitle ({ blog, mdRenderer }) {
 
 function fetchBlogData ({ server, store }) {
   const myKey = server.id
-  pull(
-    server.blogStats.readBlogs({ reverse: false }),
-    pull.drain(blog => {
-      store.blogs.push(blog)
 
+  server.blogStats.getBlogs({}, (err, blogs) => {
+    if (err) console.error(err)
+
+    // TODO - change this once merge in the new notifications-hanger work
+    //   i.e. do one query for ALL comments on my blogs as opposed to N queries
+    blogs.forEach(blog => {
       fetchComments({ server, store, blog })
       fetchLikes({ server, store, blog })
     })
-  )
+
+    blogs = blogs
+      .sort((a, b) => a.value.timestamp > b.value.timestamp ? -1 : +1)
+    store.blogs.set(blogs)
+  })
 
   function fetchComments ({ server, store, blog }) {
     if (!store.comments.has(blog.key)) store.comments.put(blog.key, MutantArray())
@@ -320,59 +328,3 @@ function initialiseChart ({ canvas, context, foci }) {
   function toDay (ts) { return Math.floor(ts / DAY) }
 }
 
-// TODO rm chartData and other overly smart things which didn't work from here
-function chartConfig ({ context }) {
-  const { lower, upper } = resolve(context.range)
-
-  // Ticktack Primary color:'hsla(215, 57%, 43%, 1)',
-  const barColor = 'hsla(215, 57%, 60%, 1)'
-
-  return {
-    type: 'bar',
-    data: {
-      datasets: [{
-        backgroundColor: barColor,
-        borderColor: barColor,
-        data: []
-      }]
-    },
-    options: {
-      legend: {
-        display: false
-      },
-      scales: {
-        xAxes: [{
-          type: 'time',
-          distribution: 'linear',
-          time: {
-            unit: 'day',
-            min: new Date(lower - DAY / 2),
-            max: new Date(upper - DAY / 2),
-            tooltipFormat: 'MMMM D',
-            stepSize: 7
-          },
-          bounds: 'ticks',
-          ticks: {
-            // maxTicksLimit: 4
-          },
-          gridLines: {
-            display: false
-          },
-          maxBarThickness: 20
-        }],
-
-        yAxes: [{
-          ticks: {
-            min: 0,
-            suggestedMax: 10,
-            // max: Math.max(localMax, 10),
-            stepSize: 5
-          }
-        }]
-      },
-      animation: {
-        // duration: 300
-      }
-    }
-  }
-}
