@@ -18,3 +18,14 @@ Shares {
 
 }
 
+textarea#caption {
+  $fontBasic
+
+  padding: 1rem
+  border-radius: 1rem
+  $borderSubtle
+  margin-bottom: .5rem
+
+  outline: none
+}
+
