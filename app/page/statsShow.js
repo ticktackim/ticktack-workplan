@@ -265,7 +265,7 @@ function initialiseChart ({ canvas, context, foci }) {
     return Object.keys(grouped)
       .map(day => {
         return {
-          t: day * DAY + 10,
+          t: day * DAY + DAY / 2,
           y: grouped[day].length
         }
         // NOTE - this collects the data points for a day at t = 10ms into the day
@@ -287,7 +287,7 @@ function initialiseChart ({ canvas, context, foci }) {
     const slice = data
       .filter(d => d.t > lower && d.t <= upper)
       .map(d => d.y)
-      .sort((a, b) => a < b)
+      .sort((a, b) => a > b ? -1 : +1)
 
     var h = slice[0]
     if (!h || h < 10) h = 10
@@ -304,9 +304,8 @@ function initialiseChart ({ canvas, context, foci }) {
   context.range(range => {
     const { lower, upper } = range
 
-    chart.options.scales.xAxes[0].time.min = new Date(lower - DAY / 2)
-    chart.options.scales.xAxes[0].time.max = new Date(upper - DAY / 2)
-        // the squeezing in by DAY/2 is to stop data outside range from half showing
+    chart.options.scales.xAxes[0].time.min = lower
+    chart.options.scales.xAxes[0].time.max = upper
 
     chart.update()
   })
@@ -327,4 +326,3 @@ function initialiseChart ({ canvas, context, foci }) {
   }
   function toDay (ts) { return Math.floor(ts / DAY) }
 }
-

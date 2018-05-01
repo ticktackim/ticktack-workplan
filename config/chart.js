@@ -27,8 +27,8 @@ module.exports = function chartConfig ({ context }) {
           distribution: 'linear',
           time: {
             unit: 'day',
-            min: new Date(lower - DAY / 2),
-            max: new Date(upper - DAY / 2),
+            min: lower,
+            max: upper,
             tooltipFormat: 'MMMM D',
             stepSize: 7
           },
