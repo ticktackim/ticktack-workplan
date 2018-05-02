@@ -26,7 +26,7 @@ module.exports = {
     readLikes: 'source'
   },
   init: (server, config) => {
-    console.log('initialising blog-stats plugin')
+    console.log('> initialising blog-stats plugin')
     const myKey = server.keys.id
 
     const view = server._flumeUse(
@@ -137,8 +137,8 @@ module.exports = {
         const _source = pull(
           view.read({
             // live: true,
-            gt: [ 'B~', undefined, undefined ],
-            lt: [ 'C~', null, null ],
+            gt: [ 'C', null, null ],
+            lt: [ 'C', undefined, undefined ],
             reverse: true,
             values: true,
             keys: true,
@@ -150,12 +150,7 @@ module.exports = {
           pull.map(result => result.value)
         )
 
-        // pull(
-        //   _source,
-        //   pull.log()
-        // )
         source.resolve(_source)
-        // source.resolve(pull.values([1, 2, 3, 4, ':)']))
       })
 
       return pull(

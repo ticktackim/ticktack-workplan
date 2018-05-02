@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, onceTrue, throttle, Value, Array: MutantArray, map, resolve } = require('mutant')
+const { h, onceTrue, throttle, Value, Array: MutantArray, map } = require('mutant')
 const pull = require('pull-stream')
 
 exports.gives = nest('app.page.notifications')
@@ -9,6 +9,7 @@ exports.needs = nest({
   // 'app.html.topNav': 'first',
   // 'app.html.scroller': 'first',
   'app.html.sideNav': 'first',
+  'message.html.comment': 'first',
   // 'blog.sync.isBlog': 'first',
   // 'feed.pull.public': 'first',
   // 'feed.pull.type': 'first',
@@ -16,7 +17,7 @@ exports.needs = nest({
   // 'keys.sync.id': 'first',
   // 'message.sync.isBlocked': 'first',
   'sbot.obs.connection': 'first',
-  'translations.sync.strings': 'first'
+  'translations.sync.strings': 'first',
   // 'unread.sync.isUnread': 'first'
 })
 
@@ -31,7 +32,6 @@ exports.create = (api) => {
     var commentsStore = MutantArray([])
 
     onceTrue(api.sbot.obs.connection, server => {
-      console.log('methods', server.blogStats)
       pull(
         server.blogStats.readAllComments(),
         pull.drain(m => {
@@ -89,12 +89,18 @@ exports.create = (api) => {
 
     return h('Page -notifications', [
       api.app.html.sideNav(location),
-      h('div.content', map(throttle(commentsStore, 300), comment => {
-        const text = comment.value.content.text
-
-        return h('p', { style: { margin: '1rem' } }, text)
-      }))
+      h('div.content', map(
+        throttle(commentsStore, 300),
+        msg => Comment(msg),
+        {
+          // comparer: (a, b) => a === b 
+        }
+      ))
     ])
+
+    function Comment (msg) {
+      return api.message.html.comment(msg)
+    }
   })
 
 /*   function update (soFar, newBlog) { */

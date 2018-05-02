@@ -4,6 +4,7 @@ module.exports = {
   },
   html: {
     channel: require('./html/channel'),
+    comment: require('./html/comment'),
     compose: require('./html/compose'),
     likes: require('./html/likes'),
     subject: require('./html/subject'),
