@@ -21,7 +21,7 @@ module.exports = {
       addressBook: require('./html/sideNav/sideNavAddressBook'),
       discovery: require('./html/sideNav/sideNavDiscovery')
     },
-    warning: require('./html/warning'),
+    warning: require('./html/warning')
   },
   obs: {
     pluginsOk: require('./obs/pluginsOk'),
