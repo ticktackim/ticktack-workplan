@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, computed } = require('mutant')
+const { h, computed, when } = require('mutant')
 const electron = require('electron')
 const path = require('path')
 const { version } = require('../../package.json')
@@ -31,7 +31,7 @@ const LANGUAGES = ['zh', 'en']
 exports.create = (api) => {
   return nest('app.page.settings', settings)
 
-  function settings (location) {
+  function settings(location) {
     // RESET the app when the settings are changed
     api.settings.obs.get('language')(() => {
       console.log('language changed, resetting view')
@@ -40,12 +40,14 @@ exports.create = (api) => {
       api.history.obs.store().set([
         { page: 'blogIndex' }
       ])
-      api.history.sync.push({page: 'settings'})
+      api.history.sync.push({ page: 'settings' })
     })
 
+    const webSharingMetricsOption = api.settings.obs.get('websharemetrics')
     const feed = api.keys.sync.id()
     const strings = api.translations.sync.strings()
     const currentLanguage = api.settings.sync.get('language')
+
 
     const editProfile = () => api.history.sync.push({
       page: 'userEdit',
@@ -84,7 +86,15 @@ exports.create = (api) => {
         ]),
         h('section -zoom', [
           h('div.left', strings.settingsPage.section.zoom),
-          h('div.right', [ zoomButton(-0.1, '-'), zoomButton(+0.1, '+') ])
+          h('div.right', [zoomButton(-0.1, '-'), zoomButton(+0.1, '+')])
+        ]),
+        h('section -sharing', [
+          h('div.left', 'Web Sharing Metrics'),
+          h('div.right', [].concat(
+            webSharingOption('public', 'publish metrics openly'),
+            webSharingOption('author', 'publish for you and author'),
+            webSharingOption('private', 'publish just for you')
+          ))
         ]),
         h('section -version', [
           h('div.left', strings.settingsPage.section.version),
@@ -93,7 +103,7 @@ exports.create = (api) => {
       ])
     ])
 
-    function Language (lang) {
+    function Language(lang) {
       const selectLang = () => api.settings.sync.set({ language: lang })
       const className = currentLanguage === lang ? '-strong' : ''
 
@@ -106,7 +116,7 @@ exports.create = (api) => {
       )
     }
 
-    function zoomButton (increment, symbol) {
+    function zoomButton(increment, symbol) {
       const { getCurrentWebContents } = electron.remote
       return h('Button -zoom',
         {
@@ -120,5 +130,22 @@ exports.create = (api) => {
         symbol
       )
     }
+
+    function webSharingOption(v, label) {
+      let myOption = computed(webSharingMetricsOption, opt => opt === v)
+
+      const selectWebSharingOption = () => {
+        api.settings.sync.set({ websharemetrics: v })
+      }
+
+      return h('Button -websharingmetrics',
+        {
+          'ev-click': () => selectWebSharingOption(v),
+          className: when(myOption, '-strong', '')
+        },
+        label
+      )
+    }
+
   }
 }
