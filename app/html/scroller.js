@@ -14,18 +14,18 @@ exports.create = function (api) {
 
   function createScroller (opts = {}) {
     const {
-      stream,
+      stream, // TODO - rename this to createStream (rename across app)
       filter = () => pull.filter((msg) => true),
       indexProperty = ['value', 'timestamp']
     } = opts
 
     const streamToTop = pull(
-      next(stream, {old: false, limit: 100, property: indexProperty }),
+      next(stream, { live: true, reverse: false, old: false, limit: 100, property: indexProperty }),
       filter() // is a pull-stream through
     )
 
     const streamToBottom = pull(
-      next(stream, {reverse: true, limit: 100, live: false, property: indexProperty }),
+      next(stream, { live: false, reverse: true, limit: 100, property: indexProperty }),
       filter()
     )
 

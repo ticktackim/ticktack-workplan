@@ -22,7 +22,12 @@ Comment {
         font-size: 1.2rem
         margin-right: 1rem
       }
-      div.Timeago {}
+      div.Timeago {
+        margin-right: 1.5rem
+      }
+      a.rootLink {
+        font-size: .8rem
+      }
     }
 
     section.content {

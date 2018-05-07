@@ -1,0 +1,11 @@
+Page -notifications {
+  div.Scroller.content {
+
+    section.content {
+      div.Comment {
+        flex-grow: 1
+
+      }
+    }
+  }
+}

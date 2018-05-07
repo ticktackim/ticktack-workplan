@@ -23,13 +23,10 @@ exports.create = (api) => {
         .filter(msg => forkOf(msg) === undefined) // exclude nested replies / forks
         .filter(msg => msg.value.content.root) // exclude root message / blog
         .map(comment => {
-          const nestedReplies = msgs.filter(msg => forkOf(msg) === comment.key)
-
           return Struct({
-            comment: comment,
-            replies: nestedReplies
+            comment,
+            replies: msgs.filter(msg => forkOf(msg) === comment.key)
           })
-          // return Object.assign({}, comment, { replies: nestedReplies })
         })
     })
 
@@ -59,7 +56,7 @@ exports.create = (api) => {
           comparer: (a, b) => {
             if (a === undefined || b === undefined) return false
 
-            return a.comment() === b.comment() && a.replies().length === b.replies().length
+            return a.comment().key === b.comment().key && a.replies().length === b.replies().length
           }
         }
       ),
