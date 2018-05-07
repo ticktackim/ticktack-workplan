@@ -7,7 +7,8 @@ exports.needs = nest({
   'message.obs.webshares': 'first',
   'sbot.async.publish': 'first',
   'translations.sync.strings': 'first',
-  'app.html.lightbox': 'first'
+  'app.html.lightbox': 'first',
+  'settings.sync.get': 'first'
 })
 
 exports.gives = nest('message.html.webshares')
@@ -48,16 +49,35 @@ exports.create = (api) => {
   })
 
   function publishShare(msg, action) {
+    var sharingScope = api.settings.sync.get('websharingmetrics')
     var url = `http://share2.ticktack.im:8807/${msg.key}`
     var share = {
       type: 'share',
       share: { link: msg.key, content: "blog", url: url }
     }
+    // if it was a private message, then share as private ...
     if (msg.value.content.recps) {
       share.recps = msg.value.content.recps.map(function (e) {
         return e && typeof e !== 'string' ? e.link : e
       })
       share.private = true
+    } else {
+      // ... else obey configuration settings.
+      switch (sharingScope) {
+        case "private":
+          share.private = true
+          break
+        case "author":
+          share.recps = [
+            id,
+            msg.value.author
+          ]
+          share.private = true
+          break
+        case "public":
+        default:
+          break
+      }
     }
     api.sbot.async.publish(share)
 
