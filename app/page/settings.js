@@ -4,6 +4,7 @@ const electron = require('electron')
 const path = require('path')
 const { version } = require('../../package.json')
 
+
 exports.gives = nest('app.page.settings')
 
 exports.needs = nest({
@@ -95,7 +96,6 @@ exports.create = (api) => {
           h('div.left', strings.settingsPage.section.version),
           h('div.right', version)
         ]),
-        h('h1', ""),
         h('section -backup', [
           h('div.left', 'Backup'),
           h('div.right', [
