@@ -1,0 +1,42 @@
+Notification {
+  display: flex
+
+  div.left {
+    padding-top: 1rem
+    margin-right: 1rem
+
+    div.Avatar {}
+  }
+
+  div.right {
+    flex-grow: 1
+
+    padding-top: 1rem
+    padding-bottom: 2rem
+    $borderBottomLight
+    margin-bottom: 1rem
+
+    section.context {
+      display: flex
+      align-items: baseline
+
+      div.name {
+        font-size: 1.2rem
+        margin-right: 1rem
+      }
+      div.Timeago {
+        margin-right: 1.5rem
+      }
+      a.rootLink {
+        font-size: .8rem
+      }
+    }
+
+    section.content {
+      font-size: .95rem
+      line-height: 1.4
+      div.Markdown {}
+    }
+
+  }
+}

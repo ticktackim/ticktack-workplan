@@ -5,7 +5,7 @@ Page -notifications {
       padding-top: 2rem
 
       div.Comment {
-        flex-grow: 1
+        flex-basis: 100%
 
         div.right {
           section.replies {
@@ -15,6 +15,10 @@ Page -notifications {
             }
           }
         }
+      }
+
+      div.Notification {
+        flex-basis: 100%
       }
     }
   }

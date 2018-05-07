@@ -9,6 +9,7 @@ const getType = (msg) => get(msg, 'value.content.type')
 const getAuthor = (msg) => get(msg, 'value.author')
 const getCommentRoot = (msg) => get(msg, 'value.content.root')
 const getLikeRoot = (msg) => get(msg, 'value.content.vote.link')
+const getShareRoot = (msg) => get(msg, 'value.content.share.link')
 const getTimestamp = (msg) => get(msg, 'value.timestamp')
 
 const FLUME_VIEW_VERSION = 1
@@ -171,7 +172,7 @@ module.exports = {
         makeFilter: (blogIds) => msg => {
           if (getAuthor(msg) === myKey) return false // exclude my shares
 
-          return blogIds.includes(getLikeRoot(msg)) // is about one of my blogs
+          return blogIds.includes(getShareRoot(msg)) // is about one of my blogs
         },
         opts
       })
