@@ -17,7 +17,10 @@ exports.needs = nest({
   'settings.sync.get': 'first',
   'settings.sync.set': 'first',
   'settings.obs.get': 'first',
-  'translations.sync.strings': 'first'
+  'translations.sync.strings': 'first',
+  'backup.html.exportIdentityButton': 'first',
+  'backup.html.importIdentityButton': 'first'
+
 })
 
 const LANGUAGES = ['zh', 'en']
@@ -25,7 +28,7 @@ const LANGUAGES = ['zh', 'en']
 exports.create = (api) => {
   return nest('app.page.settings', settings)
 
-  function settings (location) {
+  function settings(location) {
     // RESET the app when the settings are changed
     api.settings.obs.get('language')(() => {
       console.log('language changed, resetting view')
@@ -41,6 +44,8 @@ exports.create = (api) => {
     const feed = api.keys.sync.id()
     const strings = api.translations.sync.strings()
     const currentLanguage = api.settings.sync.get('language')
+    const exportIdentityButton = api.backup.html.exportIdentityButton()
+    const importIdentityButton = api.backup.html.importIdentityButton()
 
     const editProfile = () => api.history.sync.push({
       page: 'userEdit',
@@ -96,11 +101,19 @@ exports.create = (api) => {
         h('section -version', [
           h('div.left', strings.settingsPage.section.version),
           h('div.right', version)
+        ]),
+        h('h1', ""),
+        h('section -backup', [
+          h('div.left', 'Backup'),
+          h('div.right', [
+            exportIdentityButton,
+            importIdentityButton
+          ])
         ])
       ])
     ])
 
-    function Language (lang) {
+    function Language(lang) {
       const selectLang = () => api.settings.sync.set({ language: lang })
       const className = currentLanguage === lang ? '-strong' : ''
 
@@ -113,7 +126,7 @@ exports.create = (api) => {
       )
     }
 
-    function Theme (theme) {
+    function Theme(theme) {
       const currentTheme = api.settings.obs.get('ticktack.theme')
       const className = computed(currentTheme, t => t === theme ? '-strong' : '')
 
@@ -126,7 +139,7 @@ exports.create = (api) => {
       )
     }
 
-    function zoomButton (increment, symbol) {
+    function zoomButton(increment, symbol) {
       const { getCurrentWebContents } = electron.remote
       return h('Button -zoom',
         {
@@ -141,7 +154,7 @@ exports.create = (api) => {
       )
     }
 
-    function webSharingOption (v, label) {
+    function webSharingOption(v, label) {
       let myOption = computed(webSharingMetricsOption, opt => opt === v)
 
       const selectWebSharingOption = () => {
