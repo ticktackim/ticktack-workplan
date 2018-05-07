@@ -166,6 +166,12 @@ module.exports = {
       share: 'Share',
       copy: 'Copy external URL',
       open: 'Open external URL'
+    },
+    settings: {
+      caption: 'Web Sharing Metrics',
+      publicOption: 'publish metrics openly',
+      authorAndYouOption: 'publish for you and author',
+      justYouOption: 'publish just for you'
     }
   },
   languages: {

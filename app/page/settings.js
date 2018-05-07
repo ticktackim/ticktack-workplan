@@ -89,11 +89,11 @@ exports.create = (api) => {
           h('div.right', [zoomButton(-0.1, '-'), zoomButton(+0.1, '+')])
         ]),
         h('section -sharing', [
-          h('div.left', 'Web Sharing Metrics'),
+          h('div.left', strings.share.settings.caption),
           h('div.right', [].concat(
-            webSharingOption('public', 'publish metrics openly'),
-            webSharingOption('author', 'publish for you and author'),
-            webSharingOption('private', 'publish just for you')
+            webSharingOption('public', strings.share.settings.publicOption),
+            webSharingOption('author', strings.share.settings.authorAndYouOption),
+            webSharingOption('private', strings.share.settings.justYouOption)
           ))
         ]),
         h('section -version', [
