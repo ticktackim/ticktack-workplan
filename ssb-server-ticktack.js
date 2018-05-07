@@ -14,7 +14,7 @@ const getTimestamp = (msg) => get(msg, 'value.timestamp')
 const FLUME_VIEW_VERSION = 1
 
 module.exports = {
-  name: 'blogStats',
+  name: 'ticktack',
   version: 1,
   manifest: {
     get: 'async',
@@ -22,15 +22,17 @@ module.exports = {
     readBlogs: 'source',
     getBlogs: 'async',
     readComments: 'source',
-    readAllComments: 'source', // TEMP
+    readAllComments: 'source',
+    readAllLikes: 'source',
+    readAllShares: 'source',
     readLikes: 'source'
   },
   init: (server, config) => {
-    console.log('> initialising blog-stats plugin')
+    console.log('> initialising ticktack plugin')
     const myKey = server.keys.id
 
     const view = server._flumeUse(
-      'internalblogStats',
+      'ticktack',
       FlumeView(FLUME_VIEW_VERSION, map)
     )
 
@@ -41,6 +43,8 @@ module.exports = {
       getBlogs,
       readComments,
       readAllComments,
+      readAllLikes,
+      readAllShares,
       readLikes
       // readShares
     }
@@ -76,12 +80,6 @@ module.exports = {
         default:
           return []
       }
-    }
-
-    // a Plog is a Blog shaped Post!
-    function isPlog (msg) {
-      // if (get(msg, 'value.content.text', '').length >= 2500) console.log(get(msg, 'value.content.text', '').length)
-      return get(msg, 'value.content.text', '').length >= 2500
     }
 
     function readBlogs (options = {}) {
@@ -126,58 +124,6 @@ module.exports = {
       return view.read(query)
     }
 
-    function readAllComments (opts = {}) {
-      var source = defer.source()
-
-      getBlogs({ keys: true, values: false }, (err, data) => {
-        if (err) throw err
-
-        const blogIds = data.map(d => d[1])
-
-        opts.type = 'post'
-        var limit = opts.limit
-        delete opts.limit
-        // have to remove limit from the query otherwise Next stalls out if it doesn't get a new result
-
-        const _source = pull(
-          server.messagesByType(opts),
-          pull.filter(msg => {
-            if (msg.value.author === server.id) return false // exclude my posts
-            if (msg.value.content.root === undefined) return false // want only 'comments' (reply posts)
-
-            return blogIds.includes(msg.value.content.root) // is about one of my blogs
-          }),
-          limit ? pull.take(limit) : true
-        )
-
-        // I don't know what order results some out of flumeview-level read
-        // which makes this perhaps unideal for Next / mutant-scroll
-        // const query = {
-        //   gt: [ 'C', null, opts.gt || null ],
-        //   lt: [ 'C', undefined, opts.lt || undefined ],
-        //   reverse: opts.reverse === undefined ? true : opts.reverse,
-        //   live: opts.reverse === undefined ? true : opts.reverse,
-        //   values: true,
-        //   keys: true,
-        //   seqs: false
-        // }
-        // const _source = pull(
-        //   view.read(query),
-        //   pull.filter(result => {
-        //     return blogIds.includes(result.key[1])
-        //   }),
-        //   pull.map(result => result.value),
-        //   pull.take(opts.limit)
-        // )
-
-        source.resolve(_source)
-      })
-
-      return pull(
-        source
-      )
-    }
-
     function readLikes (blog, options = {}) {
       var key = getBlogKey(blog)
 
@@ -193,14 +139,83 @@ module.exports = {
       return view.read(query)
     }
 
-    function getBlogKey (blog) {
-      if (isMsgRef(blog)) return blog
-      // else if (isMsgRef(blog.key) && isBlog(blog)) return blog.key
-      else if (isMsgRef(blog.key) && (isBlog(blog) || isPlog(blog))) return blog.key
+    function readAllComments (opts = {}) {
+      return readAllSource({
+        type: 'post',
+        makeFilter: blogIds => msg => {
+          if (getAuthor(msg) === myKey) return false // exclude my posts
+          if (getCommentRoot(msg) === undefined) return false // want only 'comments' (reply posts)
+            // NOTE - this one will get nested replies too
+
+          return blogIds.includes(getCommentRoot(msg)) // is about one of my blogs
+        },
+        opts
+      })
+    }
+
+    function readAllLikes (opts = {}) {
+      return readAllSource({
+        type: 'vote',
+        makeFilter: blogIds => msg => {
+          if (getAuthor(msg) === myKey) return false // exclude my likes
+
+          return blogIds.includes(getLikeRoot(msg)) // is about one of my blogs
+        },
+        opts
+      })
+    }
+
+    function readAllShares (opts = {}) {
+      return readAllSource({
+        type: 'share',
+        makeFilter: (blogIds) => msg => {
+          if (getAuthor(msg) === myKey) return false // exclude my shares
+
+          return blogIds.includes(getLikeRoot(msg)) // is about one of my blogs
+        },
+        opts
+      })
+    }
+
+    function readAllSource ({ type, makeFilter, opts = {} }) {
+      var source = defer.source()
+
+      getBlogs({ keys: true, values: false }, (err, data) => {
+        if (err) throw err
+
+        const blogIds = data.map(d => d[1])
+
+        opts.type = type
+        var limit = opts.limit
+        delete opts.limit
+        // have to remove limit from the query otherwise Next stalls out if it doesn't get a new result
+
+        const _source = pull(
+          server.messagesByType(opts),
+          pull.filter(makeFilter(blogIds)),
+          limit ? pull.take(limit) : true
+        )
+
+        source.resolve(_source)
+      })
+
+      return source
     }
 
     function isMyMsg (msg) {
       return getAuthor(msg) === myKey
     }
   }
+}
+
+function getBlogKey (blog) {
+  if (isMsgRef(blog)) return blog
+  // else if (isMsgRef(blog.key) && isBlog(blog)) return blog.key
+  else if (isMsgRef(blog.key) && (isBlog(blog) || isPlog(blog))) return blog.key
+}
+
+// a Plog is a Blog shaped Post!
+function isPlog (msg) {
+  // if (get(msg, 'value.content.text', '').length >= 2500) console.log(get(msg, 'value.content.text', '').length)
+  return get(msg, 'value.content.text', '').length >= 2500
 }

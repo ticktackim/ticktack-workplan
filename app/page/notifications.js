@@ -16,6 +16,8 @@ exports.create = (api) => {
   return nest('app.page.notifications', function (location) {
     // location here can expected to be: { page: 'notifications', section: * }
 
+    if (!location.section) return
+
     var scroller = api.app.html.scroller({
       classList: ['content'],
       stream: createBlogCommentStream,
@@ -29,7 +31,7 @@ exports.create = (api) => {
       onceTrue(api.sbot.obs.connection, server => {
         if (resolved) return
 
-        source.resolve(server.blogStats.readAllComments(opts))
+        source.resolve(server.ticktack.readAllComments(opts))
         resolved = true
       })
 

@@ -22,7 +22,7 @@ var createSbot = require('scuttlebot')
   // .use(require('ssb-ebt'))
   .use(require('ssb-ws'))
   .use(require('ssb-server-channel'))
-  .use(require('./ssb-server-blog-stats'))
+  .use(require('./ssb-server-ticktack'))
 
 Client(config.keys, config, (err, ssbServer) => {
   if (err) {

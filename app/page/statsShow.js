@@ -187,7 +187,7 @@ function getTitle ({ blog, mdRenderer }) {
 function fetchBlogData ({ server, store }) {
   const myKey = server.id
 
-  server.blogStats.getBlogs({}, (err, blogs) => {
+  server.ticktack.getBlogs({}, (err, blogs) => {
     if (err) console.error(err)
 
     // TODO - change this once merge in the new notifications-hanger work
@@ -206,7 +206,7 @@ function fetchBlogData ({ server, store }) {
     if (!store.comments.has(blog.key)) store.comments.put(blog.key, MutantArray())
 
     pull(
-      server.blogStats.readComments(blog),
+      server.ticktack.readComments(blog),
       pull.drain(msg => {
         if (msg.value.author === myKey) return
         store.comments.get(blog.key).push(msg)
@@ -218,7 +218,7 @@ function fetchBlogData ({ server, store }) {
     if (!store.likes.has(blog.key)) store.likes.put(blog.key, MutantArray())
 
     pull(
-      server.blogStats.readLikes(blog),
+      server.ticktack.readLikes(blog),
       pull.drain(msg => {
         if (msg.value.author === myKey) return
 
