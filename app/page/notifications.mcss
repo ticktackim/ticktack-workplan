@@ -2,9 +2,19 @@ Page -notifications {
   div.Scroller.content {
 
     section.content {
+      padding-top: 2rem
+
       div.Comment {
         flex-grow: 1
 
+        div.right {
+          section.replies {
+
+            div.Comment.-nested {
+              $backgroundPrimary
+            }
+          }
+        }
       }
     }
   }

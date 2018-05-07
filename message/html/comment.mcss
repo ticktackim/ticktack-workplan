@@ -55,6 +55,10 @@ Comment {
       div.Likes { }
     }
 
+    section.replies {
+      margin-top: 1rem
+    }
+
     div.Compose {
       margin: 1rem 0
     }

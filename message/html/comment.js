@@ -34,8 +34,8 @@ exports.create = (api) => {
     if (!replies) {
       replies = computed(api.backlinks.obs.for(msg.key), backlinks => {
         return backlinks.filter(backlinker => {
-          const { type, root } = backlinker.value.content
-          return type === 'post' && root === msg.key
+          const { type, root: _root, fork } = backlinker.value.content
+          return type === 'post' && fork === msg.key && _root === root
         })
       })
     }
@@ -82,6 +82,12 @@ exports.create = (api) => {
           // TODO don't link to root, link to position of message within blog!
         ]),
         h('section.content', api.message.html.markdown(get(msg, 'value.content.text'))),
+        h('section.actions', [
+          h('div.reply', { 'ev-click': toggleCompose }, [
+            h('i.fa.fa-commenting-o')
+          ]),
+          api.message.html.likes(msg)
+        ]),
         when(replies,
           h('section.replies',
             map(
@@ -96,12 +102,6 @@ exports.create = (api) => {
             )
           )
         ),
-        h('section.actions', [
-          h('div.reply', { 'ev-click': toggleCompose }, [
-            h('i.fa.fa-commenting-o')
-          ]),
-          api.message.html.likes(msg)
-        ]),
         when(nestedReplyCompose, nestedReplyComposer)
       ])
     ])
