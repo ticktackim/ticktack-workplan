@@ -163,8 +163,8 @@ module.exports = {
   },
   share: {
     captionPlaceholder: 'Type an optional caption here',
-    shareLabel: 'Do you to share this blog with your followers?',
-    externalShareLabel: 'Do you to share this blog on the Web?',
+    shareLabel: 'Share this blog with your followers',
+    externalShareLabel: 'Share this blog with on the Web',
     action: {
       share: 'Share',
       copy: 'Copy external URL',
