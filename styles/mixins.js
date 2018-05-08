@@ -15,7 +15,7 @@ $fontSerif {
 }
 
 $fontSansSerif {
-  font-family: "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Arial,sans-serif
+  font-family: "Lucida Sans",Geneva,Arial,sans-serif
 }
 
 $fontBasic {
