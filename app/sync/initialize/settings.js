@@ -27,7 +27,6 @@ exports.create = function (api) {
     const { get, set } = api.settings.sync
     const settings = merge({}, defaults, get())
 
-    console.log('dog', settings)
     set(settings)
   }
 }
