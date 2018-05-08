@@ -47,6 +47,13 @@ Page -blogShow {
             margin-right: 1rem
           }
           div.Likes {
+            margin-right: 2rem
+          }
+          div.Shares {
+            margin-right: 2rem
+          }
+          div.Likes {
+            margin-right: 2rem
           }
         }
 

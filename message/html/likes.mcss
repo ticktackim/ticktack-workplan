@@ -3,7 +3,7 @@ Likes {
   min-width: 2.5rem
 
   display: flex
-  align-items: center
+  align-items: baseline
 
   i {
     margin-right: .4rem
