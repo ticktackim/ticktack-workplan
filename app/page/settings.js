@@ -22,16 +22,10 @@ exports.needs = nest({
 
 const LANGUAGES = ['zh', 'en']
 
-// TODO - this needs moving somewhere upstream
-// const DEFAULT_SETTINGS = {
-//   onboarded: false,
-//   language: 'zh'
-// }
-
 exports.create = (api) => {
   return nest('app.page.settings', settings)
 
-  function settings(location) {
+  function settings (location) {
     // RESET the app when the settings are changed
     api.settings.obs.get('language')(() => {
       console.log('language changed, resetting view')
@@ -43,11 +37,10 @@ exports.create = (api) => {
       api.history.sync.push({ page: 'settings' })
     })
 
-    const webSharingMetricsOption = api.settings.obs.get('websharemetrics')
+    const webSharingMetricsOption = api.settings.obs.get('ticktack.websharemetrics')
     const feed = api.keys.sync.id()
     const strings = api.translations.sync.strings()
     const currentLanguage = api.settings.sync.get('language')
-
 
     const editProfile = () => api.history.sync.push({
       page: 'userEdit',
@@ -103,7 +96,7 @@ exports.create = (api) => {
       ])
     ])
 
-    function Language(lang) {
+    function Language (lang) {
       const selectLang = () => api.settings.sync.set({ language: lang })
       const className = currentLanguage === lang ? '-strong' : ''
 
@@ -116,14 +109,14 @@ exports.create = (api) => {
       )
     }
 
-    function zoomButton(increment, symbol) {
+    function zoomButton (increment, symbol) {
       const { getCurrentWebContents } = electron.remote
       return h('Button -zoom',
         {
           'ev-click': () => {
             var zoomFactor = api.settings.sync.get('ticktack.electron.zoomFactor', 1)
             var newZoomFactor = zoomFactor + increment
-            var zoomFactor = api.settings.sync.set('ticktack.electron.zoomFactor', newZoomFactor)
+            api.settings.sync.set('ticktack.electron.zoomFactor', newZoomFactor)
             getCurrentWebContents().setZoomFactor(newZoomFactor)
           }
         },
@@ -131,11 +124,11 @@ exports.create = (api) => {
       )
     }
 
-    function webSharingOption(v, label) {
+    function webSharingOption (v, label) {
       let myOption = computed(webSharingMetricsOption, opt => opt === v)
 
       const selectWebSharingOption = () => {
-        api.settings.sync.set({ websharemetrics: v })
+        webSharingMetricsOption.set(v)
       }
 
       return h('Button -websharingmetrics',
@@ -146,6 +139,5 @@ exports.create = (api) => {
         label
       )
     }
-
   }
 }
