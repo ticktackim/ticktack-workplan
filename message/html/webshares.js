@@ -14,7 +14,7 @@ exports.needs = nest({
 exports.gives = nest('message.html.webshares')
 
 exports.create = (api) => {
-  return nest('message.html.webshares', function shares(msg) {
+  return nest('message.html.webshares', function shares (msg) {
     var id = api.keys.sync.id()
     var shares = api.message.obs.webshares(msg.key)
 
@@ -28,7 +28,7 @@ exports.create = (api) => {
     }
     var confirmationDialog = h('div.dialog', [
       h('div.message', [
-        h('p', strings.share.externalShareLabel),
+        h('p', strings.share.externalShareLabel)
       ]),
       h('div.actions', [
         h('Button', { 'ev-click': () => isOpen.set(false) }, strings.userShow.action.cancel),
@@ -40,7 +40,6 @@ exports.create = (api) => {
 
     var lb = api.app.html.lightbox(confirmationDialog, isOpen)
 
-
     return h('WebShares', { 'ev-click': () => isOpen.set(true) }, [
       h('i.fa.fa-share-alt', { className: when(iShared, '', 'faint') }),
       h('div.count', count),
@@ -48,12 +47,12 @@ exports.create = (api) => {
     ])
   })
 
-  function publishShare(msg, action) {
+  function publishShare (msg, action) {
     var sharingScope = api.settings.sync.get('websharingmetrics')
-    var url = `http://share2.ticktack.im:8807/${msg.key}`
+    var url = `http://share2.ticktack.im:8807/${encodeURIComponent(msg.key)}`
     var share = {
       type: 'share',
-      share: { link: msg.key, content: "blog", url: url }
+      share: { link: msg.key, content: 'blog', url: url }
     }
     // if it was a private message, then share as private ...
     if (msg.value.content.recps) {
@@ -64,29 +63,29 @@ exports.create = (api) => {
     } else {
       // ... else obey configuration settings.
       switch (sharingScope) {
-        case "private":
+        case 'private':
           share.private = true
           break
-        case "author":
+        case 'author':
           share.recps = [
             id,
             msg.value.author
           ]
           share.private = true
           break
-        case "public":
+        case 'public':
         default:
           break
       }
     }
     api.sbot.async.publish(share)
 
-    if (action == "copy") {
-      console.log("copying to clipboard")
+    if (action == 'copy') {
+      console.log('copying to clipboard')
       clipboard.writeText(url)
     } else {
-      console.log("opening external")
-      shell.openExternal(url, err => console.log("error", err))
+      console.log('opening external')
+      shell.openExternal(url, err => console.log('error', err))
     }
   }
 }
