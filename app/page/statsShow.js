@@ -12,9 +12,10 @@ const chartConfig = require('../../config/chart')
 exports.gives = nest('app.page.statsShow')
 
 exports.needs = nest({
-  'sbot.obs.connection': 'first',
+  'app.html.sideNav': 'first',
   'history.sync.push': 'first',
   'message.html.markdown': 'first',
+  'sbot.obs.connection': 'first',
   'translations.sync.strings': 'first'
 })
 
@@ -94,6 +95,7 @@ exports.create = (api) => {
     const canvas = h('canvas', { height: 200, width: 600, style: { height: '200px', width: '600px' } })
 
     const page = h('Page -statsShow', [
+      api.app.html.sideNav(location),
       h('Scroller.content', [
         h('div.content', [
           h('h1', t.title),
@@ -185,7 +187,7 @@ function getTitle ({ blog, mdRenderer }) {
 function fetchBlogData ({ server, store }) {
   const myKey = server.id
 
-  server.blogStats.getBlogs({}, (err, blogs) => {
+  server.ticktack.getBlogs({}, (err, blogs) => {
     if (err) console.error(err)
 
     // TODO - change this once merge in the new notifications-hanger work
@@ -204,7 +206,7 @@ function fetchBlogData ({ server, store }) {
     if (!store.comments.has(blog.key)) store.comments.put(blog.key, MutantArray())
 
     pull(
-      server.blogStats.readComments(blog),
+      server.ticktack.readComments(blog),
       pull.drain(msg => {
         if (msg.value.author === myKey) return
         store.comments.get(blog.key).push(msg)
@@ -216,7 +218,7 @@ function fetchBlogData ({ server, store }) {
     if (!store.likes.has(blog.key)) store.likes.put(blog.key, MutantArray())
 
     pull(
-      server.blogStats.readLikes(blog),
+      server.ticktack.readLikes(blog),
       pull.drain(msg => {
         if (msg.value.author === myKey) return
 

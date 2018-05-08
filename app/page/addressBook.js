@@ -1,6 +1,5 @@
 const nest = require('depnest')
 const { h, Value, computed, map } = require('mutant')
-const pull = require('pull-stream')
 
 exports.gives = nest('app.page.addressBook')
 
@@ -14,8 +13,6 @@ exports.needs = nest({
   'about.html.avatar': 'first',
   'about.async.suggest': 'first',
   'about.obs.name': 'first',
-  'app.html.topNav': 'first',
-  // 'app.html.scroller': 'first',
   'app.html.sideNav': 'first',
   'app.html.topNav': 'first',
   'contact.html.follow': 'first',
@@ -27,7 +24,7 @@ exports.needs = nest({
 
 exports.create = (api) => {
   return nest('app.page.addressBook', function (location) {
-    // location here can expected to be: { page: 'addressBook'}
+    // location here can expected to be: { page: 'addressBook', section: '...'}
 
     const strings = api.translations.sync.strings()
     const myKey = api.keys.sync.id()

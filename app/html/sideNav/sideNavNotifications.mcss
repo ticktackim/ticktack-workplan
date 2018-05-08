@@ -1,0 +1,35 @@
+SideNav -notifications {
+  div.level {
+    section{
+      margin-top: 1rem
+
+      header {
+        font-size: .8rem
+      }
+
+      div.Option {
+        padding: 1rem
+        padding-left: 1.5rem
+
+        display: flex
+
+        div.Button {
+          flex-grow: 1
+          margin: .5rem 0
+        }
+
+        i.fa {
+          margin-right: .5rem
+        } 
+
+        div.count {
+          flex-grow: 1
+
+          display: flex
+          justify-content: flex-end
+        }
+      }
+    }
+  }
+}
+

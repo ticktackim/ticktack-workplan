@@ -23,7 +23,8 @@ exports.create = (api) => {
 
     const isSettings = computed(loc, loc => SETTINGS_PAGES.includes(loc.page))
     const isAddressBook = computed(loc, loc => loc.page === 'addressBook')
-    const isFeed = computed([isAddressBook, isSettings], (p, s) => !p && !s)
+    const isNotifications = computed(loc, loc => loc.page === 'notifications' || loc.page === 'statsShow')
+    const isFeed = computed([isAddressBook, isSettings, isNotifications], (p, s, n) => !p && !s && !n)
 
     return h('Header', [
       windowControls(),
@@ -40,7 +41,8 @@ exports.create = (api) => {
           src: when(isSettings, assetPath('settings_on.png'), assetPath('settings.png')),
           'ev-click': () => push({page: 'settings'})
         }),
-        h('i.fa.fa-bell', {
+        h('i.fa', {
+          className: when(isNotifications, 'fa-bell', 'fa-bell-o'),
           'ev-click': () => push({page: 'statsShow'})
         })
       ])
@@ -78,4 +80,3 @@ exports.create = (api) => {
 function assetPath (name) {
   return path.join(__dirname, '../../assets', name)
 }
-

@@ -1,6 +1,7 @@
 const FlumeView = require('flumeview-level')
 const get = require('lodash/get')
 const pull = require('pull-stream')
+const defer = require('pull-defer')
 const isBlog = require('scuttle-blog/isBlog')
 const { isMsg: isMsgRef } = require('ssb-ref')
 
@@ -8,12 +9,13 @@ const getType = (msg) => get(msg, 'value.content.type')
 const getAuthor = (msg) => get(msg, 'value.author')
 const getCommentRoot = (msg) => get(msg, 'value.content.root')
 const getLikeRoot = (msg) => get(msg, 'value.content.vote.link')
+const getShareRoot = (msg) => get(msg, 'value.content.share.link')
 const getTimestamp = (msg) => get(msg, 'value.timestamp')
 
 const FLUME_VIEW_VERSION = 1
 
 module.exports = {
-  name: 'blogStats',
+  name: 'ticktack',
   version: 1,
   manifest: {
     get: 'async',
@@ -21,14 +23,17 @@ module.exports = {
     readBlogs: 'source',
     getBlogs: 'async',
     readComments: 'source',
+    readAllComments: 'source',
+    readAllLikes: 'source',
+    readAllShares: 'source',
     readLikes: 'source'
   },
   init: (server, config) => {
-    console.log('initialising blog-stats plugin')
+    console.log('> initialising ticktack plugin')
     const myKey = server.keys.id
 
     const view = server._flumeUse(
-      'internalblogStats',
+      'ticktack',
       FlumeView(FLUME_VIEW_VERSION, map)
     )
 
@@ -38,6 +43,9 @@ module.exports = {
       readBlogs,
       getBlogs,
       readComments,
+      readAllComments,
+      readAllLikes,
+      readAllShares,
       readLikes
       // readShares
     }
@@ -75,12 +83,6 @@ module.exports = {
       }
     }
 
-    // a Plog is a Blog shaped Post!
-    function isPlog (msg) {
-      // if (get(msg, 'value.content.text', '').length >= 2500) console.log(get(msg, 'value.content.text', '').length)
-      return get(msg, 'value.content.text', '').length >= 2500
-    }
-
     function readBlogs (options = {}) {
       const query = Object.assign({}, {
         gte: ['B', null, null],
@@ -96,6 +98,11 @@ module.exports = {
     }
 
     function getBlogs (options, cb) {
+      if (typeof options === 'function') {
+        cb = options
+        options = {}
+      }
+
       pull(
         readBlogs(options),
         pull.collect(cb)
@@ -133,14 +140,83 @@ module.exports = {
       return view.read(query)
     }
 
-    function getBlogKey (blog) {
-      if (isMsgRef(blog)) return blog
-      // else if (isMsgRef(blog.key) && isBlog(blog)) return blog.key
-      else if (isMsgRef(blog.key) && (isBlog(blog) || isPlog(blog))) return blog.key
+    function readAllComments (opts = {}) {
+      return readAllSource({
+        type: 'post',
+        makeFilter: blogIds => msg => {
+          if (getAuthor(msg) === myKey) return false // exclude my posts
+          if (getCommentRoot(msg) === undefined) return false // want only 'comments' (reply posts)
+            // NOTE - this one will get nested replies too
+
+          return blogIds.includes(getCommentRoot(msg)) // is about one of my blogs
+        },
+        opts
+      })
+    }
+
+    function readAllLikes (opts = {}) {
+      return readAllSource({
+        type: 'vote',
+        makeFilter: blogIds => msg => {
+          if (getAuthor(msg) === myKey) return false // exclude my likes
+
+          return blogIds.includes(getLikeRoot(msg)) // is about one of my blogs
+        },
+        opts
+      })
+    }
+
+    function readAllShares (opts = {}) {
+      return readAllSource({
+        type: 'share',
+        makeFilter: (blogIds) => msg => {
+          if (getAuthor(msg) === myKey) return false // exclude my shares
+
+          return blogIds.includes(getShareRoot(msg)) // is about one of my blogs
+        },
+        opts
+      })
+    }
+
+    function readAllSource ({ type, makeFilter, opts = {} }) {
+      var source = defer.source()
+
+      getBlogs({ keys: true, values: false }, (err, data) => {
+        if (err) throw err
+
+        const blogIds = data.map(d => d[1])
+
+        opts.type = type
+        var limit = opts.limit
+        delete opts.limit
+        // have to remove limit from the query otherwise Next stalls out if it doesn't get a new result
+
+        const _source = pull(
+          server.messagesByType(opts),
+          pull.filter(makeFilter(blogIds)),
+          limit ? pull.take(limit) : true
+        )
+
+        source.resolve(_source)
+      })
+
+      return source
     }
 
     function isMyMsg (msg) {
       return getAuthor(msg) === myKey
     }
   }
+}
+
+function getBlogKey (blog) {
+  if (isMsgRef(blog)) return blog
+  // else if (isMsgRef(blog.key) && isBlog(blog)) return blog.key
+  else if (isMsgRef(blog.key) && (isBlog(blog) || isPlog(blog))) return blog.key
+}
+
+// a Plog is a Blog shaped Post!
+function isPlog (msg) {
+  // if (get(msg, 'value.content.text', '').length >= 2500) console.log(get(msg, 'value.content.text', '').length)
+  return get(msg, 'value.content.text', '').length >= 2500
 }

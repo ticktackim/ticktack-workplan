@@ -4,8 +4,10 @@ module.exports = {
   },
   html: {
     channel: require('./html/channel'),
+    comment: require('./html/comment'),
     compose: require('./html/compose'),
     likes: require('./html/likes'),
+    notification: require('./html/notification'),
     shares: require('./html/shares'),
     webshares: require('./html/webshares'),
     subject: require('./html/subject'),

@@ -15,6 +15,7 @@ exports.needs = nest({
   'app.page.settings': 'first',
   'app.page.channelSubscriptions': 'first',
   'app.page.channelShow': 'first',
+  'app.page.notifications': 'first',
   // 'app.page.channel': 'first',
   // 'app.page.groupFind': 'first',
   // 'app.page.groupIndex': 'first',
@@ -56,8 +57,9 @@ exports.create = (api) => {
       [ location => location.page === 'channelShow', pages.channelShow ],
       [ location => location.channel, pages.channelShow ],
 
-      // Stats pages
+      // Stats / Notifications pages
       [ location => location.page === 'statsShow', pages.statsShow ],
+      [ location => location.page === 'notifications', pages.notifications ],
 
       // AddressBook pages
       [ location => location.page === 'addressBook', pages.addressBook ],
