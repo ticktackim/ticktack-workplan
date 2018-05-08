@@ -161,11 +161,27 @@ module.exports = {
       noSubscriptions: 'You have no subscriptions yet'
     }
   },
+  share: {
+    captionPlaceholder: 'Type an optional caption here',
+    shareLabel: 'Share this blog with your followers',
+    externalShareLabel: 'Share this blog with on the Web',
+    action: {
+      share: 'Share',
+      copy: 'Copy external URL',
+      open: 'Open external URL'
+    },
+    settings: {
+      caption: 'Web Sharing Metrics',
+      publicOption: 'publish metrics openly',
+      authorAndYouOption: 'publish for you and author',
+      justYouOption: 'publish just for you'
+    }
+  },
   statsShow: {
     title: 'Stats',
     prevMonth: 'Prev 30 days',
     nextMonth: 'Next 30 days',
-    thirtyDays: '30 days',
+    thirtyDays: '30 days'
   },
   languages: {
     en: 'English',

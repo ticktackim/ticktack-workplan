@@ -1,4 +1,4 @@
-Likes {
+WebShares {
   cursor: pointer
   min-width: 2.5rem
 
@@ -8,8 +8,13 @@ Likes {
   i {
     margin-right: .4rem
   }
-  i.fa-heart {
+  i.fa-share-alt {
     $colorFontPrimary
   }
+
+  i.faint {
+    color: #b9b9b9
+  }
+
 }
 

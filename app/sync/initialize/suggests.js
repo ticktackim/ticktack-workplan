@@ -13,6 +13,7 @@ exports.create = (api) => {
 
   return nest({
     'app.sync.initialize': function initializeSuggests () {
+      console.log('> initialise: suggest-mentions')
       api.about.async.suggest()
       api.channel.async.suggest()
       // api.channel.obs.recent()()   TODO - figure out how to initialise this store

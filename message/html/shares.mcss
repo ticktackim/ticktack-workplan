@@ -1,0 +1,31 @@
+Shares {
+  cursor: pointer
+  min-width: 2.5rem
+
+  display: flex
+  align-items: baseline
+
+  i {
+    margin-right: .4rem
+  }
+  i.fa-retweet {
+    $colorFontPrimary
+  }
+
+  i.faint {
+    color: #b9b9b9
+  }
+
+}
+
+textarea#caption {
+  $fontBasic
+
+  padding: 1rem
+  border-radius: 1rem
+  $borderSubtle
+  margin-bottom: .5rem
+
+  outline: none
+}
+

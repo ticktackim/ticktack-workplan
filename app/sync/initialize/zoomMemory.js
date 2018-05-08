@@ -12,6 +12,7 @@ exports.create = (api) => {
   return nest('app.sync.initialize', zoomMemory)
 
   function zoomMemory () {
+    console.log('> initialise: window form')
     const { getCurrentWebContents, getCurrentWindow } = electron.remote
 
     window.addEventListener('resize', () => {
