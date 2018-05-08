@@ -24,6 +24,7 @@ exports.needs = nest({
   // 'app.page.userFind': 'first',
   'app.page.userShow': 'first',
   'app.page.splash': 'first',
+  'app.page.statsShow': 'first',
   'app.page.threadNew': 'first',
   'app.page.threadShow': 'first',
   // 'app.page.image': 'first',
@@ -51,9 +52,12 @@ exports.create = (api) => {
       }, pages.blogShow ],
 
       // Channel related pages
-      [ location => location.page === 'channelSubscriptions', pages.channelSubscriptions],
+      [ location => location.page === 'channelSubscriptions', pages.channelSubscriptions ],
       [ location => location.page === 'channelShow', pages.channelShow ],
       [ location => location.channel, pages.channelShow ],
+
+      // Stats pages
+      [ location => location.page === 'statsShow', pages.statsShow ],
 
       // AddressBook pages
       [ location => location.page === 'addressBook', pages.addressBook ],
