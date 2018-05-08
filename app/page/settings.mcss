@@ -56,10 +56,19 @@ Page -settings {
       }
 
       -version {
-        margin-top: 2rem
-
         div.right {
           $colorFontSubtle
+        }
+      }
+
+      -sharing {
+        div.left {
+          align-items: flex-start
+          padding-top: .8rem
+        }
+        div.right {
+          flex-direction: column
+          align-items: flex-start
         }
       }
     }
@@ -68,6 +77,12 @@ Page -settings {
 
 Button -language {
   margin-right: 1rem
+}
+
+
+Button -websharingmetrics {
+  margin-right: 1rem
+  margin-bottom: 1rem
 }
 
 Button -zoom {

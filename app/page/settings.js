@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, computed } = require('mutant')
+const { h, computed, when } = require('mutant')
 const electron = require('electron')
 const path = require('path')
 const { version } = require('../../package.json')
@@ -22,12 +22,6 @@ exports.needs = nest({
 
 const LANGUAGES = ['zh', 'en']
 
-// TODO - this needs moving somewhere upstream
-// const DEFAULT_SETTINGS = {
-//   onboarded: false,
-//   language: 'zh'
-// }
-
 exports.create = (api) => {
   return nest('app.page.settings', settings)
 
@@ -40,9 +34,10 @@ exports.create = (api) => {
       api.history.obs.store().set([
         { page: 'blogIndex' }
       ])
-      api.history.sync.push({page: 'settings'})
+      api.history.sync.push({ page: 'settings' })
     })
 
+    const webSharingMetricsOption = api.settings.obs.get('ticktack.websharemetrics')
     const feed = api.keys.sync.id()
     const strings = api.translations.sync.strings()
     const currentLanguage = api.settings.sync.get('language')
@@ -84,7 +79,15 @@ exports.create = (api) => {
         ]),
         h('section -zoom', [
           h('div.left', strings.settingsPage.section.zoom),
-          h('div.right', [ zoomButton(-0.1, '-'), zoomButton(+0.1, '+') ])
+          h('div.right', [zoomButton(-0.1, '-'), zoomButton(+0.1, '+')])
+        ]),
+        h('section -sharing', [
+          h('div.left', strings.share.settings.caption),
+          h('div.right', [].concat(
+            webSharingOption('public', strings.share.settings.publicOption),
+            webSharingOption('author', strings.share.settings.authorAndYouOption),
+            webSharingOption('private', strings.share.settings.justYouOption)
+          ))
         ]),
         h('section -version', [
           h('div.left', strings.settingsPage.section.version),
@@ -113,11 +116,27 @@ exports.create = (api) => {
           'ev-click': () => {
             var zoomFactor = api.settings.sync.get('ticktack.electron.zoomFactor', 1)
             var newZoomFactor = zoomFactor + increment
-            var zoomFactor = api.settings.sync.set('ticktack.electron.zoomFactor', newZoomFactor)
+            api.settings.sync.set('ticktack.electron.zoomFactor', newZoomFactor)
             getCurrentWebContents().setZoomFactor(newZoomFactor)
           }
         },
         symbol
+      )
+    }
+
+    function webSharingOption (v, label) {
+      let myOption = computed(webSharingMetricsOption, opt => opt === v)
+
+      const selectWebSharingOption = () => {
+        webSharingMetricsOption.set(v)
+      }
+
+      return h('Button -websharingmetrics',
+        {
+          'ev-click': () => selectWebSharingOption(v),
+          className: when(myOption, '-strong', '')
+        },
+        label
       )
     }
   }

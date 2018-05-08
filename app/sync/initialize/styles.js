@@ -11,6 +11,7 @@ exports.needs = nest({
 exports.create = (api) => {
   return nest({
     'app.sync.initialize': function initializeStyles () {
+      console.log('> initialise: styles')
       const css = values(api.styles.css()).join('\n')
       insertCss(css)
     }

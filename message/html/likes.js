@@ -10,7 +10,7 @@ exports.needs = nest({
 exports.gives = nest('message.html.likes')
 
 exports.create = (api) => {
-  return nest('message.html.likes', function likes (msg) {
+  return nest('message.html.likes', function likes(msg) {
     var id = api.keys.sync.id()
     var likes = api.message.obs.likes(msg.key)
 
@@ -23,16 +23,16 @@ exports.create = (api) => {
     ])
   })
 
-  function publishLike (msg, status = true) {
+  function publishLike(msg, status = true) {
     var like = status ? {
       type: 'vote',
       channel: msg.value.content.channel,
       vote: { link: msg.key, value: 1, expression: 'Like' }
     } : {
-      type: 'vote',
-      channel: msg.value.content.channel,
-      vote: { link: msg.key, value: 0, expression: 'Unlike' }
-    }
+        type: 'vote',
+        channel: msg.value.content.channel,
+        vote: { link: msg.key, value: 0, expression: 'Unlike' }
+      }
     if (msg.value.content.recps) {
       like.recps = msg.value.content.recps.map(function (e) {
         return e && typeof e !== 'string' ? e.link : e

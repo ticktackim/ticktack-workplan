@@ -11,6 +11,7 @@ exports.needs = nest({
 exports.create = (api) => {
   return nest({
     'app.sync.initialize': function initializeClickHandling () {
+      console.log('> initialise: clickHandler')
       const target = document.body
 
       api.app.async.catchLinkClick(target, (link, { isExternal }) => {

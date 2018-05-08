@@ -22,10 +22,10 @@ module.exports = {
       discovery: require('./html/sideNav/sideNavDiscovery'),
       notifications: require('./html/sideNav/sideNavNotifications')
     },
-    warning: require('./html/warning'),
+    warning: require('./html/warning')
   },
   obs: {
-    pluginsOk: require('./obs/pluginsOk'),
+    pluginsOk: require('./obs/pluginsOk')
   },
   page: {
     addressBook: require('./page/addressBook'),
@@ -56,6 +56,7 @@ module.exports = {
   sync: {
     initialize: {
       clickHandler: require('./sync/initialize/clickHandler'),
+      settings: require('./sync/initialize/settings'),
       styles: require('./sync/initialize/styles'),
       suggests: require('./sync/initialize/suggests'),
       zoomMemory: require('./sync/initialize/zoomMemory')
