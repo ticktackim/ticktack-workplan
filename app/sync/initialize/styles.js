@@ -17,6 +17,9 @@ body {
 body .Page img {
   filter: invert();
 }
+.Option > div.circle > i > img {
+  filter: none;
+}
 div.Thumbnail {
   filter: invert();
 }
