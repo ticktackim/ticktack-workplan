@@ -29,19 +29,25 @@ exports.create = (api) => {
     return h('Header', [
       windowControls(),
       h('nav', [
-        h('img.feed', {
-          src: when(isFeed, assetPath('feed_on.png'), assetPath('feed.png')),
-          'ev-click': () => push({page: 'blogIndex'})
-        }),
-        h('img.addressBook', {
-          src: when(isAddressBook, assetPath('address_bk_on.png'), assetPath('address_bk.png')),
-          'ev-click': () => push({page: 'addressBook'})
-        }),
-        h('img.settings', {
-          src: when(isSettings, assetPath('settings_on.png'), assetPath('settings.png')),
-          'ev-click': () => push({page: 'settings'})
-        }),
-        h('i.fa', {
+        h('i.feed', [
+          h('img', {
+            src: when(isFeed, assetPath('feed_on.png'), assetPath('feed.png')),
+            'ev-click': () => push({page: 'blogIndex'})
+          })
+        ]),
+        h('i.addressBook', [
+          h('img', {
+            src: when(isAddressBook, assetPath('address_bk_on.png'), assetPath('address_bk.png')),
+            'ev-click': () => push({page: 'addressBook'})
+          })
+        ]),
+        h('i.settings', [
+          h('img.settings', {
+            src: when(isSettings, assetPath('settings_on.png'), assetPath('settings.png')),
+            'ev-click': () => push({page: 'settings'})
+          })
+        ]),
+        h('i.notifications.fa', {
           className: when(isNotifications, 'fa-bell', 'fa-bell-o'),
           'ev-click': () => push({page: 'statsShow'})
         })

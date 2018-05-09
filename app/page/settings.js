@@ -81,6 +81,10 @@ exports.create = (api) => {
           h('div.left', strings.settingsPage.section.zoom),
           h('div.right', [zoomButton(-0.1, '-'), zoomButton(+0.1, '+')])
         ]),
+        h('section -theme', [
+          h('div.left', strings.settingsPage.section.theme),
+          h('div.right', ['light', 'dark'].map(Theme))
+        ]),
         h('section -sharing', [
           h('div.left', strings.share.settings.caption),
           h('div.right', [].concat(
@@ -106,6 +110,19 @@ exports.create = (api) => {
           className
         },
         strings.languages[lang]
+      )
+    }
+
+    function Theme (theme) {
+      const currentTheme = api.settings.obs.get('ticktack.theme')
+      const className = computed(currentTheme, t => t === theme ? '-strong' : '')
+
+      return h('Button -language',
+        {
+          'ev-click': () => currentTheme.set(theme),
+          className
+        },
+        strings.themes[theme]
       )
     }
 

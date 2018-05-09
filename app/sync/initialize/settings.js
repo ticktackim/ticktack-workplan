@@ -15,7 +15,8 @@ const defaults = {
     websharemetrics: 'public',
     electron: {
       zoomFactor: 1
-    }
+    },
+    theme: 'light'
   }
 }
 

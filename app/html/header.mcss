@@ -29,15 +29,17 @@ Header {
     align-items: center
     justify-content: center
 
-    img, i {
+    i {
       cursor: pointer
       text-decoration: none
+      font-size: 1.4rem 
 
+      display: flex
       margin: 0 2rem
     }
 
-    i { font-size: 1.4rem }
-    i.fa-bell-o { color: #7da9ea }
+    i.notifications { color: #7da9ea }
+    i.fa-bell.notifications { color: #fff }
 
     (a) {
       color: #222

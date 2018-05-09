@@ -61,6 +61,7 @@ Option {
     display: flex
     align-self: center
     div.alert {
+      z-index: 99
       position: relative
       width: 1.2rem
       height: 1.2rem

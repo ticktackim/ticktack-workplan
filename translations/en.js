@@ -3,6 +3,10 @@ module.exports = {
   comments: 'Comments',
   likes: 'Likes',
   shares: 'Shares',
+  themes: {
+    light: 'Light',
+    dark: 'Dark'
+  },
   splash: {
     about: [
       'A social network that values openness, equality, and freedom.',
@@ -75,7 +79,8 @@ module.exports = {
       introduction: 'Introduction',
       language: 'Language',
       zoom: 'Zoom',
-      version: 'Version'
+      version: 'Version',
+      theme: 'Theme (beta)'
     }
   },
   addressBook: {
