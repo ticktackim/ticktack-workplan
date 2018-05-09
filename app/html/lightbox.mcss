@@ -8,14 +8,17 @@ Lightbox {
   text-align: center
   top: 0
   left: 0
-  background: rgba(0,0,0,0.8)
+  background: rgba(0,0,0,0.6)
 
   div.content {
-    margin: auto
+    min-width: 28rem
+    $dontSelect
+
+    $backgroundPrimary
     padding: 30px
     border-radius: 5px
-    $backgroundPrimary
-    $dontSelect
+    margin: auto
+    box-shadow: rgba(0,0,0,0.3) 2px 6px 18px
 
     div.dialog {
       div.message {
