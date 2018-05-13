@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, Value } = require('mutant')
+const { h, Value, onceTrue } = require('mutant')
 
 exports.gives = nest('app.html.app')
 
@@ -13,12 +13,14 @@ exports.needs = nest({
   'router.sync.router': 'first',
   'settings.sync.get': 'first',
   'settings.sync.set': 'first',
-
   'invite.async.autofollow': 'first',
   'config.sync.load': 'first',
   'sbot.async.friendsGet': 'first',
-  'sbot.async.get': 'first'
+  'sbot.async.get': 'first',
+  'sbot.obs.connection': 'first' // EBT
 })
+
+var count = 0 // TODO - rm
 
 exports.create = (api) => {
   var view
@@ -34,9 +36,29 @@ exports.create = (api) => {
 
       startApp()
 
+      onceTrue(api.sbot.obs.connection, server => getMySeq(server)) // EBT
+
       return app
     }
   })
+
+  function getMySeq (server) {
+    server.ebt.remoteFeedSequence((err, data) => {
+      server.latestSequence(server.id, (err, seq) => {
+        console.log(`${count} mins`)
+        count = count + 1
+        console.log('actual seq:', seq)
+        console.log(JSON.stringify(data, null, 2))
+        console.log('ticktack pubs', [
+          '@7xMrWP8708+LDvaJrRMRQJEixWYp4Oipa9ohqY7+NyQ=.ed25519',
+          '@MflVZCcOBOUe6BLrm/8TyirkTu9/JtdnIJALcd8v5bc=.ed25519'
+        ])
+        console.log('------------------')
+      })
+    })
+
+    setTimeout(() => getMySeq(server), 60000)
+  }
 
   function renderLocation (loc) {
     var page = api.router.sync.router(loc)
@@ -86,18 +108,24 @@ exports.create = (api) => {
       return
     }
 
-    var self_id = api.config.sync.load().keys.id
-    api.sbot.async.friendsGet({dest: self_id}, function (err, friends) {
-      // if you have less than 5 followers, maybe use the autoinvite
-      if (Object.keys(friends).length <= 5) {
-        invites.forEach(invite => {
-          console.log('using invite:', invite)
-          api.invite.async.autofollow(invite, (err, follows) => {
-            if (err) console.error('Autofollow error:', err)
-            else console.log('Autofollow success', follows)
-          })
+    useInvites(invites)
+    // TODO change it so that if you already have a bunch of friends you unfollow the pubs after they follow you?
+
+    // var myKey = api.config.sync.load().keys.id
+    // api.sbot.async.friendsGet({dest: myKey}, function (err, friends) {
+    //   // if you have less than 5 followers, maybe use the autoinvite
+    //   if (Object.keys(friends).length <= 5) useInvites(invites)
+    //   else console.log('no autoinvite - you have friends already')
+    // })
+
+    function useInvites (invites) {
+      invites.forEach(invite => {
+        console.log('using invite:', invite)
+        api.invite.async.autofollow(invite, (err, follows) => {
+          if (err) console.error('Autofollow error:', err)
+          else console.log('Autofollow success', follows)
         })
-      } else { console.log('no autoinvite - you have friends already') }
-    })
+      })
+    }
   }
 }
