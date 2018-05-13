@@ -19,9 +19,9 @@ exports.needs = nest({
 exports.create = (api) => {
   return nest('backup.html', { exportIdentityButton, importIdentityButton })
 
-  let strings = api.translations.sync.strings()
-
   function exportIdentityButton() {
+    const strings = api.translations.sync.strings()
+
     let isOpen = Value(false)
     let encryptionKeyRaw = Value('')
 
@@ -29,7 +29,7 @@ exports.create = (api) => {
       style: {
         width: '90%'
       },
-      placeholder: 'Please enter password to protect export file',
+      placeholder: strings.backup.export.passwordPlaceholder,
       value: encryptionKeyRaw,
       'ev-input': () => encryptionKeyRaw.set(encryptionKeyInput.value),
     })
@@ -41,21 +41,21 @@ exports.create = (api) => {
     },
       [
         h('div.message', [
-          h('h1', 'Export Identity'),
-          h('p', 'Please backup your private key file very carefully.'),
-          h('p', 'If your private key is hacked, all your private messages will be retrieved by third party, and your identity will be faked on the network')
+          h('h1', strings.backup.export.header),
+          h('p', strings.backup.export.message[0]),
+          h('p', strings.backup.export.message[1])
         ]),
         h('div.form', [
           encryptionKeyInput
         ]),
         h('div.actions', [
-          h('Button', { 'ev-click': () => isOpen.set(false) }, 'Cancel'),
+          h('Button', { 'ev-click': () => isOpen.set(false) }, strings.backup.export.cancelAction),
           h('Button -primary', {
             'ev-click': () => {
               dialog.showSaveDialog(
                 {
-                  title: 'Export Identity',
-                  butttonLabel: 'Export Identity',
+                  title: strings.backup.export.dialog.title,
+                  butttonLabel: strings.backup.export.dialog.label,
                   defaultPath: 'ticktack-identity.backup',
                 },
                 (filename) => api.backup.async.exportIdentity(
@@ -63,21 +63,23 @@ exports.create = (api) => {
                 )
               )
             }
-          }, 'Export Identity')
+          }, strings.backup.export.exportAction)
         ])
       ])
 
     let lb = api.app.html.lightbox(exportDialog, isOpen)
 
     return h('div.backupKeys', [
-      h('Button -backup', { 'ev-click': () => isOpen.set(true) }, 'Export Keys'),
+      h('Button -backup', { 'ev-click': () => isOpen.set(true) }, strings.backup.export.exportAction),
       lb
     ])
   }
 
   function importIdentityButton() {
+    const strings = api.translations.sync.strings()
+
     return h('div.backupKeys', [
-      h('Button -backup', 'Import Keys')
+      h('Button -backup', strings.backup.import.importAction)
     ])
   }
 }

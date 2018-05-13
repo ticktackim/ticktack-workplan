@@ -1,6 +1,7 @@
-const { h, Value } = require('mutant')
+const { h, Value, when } = require('mutant')
 const nest = require('depnest')
 const path = require('path')
+const fs = require('fs')
 const { remote } = require('electron')
 const insertCss = require('insert-css')
 const values = require('lodash/values')
@@ -18,8 +19,19 @@ exports.create = (api) => {
   return nest({
     'ftu.app': function app() {
 
+      const strings = api.translations.sync.strings()
+
       const css = values(api.styles.css()).join('\n')
       insertCss(css)
+
+      var isBusy = Value(false)
+
+      var actionButtons = h('section', [
+        h('div.left', h('Button', strings.backup.ftu.importAction)),
+        h('div.right', h('Button', { 'ev-click': () => actionCreateNewOne(isBusy) }, strings.backup.ftu.createAction))
+      ])
+
+      var busyMessage = h('p', strings.backup.ftu.busyMessage)
 
       var app = h('App', [
         h('Header', [
@@ -27,12 +39,9 @@ exports.create = (api) => {
         ]),
         h('Page -ftu', [
           h('div.content', [
-            h('h1', 'Welcome to Ticktack'),
-            h('p', 'Do you want to create a new identity or import one?'),
-            h('section', [
-              h('div.left', h('Button', 'Import identity')),
-              h('div.right', h('Button', { 'ev-click': () => actionCreateNewOne() }, 'Create a new one'))
-            ])
+            h('h1', strings.backup.ftu.welcomeHeader),
+            h('p', strings.backup.ftu.welcomeMessage),
+            when(isBusy, busyMessage, actionButtons)
           ])
         ])
       ])
@@ -44,7 +53,13 @@ exports.create = (api) => {
 
 }
 
-function actionCreateNewOne() {
+function actionCreateNewOne(isBusy) {
+  isBusy.set(true)
+  const config = require('../config').create().config.sync.load()
+  const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, "../manifest.json")))
+  fs.writeFileSync(path.join(config.path, 'manifest.json'), JSON.stringify(manifest))
+
+
   electron.ipcRenderer.send('create-new-identity')
 }
 
