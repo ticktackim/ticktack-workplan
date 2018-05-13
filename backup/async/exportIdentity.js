@@ -1,4 +1,5 @@
 const nest = require('depnest')
+const { onceTrue } = require('mutant')
 const path = require('path')
 const fs = require('fs')
 const os = require('os')
@@ -9,6 +10,12 @@ const secretFile = path.join(homedir, ".ssb", "secret")
 
 
 exports.gives = nest('backup.async.exportIdentity')
+
+
+exports.needs = nest({
+  'keys.sync.id': 'first',
+  'sbot.obs.connection': 'first'
+})
 
 exports.create = function (api) {
   return nest('backup.async.exportIdentity', (password, filename, cb) => {
@@ -21,17 +28,26 @@ exports.create = function (api) {
       let peers = JSON.parse(fs.readFileSync(peersFile))
       let secret = fs.readFileSync(secretFile, "utf8")
 
+      onceTrue(api.sbot.obs.connection, sbot => {
 
-      let data = {
-        exportDate: new Date(),
-        latestSequence: "",
-        peers: peers,
-        secret: secret
-      }
+        let feedId = api.keys.sync.id()
 
-      fs.writeFileSync(filename, JSON.stringify(data), "utf8")
+        sbot.latestSequence(feedId, (err, sequence) => {
 
-      cb()
+          if (err) throw err
+
+          let data = {
+            exportDate: new Date(),
+            latestSequence: sequence,
+            peers: peers,
+            secret: secret
+          }
+
+          fs.writeFileSync(filename, JSON.stringify(data), "utf8")
+
+          cb()
+        })
+      })
     }
     return true
   })

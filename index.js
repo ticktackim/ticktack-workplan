@@ -4,6 +4,13 @@ var electron = require('electron')
 var Menu = electron.Menu
 var Path = require('path')
 
+// FTU needs
+const fs = require('fs')
+const Config = require('ssb-config/inject')
+const appName = process.env.ssb_appname || 'ssb'
+const config = Config(appName)
+const isInstalled = fs.existsSync(Path.join(config.path, 'secret'))
+
 var windows = {}
 var quitting = false
 
@@ -33,7 +40,19 @@ electron.app.on('ready', () => {
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
 
-  startBackgroundProcess()
+  // TODO: FTU must happen before this part.
+  if (!isInstalled) {
+    console.log('Ticktack or SSB not installed, run FTU')
+    openFTUWindow()
+  } else {
+    startBackgroundProcess()
+  }
+
+  // FTU told app to create new identity, so proceed as normal
+  electron.ipcMain.once('create-new-identity', function (ev) {
+    console.log('create new identity')
+    startBackgroundProcess()
+  })
 
   // wait until server has started before opening main window
   electron.ipcMain.once('server-started', function (ev, config) {
@@ -47,12 +66,12 @@ electron.app.on('ready', () => {
   // allow inspecting of background process
   electron.ipcMain.on('open-background-devtools', function (ev, config) {
     if (windows.background) {
-      windows.background.webContents.openDevTools({detach: true})
+      windows.background.webContents.openDevTools({ detach: true })
     }
   })
 })
 
-function startBackgroundProcess () {
+function startBackgroundProcess() {
   if (!windows.background) {
     windows.background = openWindow(Path.join(__dirname, 'background-process.js'), {
       connect: false,
@@ -72,7 +91,7 @@ function startBackgroundProcess () {
   }
 }
 
-function openMainWindow () {
+function openMainWindow() {
   if (!windows.main) {
     var windowState = WindowState({
       defaultWidth: 1024,
@@ -107,7 +126,42 @@ function openMainWindow () {
   }
 }
 
-function openWindow (path, opts) {
+function openFTUWindow() {
+  if (!windows.main) {
+    var windowState = WindowState({
+      defaultWidth: 1024,
+      defaultHeight: 768
+    })
+    windows.main = openWindow(Path.join(__dirname, 'ftu', 'index.js'), {
+      minWidth: 800,
+      x: windowState.x,
+      y: windowState.y,
+      width: windowState.width,
+      height: windowState.height,
+      autoHideMenuBar: true,
+      title: 'Ticktack',
+      frame: false,
+      titleBarStyle: 'hidden',
+      show: true,
+      backgroundColor: '#EEE',
+      icon: './assets/icon.png'
+    })
+    windowState.manage(windows.main)
+    windows.main.setSheetOffset(40)
+    windows.main.on('close', function (e) {
+      if (!quitting && process.platform === 'darwin') {
+        e.preventDefault()
+        windows.main.hide()
+      }
+    })
+    windows.main.on('closed', function () {
+      windows.main = null
+      if (process.platform !== 'darwin') electron.app.quit()
+    })
+  }
+}
+
+function openWindow(path, opts) {
   var window = new electron.BrowserWindow(opts)
   window.webContents.on('dom-ready', function () {
     window.webContents.executeJavaScript(`
