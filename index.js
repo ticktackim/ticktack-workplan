@@ -56,6 +56,7 @@ electron.app.on('ready', () => {
 
   // wait until server has started before opening main window
   electron.ipcMain.once('server-started', function (ev, config) {
+    console.log("> Opening main window")
     openMainWindow()
   })
 
@@ -123,16 +124,20 @@ function openMainWindow() {
       windows.main = null
       if (process.platform !== 'darwin') electron.app.quit()
     })
+
+    if (windows.ftu) {
+      windows.ftu.hide()
+    }
   }
 }
 
 function openFTUWindow() {
-  if (!windows.main) {
+  if (!windows.ftu) {
     var windowState = WindowState({
       defaultWidth: 1024,
       defaultHeight: 768
     })
-    windows.main = openWindow(Path.join(__dirname, 'ftu', 'index.js'), {
+    windows.ftu = openWindow(Path.join(__dirname, 'ftu', 'index.js'), {
       minWidth: 800,
       x: windowState.x,
       y: windowState.y,
@@ -146,16 +151,16 @@ function openFTUWindow() {
       backgroundColor: '#EEE',
       icon: './assets/icon.png'
     })
-    windowState.manage(windows.main)
-    windows.main.setSheetOffset(40)
-    windows.main.on('close', function (e) {
+    windowState.manage(windows.ftu)
+    windows.ftu.setSheetOffset(40)
+    windows.ftu.on('close', function (e) {
       if (!quitting && process.platform === 'darwin') {
         e.preventDefault()
-        windows.main.hide()
+        windows.ftu.hide()
       }
     })
-    windows.main.on('closed', function () {
-      windows.main = null
+    windows.ftu.on('closed', function () {
+      windows.ftu = null
       if (process.platform !== 'darwin') electron.app.quit()
     })
   }
