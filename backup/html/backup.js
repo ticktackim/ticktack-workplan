@@ -19,7 +19,6 @@ exports.needs = nest({
 exports.create = (api) => {
   return nest('backup.html', { exportIdentityButton, importIdentityButton })
 
-  let feed = api.keys.sync.id()
   let strings = api.translations.sync.strings()
 
   function exportIdentityButton() {
