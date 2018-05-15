@@ -38,6 +38,10 @@ Header {
 
     i { font-size: 1.4rem }
     i.fa-bell-o { color: #7da9ea }
+    i.-disabled { 
+      filter: opacity(.4)
+      cursor: not-allowed
+    }
 
     (a) {
       color: #222
