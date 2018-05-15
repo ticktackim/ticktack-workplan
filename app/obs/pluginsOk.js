@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, onceTrue, Value } = require('mutant')
+const { onceTrue, Value } = require('mutant')
 
 exports.gives = nest('app.obs.pluginsOk')
 
@@ -8,10 +8,11 @@ exports.needs = nest({
 })
 
 exports.create = (api) => {
+  // TODO - differentiate and enable / disable based on channel || ticktack plugin missing
   var ok = Value()
 
   return nest('app.obs.pluginsOk', function pluginsOk () {
-    if (ok() == undefined) checkForTrouble()
+    if (ok() === null) checkForTrouble()
 
     return ok
   })
@@ -20,10 +21,12 @@ exports.create = (api) => {
     onceTrue(
       api.sbot.obs.connection,
       sbot => {
-        if (!sbot.channel) ok.set(false) // TODO could build a list of missing plugins + effects
+        if (!sbot.channel) console.log('> channel plugin missing!')
+        if (!sbot.tickack) console.log('> ticktack plugin missing!')
+
+        if (!sbot.channel || !sbot.ticktack) ok.set(false) // TODO could build a list of missing plugins + effects
         else ok.set(true)
       }
     )
   }
 }
-

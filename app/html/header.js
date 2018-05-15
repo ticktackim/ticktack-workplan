@@ -4,6 +4,9 @@ const path = require('path')
 const { remote } = require('electron')
 
 exports.gives = nest('app.html.header')
+exports.needs = nest({
+  'app.obs.pluginsOk': 'first'
+})
 
 const SETTINGS_PAGES = [
   'settings',
@@ -47,9 +50,17 @@ exports.create = (api) => {
             'ev-click': () => push({page: 'settings'})
           })
         ]),
-        h('i.notifications.fa', {
-          className: when(isNotifications, 'fa-bell', 'fa-bell-o'),
-          'ev-click': () => push({page: 'statsShow'})
+        computed(api.app.obs.pluginsOk(), ok => {
+          return h('i.notifications.fa', {
+            classList: [
+              when(isNotifications, 'fa-bell', 'fa-bell-o'),
+              when(!ok, '-disabled')
+            ],
+            'ev-click': () => {
+              if (!ok) return
+              push({page: 'statsShow'})
+            }
+          })
         })
       ])
     ])

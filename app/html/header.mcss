@@ -38,8 +38,14 @@ Header {
       margin: 0 2rem
     }
 
+    i { font-size: 1.4rem }
     i.notifications { color: #7da9ea }
     i.fa-bell.notifications { color: #fff }
+    i.fa-bell-o { color: #7da9ea }
+    i.-disabled { 
+      filter: opacity(.4)
+      cursor: not-allowed
+    }
 
     (a) {
       color: #222

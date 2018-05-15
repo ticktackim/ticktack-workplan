@@ -1,6 +1,6 @@
 # Ticktack
 
-A decentralized social platform enable people to share knowledge and exchange value, with p2p messaging encrypted feature. 
+A decentralized social platform enables people to share knowledge and exchange value, with an end to end encrypted messaging feature. 
 
 You can find [installers for Linux, Mac, and Windows on the Releases page](https://github.com/ticktackim/ticktack-workplan/releases).
 

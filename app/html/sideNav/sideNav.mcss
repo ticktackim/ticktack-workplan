@@ -54,6 +54,7 @@ Option {
     opacity: .5
     :hover {
       cursor: not-allowed
+      background: initial
     }
   }
 
