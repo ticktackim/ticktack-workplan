@@ -1,6 +1,6 @@
 {
   "name": "ticktack",
-  "version": "0.4.0-prerelease-1",
+  "version": "0.4.0-prerelease-2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -65,6 +65,7 @@
     "ssb-blobs": "^1.1.4",
     "ssb-client": "4.5.2",
     "ssb-config": "^2.2.0",
+    "ssb-ebt": "^5.1.5",
     "ssb-friends": "^2.3.5",
     "ssb-keys": "^7.0.10",
     "ssb-markdown": "^3.3.0",
