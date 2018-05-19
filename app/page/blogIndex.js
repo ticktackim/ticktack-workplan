@@ -1,13 +1,15 @@
 const nest = require('depnest')
 const { h, Value, Array: MutantArray, resolve } = require('mutant')
+const Scroller = require('mutant-scroll')
 const pull = require('pull-stream')
+const Next = require('pull-next')
 
 exports.gives = nest('app.page.blogIndex')
 
 exports.needs = nest({
   'app.html.blogCard': 'first',
   'app.html.topNav': 'first',
-  'app.html.scroller': 'first',
+  // 'app.html.scroller': 'first',
   'app.html.sideNav': 'first',
   'blog.sync.isBlog': 'first',
   'feed.pull.public': 'first',
@@ -27,21 +29,36 @@ exports.create = (api) => {
 
     var strings = api.translations.sync.strings()
 
-    var blogs = api.app.html.scroller({
+    // const filter = () => pull(
+      // pull.filter(api.blog.sync.isBlog), // isBlog or Plog?
+      // pull.filter(msg => !msg.value.content.root), // show only root messages
+      // pull.filter(msg => !api.message.sync.isBlocked(msg)) // this is already in feed.pull.type
+    // )
+
+    // stream: api.feed.pull.public, // for post + blog type
+
+    const streamToTop = pull(
+      // next(stream, { live: true, reverse: false, old: false, limit: 100, property: indexProperty }),
+      api.feed.pull.type('blog')({ live: true, reverse: false, old: false }),
+      // filter()
+    )
+
+    
+    const streamToBottom = pull(
+      Next
+      api.feed.pull.type('blog')({ live: false, reverse: true }),
+      // filter()
+
+    )
+
+    var blogs = Scroller({
       classList: ['content'],
       prepend: api.app.html.topNav(location),
-      // stream: api.feed.pull.public,
-      stream: api.feed.pull.type('blog'),
-      filter: () => pull(
-        // pull.filter(api.blog.sync.isBlog),
-        pull.filter(msg => !msg.value.content.root), // show only root messages
-        pull.filter(msg => !api.message.sync.isBlocked(msg))
-      ),
-      // FUTURE : if we need better perf, we can add a persistent cache. At the moment this page is fast enough though.
-      // See implementation of app.html.sideNav for example
-      store: blogsCache,
+      streamToTop,
+      streamToBottom,
       updateTop: update,
       updateBottom: update,
+      store: blogsCache,
       render
     })
 
@@ -53,8 +70,6 @@ exports.create = (api) => {
 
   function update (soFar, newBlog) {
     soFar.transaction(() => {
-      const { timestamp } = newBlog.value
-
       var object = newBlog // Value(newBlog)
 
       const index = indexOf(soFar, (blog) => newBlog.key === resolve(blog).key)
@@ -66,7 +81,7 @@ exports.create = (api) => {
 
       // Orders by: time published BUT the messagesByType stream streams _by time received_
       // TODO - we need an index of all blogs otherwise the scroller doesn't work...
-      // const justOlderPosition = indexOf(soFar, (msg) => timestamp > resolve(msg).value.timestamp)
+      // const justOlderPosition = indexOf(soFar, (msg) => newBlog.value.timestamp > resolve(msg).value.timestamp)
 
       if (justOlderPosition > -1) {
         soFar.insert(object, justOlderPosition)
