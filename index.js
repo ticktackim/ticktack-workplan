@@ -4,12 +4,13 @@ var electron = require('electron')
 var Menu = electron.Menu
 var Path = require('path')
 
-// FTU needs
+// First-Time User Experience (FTU) needs the items below
 const fs = require('fs')
-const Config = require('ssb-config/inject')
-const appName = process.env.ssb_appname || 'ssb'
-const config = Config(appName)
-const isInstalled = fs.existsSync(Path.join(config.path, 'secret'))
+const path = require('path')
+const os = require('os')
+const appName = process.env.SSB_APPNAME || 'ssb'
+const configFolder = path.join(os.homedir(), `.${appName}`)
+const isInstalled = fs.existsSync(Path.join(configFolder, 'secret'))
 
 var windows = {}
 var quitting = false
@@ -40,7 +41,6 @@ electron.app.on('ready', () => {
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
 
-  // TODO: FTU must happen before this part.
   if (!isInstalled) {
     console.log('Ticktack or SSB not installed, run FTU')
     openFTUWindow()
@@ -51,13 +51,36 @@ electron.app.on('ready', () => {
   // FTU told app to create new identity, so proceed as normal
   electron.ipcMain.once('create-new-identity', function (ev) {
     console.log('create new identity')
+    setImportRunningFlag(false)
     startBackgroundProcess()
+  })
+
+  // FTU told app to import some identity, need to start sbot and keep FTU running 
+  electron.ipcMain.once('import-identity', function (ev) {
+    console.log('import identity')
+    setImportRunningFlag(true)
+    startBackgroundProcess()
+  })
+
+  // FTU import finished, ready to start main window
+  electron.ipcMain.once('import-completed', function (ev) {
+    console.log('> import finished, opening main window')
+    setImportRunningFlag(false)
+    openMainWindow()
   })
 
   // wait until server has started before opening main window
   electron.ipcMain.once('server-started', function (ev, config) {
-    console.log("> Opening main window")
-    openMainWindow()
+    let keepFTURunning = getImportRunningFlag(false)
+    if (!keepFTURunning) {
+      console.log("> Opening main window")
+      openMainWindow()
+    } else {
+      // sbot started but we're importing an older identity, need
+      // to tell FTU to wait for sync.
+      openFTUWindow()
+      windows.ftu.webContents.send('import-started')
+    }
   })
 
   electron.app.on('before-quit', function () {
@@ -193,4 +216,26 @@ function openWindow(path, opts) {
 
   window.loadURL('file://' + Path.join(__dirname, 'assets', 'base.html'))
   return window
+}
+
+function getImportRunningFlag(defaultValue) {
+  var importFile = Path.join(configFolder, 'importing.json')
+  if (fs.existsSync(importFile)) {
+    let data = JSON.parse(fs.readFileSync(importFile))
+    return data.importing || defaultValue
+  } else {
+    return defaultValue
+  }
+}
+
+function setImportRunningFlag(v) {
+  let data = {}
+  var importFile = Path.join(configFolder, 'importing.json')
+  if (fs.existsSync(importFile)) {
+    data = JSON.parse(fs.readFileSync(importFile))
+  }
+
+  data.importing = v
+
+  fs.writeFileSync(importFile, JSON.stringify(data))
 }

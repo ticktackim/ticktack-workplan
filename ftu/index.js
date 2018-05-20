@@ -15,7 +15,7 @@ const sockets = combine(
   {
     styles: require('../styles'),
     settings: require('patch-settings'),
-    translations: require('../translations/sync')
+    translations: require('../translations/sync'),
   },
   {
     app: require('./app')

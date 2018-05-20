@@ -3,10 +3,9 @@ const { onceTrue } = require('mutant')
 const path = require('path')
 const fs = require('fs')
 const os = require('os')
-const homedir = os.homedir()
-const ssbPath = `${homedir}/.ssb/`
-const peersFile = path.join(homedir, ".ssb", "gossip.json")
-const secretFile = path.join(homedir, ".ssb", "secret")
+const config = require('../../config').create().config.sync.load()
+const peersFile = path.join(config.path, "gossip.json")
+const secretFile = path.join(config.path, "secret")
 
 
 exports.gives = nest('backup.async.exportIdentity')
