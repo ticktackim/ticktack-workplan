@@ -3,6 +3,7 @@ module.exports = {
     backup: require('./html/backup')
   },
   async: {
-    exportIdentity: require('./async/exportIdentity')
+    exportIdentity: require('./async/exportIdentity'),
+    importIdentity: require('./async/importIdentity')
   }
 }

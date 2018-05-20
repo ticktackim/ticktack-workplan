@@ -212,7 +212,13 @@ module.exports = {
       }
     },
     import: {
-      importAction: 'Import Identity'
+      header: 'Import identity',
+      importAction: 'Import Identity',
+      synchronizeMessage: 'Synchronizing feed: ',
+      dialog: {
+        label: 'Import Identity',
+        title: 'Import Identity'
+      }
     }
   },
   languages: {
