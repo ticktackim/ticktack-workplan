@@ -19,9 +19,7 @@ exports.needs = nest({
   'settings.sync.set': 'first',
   'settings.obs.get': 'first',
   'translations.sync.strings': 'first',
-  'backup.html.exportIdentityButton': 'first',
-  'backup.html.importIdentityButton': 'first'
-
+  'backup.html.exportIdentityButton': 'first'
 })
 
 const LANGUAGES = ['zh', 'en']
@@ -51,7 +49,6 @@ exports.create = (api) => {
     const strings = api.translations.sync.strings()
     const currentLanguage = api.settings.sync.get('language')
     const exportIdentityButton = api.backup.html.exportIdentityButton()
-    const importIdentityButton = api.backup.html.importIdentityButton()
 
     const editProfile = () => api.history.sync.push({
       page: 'userEdit',
@@ -99,8 +96,7 @@ exports.create = (api) => {
         h('section -backup', [
           h('div.left', strings.backup.sectionName),
           h('div.right', [
-            exportIdentityButton,
-            importIdentityButton
+            exportIdentityButton
           ])
         ])
       ])

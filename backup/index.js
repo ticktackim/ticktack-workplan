@@ -4,6 +4,5 @@ module.exports = {
   },
   async: {
     exportIdentity: require('./async/exportIdentity'),
-    importIdentity: require('./async/importIdentity')
   }
 }
