@@ -24,8 +24,8 @@ exports.create = function (api) {
 
       console.log(`should export identity to file ${filename}`)
 
-      let peers = JSON.parse(fs.readFileSync(peersFile))
-      let secret = fs.readFileSync(secretFile, "utf8")
+      const peers = JSON.parse(fs.readFileSync(peersFile))
+      const secret = fs.readFileSync(secretFile, "utf8")
 
       onceTrue(api.sbot.obs.connection, sbot => {
 
