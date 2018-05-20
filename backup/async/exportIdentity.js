@@ -17,9 +17,9 @@ exports.needs = nest({
 })
 
 exports.create = function (api) {
-  return nest('backup.async.exportIdentity', (password, filename, cb) => {
+  return nest('backup.async.exportIdentity', (filename, cb) => {
     if ("undefined" == typeof filename) {
-      cb()
+      cb(new Error('backup requires a filename'))
     } else {
 
       console.log(`should export identity to file ${filename}`)
@@ -33,16 +33,16 @@ exports.create = function (api) {
 
         sbot.latestSequence(feedId, (err, sequence) => {
 
-          if (err) throw err
+          if (err) return cb(err)
 
           let data = {
-            exportDate: new Date(),
+            exportDate: new Date().toISOString(),
             latestSequence: sequence,
             peers: peers,
             secret: secret
           }
 
-          fs.writeFileSync(filename, JSON.stringify(data), "utf8")
+          fs.writeFileSync(filename, JSON.stringify(data, null, 2), "utf8")
 
           cb()
         })

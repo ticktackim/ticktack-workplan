@@ -1,4 +1,4 @@
-const { h, Value, when, resolve, computed, Struct, watch } = require('mutant')
+const { h, Value, when, resolve, computed, Struct, watch, throttle } = require('mutant')
 const nest = require('depnest')
 const path = require('path')
 const fs = require('fs')
@@ -59,7 +59,7 @@ exports.create = (api) => {
       ])
 
       // This watcher is responsible for switching from FTU to Ticktack main app
-      watch(state, s => {
+      watch(throttle(state, 500), s => {
         if (s.currentSequence >= s.latestSequence) {
           console.log('all imported')
           electron.ipcRenderer.send('import-completed')
@@ -71,10 +71,18 @@ exports.create = (api) => {
         // treat it as a failed import and start importing...
         console.log('resuming import')
         let previousData = getImportData()
-        state.latestSequence.set(previousData.latestSequence)
-        state.currentSequence.set(previousData.currentSequence)
-        isPresentingOptions.set(false)
-        observeSequence()
+        if (previousData === false) {
+          // there is a secret but there is no previous import data.
+          // so, we proceed as normal because we can't do anything else,
+          // it looks like a normal standard installation...
+          setImportData({ importing: false })
+          electron.ipcRenderer.send('import-completed')
+        } else {
+          state.latestSequence.set(previousData.latestSequence)
+          state.currentSequence.set(previousData.currentSequence)
+          isPresentingOptions.set(false)
+          observeSequence()
+        }
       }
 
       var app = h('App', [
@@ -215,29 +223,24 @@ function observeSequence() {
       console.error('problem starting client', err)
     } else {
       console.log('> sbot running!!!!')
-      ssbServer.whoami((err, data) => {
-        console.log("whoami", data.id)
 
-        var feedSource = ssbServer.createUserStream({
-          live: true,
-          id: data.id
-        })
-
-        var valueLogger = pull.drain((msg) => {
-          console.log("msg", msg)
-
-          let seq = _.get(msg, "value.sequence", false)
-          if (seq) {
-            state.currentSequence.set(seq)
-          }
-        })
-
-        pull(
-          feedSource,
-          valueLogger,
-        )
-
+      var feedSource = ssbServer.createUserStream({
+        live: true,
+        id: ssbServer.id
       })
+
+      var valueLogger = pull.drain((msg) => {
+        let seq = _.get(msg, "value.sequence", false)
+        if (seq) {
+          state.currentSequence.set(seq)
+        }
+      })
+
+      pull(
+        feedSource,
+        valueLogger,
+      )
+
     }
   })
 }
