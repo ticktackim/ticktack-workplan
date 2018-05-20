@@ -97,7 +97,7 @@ exports.create = (api) => {
           h('div.right', version)
         ]),
         h('section -backup', [
-          h('div.left', 'Backup'),
+          h('div.left', strings.backup.sectionName),
           h('div.right', [
             exportIdentityButton,
             importIdentityButton
