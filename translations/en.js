@@ -168,6 +168,7 @@ module.exports = {
     thirtyDays: '30 days',
   },
   backup: {
+    sectionName: 'Backup',
     ftu: {
       importAction: 'Import identity',
       createAction: 'Create new identity',
