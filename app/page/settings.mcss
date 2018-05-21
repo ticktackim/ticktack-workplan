@@ -1,10 +1,18 @@
 Page -settings {
-  padding-top: 1rem
+  display: grid
+  padding: 1rem 0
+  grid-template-rows: auto
+  justify-items: center
+  grid-template-columns: auto
+  overflow-y: auto
+
   background: #fff
 
   div.content {
     padding: 1rem
     $maxWidthSmaller 
+
+    overflow-y: initial
 
     h1 {
       font-size: 1.5rem
