@@ -43,21 +43,22 @@ exports.create = (api) => {
   })
 
   function getMySeq (server) {
-    server.ebt.remoteFeedSequence((err, data) => {
-      server.latestSequence(server.id, (err, seq) => {
-        console.log(`${count} mins`)
-        count = count + 1
-        console.log('actual seq:', seq)
-        console.log(JSON.stringify(data, null, 2))
-        console.log('ticktack pubs', [
-          '@7xMrWP8708+LDvaJrRMRQJEixWYp4Oipa9ohqY7+NyQ=.ed25519',
-          '@MflVZCcOBOUe6BLrm/8TyirkTu9/JtdnIJALcd8v5bc=.ed25519'
-        ])
-        console.log('------------------')
-      })
-    })
+    console.log('REMOVE THIS')
+    // server.ebt.peerStatus(server.id, err, data) => {
+    //   server.latestSequence(server.id, (err, seq) => {
+    //     console.log(`${count} mins`)
+    //     count = count + 1
+    //     console.log('actual seq:', seq)
+    //     console.log(JSON.stringify(data, null, 2))
+    //     console.log('ticktack pubs', [
+    //       '@7xMrWP8708+LDvaJrRMRQJEixWYp4Oipa9ohqY7+NyQ=.ed25519',
+    //       '@MflVZCcOBOUe6BLrm/8TyirkTu9/JtdnIJALcd8v5bc=.ed25519'
+    //     ])
+    //     console.log('------------------')
+    //   })
+    // })
 
-    setTimeout(() => getMySeq(server), 60000)
+    // setTimeout(() => getMySeq(server), 60000)
   }
 
   function renderLocation (loc) {

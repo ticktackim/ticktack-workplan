@@ -24,13 +24,12 @@ exports.gives = nest('ftu.app')
 
 exports.needs = nest({
   'styles.css': 'reduce',
-  'translations.sync.strings': 'first',
+  'translations.sync.strings': 'first'
 })
 
 exports.create = (api) => {
   return nest({
-    'ftu.app': function app() {
-
+    'ftu.app': function app () {
       const strings = api.translations.sync.strings()
 
       const css = values(api.styles.css()).join('\n')
@@ -54,7 +53,7 @@ exports.create = (api) => {
       var importProcess = h('Page -ftu', [
         h('div.content', [
           h('h1', strings.backup.import.header),
-          h('p', [strings.backup.import.synchronizeMessage, state.currentSequence, '/', state.latestSequence]),
+          h('p', [strings.backup.import.synchronizeMessage, state.currentSequence, '/', state.latestSequence])
         ])
       ])
 
@@ -66,7 +65,7 @@ exports.create = (api) => {
         }
       })
 
-      if (fs.existsSync(path.join(configFolder, "secret"))) {
+      if (fs.existsSync(path.join(configFolder, 'secret'))) {
         // somehow the FTU started but the identity is already in place.
         // treat it as a failed import and start importing...
         console.log('resuming import')
@@ -103,25 +102,22 @@ electron.ipcRenderer.on('import-started', function (ev, c) {
   observeSequence()
 })
 
-
-
-function actionCreateNewOne() {
+function actionCreateNewOne () {
   isBusy.set(true)
-  const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, "../manifest.json")))
+  const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, '../manifest.json')))
   const manifestFile = path.join(configFolder, 'manifest.json')
   if (!fs.existsSync(configFolder)) {
     fs.mkdirSync(configFolder)
   }
   fs.writeFileSync(manifestFile, JSON.stringify(manifest))
 
-
   electron.ipcRenderer.send('create-new-identity')
 }
 
-function actionImportIdentity(strings) {
-  const peersFile = path.join(configFolder, "gossip.json")
-  const secretFile = path.join(configFolder, "secret")
-  const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, "../manifest.json")))
+function actionImportIdentity (strings) {
+  const peersFile = path.join(configFolder, 'gossip.json')
+  const secretFile = path.join(configFolder, 'secret')
+  const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, '../manifest.json')))
   const manifestFile = path.join(configFolder, 'manifest.json')
 
   // place the other files first
@@ -133,17 +129,17 @@ function actionImportIdentity(strings) {
       properties: ['openFile']
     },
     (filenames) => {
-      if (typeof filenames !== "undefined") {
+      if (typeof filenames !== 'undefined') {
         let filename = filenames[0]
         let data = JSON.parse(fs.readFileSync(filename))
-        if (data.hasOwnProperty("secret") && data.hasOwnProperty("peers") && data.hasOwnProperty("latestSequence")) {
+        if (data.hasOwnProperty('secret') && data.hasOwnProperty('peers') && data.hasOwnProperty('latestSequence')) {
           if (!fs.existsSync(configFolder)) {
             fs.mkdirSync(configFolder)
           }
 
           fs.writeFileSync(manifestFile, JSON.stringify(manifest))
-          fs.writeFileSync(peersFile, JSON.stringify(data.peers), "utf8")
-          fs.writeFileSync(secretFile, data.secret, "utf8")
+          fs.writeFileSync(peersFile, JSON.stringify(data.peers), 'utf8')
+          fs.writeFileSync(secretFile, data.secret, 'utf8')
           state.latestSequence.set(data.latestSequence)
           state.currentSequence.set(0)
           isPresentingOptions.set(false)
@@ -155,16 +151,16 @@ function actionImportIdentity(strings) {
 
           electron.ipcRenderer.send('import-identity')
         } else {
-          console.log("> bad export file")
+          console.log('> bad export file')
           console.log(data)
-          alert("Bad Export File")
+          alert('Bad Export File')
         }
       }
     }
   )
 }
 
-function windowControls() {
+function windowControls () {
   if (process.platform === 'darwin') return
 
   const window = remote.getCurrentWindow()
@@ -191,13 +187,11 @@ function windowControls() {
   ])
 }
 
-
-function assetPath(name) {
+function assetPath (name) {
   return path.join(__dirname, '../assets', name)
 }
 
-
-function getImportData() {
+function getImportData () {
   var importFile = path.join(configFolder, 'importing.json')
   if (fs.existsSync(importFile)) {
     let data = JSON.parse(fs.readFileSync(importFile))
@@ -207,12 +201,12 @@ function getImportData() {
   }
 }
 
-function setImportData(data) {
+function setImportData (data) {
   var importFile = path.join(configFolder, 'importing.json')
   fs.writeFileSync(importFile, JSON.stringify(data))
 }
 
-function observeSequence() {
+function observeSequence () {
   const pull = require('pull-stream')
   const Client = require('ssb-client')
   const config = require('../config').create().config.sync.load()
@@ -224,13 +218,63 @@ function observeSequence() {
     } else {
       console.log('> sbot running!!!!')
 
+      ssbServer.gossip.peers((err, data) => {
+        console.log('PEERS', err, data)
+
+        data.forEach(peer => {
+          ssbServer.gossip.connect({
+            'host': peer.host,
+            'port': peer.port,
+            'key': peer.key
+          }, function (err, v) {
+            console.log('connected to ', peer.host)
+          })
+        })
+      })
+
+      // ssbServer.gossip.connect({
+      //   'host': '128.199.76.241',
+      //   'port': 8008,
+      //   'key': '@7xMrWP8708+LDvaJrRMRQJEixWYp4Oipa9ohqY7+NyQ=.ed25519'
+      // }, function (err, v) {
+      //   console.log('connected to ticktack 1', err, v)
+      // })
+
+      // ssbServer.gossip.connect({
+      //   'host': '138.68.27.255',
+      //   'port': 8008,
+      //   'key': '@MflVZCcOBOUe6BLrm/8TyirkTu9/JtdnIJALcd8v5bc=.ed25519'
+      // }, function (err, v) {
+      //   console.log('connected to ticktack 2', err, v)
+      // })
+
+      // ssbServer.gossip.connect({
+      //   host: 'one.butt.nz',
+      //   key: '@VJM7w1W19ZsKmG2KnfaoKIM66BRoreEkzaVm/J//wl8=.ed25519',
+      //   port: 8008
+      // }, function (err, v) {
+      //   console.log('connected to one.butt.nz', err, v)
+      //   checkPeers()
+      // })
+
+      function checkPeers () {
+        ssbServer.ebt.peerStatus(ssbServer.id, (err, data) => {
+          console.log('PEER STATUS:')
+          console.log(data.seq)
+          console.log(data.peers)
+          console.log('-------')
+        })
+
+        setTimeout(checkPeers, 5000)
+      }
+
       var feedSource = ssbServer.createUserStream({
         live: true,
         id: ssbServer.id
       })
 
       var valueLogger = pull.drain((msg) => {
-        let seq = _.get(msg, "value.sequence", false)
+        let seq = _.get(msg, 'value.sequence', false)
         if (seq) {
           state.currentSequence.set(seq)
         }
@@ -238,9 +282,8 @@ function observeSequence() {
 
       pull(
         feedSource,
-        valueLogger,
+        valueLogger
       )
-
     }
   })
 }
