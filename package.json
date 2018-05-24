@@ -50,6 +50,7 @@
     "patch-settings": "^1.1.2",
     "patch-suggest": "^1.1.0",
     "patchcore": "^1.23.3",
+    "progress-string": "^1.2.2",
     "pull-defer": "^0.2.2",
     "pull-next": "^1.0.1",
     "pull-next-step": "^1.0.0",

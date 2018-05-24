@@ -5,18 +5,23 @@ const fs = require('fs')
 const { remote } = require('electron')
 const insertCss = require('insert-css')
 const values = require('lodash/values')
+const get = require('lodash/get')
 const electron = require('electron')
 const { dialog } = require('electron').remote
 const os = require('os')
+const progress = require('progress-string')
+
 const appName = process.env.SSB_APPNAME || 'ssb'
 const configFolder = path.join(os.homedir(), `.${appName}`)
 
 var isBusy = Value(false)
 var isPresentingOptions = Value(true)
+var checkerTimeout
 
 // these initial values are overwritten by the identity file.
 var state = Struct({
   latestSequence: 0,
+  confirmedRemotely: false,
   currentSequence: -1
 })
 
@@ -50,17 +55,28 @@ exports.create = (api) => {
         ])
       ])
 
-      var importProcess = h('Page -ftu', [
+      var importProgress = h('Page -ftu', [
         h('div.content', [
           h('h1', strings.backup.import.header),
-          h('p', [strings.backup.import.synchronizeMessage, state.currentSequence, '/', state.latestSequence])
+          h('p', [strings.backup.import.synchronizeMessage]),
+          h('pre', computed(state, s => {
+            return progress({
+              width: 42,
+              total: s.latestSequence,
+              style: function (complete, incomplete) {
+                // add an arrow at the head of the completed part
+                return `${complete}>${incomplete} (${s.currentSequence}/ ${s.latestSequence})`
+              }
+            })(s.currentSequence)
+          }))
         ])
       ])
 
       // This watcher is responsible for switching from FTU to Ticktack main app
       watch(throttle(state, 500), s => {
-        if (s.currentSequence >= s.latestSequence) {
+        if (s.currentSequence >= s.latestSequence && s.confirmedRemotely) {
           console.log('all imported')
+          clearTimeout(checkerTimeout)
           electron.ipcRenderer.send('import-completed')
         }
       })
@@ -88,7 +104,7 @@ exports.create = (api) => {
         h('Header', [
           windowControls()
         ]),
-        when(isPresentingOptions, initialOptions, importProcess)
+        when(isPresentingOptions, initialOptions, importProgress)
       ])
 
       return app
@@ -210,80 +226,73 @@ function observeSequence () {
   const pull = require('pull-stream')
   const Client = require('ssb-client')
   const config = require('../config').create().config.sync.load()
-  const _ = require('lodash')
 
   Client(config.keys, config, (err, ssbServer) => {
-    if (err) {
-      console.error('problem starting client', err)
-    } else {
-      console.log('> sbot running!!!!')
+    if (err) return console.error('problem starting client', err)
 
-      ssbServer.gossip.peers((err, data) => {
-        console.log('PEERS', err, data)
+    console.log('> sbot running!!!!')
 
-        data.forEach(peer => {
-          ssbServer.gossip.connect({
-            'host': peer.host,
-            'port': peer.port,
-            'key': peer.key
-          }, function (err, v) {
-            console.log('connected to ', peer.host)
-          })
-        })
-      })
+    ssbServer.gossip.peers((err, peers) => {
+      if (err) return console.error(err)
 
-      // ssbServer.gossip.connect({
-      //   'host': '128.199.76.241',
-      //   'port': 8008,
-      //   'key': '@7xMrWP8708+LDvaJrRMRQJEixWYp4Oipa9ohqY7+NyQ=.ed25519'
-      // }, function (err, v) {
-      //   console.log('connected to ticktack 1', err, v)
-      // })
+      connectToPeers(peers)
+      checkPeers()
+    })
 
-      // ssbServer.gossip.connect({
-      //   'host': '138.68.27.255',
-      //   'port': 8008,
-      //   'key': '@MflVZCcOBOUe6BLrm/8TyirkTu9/JtdnIJALcd8v5bc=.ed25519'
-      // }, function (err, v) {
-      //   console.log('connected to ticktack 2', err, v)
-      // })
-
-      // ssbServer.gossip.connect({
-      //   host: 'one.butt.nz',
-      //   key: '@VJM7w1W19ZsKmG2KnfaoKIM66BRoreEkzaVm/J//wl8=.ed25519',
-      //   port: 8008
-      // }, function (err, v) {
-      //   console.log('connected to one.butt.nz', err, v)
-      //   checkPeers()
-      // })
-
-      function checkPeers () {
-        ssbServer.ebt.peerStatus(ssbServer.id, (err, data) => {
-          console.log('PEER STATUS:')
-          console.log(data.seq)
-          console.log(data.peers)
-          console.log('-------')
-        })
-
-        setTimeout(checkPeers, 5000)
-      }
-
-      var feedSource = ssbServer.createUserStream({
-        live: true,
-        id: ssbServer.id
-      })
-
-      var valueLogger = pull.drain((msg) => {
-        let seq = _.get(msg, 'value.sequence', false)
+    // start listening to the my seq, and update the state
+    pull(
+      ssbServer.createUserStream({ live: true, id: ssbServer.id }),
+      pull.drain((msg) => {
+        let seq = get(msg, 'value.sequence', false)
         if (seq) {
           state.currentSequence.set(seq)
         }
       })
+    )
 
-      pull(
-        feedSource,
-        valueLogger
-      )
+    function connectToPeers (peers) {
+      if (peers.length > 10) {
+        const lessPeers = peers.filter(p => !p.error)
+        if (lessPeers.length > 10) peers = lessPeers
+      }
+
+      peers.forEach(({ host, port, key }) => {
+        if (host && port && key) {
+          ssbServer.gossip.connect({ host, port, key }, (err, v) => {
+            if (err) console.log('error connecting to ', host, err)
+            else console.log('connected to ', host)
+          })
+        }
+      })
+    }
+    function checkPeers () {
+      ssbServer.ebt.peerStatus(ssbServer.id, (err, data) => {
+        if (err) {
+          checkerTimeout = setTimeout(checkPeers, 5000)
+          return
+        }
+
+        const latest = resolve(state.latestSequence)
+
+        const remoteSeqs = Object.keys(data.peers)
+          .map(p => data.peers[p].seq)    // get my seq reported by each peer
+          .filter(s => s >= latest)       // only keep remote seq that confirm or update backup seq
+          .sort((a, b) => a > b ? -1 : 1) // order them
+
+        console.log(remoteSeqs)
+
+        const newLatest = remoteSeqs[0]
+        if (newLatest) {
+          state.latestSequence.set(newLatest)
+
+          // if this value is confirmed remotely twice, assume safe
+          if (remoteSeqs.filter(s => s === newLatest).length >= 2) {
+            state.confirmedRemotely.set(true)
+          }
+        }
+
+        checkerTimeout = setTimeout(checkPeers, 5000)
+      })
     }
   })
 }
