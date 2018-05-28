@@ -211,14 +211,17 @@ module.exports = {
       return getAuthor(msg) === myKey
     }
 
-    function getPrivateMessages (authors, opts = {}) {
+    function getPrivateMessages (authors, _opts = {}) {
       if (!authors.includes(server.id)) authors.push(server.id)
 
+      const opts = clone(_opts)
       console.log('authors', authors)
       console.log('')
 
       const lt = opts.lt
       delete opts.lt
+      const gt = opts.gt
+      delete opts.gt
 
       const limit = opts.limit
       delete opts.limit
@@ -229,9 +232,12 @@ module.exports = {
             const finalOpts = Object.assign(clone(opts), {
               query: [{
                 $filter: {
-                  timestamp: typeof lt === 'number' ? { $lt: lt, $gt: 0 } : { $gt: 0 },
+                  timestamp: {
+                    $gt: typeof gt === 'number' ? gt : 0,
+									  $lt: typeof lt === 'number' ? lt : 1e20
+                  },
                   value: {
-                  // content: { type: 'post' }, // This isn't working for some reason
+                    content: { type: 'post' },
                     author
                   }
                 }
@@ -241,8 +247,9 @@ module.exports = {
           }),
           Comparer(opts)
         ),
+        pull.filter(Boolean),
         pull.filter(msg => !msg.sync),
-        pull.filter(msg => msg.value.content.type === 'post'),
+        // pull.filter(msg => msg.value.content.type === 'post'),
         pull.filter(msg => {
           const recps = (msg.value.content.recps || [msg.value.content.recps])
             .filter(Boolean)
@@ -261,7 +268,6 @@ module.exports = {
 
 function Comparer (opts) {
   return (a, b) => {
-    console.log(a.timestamp, b.timestamp)
     if (opts.reverse) {
       return a.timestamp > b.timestamp ? -1 : +1
     } else {
