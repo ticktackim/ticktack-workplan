@@ -75,7 +75,7 @@ exports.create = (api) => {
     }
 
     pull(
-      next(api.feed.pull.private, {reverse: true, limit: 1000, live: false, property: ['timestamp']}),
+      next(api.feed.pull.private, {reverse: true, limit: 100, live: false, property: ['timestamp']}),
       privateMsgFilter(),
       pull.drain(updateUnreadMsgsCache)
     )
@@ -277,8 +277,8 @@ exports.create = (api) => {
         classList: [ 'level', '-two' ],
         prepend,
         // stream: api.feed.pull.private,
-        streamToTop: Source({ reverse: false, live: true, old: false, limit: 20 }),
-        streamToBottom: Source({ reverse: true, live: false, limit: 20 }),
+        streamToTop: Source({ reverse: false, live: true, old: false, limit: 50 }),
+        streamToBottom: Source({ reverse: true, live: false, limit: 50 }),
         store: userLastMsgCache,
         updateTop: updateLastMsgCache,
         updateBottom: updateLastMsgCache,
@@ -391,7 +391,7 @@ function StepperStream (createStream, participants, _opts) {
       // mix: not sure which case this ends stream for
       //
 
-      var value = get(last, ['value'])
+      var value = get(last, ['timestamp'])
       if (value == null) return
 
       if (opts.reverse) {

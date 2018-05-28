@@ -215,8 +215,6 @@ module.exports = {
       if (!authors.includes(server.id)) authors.push(server.id)
 
       const opts = clone(_opts)
-      console.log('authors', authors)
-      console.log('')
 
       const lt = opts.lt
       delete opts.lt
@@ -259,7 +257,6 @@ module.exports = {
           if (authors.length !== recps.length) return false
           return authors.every(r => recps.includes(r))
         }),
-        pull.through(m => console.log(new Date(m.timestamp))),
         limit ? pull.take(limit) : true
       )
     }
