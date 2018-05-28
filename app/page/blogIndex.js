@@ -1,19 +1,21 @@
 const nest = require('depnest')
-const { h, Value, Array: MutantArray, resolve } = require('mutant')
+const { h, Array: MutantArray, resolve } = require('mutant')
 const Scroller = require('mutant-scroll')
 const pull = require('pull-stream')
+
 const Next = require('pull-next')
+const get = require('lodash/get')
+const clone = require('lodash/cloneDeep')
 
 exports.gives = nest('app.page.blogIndex')
 
 exports.needs = nest({
   'app.html.blogCard': 'first',
   'app.html.topNav': 'first',
-  // 'app.html.scroller': 'first',
   'app.html.sideNav': 'first',
   'blog.sync.isBlog': 'first',
-  'feed.pull.public': 'first',
-  'feed.pull.type': 'first',
+  'sbot.pull.stream': 'first',
+  'sbot.obs.connection': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
   'message.sync.isBlocked': 'first',
@@ -29,33 +31,11 @@ exports.create = (api) => {
 
     var strings = api.translations.sync.strings()
 
-    // const filter = () => pull(
-      // pull.filter(api.blog.sync.isBlog), // isBlog or Plog?
-      // pull.filter(msg => !msg.value.content.root), // show only root messages
-      // pull.filter(msg => !api.message.sync.isBlocked(msg)) // this is already in feed.pull.type
-    // )
-
-    // stream: api.feed.pull.public, // for post + blog type
-
-    const streamToTop = pull(
-      // next(stream, { live: true, reverse: false, old: false, limit: 100, property: indexProperty }),
-      api.feed.pull.type('blog')({ live: true, reverse: false, old: false }),
-      // filter()
-    )
-
-    
-    const streamToBottom = pull(
-      Next
-      api.feed.pull.type('blog')({ live: false, reverse: true }),
-      // filter()
-
-    )
-
     var blogs = Scroller({
       classList: ['content'],
       prepend: api.app.html.topNav(location),
-      streamToTop,
-      streamToBottom,
+      streamToTop: Source({ reverse: false, live: true, old: false, limit: 20 }),
+      streamToBottom: Source({ reverse: true, live: false, limit: 20 }),
       updateTop: update,
       updateBottom: update,
       store: blogsCache,
@@ -68,6 +48,31 @@ exports.create = (api) => {
     ])
   })
 
+  function Source (opts) {
+    const commonOpts = {
+      query: [{
+        $filter: {
+          value: {
+            content: {
+              type: 'blog'
+            },
+            timestamp: { $gt: 0, $lt: undefined }
+          }
+        }
+      }]
+    }
+
+    return pull(
+      StepperStream(
+        (options) => api.sbot.pull.stream(sbot => sbot.query.read(options)),
+        Object.assign(commonOpts, opts)
+      ),
+      pull.filter(api.blog.sync.isBlog), // isBlog or Plog?
+      // pull.filter(msg => !msg.value.content.root), // show only root messages
+      pull.filter(msg => !api.message.sync.isBlocked(msg)) // this is already in feed.pull.type
+    )
+  }
+
   function update (soFar, newBlog) {
     soFar.transaction(() => {
       var object = newBlog // Value(newBlog)
@@ -76,12 +81,7 @@ exports.create = (api) => {
       // if blog already in cache, not needed again
       if (index >= 0) return
 
-      // Orders by: time received
-      const justOlderPosition = indexOf(soFar, (msg) => newBlog.timestamp > resolve(msg).timestamp)
-
-      // Orders by: time published BUT the messagesByType stream streams _by time received_
-      // TODO - we need an index of all blogs otherwise the scroller doesn't work...
-      // const justOlderPosition = indexOf(soFar, (msg) => newBlog.value.timestamp > resolve(msg).value.timestamp)
+      const justOlderPosition = indexOf(soFar, (msg) => newBlog.value.timestamp > resolve(msg).value.timestamp)
 
       if (justOlderPosition > -1) {
         soFar.insert(object, justOlderPosition)
@@ -106,4 +106,51 @@ function indexOf (array, fn) {
     }
   }
   return -1
+}
+
+// this is needed because muxrpc doesn't do back-pressure yet
+// this is a modified pull-next-step for ssb-query
+function StepperStream (createStream, _opts) {
+  var opts = clone(_opts)
+  var last = null
+  var count = -1
+
+  return Next(() => {
+    if (last) {
+      if (count === 0) return
+      // mix: not sure which case this ends stream for
+      //
+
+      var value = get(last, ['value', 'timestamp'])
+      if (value == null) return
+
+      if (opts.reverse) {
+        opts.query[0].$filter.value.timestamp.$lt = value
+      } else {
+        opts.query[0].$filter.value.timestamp.$gt = value
+      }
+      last = null
+    }
+
+    return pull(
+      createStream(clone(opts)),
+      pull.through(
+        (msg) => {
+          count++
+          if (!msg.sync) {
+            last = msg
+          }
+        },
+        (err) => {
+            // retry on errors...
+          if (err) {
+            count = -1
+            return count
+          }
+          // end stream if there were no results
+          if (last == null) last = {}
+        }
+      )
+    )
+  })
 }
