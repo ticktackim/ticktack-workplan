@@ -192,7 +192,7 @@ module.exports = {
         // have to remove limit from the query otherwise Next stalls out if it doesn't get a new result
 
         const _source = pull(
-          server.messagesByType(opts),
+          server.messagesByType(opts),      // TODO - check/ note why I didn't use e.g. readComments
           pull.filter(makeFilter(blogIds)),
           limit ? pull.take(limit) : true
         )
