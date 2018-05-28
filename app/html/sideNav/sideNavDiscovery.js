@@ -23,6 +23,7 @@ exports.needs = nest({
   'message.html.subject': 'first',
   'message.sync.getParticipants': 'first',
   'sbot.obs.localPeers': 'first',
+  'sbot.pull.stream': 'first',
   'translations.sync.strings': 'first',
   'unread.sync.isUnread': 'first'
 })
@@ -259,6 +260,14 @@ exports.create = (api) => {
         userLastMsgCache = MutantArray()
         usersLastMsgCache.put(participantsKey, userLastMsgCache)
       }
+
+      pull(
+        api.sbot.pull.stream(server => {
+          return server.ticktack.getPrivateMessages(participants, { reverse: true })
+        }),
+        pull.map(m => m.value.content),
+        pull.drain(() => {})
+      )
 
       return api.app.html.scroller({
         classList: [ 'level', '-two' ],
