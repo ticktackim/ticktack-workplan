@@ -41,7 +41,7 @@ exports.create = (api) => {
   function markUnread (msg) {
     unreadMsgsCache.get(msg.value.content.root || msg.key)
       .delete(msg.key)
-    
+
     const participants = api.message.sync.getParticipants(msg)
     unreadMsgsCache.get(participants.key)
       .delete(msg.key)
@@ -71,13 +71,13 @@ exports.create = (api) => {
     }
 
     pull(
-      next(api.feed.pull.private, {reverse: true, limit: 1000, live: false, property: ['value', 'timestamp']}),
+      next(api.feed.pull.private, {reverse: true, limit: 1000, live: false, property: ['timestamp']}),
       privateMsgFilter(),
       pull.drain(updateUnreadMsgsCache)
     )
 
     pull(
-      next(api.feed.pull.private, {old: false, live: true, property: ['value', 'timestamp']}),
+      next(api.feed.pull.private, {old: false, live: true, property: ['timestamp']}),
       privateMsgFilter(),
       pull.drain(updateUnreadMsgsCache)
     )
@@ -367,4 +367,3 @@ function isSideNavDiscovery (location) {
   }
   return false
 }
-
