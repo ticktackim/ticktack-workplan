@@ -19,19 +19,18 @@ exports.needs = nest({
   'contact.obs.relationships': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
-  'translations.sync.strings': 'first'
 })
 
 exports.create = (api) => {
   return nest('app.page.addressBook', function (location) {
     // location here can expected to be: { page: 'addressBook', section: '...'}
+    location = Object.assign({ section: SEARCH }, location)
 
-    const strings = api.translations.sync.strings()
     const myKey = api.keys.sync.id()
     const relationships = api.contact.obs.relationships(myKey)
 
     const SECTIONS = [FRIENDS, FOLLOWING, FOLLOWERS, SEARCH]
-    const section = location.section || FRIENDS
+    const section = location.section
     if (!SECTIONS.includes(section)) throw new Error('AddressBook location must include valid section, got:', location)
 
     const input = Value()
