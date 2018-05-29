@@ -3,7 +3,7 @@ const pull = require('pull-stream')
 const Client = require('ssb-client')
 const { resolve } = require('mutant')
 
-function observeSequence ({ state, timeout }) {
+function observeSequence ({ state }) {
   const config = require('../config').create().config.sync.load()
 
   Client(config.keys, config, (err, ssbServer) => {
@@ -33,6 +33,7 @@ function observeSequence ({ state, timeout }) {
       if (peers.length > 10) {
         const lessPeers = peers.filter(p => !p.error)
         if (lessPeers.length > 10) peers = lessPeers
+        console.log('CONNECTING TO PEERS:', peers.length)
       }
 
       peers.forEach(({ host, port, key }) => {
@@ -48,7 +49,7 @@ function observeSequence ({ state, timeout }) {
     function checkPeers () {
       ssbServer.ebt.peerStatus(ssbServer.id, (err, data) => {
         if (err) {
-          timeout = setTimeout(checkPeers, 5000)
+          setTimeout(checkPeers, 5000)
           return
         }
 
@@ -71,8 +72,14 @@ function observeSequence ({ state, timeout }) {
           }
         }
 
-        timeout = setTimeout(checkPeers, 5000)
+        var s = resolve(state)
+        // NOTE - this 'isDone' logic is repeated in ftu/app.js
+        if (s.currentSequence >= s.latestSequence && s.confirmedRemotely) return
+
+        setTimeout(checkPeers, 5000)
       })
+
+      ssbServer.progress(console.log)
     }
   })
 }

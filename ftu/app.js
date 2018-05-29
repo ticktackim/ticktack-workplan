@@ -17,7 +17,6 @@ const IMPORT_FILE = path.join(CONFIG_FOLDER, 'importing.json')
 
 var isBusy = Value(false)
 var isPresentingOptions = Value(true)
-var checkerTimeout
 
 // these initial values are overwritten by the identity file.
 var state = Struct({
@@ -45,7 +44,6 @@ exports.create = (api) => {
       watch(throttle(state, 500), s => {
         if (s.currentSequence >= s.latestSequence && s.confirmedRemotely) {
           console.log('all imported')
-          clearTimeout(checkerTimeout)
           electron.ipcRenderer.send('import-completed')
         }
       })
@@ -65,7 +63,7 @@ exports.create = (api) => {
           state.latestSequence.set(previousData.latestSequence)
           state.currentSequence.set(previousData.currentSequence)
           isPresentingOptions.set(false)
-          observeSequence({ state, timeout: checkerTimeout })
+          observeSequence({ state })
         }
       }
 
@@ -127,7 +125,7 @@ exports.create = (api) => {
 electron.ipcRenderer.on('import-resumed', function (ev, c) {
   console.log('background process is running, begin observing')
 
-  observeSequence({ state, timeout: checkerTimeout })
+  observeSequence({ state })
 })
 
 function actionCreateNewOne () {
