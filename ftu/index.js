@@ -2,7 +2,6 @@ const combine = require('depject')
 const entry = require('depject/entry')
 const nest = require('depnest')
 
-
 // polyfills
 require('setimmediate')
 
@@ -13,9 +12,9 @@ require('../context-menu')
 const sockets = combine(
   // need some modules first
   {
-    styles: require('../styles'),
     settings: require('patch-settings'),
     translations: require('../translations/sync'),
+    styles: require('../styles')
   },
   {
     app: require('./app')

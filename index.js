@@ -9,8 +9,8 @@ const fs = require('fs')
 const path = require('path')
 const os = require('os')
 const appName = process.env.SSB_APPNAME || 'ssb'
-const configFolder = path.join(os.homedir(), `.${appName}`)
-const isInstalled = fs.existsSync(Path.join(configFolder, 'secret'))
+const CONFIG_FOLDER = path.join(os.homedir(), `.${appName}`)
+const IMPORT_FILE = path.join(CONFIG_FOLDER, 'importing.json')
 
 var windows = {}
 var quitting = false
@@ -41,7 +41,7 @@ electron.app.on('ready', () => {
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
 
-  if (!isInstalled) {
+  if (!fs.existsSync(Path.join(CONFIG_FOLDER, 'secret'))) {
     console.log('Ticktack or SSB not installed, run FTU')
     openFTUWindow()
   } else {
@@ -55,7 +55,7 @@ electron.app.on('ready', () => {
     startBackgroundProcess()
   })
 
-  // FTU told app to import some identity, need to start sbot and keep FTU running 
+  // FTU told app to import some identity, need to start sbot and keep FTU running
   electron.ipcMain.once('import-identity', function (ev) {
     console.log('import identity')
     setImportRunningFlag(true)
@@ -73,13 +73,13 @@ electron.app.on('ready', () => {
   electron.ipcMain.once('server-started', function (ev, config) {
     let keepFTURunning = getImportRunningFlag(false)
     if (!keepFTURunning) {
-      console.log("> Opening main window")
+      console.log('> Opening main window')
       openMainWindow()
     } else {
       // sbot started but we're importing an older identity, need
       // to tell FTU to wait for sync.
       openFTUWindow()
-      windows.ftu.webContents.send('import-started')
+      windows.ftu.webContents.send('import-resumed')
     }
   })
 
@@ -95,7 +95,7 @@ electron.app.on('ready', () => {
   })
 })
 
-function startBackgroundProcess() {
+function startBackgroundProcess () {
   if (!windows.background) {
     windows.background = openWindow(Path.join(__dirname, 'background-process.js'), {
       connect: false,
@@ -115,7 +115,7 @@ function startBackgroundProcess() {
   }
 }
 
-function openMainWindow() {
+function openMainWindow () {
   if (!windows.main) {
     var windowState = WindowState({
       defaultWidth: 1024,
@@ -154,7 +154,7 @@ function openMainWindow() {
   }
 }
 
-function openFTUWindow() {
+function openFTUWindow () {
   if (!windows.ftu) {
     var windowState = WindowState({
       defaultWidth: 1024,
@@ -189,7 +189,7 @@ function openFTUWindow() {
   }
 }
 
-function openWindow(path, opts) {
+function openWindow (path, opts) {
   var window = new electron.BrowserWindow(opts)
   window.webContents.on('dom-ready', function () {
     window.webContents.executeJavaScript(`
@@ -218,24 +218,22 @@ function openWindow(path, opts) {
   return window
 }
 
-function getImportRunningFlag(defaultValue) {
-  var importFile = Path.join(configFolder, 'importing.json')
-  if (fs.existsSync(importFile)) {
-    let data = JSON.parse(fs.readFileSync(importFile))
+function getImportRunningFlag (defaultValue) {
+  if (fs.existsSync(IMPORT_FILE)) {
+    let data = JSON.parse(fs.readFileSync(IMPORT_FILE))
     return data.importing || defaultValue
   } else {
     return defaultValue
   }
 }
 
-function setImportRunningFlag(v) {
+function setImportRunningFlag (v) {
   let data = {}
-  var importFile = Path.join(configFolder, 'importing.json')
-  if (fs.existsSync(importFile)) {
-    data = JSON.parse(fs.readFileSync(importFile))
+  if (fs.existsSync(IMPORT_FILE)) {
+    data = JSON.parse(fs.readFileSync(IMPORT_FILE))
   }
 
   data.importing = v
 
-  fs.writeFileSync(importFile, JSON.stringify(data))
+  fs.writeFileSync(IMPORT_FILE, JSON.stringify(data))
 }

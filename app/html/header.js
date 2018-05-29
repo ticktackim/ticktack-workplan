@@ -1,7 +1,7 @@
 const nest = require('depnest')
 const { h, computed, when } = require('mutant')
 const path = require('path')
-const { remote } = require('electron')
+const windowControls = require('../../windowControls')
 
 exports.gives = nest('app.html.header')
 exports.needs = nest({
@@ -65,33 +65,6 @@ exports.create = (api) => {
       ])
     ])
   })
-
-  function windowControls () {
-    if (process.platform === 'darwin') return
-
-    const window = remote.getCurrentWindow()
-    const minimize = () => window.minimize()
-    const maximize = () => {
-      if (!window.isMaximized()) window.maximize()
-      else window.unmaximize()
-    }
-    const close = () => window.close()
-
-    return h('div.window-controls', [
-      h('img.min', {
-        src: assetPath('minimize.png'),
-        'ev-click': minimize
-      }),
-      h('img.max', {
-        src: assetPath('maximize.png'),
-        'ev-click': maximize
-      }),
-      h('img.close', {
-        src: assetPath('close.png'),
-        'ev-click': close
-      })
-    ])
-  }
 }
 
 function assetPath (name) {
