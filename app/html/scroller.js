@@ -16,7 +16,7 @@ exports.create = function (api) {
     const {
       stream, // TODO - rename this to createStream (rename across app)
       filter = () => pull.filter((msg) => true),
-      indexProperty = ['value', 'timestamp']
+      indexProperty = ['timestamp']
     } = opts
 
     const streamToTop = pull(
