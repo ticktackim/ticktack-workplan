@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, Value } = require('mutant')
+const { h, Value, onceTrue } = require('mutant')
 
 exports.gives = nest('app.html.app')
 
@@ -16,7 +16,7 @@ exports.needs = nest({
   'invite.async.autofollow': 'first',
   'config.sync.load': 'first',
   'sbot.async.friendsGet': 'first',
-  'sbot.async.get': 'first'
+  'sbot.async.get': 'first',
 })
 
 exports.create = (api) => {
@@ -85,18 +85,24 @@ exports.create = (api) => {
       return
     }
 
-    var myKey = api.config.sync.load().keys.id
-    api.sbot.async.friendsGet({dest: myKey}, function (err, friends) {
-      // if you have less than 5 followers, maybe use the autoinvite
-      if (Object.keys(friends).length <= 5) {
-        invites.forEach(invite => {
-          console.log('using invite:', invite)
-          api.invite.async.autofollow(invite, (err, follows) => {
-            if (err) console.error('Autofollow error:', err)
-            else console.log('Autofollow success', follows)
-          })
+    useInvites(invites)
+    // TODO change it so that if you already have a bunch of friends you unfollow the pubs after they follow you?
+
+    // var myKey = api.config.sync.load().keys.id
+    // api.sbot.async.friendsGet({dest: myKey}, function (err, friends) {
+    //   // if you have less than 5 followers, maybe use the autoinvite
+    //   if (Object.keys(friends).length <= 5) useInvites(invites)
+    //   else console.log('no autoinvite - you have friends already')
+    // })
+
+    function useInvites (invites) {
+      invites.forEach(invite => {
+        console.log('using invite:', invite)
+        api.invite.async.autofollow(invite, (err, follows) => {
+          if (err) console.error('Autofollow error:', err)
+          else console.log('Autofollow success', follows)
         })
-      } else { console.log('no autoinvite - you have friends already') }
-    })
+      })
+    }
   }
 }
