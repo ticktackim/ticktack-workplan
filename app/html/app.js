@@ -13,7 +13,6 @@ exports.needs = nest({
   'router.sync.router': 'first',
   'settings.sync.get': 'first',
   'settings.sync.set': 'first',
-
   'invite.async.autofollow': 'first',
   'config.sync.load': 'first',
   'sbot.async.friendsGet': 'first',
@@ -86,8 +85,8 @@ exports.create = (api) => {
       return
     }
 
-    var self_id = api.config.sync.load().keys.id
-    api.sbot.async.friendsGet({dest: self_id}, function (err, friends) {
+    var myKey = api.config.sync.load().keys.id
+    api.sbot.async.friendsGet({dest: myKey}, function (err, friends) {
       // if you have less than 5 followers, maybe use the autoinvite
       if (Object.keys(friends).length <= 5) {
         invites.forEach(invite => {
