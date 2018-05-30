@@ -1,8 +1,6 @@
 const nest = require('depnest')
-const { h, Value, resolve } = require('mutant')
-const { dialog } = require('electron').remote;
-const path = require('path')
-const fs = require('fs')
+const { h, Value, computed } = require('mutant')
+const { dialog } = require('electron').remote
 
 exports.gives = nest({
   'backup.html': ['exportIdentityButton']
@@ -17,23 +15,42 @@ exports.needs = nest({
 
 exports.create = (api) => {
   return nest('backup.html.exportIdentityButton', () => {
-
     const strings = api.translations.sync.strings()
 
-    function exportAction() {
+    const exporting = Value()
+    const success = Value()
+
+    function exportAction () {
+      exporting.set(true)
+
       let feedFragment = api.keys.sync.id().slice(1, 6)
       dialog.showSaveDialog(
         {
           title: strings.backup.export.dialog.title,
           butttonLabel: strings.backup.export.dialog.label,
-          defaultPath: `ticktack-identity-${feedFragment}.backup`,
+          defaultPath: `ticktack-identity-${feedFragment}.backup`
         },
-        (filename) => api.backup.async.exportIdentity(filename, () => console.log('exported'))
+        (filename) => api.backup.async.exportIdentity(filename, (err, res) => {
+          exporting.set(false)
+          if (err) {
+            console.error(err)
+            success.set(false)
+          } else {
+            console.log('exported')
+            success.set(true)
+          }
+        })
       )
     }
 
     return h('div.backupKeys', [
-      h('Button -backup', { 'ev-click': exportAction }, strings.backup.export.exportAction)
+      h('Button -backup', { 'ev-click': exportAction }, strings.backup.export.exportAction),
+      computed([exporting, success], (exporting, success) => {
+        if (success === true) return h('i.fa.fa-check')
+        if (success === false) return h('i.fa.fa-times')
+
+        if (exporting) return h('i.fa.fa-spinner.fa-pulse')
+      })
     ])
   })
 }

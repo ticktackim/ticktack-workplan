@@ -2,52 +2,71 @@ const nest = require('depnest')
 const { onceTrue } = require('mutant')
 const path = require('path')
 const fs = require('fs')
-const os = require('os')
-const config = require('../../config').create().config.sync.load()
-const peersFile = path.join(config.path, "gossip.json")
-const secretFile = path.join(config.path, "secret")
+const mapLimit = require('map-limit')
 
+const config = require('../../config').create().config.sync.load()
+const gossipFile = path.join(config.path, 'gossip.json')
+const secretFile = path.join(config.path, 'secret')
 
 exports.gives = nest('backup.async.exportIdentity')
 
-
 exports.needs = nest({
-  'keys.sync.id': 'first',
   'sbot.obs.connection': 'first'
 })
 
 exports.create = function (api) {
   return nest('backup.async.exportIdentity', (filename, cb) => {
-    if ("undefined" == typeof filename) {
-      cb(new Error('backup requires a filename'))
-    } else {
+    if (typeof filename === 'undefined') return cb(new Error('backup requires a filename'))
 
-      console.log(`should export identity to file ${filename}`)
+    console.log(`should export identity to file ${filename}`)
 
-      const peers = JSON.parse(fs.readFileSync(peersFile))
-      const secret = fs.readFileSync(secretFile, "utf8")
+    var backup = {
+      exportDate: new Date().toISOString(),
+      secret: fs.readFileSync(secretFile, 'utf8'),
+      gossip: require(gossipFile)
+      // gossip: JSON.parse(fs.readFileSync(gossipFile)),
+    }
 
-      onceTrue(api.sbot.obs.connection, sbot => {
+    onceTrue(api.sbot.obs.connection, sbot => {
+      sbot.latestSequence(sbot.id, (err, seq) => {
+        if (err) return cb(err)
 
-        let feedId = api.keys.sync.id()
+        backup.latestSequence = seq
 
-        sbot.latestSequence(feedId, (err, sequence) => {
-
+        sbot.friends.get({ source: sbot.id }, (err, d) => {
           if (err) return cb(err)
 
-          let data = {
-            exportDate: new Date().toISOString(),
-            latestSequence: sequence,
-            peers: peers,
-            secret: secret
-          }
+          console.log(Object.keys(d).length)
+          var follows = Object.keys(d).filter(id => d[id] === true)
+          console.log(follows.length)
 
-          fs.writeFileSync(filename, JSON.stringify(data, null, 2), "utf8")
+          mapLimit(follows, 10,
+            (id, cb) => sbot.latestSequence(id, (err, seq) => {
+              if (err && err.message && err.message.indexOf('not found') > 0) {
+                console.error(err)
+                cb(null, null) // don't include this user
+              } else cb(null, [ id, seq ])
+            }),
+            (err, peers) => {
+              if (err) return cb(err)
 
-          cb()
+              console.log(peers.length)
+              backup.peersSequence = peers
+                .filter(Boolean)
+                .reduce((soFar, [ id, seq ]) => {
+                  if (seq) soFar[id] = seq
+                  return soFar
+                }, {})
+
+              console.log(Object.keys(backup.peersSequence).length)
+
+              fs.writeFileSync(filename, JSON.stringify(backup, null, 2), 'utf8')
+              cb(null, true)
+            }
+          )
         })
       })
-    }
+    })
     return true
   })
 }

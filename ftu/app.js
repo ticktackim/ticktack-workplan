@@ -141,7 +141,7 @@ function actionCreateNewOne () {
 }
 
 function actionImportIdentity (strings) {
-  const peersFile = path.join(CONFIG_FOLDER, 'gossip.json')
+  const gossipFile = path.join(CONFIG_FOLDER, 'gossip.json')
   const secretFile = path.join(CONFIG_FOLDER, 'secret')
   const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, '../manifest.json')))
   const manifestFile = path.join(CONFIG_FOLDER, 'manifest.json')
@@ -158,13 +158,13 @@ function actionImportIdentity (strings) {
       if (typeof filenames !== 'undefined') {
         let filename = filenames[0]
         let data = JSON.parse(fs.readFileSync(filename))
-        if (data.hasOwnProperty('secret') && data.hasOwnProperty('peers') && data.hasOwnProperty('latestSequence')) {
+        if (data.hasOwnProperty('secret') && data.hasOwnProperty('gossip') && data.hasOwnProperty('latestSequence')) {
           if (!fs.existsSync(CONFIG_FOLDER)) {
             fs.mkdirSync(CONFIG_FOLDER)
           }
 
           fs.writeFileSync(manifestFile, JSON.stringify(manifest))
-          fs.writeFileSync(peersFile, JSON.stringify(data.peers), 'utf8')
+          fs.writeFileSync(gossipFile, JSON.stringify(data.gossip), 'utf8')
           fs.writeFileSync(secretFile, data.secret, 'utf8')
           state.latestSequence.set(data.latestSequence)
           state.currentSequence.set(0)
