@@ -25,12 +25,12 @@ exports.create = function (api) {
       exportDate: new Date().toISOString(),
       secret: fs.readFileSync(secretFile, 'utf8'),
       gossip: require(gossipFile)
-      // gossip: JSON.parse(fs.readFileSync(gossipFile)),
     }
 
     onceTrue(api.sbot.obs.connection, sbot => {
       parallel([
         getLatestSequence,
+        getGossipFollowers,
         getPeersSequence
       ], save)
 
@@ -39,6 +39,19 @@ exports.create = function (api) {
           if (err) return done(err)
 
           backup.latestSequence = seq
+          done(null)
+        })
+      }
+
+      function getGossipFollowers (done) {
+        // the peers in gossip list who follow me
+        sbot.friends.get({ dest: sbot.id }, (err, followers) => {
+          if (err) return done(err)
+
+          backup.gossip.forEach(record => {
+            if (followers[record.key]) record.followsMe = true
+          })
+
           done(null)
         })
       }
