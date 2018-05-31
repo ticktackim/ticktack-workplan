@@ -22,6 +22,7 @@ exports.create = (api) => {
 
     function exportAction () {
       exporting.set(true)
+      success.set() // the resets the tick if there are multiple backup exports done
 
       let feedFragment = api.keys.sync.id().slice(1, 6)
       dialog.showSaveDialog(

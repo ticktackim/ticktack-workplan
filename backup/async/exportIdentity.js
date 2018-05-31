@@ -2,6 +2,7 @@ const nest = require('depnest')
 const { onceTrue } = require('mutant')
 const path = require('path')
 const fs = require('fs')
+const parallel = require('run-parallel')
 const mapLimit = require('map-limit')
 
 const config = require('../../config').create().config.sync.load()
@@ -28,45 +29,58 @@ exports.create = function (api) {
     }
 
     onceTrue(api.sbot.obs.connection, sbot => {
-      sbot.latestSequence(sbot.id, (err, seq) => {
-        if (err) return cb(err)
+      parallel([
+        getLatestSequence,
+        getPeersSequence
+      ], save)
 
-        backup.latestSequence = seq
+      function getLatestSequence (done) {
+        sbot.latestSequence(sbot.id, (err, seq) => {
+          if (err) return done(err)
 
+          backup.latestSequence = seq
+          done(null)
+        })
+      }
+
+      function getPeersSequence (done) {
         sbot.friends.get({ source: sbot.id }, (err, d) => {
-          if (err) return cb(err)
+          if (err) return done(err)
 
-          console.log(Object.keys(d).length)
           var follows = Object.keys(d).filter(id => d[id] === true)
-          console.log(follows.length)
 
-          mapLimit(follows, 10,
+          mapLimit(follows, 5,
             (id, cb) => sbot.latestSequence(id, (err, seq) => {
               if (err && err.message && err.message.indexOf('not found') > 0) {
                 console.error(err)
-                cb(null, null) // don't include this user
-              } else cb(null, [ id, seq ])
+                return cb(null, null) // don't include this user
+              }
+
+              cb(null, [ id, seq ])
             }),
             (err, peers) => {
-              if (err) return cb(err)
+              if (err) return done(err)
 
-              console.log(peers.length)
               backup.peersSequence = peers
                 .filter(Boolean)
                 .reduce((soFar, [ id, seq ]) => {
                   if (seq) soFar[id] = seq
                   return soFar
                 }, {})
-
-              console.log(Object.keys(backup.peersSequence).length)
-
-              fs.writeFileSync(filename, JSON.stringify(backup, null, 2), 'utf8')
-              cb(null, true)
+              done(null)
             }
           )
         })
-      })
+      }
     })
+
+    function save (err, success) {
+      if (err) return cb(err)
+
+      fs.writeFileSync(filename, JSON.stringify(backup, null, 2), 'utf8')
+      cb(null, true)
+    }
+
     return true
   })
 }

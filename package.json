@@ -58,6 +58,7 @@
     "pull-stream": "^3.6.0",
     "read-directory": "^2.1.0",
     "require-style": "^1.0.1",
+    "run-parallel": "^1.1.9",
     "scuttle-blog": "^1.0.1",
     "scuttlebot": "10.4.10",
     "secret-stack": "4.0.1",
