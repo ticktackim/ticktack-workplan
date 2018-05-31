@@ -25,7 +25,7 @@ function manageProgress ({ state, config }) {
 
     // watch progress (db size) ??
     // sbot.progress(console.log)
-    //
+
     sbot.gossip.peers((err, peers) => {
       if (err) return console.error(err)
 
@@ -67,11 +67,13 @@ function watchCurrentSequence ({ sbot, state }) {
   })
 }
 
+var cache = {}
 function watchLatestSequence ({ sbot, period, state }) {
   const feedId = sbot.id
   sbot.ebt.peerStatus(feedId, (err, data) => {
     if (err) return setTimeout(() => watchLatestSequence({ sbot, period, state }), period)
 
+    cache = data = Object.assign({}, cache, data)
     const currentLatest = resolve(state.mySequence.latest)
 
     const remoteSeqs = map(data.peers, (val) => val.seq)
