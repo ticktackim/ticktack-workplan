@@ -7,22 +7,45 @@ const os = require('os')
 const progress = require('progress-string')
 const values = require('lodash/values')
 
-const observeSequence = require('./observeSequence')
+const manageProgress = require('./manageProgress')
 const windowControls = require('../windowControls')
 const ftuCss = require('./styles')
 
-const appName = process.env.SSB_APPNAME || 'ssb'
-const CONFIG_FOLDER = path.join(os.homedir(), `.${appName}`)
-const IMPORT_FILE = path.join(CONFIG_FOLDER, 'importing.json')
-
-var isBusy = Value(false)
-var isPresentingOptions = Value(true)
+// const config = require('../config').create().config.sync.load()
+const config = {
+  path: path.join(os.homedir(), `.${process.env.SSB_APPNAME || process.env.ssb_appname || 'ssb'}`)
+}
+const SECRET_PATH = path.join(config.path, 'secret')
+const MANIFEST_PATH = path.join(config.path, 'manifest.json')
+const GOSSIP_PATH = path.join(config.path, 'gossip.json')
+const IMPORT_PATH = path.join(config.path, 'importing.json')
 
 // these initial values are overwritten by the identity file.
 var state = Struct({
-  latestSequence: 0,
-  confirmedRemotely: false,
-  currentSequence: -1
+  isPresentingOptions: true,
+  creatingNewIdentity: false,
+  mySequence: Struct({
+    current: 0,
+    latest: 0,
+    latestConfirmed: false
+  }),
+  peerSequences: Struct({
+    current: 0,
+    latest: 0
+  }),
+  importComplete: false
+})
+
+state.peerSequences(console.log)
+
+watch(throttle(state.peersLatestSequence, 1000), console.log)
+
+// Note you can't want state and get updates to mySequence!
+watch(throttle(state, 500), s => {
+  const myFeedSynced = s.mySequence.current >= s.mySequence.latest && s.mySequence.latestConfirmed
+  const enoughFriends = s.peerSequences.current > 0.95 * s.peerSequences.latest
+
+  if (myFeedSynced && enoughFriends) state.importComplete.set(true)
 })
 
 exports.gives = nest('ftu.app')
@@ -41,14 +64,11 @@ exports.create = (api) => {
       document.head.appendChild(h('style', { innerHTML: css }))
 
       // This watcher is responsible for switching from FTU to Ticktack main app
-      watch(throttle(state, 500), s => {
-        if (s.currentSequence >= s.latestSequence && s.confirmedRemotely) {
-          console.log('all imported')
-          electron.ipcRenderer.send('import-completed')
-        }
+      watch(state.importComplete, importComplete => {
+        if (importComplete) electron.ipcRenderer.send('import-completed')
       })
 
-      if (fs.existsSync(path.join(CONFIG_FOLDER, 'secret'))) {
+      if (fs.existsSync(SECRET_PATH)) {
         // somehow the FTU started but the identity is already in place.
         // treat it as a failed import and start importing...
         console.log('resuming import')
@@ -60,10 +80,10 @@ exports.create = (api) => {
           setImportData({ importing: false })
           electron.ipcRenderer.send('import-completed')
         } else {
-          state.latestSequence.set(previousData.latestSequence)
-          state.currentSequence.set(previousData.currentSequence)
-          isPresentingOptions.set(false)
-          observeSequence({ state })
+          state.mySequence.latest.set(previousData.mySequence.latest)
+          // state.peerSequences.latest.set(previousData.peerSequences.latest) // nor made in exportIdentity yet
+          state.isPresentingOptions.set(false)
+          manageProgress({ state, config })
         }
       }
 
@@ -72,7 +92,7 @@ exports.create = (api) => {
           h('img.logoName', { src: assetPath('logo_and_name.png') }),
           windowControls()
         ]),
-        when(isPresentingOptions, InitialOptions(), ImportProgress())
+        when(state.isPresentingOptions, InitialOptions(), ImportProgress())
       ])
 
       return app
@@ -86,7 +106,7 @@ exports.create = (api) => {
               h('h1', welcomeHeader),
               h('div', welcomeMessage)
             ]),
-            when(isBusy,
+            when(state.creatingNewIdentity,
               h('p', busyMessage),
               h('section.actionButtons', [
                 h('div.left', h('Button', { 'ev-click': () => actionImportIdentity(strings) }, importAction)),
@@ -98,23 +118,38 @@ exports.create = (api) => {
       }
 
       function ImportProgress () {
-        const { header, synchronizeMessage, details } = strings.backup.import
+        const { header, myFeedProgress, myFriendsProgress, details } = strings.backup.import
 
         return h('Page', [
           h('div.content', [
             h('h1', header),
-            h('p', synchronizeMessage),
-            h('pre', computed(state, s => {
+            h('h2', myFeedProgress),
+            h('pre', computed(state.mySequence, s => {
               return progress({
                 width: 42,
-                total: s.latestSequence,
+                total: s.latest,
+                complete: '/',
+                incomplete: '-',
                 style: function (complete, incomplete) {
                   // add an arrow at the head of the completed part
-                  return `${complete}>${incomplete} (${s.currentSequence}/ ${s.latestSequence})`
+                  return `[${complete}${incomplete}] (${s.current}/ ${s.latest})`
                 }
-              })(s.currentSequence)
+              })(s.current)
             })),
-            h('p', details)
+            h('p', details),
+            h('h2', myFriendsProgress),
+            h('pre', computed(state.peerSequences, s => {
+              return progress({
+                width: 42,
+                total: s.latest,
+                complete: '\\',
+                incomplete: '-',
+                style: function (complete, incomplete) {
+                  // add an arrow at the head of the completed part
+                  return `[${complete}${incomplete}] (${s.current}/ ${Math.max(s.latest, s.current)})`
+                }
+              })(s.current)
+            }))
           ])
         ])
       }
@@ -125,26 +160,27 @@ exports.create = (api) => {
 electron.ipcRenderer.on('import-resumed', function (ev, c) {
   console.log('background process is running, begin observing')
 
-  observeSequence({ state })
+  manageProgress({ state, config })
 })
 
 function actionCreateNewOne () {
-  isBusy.set(true)
+  state.creatingNewIdentity.set(true)
+  /// //////////!!!!!!
+  // WARNING TODO: this needs replacing with manifest exported from actual sbot running!
   const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, '../manifest.json')))
-  const manifestFile = path.join(CONFIG_FOLDER, 'manifest.json')
-  if (!fs.existsSync(CONFIG_FOLDER)) {
-    fs.mkdirSync(CONFIG_FOLDER)
+  /// //////////!!!!!!
+  if (!fs.existsSync(config.path)) {
+    fs.mkdirSync(config.path)
   }
-  fs.writeFileSync(manifestFile, JSON.stringify(manifest))
+  fs.writeFileSync(MANIFEST_PATH, JSON.stringify(manifest))
 
   electron.ipcRenderer.send('create-new-identity')
 }
 
 function actionImportIdentity (strings) {
-  const gossipFile = path.join(CONFIG_FOLDER, 'gossip.json')
-  const secretFile = path.join(CONFIG_FOLDER, 'secret')
+  /// /////////!!!!!!
+  // WARNING TODO (same as above warning)
   const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, '../manifest.json')))
-  const manifestFile = path.join(CONFIG_FOLDER, 'manifest.json')
 
   // place the other files first
   electron.remote.dialog.showOpenDialog(
@@ -158,20 +194,21 @@ function actionImportIdentity (strings) {
       if (typeof filenames !== 'undefined') {
         let filename = filenames[0]
         let data = JSON.parse(fs.readFileSync(filename))
-        if (data.hasOwnProperty('secret') && data.hasOwnProperty('gossip') && data.hasOwnProperty('latestSequence')) {
-          if (!fs.existsSync(CONFIG_FOLDER)) {
-            fs.mkdirSync(CONFIG_FOLDER)
+        const requiredProps = ['secret', 'gossip', 'mySequence', 'peersLatestSequence']
+
+        if (requiredProps.every(prop => data.hasOwnProperty(prop))) {
+          if (!fs.existsSync(config.path)) {
+            fs.mkdirSync(config.path)
           }
 
-          fs.writeFileSync(manifestFile, JSON.stringify(manifest))
-          fs.writeFileSync(gossipFile, JSON.stringify(data.gossip), 'utf8')
-          fs.writeFileSync(secretFile, data.secret, 'utf8')
-          state.latestSequence.set(data.latestSequence)
-          state.currentSequence.set(0)
-          isPresentingOptions.set(false)
+          fs.writeFileSync(MANIFEST_PATH, JSON.stringify(manifest))
+          fs.writeFileSync(GOSSIP_PATH, JSON.stringify(data.gossip), 'utf8')
+          fs.writeFileSync(SECRET_PATH, data.secret, 'utf8')
+
+          state.mySequence.latest.set(data.mySequence.latest)
+          state.isPresentingOptions.set(false)
 
           data.importing = true
-          data.currentSequence = 0
 
           setImportData(data)
 
@@ -191,8 +228,8 @@ function assetPath (name) {
 }
 
 function getImportData () {
-  if (fs.existsSync(IMPORT_FILE)) {
-    let data = JSON.parse(fs.readFileSync(IMPORT_FILE))
+  if (fs.existsSync(IMPORT_PATH)) {
+    let data = JSON.parse(fs.readFileSync(IMPORT_PATH))
     return data || false
   } else {
     return false
@@ -200,5 +237,5 @@ function getImportData () {
 }
 
 function setImportData (data) {
-  fs.writeFileSync(IMPORT_FILE, JSON.stringify(data))
+  fs.writeFileSync(IMPORT_PATH, JSON.stringify(data))
 }

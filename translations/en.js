@@ -215,7 +215,8 @@ module.exports = {
     import: {
       importAction: 'Import Identity',
       header: 'Importing identity',
-      synchronizeMessage: 'Progress',
+      myFeedProgress: 'Progress (your identity)',
+      myFriendsProgress: 'Progress (your friends)',
       dialog: {
         label: 'Import Identity',
         title: 'Import Identity'

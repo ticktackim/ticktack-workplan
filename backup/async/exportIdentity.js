@@ -31,14 +31,14 @@ exports.create = function (api) {
       parallel([
         getLatestSequence,
         getGossipFollowers,
-        getPeersSequence
+        getPeersLatestSequence
       ], save)
 
       function getLatestSequence (done) {
         sbot.latestSequence(sbot.id, (err, seq) => {
           if (err) return done(err)
 
-          backup.latestSequence = seq
+          backup.mySequence = { latest: seq }
           done(null)
         })
       }
@@ -56,7 +56,7 @@ exports.create = function (api) {
         })
       }
 
-      function getPeersSequence (done) {
+      function getPeersLatestSequence (done) {
         sbot.friends.get({ source: sbot.id }, (err, d) => {
           if (err) return done(err)
 
@@ -68,13 +68,15 @@ exports.create = function (api) {
                 console.error(err)
                 return cb(null, null) // don't include this user
               }
+              if (err) return cb(err)
 
               cb(null, [ id, seq ])
             }),
             (err, peers) => {
               if (err) return done(err)
 
-              backup.peersSequence = peers
+              // TODO change
+              backup.peersLatestSequence = peers
                 .filter(Boolean)
                 .reduce((soFar, [ id, seq ]) => {
                   if (seq) soFar[id] = seq
