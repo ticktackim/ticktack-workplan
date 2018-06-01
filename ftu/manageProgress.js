@@ -30,6 +30,7 @@ function manageProgress ({ state, config }) {
       if (err) return console.error(err)
 
       connectToPeers({ sbot, peers, state })
+      reconnectToPeers({ sbot, peers, state, period: 7000 })
     })
   })
 }
@@ -48,6 +49,23 @@ function connectToPeers ({ sbot, peers, state }) {
         else console.log('connected to ', host)
       })
     }
+  })
+}
+
+function reconnectToPeers ({ sbot, peers, state, period }) {
+  sbot.status((err, data) => {
+    if (err) return setTimeout(() => reconnectToPeers({ sbot, peers, period, state }), period)
+
+    if (data.gossip.length < 5) {
+      peers
+        .sort((a, b) => Math.random() > 0.5 ? -1 : 1)
+        .slice(0, 5)
+        .forEach(p => sbot.gossip.connect(p, console.log))
+    }
+
+    if (resolve(state.importComplete)) return
+
+    setTimeout(() => reconnectToPeers({ sbot, peers, period, state }), period)
   })
 }
 
@@ -73,10 +91,10 @@ function watchLatestSequence ({ sbot, period, state }) {
   sbot.ebt.peerStatus(feedId, (err, data) => {
     if (err) return setTimeout(() => watchLatestSequence({ sbot, period, state }), period)
 
-    cache = data = Object.assign({}, cache, data)
+    Object.assign(cache, data.peers)
     const currentLatest = resolve(state.mySequence.latest)
 
-    const remoteSeqs = map(data.peers, (val) => val.seq)
+    const remoteSeqs = map(cache, (val) => val.seq)
       .filter(s => s >= currentLatest)       // only keep remote seq that confirm or update backup seq
       .sort((a, b) => a > b ? -1 : 1) // order them
 
@@ -151,7 +169,6 @@ function watchPeersLatestSequence ({ sbot, peersLatestSequence, period, state })
   //     console.log(peerId, currentLatest, remoteSeq)
   //   })
   // })
-
 }
 
 module.exports = manageProgress
