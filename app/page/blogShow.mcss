@@ -46,6 +46,9 @@ Page -blogShow {
           div.Button.-channel {
             margin-right: 1rem
           }
+          div.CommentsCount {
+            margin-right: 2rem
+          }
           div.Likes {
             margin-right: 2rem
           }
