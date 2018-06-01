@@ -11,9 +11,10 @@ exports.needs = nest({
   'app.html.sideNav': 'first',
   'contact.html.follow': 'first',
   'message.html.channel': 'first',
+  'message.html.commentsCount': 'first',
   'message.html.likes': 'first',
   'message.html.webshares': 'first',
-  'message.html.shares': 'first',
+  // 'message.html.shares': 'first', // disabled until more design done
   'message.html.timeago': 'first',
   'feed.obs.thread': 'first',
   'blog.html.title': 'first',
@@ -23,7 +24,7 @@ exports.needs = nest({
 exports.create = (api) => {
   return nest('app.page.blogShow', blogShow)
 
-  function blogShow(blogMsg) {
+  function blogShow (blogMsg) {
     // blogMsg = a thread (message, may be decorated with replies)
 
     const { author } = blogMsg.value
@@ -48,8 +49,9 @@ exports.create = (api) => {
               h('h1', title),
               timeago(blogMsg),
               channel(blogMsg),
+              api.message.html.commentsCount(thread),
               api.message.html.likes(blogMsg),
-              api.message.html.shares(blogMsg),
+              // api.message.html.shares(blogMsg),
               api.message.html.webshares(blogMsg)
             ]),
             h('div.author', [

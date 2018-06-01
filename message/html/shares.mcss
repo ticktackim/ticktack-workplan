@@ -1,6 +1,7 @@
 Shares {
   cursor: pointer
   min-width: 2.5rem
+  min-hieght: 1.2rem
 
   display: flex
   align-items: baseline
