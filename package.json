@@ -41,7 +41,7 @@
     "micro-css": "^2.0.1",
     "morphdom": "^2.3.3",
     "mutant": "^3.22.1",
-    "mutant-scroll": "0.0.5",
+    "mutant-scroll": "0.0.6",
     "open-external": "^0.1.1",
     "patch-drafts": "0.0.6",
     "patch-history": "^1.0.0",
