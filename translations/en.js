@@ -221,7 +221,7 @@ module.exports = {
         label: 'Import Identity',
         title: 'Import Identity'
       },
-      details: 'Reconstructing your identity will take some time. Ticktack will launch once your identity is synchoronized, but it will take some time to gather your friends data, so some message and blogs will arrive later. You can safely close this window and Ticktack will resume sync next time you open it.'
+      details: 'Reconstructing your identity will take some time. Ticktack will launch once your identity is synchronized, but it will take some time to gather your friends data, so some messages and blogs will arrive later. You can safely close this window and Ticktack will resume sync next time you open it.'
     }
   },
   languages: {
