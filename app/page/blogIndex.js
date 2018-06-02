@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, Array: MutantArray, resolve, when, computed } = require('mutant')
+const { h, Array: MutantArray, resolve, computed } = require('mutant')
 const Scroller = require('mutant-scroll')
 const pull = require('pull-stream')
 
@@ -29,23 +29,45 @@ exports.create = (api) => {
   var blogsCache = MutantArray()
 
   return nest('app.page.blogIndex', function (location) {
-    // location here can expected to be: { page: 'blogIndex'}
+    // location here can expected to be: { page: 'blogIndex', filter: 'All' }
+    const { page, filter = 'All' } = location
 
     var strings = api.translations.sync.strings()
     blogsCache.clear()
 
     var blogs = Scroller({
       classList: ['content'],
-      prepend: api.app.html.topNav(location),
-      streamToTop: Source({ reverse: false, live: true, old: false, limit: 20 }, api, location),
-      streamToBottom: Source({ reverse: true, live: false, limit: 20 }, api, location),
+      prepend: [
+        api.app.html.topNav(location),
+        Filters()
+      ],
+      streamToTop: Source({ reverse: false, live: true, old: false, limit: 20 }, api, filter),
+      streamToBottom: Source({ reverse: true, live: false, limit: 20 }, api, filter),
       updateTop: update,
       updateBottom: update,
       store: blogsCache,
       render
     })
 
-
+    function Filters () {
+      const goTo = (loc) => () => api.history.sync.push(loc)
+      return h('Filters', [
+        h('span -filter', {
+          className: filter === 'All' ? '-active' : '',
+          'ev-click': goTo({ page, filter: 'All' })
+        }, 'All'),
+        h('span', '|'),
+        h('span -filter', {
+          className: filter === 'Subscriptions' ? '-active' : '',
+          'ev-click': goTo({ page, filter: 'Subscriptions' })
+        }, 'Subscriptions'),
+        h('span', '|'),
+        h('span -filter', {
+          className: filter === 'Friends' ? '-active' : '',
+          'ev-click': goTo({ page, filter: 'Friends' })
+        }, 'Friends')
+      ])
+    }
 
     return h('Page -blogIndex', { title: strings.home }, [
       api.app.html.sideNav(location),
@@ -53,7 +75,7 @@ exports.create = (api) => {
     ])
   })
 
-  function Source(opts, api, location) {
+  function Source (opts, api, filter) {
     const commonOpts = {
       query: [{
         $filter: {
@@ -69,27 +91,24 @@ exports.create = (api) => {
 
     const myId = api.keys.sync.id()
     const { followers } = api.contact.obs
-    const activeFilter = location.hasOwnProperty('filter') ? location.filter : "All"
 
     const filterbyFriends = (msg) => {
-      if (activeFilter !== 'Friends') return true
+      if (filter !== 'Friends') return true
 
       const feed = msg.value.author
       const theirFollowers = followers(feed)
       const youFollowThem = computed(theirFollowers, followers => followers.includes(myId))
-      const r = resolve(youFollowThem)
 
-      return r
+      return resolve(youFollowThem)
     }
 
     const filterBySubscription = (msg) => {
-      if (activeFilter !== 'Subscriptions') return true
+      if (filter !== 'Subscriptions') return true
 
       if (!msg.value.content.hasOwnProperty('channel')) {
         return false
       }
 
-      const isSubscribedTo = api.channel.obs.isSubscribedTo
       const channel = msg.value.content.channel
 
       return resolve(api.channel.obs.isSubscribedTo(channel))
@@ -108,7 +127,7 @@ exports.create = (api) => {
     )
   }
 
-  function update(soFar, newBlog) {
+  function update (soFar, newBlog) {
     soFar.transaction(() => {
       var object = newBlog // Value(newBlog)
 
@@ -126,7 +145,7 @@ exports.create = (api) => {
     })
   }
 
-  function render(blog) {
+  function render (blog) {
     const { recps, channel } = blog.value.content
     var onClick
     if (channel && !recps) { onClick = (ev) => api.history.sync.push(Object.assign({}, blog, { page: 'blogShow' })) }
@@ -134,7 +153,7 @@ exports.create = (api) => {
   }
 }
 
-function indexOf(array, fn) {
+function indexOf (array, fn) {
   for (var i = 0; i < array.getLength(); i++) {
     if (fn(array.get(i))) {
       return i
@@ -145,7 +164,7 @@ function indexOf(array, fn) {
 
 // this is needed because muxrpc doesn't do back-pressure yet
 // this is a modified pull-next-step for ssb-query
-function StepperStream(createStream, _opts) {
+function StepperStream (createStream, _opts) {
   var opts = clone(_opts)
   var last = null
   var count = -1

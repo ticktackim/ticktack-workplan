@@ -15,28 +15,7 @@ exports.create = (api) => {
 
     if (!['blogIndex', 'blogSearch'].includes(location.page)) return
 
-    const activeFilter = location.hasOwnProperty('filter') ? location.filter : "All"
-
-    var filters = () => {
-      return h('Filters', [
-        h('span -filter', {
-          className: 'All' === activeFilter ? '-active' : '',
-          'ev-click': goTo({ page: location.page, filter: 'All' })
-        }, 'All'),
-        h('span', '|'),
-        h('span -filter', {
-          className: 'Subscriptions' === activeFilter ? '-active' : '',
-          'ev-click': goTo({ page: location.page, filter: 'Subscriptions' })
-        }, 'Subscriptions'),
-        h('span', '|'),
-        h('span -filter', {
-          className: 'Friends' === activeFilter ? '-active' : '',
-          'ev-click': goTo({ page: location.page, filter: 'Friends' })
-        }, 'Friends')
-      ])
-    }
-
-    return [h('TopNav -blog', [
+    return h('TopNav -blog', [
       h('div.left', [
         h('div', {
           className: location.page === 'blogIndex' ? '-active' : '',
@@ -50,8 +29,6 @@ exports.create = (api) => {
       h('div.right', [
         h('Button -strong', { 'ev-click': () => api.history.sync.push({ page: 'blogNew' }) }, strings.blogNew.actions.writeBlog)
       ])
-    ]),
-      filters
-    ]
+    ])
   })
 }

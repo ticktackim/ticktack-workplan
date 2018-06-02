@@ -11,22 +11,3 @@ TopNav -blog {
   }
 }
 
-Filters {
-  $backgroundPrimary
-  padding: 0.5rem 2rem
-  span {
-    $colorFontSubtle
-    padding: 10px
-
-    -active {
-      $colorFontBasic
-      border-bottom: 2px solid #222
-    }
-
-    -filter {
-      cursor: pointer
-    }
-  }
-
-}
-
