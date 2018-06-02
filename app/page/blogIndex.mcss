@@ -26,13 +26,13 @@ Page -blogIndex {
 }
 
 Filters {
-  background-color: #f1f1f1
+  $maxWidth
+  padding: 0 2rem
+  margin: .8rem auto
 
   font-size: .8rem
   text-transform: uppercase
   letter-spacing: 1.4px
-
-  padding: .5rem 0 .5rem .5rem
 
   display: grid
   grid-template-columns: 4rem 0rem 10rem 0rem 7rem

@@ -39,7 +39,7 @@ exports.create = (api) => {
       classList: ['content'],
       prepend: [
         api.app.html.topNav(location),
-        Filters()
+        // Filters()
       ],
       streamToTop: Source({ reverse: false, live: true, old: false, limit: 20 }, api, filter),
       streamToBottom: Source({ reverse: true, live: false, limit: 20 }, api, filter),
@@ -48,6 +48,9 @@ exports.create = (api) => {
       store: blogsCache,
       render
     })
+
+    // HACK
+    blogs.insertBefore(Filters(), blogs.querySelector('.content'))
 
     function Filters () {
       const goTo = (loc) => () => api.history.sync.push(loc)
