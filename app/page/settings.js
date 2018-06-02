@@ -96,16 +96,17 @@ exports.create = (api) => {
             webSharingOption('private', strings.share.settings.justYouOption)
           ))
         ]),
-        h('section -version', [
-          h('div.left', strings.settingsPage.section.version),
-          h('div.right', version)
-        ]),
         h('section -backup', [
           h('div.left', strings.backup.sectionName),
           h('div.right', [
             exportIdentityButton
           ])
-        ])
+        ]),
+        h('section -version', [
+          h('div.left', strings.settingsPage.section.version),
+          h('div.right', version)
+        ]),
+        h('div', { style: 'padding-bottom: 20px' }, '')
       ])
     ])
 
