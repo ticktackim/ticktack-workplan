@@ -1,0 +1,14 @@
+Button -backup {
+  margin-right: 1rem
+}
+
+textarea#encryptionKey {
+  $fontBasic
+
+  padding: 1rem
+  border-radius: 1rem
+  $borderSubtle
+  margin-bottom: .5rem
+
+  outline: none
+}

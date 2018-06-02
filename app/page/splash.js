@@ -17,7 +17,6 @@ exports.create = (api) => {
     const strings = api.translations.sync.strings()
 
     const svg = assetPath('splash.svg')
-    console.log(svg)
 
     const style = {
       'background': require('../../assets/splash-svg.js'),

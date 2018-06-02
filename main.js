@@ -30,7 +30,8 @@ const sockets = combine(
     styles: require('./styles'),
     state: require('./state/obs'),
     unread: require('./unread'),
-    channel: require('./channel')
+    channel: require('./channel'),
+    backup: require('./backup')
   },
   {
     profile: require('patch-profile'),
