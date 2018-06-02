@@ -31,7 +31,7 @@ exports.create = (api) => {
 
     var searchVal = Value(resolve(location.searchVal) || resolve(location.channel) || '')
     var searchResults = computed([api.channel.obs.recent(), searchVal], (channels, val) => {
-      if (val.length < 2) return []
+      if (val.length < 2) return
 
       return channels.filter(c => c.toLowerCase().indexOf(val.toLowerCase()) > -1)
     })
