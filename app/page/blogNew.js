@@ -19,6 +19,7 @@ exports.needs = nest({
   'channel.async.suggest': 'first',
   'drafts.sync.get': 'first',
   'drafts.sync.set': 'first',
+  'drafts.sync.remove': 'first',
   'history.sync.push': 'first',
   'message.html.compose': 'first',
   'translations.sync.strings': 'first',
