@@ -193,8 +193,10 @@ function initialiseDummyComposer ({ meta, api, filesById }) {
       }
     },
     (err, msg) => {
+      if (err) return api.history.sync.push(err)
+
       api.drafts.sync.remove(DRAFT_LOCATION)
-      api.history.sync.push(err || { page: 'blogIndex' })
+      api.history.sync.push({ page: 'blogIndex' })
     }
   )
 }
