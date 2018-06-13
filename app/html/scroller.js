@@ -29,7 +29,13 @@ exports.create = function (api) {
       filter()
     )
 
-    return Scroller(Object.assign({}, opts, { streamToTop, streamToBottom }))
+    const _opts = Object.assign(
+      { overflowY: 'auto' }, // TODO check across app what makes better default
+      opts,
+      { streamToTop, streamToBottom }
+    )
+
+    return Scroller(_opts)
     // valid Scroller opts :  see github.com/mixmix/mutant-scroll
     //   classList = [],
     //   prepend = [],
@@ -41,5 +47,6 @@ exports.create = function (api) {
     //   updateBottom = updateBottomDefault,
     //   store = MutantArray(),
     //   cb = (err) => { if (err) throw err }
+    //   overflowY = 'scroll'
   }
 }

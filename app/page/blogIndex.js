@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, Array: MutantArray, resolve } = require('mutant')
+const { h, Array: MutantArray, resolve, computed } = require('mutant')
 const Scroller = require('mutant-scroll')
 const pull = require('pull-stream')
 
@@ -18,6 +18,8 @@ exports.needs = nest({
   'sbot.obs.connection': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
+  'contact.obs.followers': 'first',
+  'channel.obs.isSubscribedTo': 'first',
   'message.sync.isBlocked': 'first',
   'translations.sync.strings': 'first',
   'unread.sync.isUnread': 'first'
@@ -27,28 +29,56 @@ exports.create = (api) => {
   var blogsCache = MutantArray()
 
   return nest('app.page.blogIndex', function (location) {
-    // location here can expected to be: { page: 'blogIndex'}
+    // location here can expected to be: { page: 'blogIndex', filter: 'All' }
+    const { page, filter = 'All' } = location
 
     var strings = api.translations.sync.strings()
+    blogsCache.clear()
 
     var blogs = Scroller({
       classList: ['content'],
-      prepend: api.app.html.topNav(location),
-      streamToTop: Source({ reverse: false, live: true, old: false, limit: 20 }),
-      streamToBottom: Source({ reverse: true, live: false, limit: 20 }),
+      prepend: [
+        api.app.html.topNav(location),
+        // Filters()
+      ],
+      streamToTop: Source({ reverse: false, live: true, old: false, limit: 20 }, api, filter),
+      streamToBottom: Source({ reverse: true, live: false, limit: 20 }, api, filter),
       updateTop: update,
       updateBottom: update,
       store: blogsCache,
       render
     })
 
-    return h('Page -blogIndex', {title: strings.home}, [
+    // HACK
+    blogs.insertBefore(Filters(), blogs.querySelector('.content'))
+
+    function Filters () {
+      const goTo = (loc) => () => api.history.sync.push(loc)
+      return h('Filters', [
+        h('span -filter', {
+          className: filter === 'All' ? '-active' : '',
+          'ev-click': goTo({ page, filter: 'All' })
+        }, 'All'),
+        h('span', '|'),
+        h('span -filter', {
+          className: filter === 'Subscriptions' ? '-active' : '',
+          'ev-click': goTo({ page, filter: 'Subscriptions' })
+        }, 'Subscriptions'),
+        h('span', '|'),
+        h('span -filter', {
+          className: filter === 'Friends' ? '-active' : '',
+          'ev-click': goTo({ page, filter: 'Friends' })
+        }, 'Friends')
+      ])
+    }
+
+    return h('Page -blogIndex', { title: strings.home }, [
       api.app.html.sideNav(location),
       blogs
     ])
   })
 
-  function Source (opts) {
+  function Source (opts, api, filter) {
     const commonOpts = {
       query: [{
         $filter: {
@@ -62,12 +92,39 @@ exports.create = (api) => {
       }]
     }
 
+    const myId = api.keys.sync.id()
+    const { followers } = api.contact.obs
+
+    const filterbyFriends = (msg) => {
+      if (filter !== 'Friends') return true
+
+      const feed = msg.value.author
+      const theirFollowers = followers(feed)
+      const youFollowThem = computed(theirFollowers, followers => followers.includes(myId))
+
+      return resolve(youFollowThem)
+    }
+
+    const filterBySubscription = (msg) => {
+      if (filter !== 'Subscriptions') return true
+
+      if (!msg.value.content.hasOwnProperty('channel')) {
+        return false
+      }
+
+      const channel = msg.value.content.channel
+
+      return resolve(api.channel.obs.isSubscribedTo(channel))
+    }
+
     return pull(
       StepperStream(
         (options) => api.sbot.pull.stream(sbot => sbot.query.read(options)),
         Object.assign(commonOpts, opts)
       ),
       pull.filter(api.blog.sync.isBlog), // isBlog or Plog?
+      pull.filter(filterBySubscription),
+      pull.filter(filterbyFriends),
       // pull.filter(msg => !msg.value.content.root), // show only root messages
       pull.filter(msg => !api.message.sync.isBlocked(msg)) // this is already in feed.pull.type
     )
@@ -142,7 +199,7 @@ function StepperStream (createStream, _opts) {
           }
         },
         (err) => {
-            // retry on errors...
+          // retry on errors...
           if (err) {
             count = -1
             return count

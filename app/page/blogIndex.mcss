@@ -25,3 +25,31 @@ Page -blogIndex {
   }
 }
 
+Filters {
+  $maxWidth
+  padding: 0 2rem
+  margin: .8rem auto
+
+  font-size: .8rem
+  text-transform: uppercase
+  letter-spacing: 1.4px
+
+  display: grid
+  grid-template-columns: 4rem 0rem 10rem 0rem 7rem
+  justify-items: center
+
+  span {
+    $colorFontSubtle
+    /* padding: 10px */
+
+    -active {
+      $colorFontBasic
+      font-weight: 600
+    }
+
+    -filter {
+      cursor: pointer
+    }
+  }
+}
+

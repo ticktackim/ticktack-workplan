@@ -6,7 +6,7 @@ module.exports = {
     app: require('./html/app'),
     comments: require('./html/comments'),
     header: require('./html/header'),
-    thread: require('./html/thread'),
+    thread: require('./html/thread'), // TODO rename threadPrivate
     link: require('./html/link'),
     lightbox: require('./html/lightbox'),
     blogCard: require('./html/blogCard'),
@@ -35,7 +35,7 @@ module.exports = {
     blogShow: require('./page/blogShow'),
     channelShow: require('./page/channelShow'),
     channelSubscriptions: require('./page/channelSubscriptions'),
-    // channel: require('./page/channel'),
+    // channel: require('./page/channel'), // TODO delete all these files
     // image: require('./page/image'),
     // groupFind: require('./page/groupFind'),
     // groupIndex: require('./page/groupIndex'),

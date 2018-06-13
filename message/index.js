@@ -5,6 +5,7 @@ module.exports = {
   html: {
     channel: require('./html/channel'),
     comment: require('./html/comment'),
+    commentsCount: require('./html/commentsCount'),
     compose: require('./html/compose'),
     likes: require('./html/likes'),
     notification: require('./html/notification'),

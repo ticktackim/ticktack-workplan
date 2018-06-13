@@ -17,7 +17,6 @@ exports.create = (api) => {
     const strings = api.translations.sync.strings()
 
     const svg = assetPath('splash.svg')
-    console.log(svg)
 
     const style = {
       'background': require('../../assets/splash-svg.js'),
@@ -30,8 +29,8 @@ exports.create = (api) => {
         h('img.logoName', { src: assetPath('logo_and_name.png') })
       ]),
       h('div.bottom', { style }, [
-        h('div.about', random(strings.splash.about)),
-        h('pre.slogan', strings.splash.slogan)
+        h('pre.slogan', strings.splash.slogan),
+        h('div.about', random(strings.splash.about))
       ])
     ])
   }

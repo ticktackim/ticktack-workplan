@@ -79,6 +79,15 @@ Page -settings {
           align-items: flex-start
         }
       }
+
+      -backup {
+        div.right {
+          div.backupKeys {
+            display: flex
+            align-items: center
+          }
+        }
+      }
     }
   }
 }

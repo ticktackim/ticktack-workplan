@@ -18,7 +18,7 @@ exports.create = (api) => {
     const { messages, channel, lastId: branch } = thread
 
     // TODO - move this up into Patchcore
-    const messagesTree = computed(throttle(messages, 200), msgs => {
+    const messagesTree = computed(throttle(messages, 500), msgs => {
       return msgs
         .filter(msg => forkOf(msg) === undefined) // exclude nested replies / forks
         .filter(msg => msg.value.content.root) // exclude root message / blog

@@ -1,4 +1,4 @@
-WebShares {
+CommentsCount {
   cursor: pointer
   min-width: 2.5rem
   min-hieght: 1.2rem
@@ -9,13 +9,7 @@ WebShares {
   i {
     margin-right: .4rem
   }
-  i.fa-share-alt {
-    $colorFontPrimary
+  i.fa-commenting-o {
   }
-
-  i.faint {
-    color: #b9b9b9
-  }
-
 }
 
