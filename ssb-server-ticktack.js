@@ -232,7 +232,7 @@ module.exports = {
                 $filter: {
                   timestamp: {
                     $gt: typeof gt === 'number' ? gt : 0,
-									  $lt: typeof lt === 'number' ? lt : 1e20
+                    $lt: typeof lt === 'number' ? lt : 1e20
                   },
                   value: {
                     content: { type: 'post' },
