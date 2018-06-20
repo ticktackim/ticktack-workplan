@@ -69,7 +69,7 @@ exports.create = (api) => {
         api.app.html.topNav(location),
         searchField
       ],
-      stream: createStream,
+      createStream,
       filter: () => pull(
         pull.filter(api.blog.sync.isBlog),
         pull.filter(msg => !msg.value.content.root) // show only root messages

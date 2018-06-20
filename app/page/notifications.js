@@ -26,7 +26,7 @@ exports.create = (api) => {
 
     var scroller = api.app.html.scroller({
       classList: ['content'],
-      stream: createCreateStream(location.section),
+      createStream: createCreateStream(location.section),
       render: createRender(location.section)
     })
 

@@ -53,6 +53,7 @@
     "progress-string": "^1.2.2",
     "pull-defer": "^0.2.2",
     "pull-next": "^1.0.1",
+    "pull-next-query": "^1.0.0",
     "pull-next-step": "^1.0.0",
     "pull-obv": "^1.3.0",
     "pull-stream": "^3.6.0",

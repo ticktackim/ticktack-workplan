@@ -13,6 +13,7 @@ const getShareRoot = (msg) => get(msg, 'value.content.share.link')
 const getTimestamp = (msg) => get(msg, 'value.timestamp')
 
 const FLUME_VIEW_VERSION = 1
+const MIN_LENGTH_FOR_BLOG_POST = 2500 // note this defn duplicated in blog.sync.isBlog
 
 module.exports = {
   name: 'ticktack',
@@ -217,6 +218,6 @@ function getBlogKey (blog) {
 
 // a Plog is a Blog shaped Post!
 function isPlog (msg) {
-  // if (get(msg, 'value.content.text', '').length >= 2500) console.log(get(msg, 'value.content.text', '').length)
-  return get(msg, 'value.content.text', '').length >= 2500
+  // if (get(msg, 'value.content.text', '').length >= MIN_LENGTH_FOR_BLOG_POST) console.log(get(msg, 'value.content.text', '').length)
+  return get(msg, 'value.content.text', '').length >= MIN_LENGTH_FOR_BLOG_POST
 }

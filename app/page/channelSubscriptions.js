@@ -9,7 +9,6 @@ exports.gives = nest('app.page.channelSubscriptions')
 exports.needs = nest({
   'app.html.sideNav': 'first',
   'app.html.topNav': 'first',
-  'app.html.scroller': 'first',
   'app.html.channelCard': 'first',
   'app.obs.pluginsOk': 'first',
   'history.sync.push': 'first',

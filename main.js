@@ -24,6 +24,7 @@ const sockets = combine(
     contact: require('./contact'),
     // config: require('./ssb-config'),
     config: require('./config'),
+    feed: require('./feed'),
     // group: require('./group'),
     message: require('./message'),
     router: require('./router'),

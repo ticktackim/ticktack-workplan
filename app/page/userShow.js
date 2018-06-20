@@ -86,7 +86,7 @@ exports.create = (api) => {
         classList: ['content'],
         prepend,
         // stream: api.feed.pull.profile(feed),
-        stream: opts => api.sbot.pull.userFeed(Object.assign({}, { id: feed }, opts)),
+        createStream: opts => api.sbot.pull.userFeed(Object.assign({}, { id: feed }, opts)),
         indexProperty: ['value', 'sequence'],
         filter: () => pull(
           // pull.filter(msg => get(msg, 'value.author') === feed),

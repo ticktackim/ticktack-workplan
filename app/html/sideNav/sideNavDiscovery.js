@@ -156,7 +156,7 @@ exports.create = (api) => {
       return api.app.html.scroller({
         classList: [ 'level', '-one' ],
         prepend,
-        stream: api.feed.pull.private,
+        createStream: api.feed.pull.private,
         filter: privateMsgFilter,
         store: recentMsgCache,
         updateTop: updateRecentMsgCache,
@@ -263,7 +263,7 @@ exports.create = (api) => {
       return api.app.html.scroller({
         classList: [ 'level', '-two' ],
         prepend,
-        stream: api.feed.pull.private,
+        createStream: api.feed.pull.private,
         filter: () => pull(
           pull.filter(msg => !msg.value.content.root),
           pull.filter(msg => msg.value.content.type === 'post'),
