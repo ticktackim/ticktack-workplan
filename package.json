@@ -52,6 +52,7 @@
     "patchcore": "^1.26.1",
     "progress-string": "^1.2.2",
     "pull-defer": "^0.2.2",
+    "pull-merge": "^1.0.4",
     "pull-next": "^1.0.1",
     "pull-next-query": "^1.0.0",
     "pull-next-step": "^1.0.0",

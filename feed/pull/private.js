@@ -28,9 +28,7 @@ exports.create = function (api) {
       if (!server.private || !server.private.read) return pull.empty()
 
       return pull(
-        // next(server.backlinks.read, _opts, ['value', 'timestamp']),
         next(server.private.read, _opts, ['timestamp']),
-        // pull.through(console.log),
         pull.filter(msg => !api.message.sync.isBlocked(msg))
       )
     })

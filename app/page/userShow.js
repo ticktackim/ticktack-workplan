@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, Array: MutantArray, computed, when, map } = require('mutant')
+const { h, Array: MutantArray, computed } = require('mutant')
 const pull = require('pull-stream')
 const get = require('lodash/get')
 const path = require('path')
@@ -18,17 +18,15 @@ exports.needs = nest({
   'blog.sync.isBlog': 'first',
   'contact.html.follow': 'first',
   'contact.html.block': 'first',
-  'feed.pull.profile': 'first',
-  'feed.pull.rollup': 'first',
-  'message.html.markdown': 'first',
+  'feed.pull.user': 'first',
   'keys.sync.id': 'first',
-  'sbot.pull.userFeed': 'first',
+  'message.html.markdown': 'first',
   'translations.sync.strings': 'first',
-  'unread.sync.isUnread': 'first'
+  // 'unread.sync.isUnread': 'first'
 })
 
 exports.create = (api) => {
-  var isUnread = api.unread.sync.isUnread
+  // var isUnread = api.unread.sync.isUnread
   return nest('app.page.userShow', userShow)
 
   function userShow (location) {
@@ -78,16 +76,15 @@ exports.create = (api) => {
     ]
 
     const store = MutantArray()
-    // store(console.log)
+
+    // indexProperty: ['value', 'sequence'],
 
     return h('Page -userShow', [
       api.app.html.sideNav(location),
       api.app.html.scroller({
         classList: ['content'],
         prepend,
-        // stream: api.feed.pull.profile(feed),
-        createStream: opts => api.sbot.pull.userFeed(Object.assign({}, { id: feed }, opts)),
-        indexProperty: ['value', 'sequence'],
+        createStream: api.feed.pull.user(feed),
         filter: () => pull(
           // pull.filter(msg => get(msg, 'value.author') === feed),
           pull.filter(msg => typeof msg.value.content !== 'string'),
