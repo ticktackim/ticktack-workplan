@@ -13,6 +13,7 @@ exports.needs = nest({
 exports.create = function (api) {
   return nest('feed.pull.private', function (opts) {
     const defaultOpts = {
+      limit: 100,
       query: [{
         $filter: {
           timestamp: { $gt: 0 }

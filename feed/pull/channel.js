@@ -17,6 +17,7 @@ exports.create = function (api) {
 
     return function (opts) {
       const defaultOpts = {
+        limit: 100,
         query: [{
           $filter: {
             dest: `#${channel}`,
