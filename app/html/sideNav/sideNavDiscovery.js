@@ -1,8 +1,8 @@
 const nest = require('depnest')
 const { h, computed, map, when, Dict, Array: MutantArray, Value, Set, resolve } = require('mutant')
 const pull = require('pull-stream')
-const next = require('pull-next-step')
 const get = require('lodash/get')
+const merge = require('lodash/merge')
 const isEmpty = require('lodash/isEmpty')
 const path = require('path')
 
@@ -70,15 +70,13 @@ exports.create = (api) => {
       updateCache(getUnreadMsgsCache(rootKey), msg)
     }
 
+    // process messages for 'unreadness'
     pull(
-      next(api.feed.pull.private, {reverse: true, limit: 1000, live: false, property: ['timestamp']}),
-      privateMsgFilter(),
+      api.feed.pull.private(privateOpts({old: false, live: true})),
       pull.drain(updateUnreadMsgsCache)
     )
-
     pull(
-      next(api.feed.pull.private, {old: false, live: true, property: ['timestamp']}),
-      privateMsgFilter(),
+      api.feed.pull.private(privateOpts({reverse: true, live: false})),
       pull.drain(updateUnreadMsgsCache)
     )
 
@@ -156,8 +154,7 @@ exports.create = (api) => {
       return api.app.html.scroller({
         classList: [ 'level', '-one' ],
         prepend,
-        createStream: api.feed.pull.private,
-        filter: privateMsgFilter,
+        createStream: (opts) => api.feed.pull.private(privateOpts(opts)),
         store: recentMsgCache,
         updateTop: updateRecentMsgCache,
         updateBottom: updateRecentMsgCache,
@@ -337,11 +334,18 @@ exports.create = (api) => {
       ])
     }
 
-    function privateMsgFilter () {
-      return pull(
-        pull.filter(msg => msg.value.content.type === 'post'),
-        pull.filter(msg => msg.value.content.recps)
-      )
+    function privateOpts (opts) {
+      const defaultOpts = {
+        query: [{
+          $filter: {
+            value: {
+              content: {type: 'post'}
+            }
+          }
+        }]
+      }
+
+      return merge({}, defaultOpts, opts)
     }
   }
 }
