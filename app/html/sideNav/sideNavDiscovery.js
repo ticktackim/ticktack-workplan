@@ -2,7 +2,10 @@ const nest = require('depnest')
 const { h, computed, map, when, Dict, Array: MutantArray, Value, Set, resolve } = require('mutant')
 const pull = require('pull-stream')
 const next = require('pull-next-step')
+const Next = require('pull-next')
+const Scroller = require('mutant-scroll')
 const get = require('lodash/get')
+const clone = require('lodash/cloneDeep')
 const isEmpty = require('lodash/isEmpty')
 const path = require('path')
 
@@ -23,6 +26,7 @@ exports.needs = nest({
   'message.html.subject': 'first',
   'message.sync.getParticipants': 'first',
   'sbot.obs.localPeers': 'first',
+  'sbot.pull.stream': 'first',
   'translations.sync.strings': 'first',
   'unread.sync.isUnread': 'first'
 })
@@ -71,7 +75,7 @@ exports.create = (api) => {
     }
 
     pull(
-      next(api.feed.pull.private, {reverse: true, limit: 1000, live: false, property: ['timestamp']}),
+      next(api.feed.pull.private, {reverse: true, limit: 100, live: false, property: ['timestamp']}),
       privateMsgFilter(),
       pull.drain(updateUnreadMsgsCache)
     )
@@ -260,15 +264,21 @@ exports.create = (api) => {
         usersLastMsgCache.put(participantsKey, userLastMsgCache)
       }
 
-      return api.app.html.scroller({
+      const Source = (opts) => api.sbot.pull.stream(server => {
+        return pull(
+          StepperStream(server.ticktack.getPrivateMessages, participants, opts),
+          pull.filter(msg => !msg.value.content.root),
+          // pull.filter(msg => msg.value.content.type === 'post'),
+          pull.filter(msg => getParticipants(msg).key === participantsKey)
+        )
+      })
+
+      return Scroller({
         classList: [ 'level', '-two' ],
         prepend,
-        stream: api.feed.pull.private,
-        filter: () => pull(
-          pull.filter(msg => !msg.value.content.root),
-          pull.filter(msg => msg.value.content.type === 'post'),
-          pull.filter(msg => getParticipants(msg).key === participantsKey)
-        ),
+        // stream: api.feed.pull.private,
+        streamToTop: Source({ reverse: false, live: true, old: false, limit: 50 }),
+        streamToBottom: Source({ reverse: true, live: false, limit: 50 }),
         store: userLastMsgCache,
         updateTop: updateLastMsgCache,
         updateBottom: updateLastMsgCache,
@@ -366,4 +376,51 @@ function isSideNavDiscovery (location) {
     return true
   }
   return false
+}
+
+// this is needed because muxrpc doesn't do back-pressure yet
+// this is a modified pull-next-step for ssb-query
+function StepperStream (createStream, participants, _opts) {
+  var opts = clone(_opts)
+  var last = null
+  var count = -1
+
+  return Next(() => {
+    if (last) {
+      if (count === 0) return
+      // mix: not sure which case this ends stream for
+      //
+
+      var value = get(last, ['timestamp'])
+      if (value == null) return
+
+      if (opts.reverse) {
+        opts.lt = value
+      } else {
+        opts.gt = value
+      }
+      last = null
+    }
+
+    return pull(
+      createStream(participants, clone(opts)),
+      pull.through(
+        (msg) => {
+          count++
+          if (!msg.sync) {
+            last = msg
+          }
+        },
+        (err) => {
+            // retry on errors...
+          if (err) {
+            count = -1
+            return count
+          }
+          // end stream if there were no results
+          if (last == null) last = {}
+        }
+      )
+    )
+  })
 }

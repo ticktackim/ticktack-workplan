@@ -1,6 +1,8 @@
 const FlumeView = require('flumeview-level')
 const get = require('lodash/get')
+const clone = require('lodash/cloneDeep')
 const pull = require('pull-stream')
+const pullMerge = require('pull-merge')
 const defer = require('pull-defer')
 const isBlog = require('scuttle-blog/isBlog')
 const { isMsg: isMsgRef } = require('ssb-ref')
@@ -26,7 +28,8 @@ module.exports = {
     readAllComments: 'source',
     readAllLikes: 'source',
     readAllShares: 'source',
-    readLikes: 'source'
+    readLikes: 'source',
+    getPrivateMessages: 'source'
   },
   init: (server, config) => {
     console.log('> initialising ticktack plugin')
@@ -46,8 +49,9 @@ module.exports = {
       readAllComments,
       readAllLikes,
       readAllShares,
-      readLikes
+      readLikes,
       // readShares
+      getPrivateMessages
     }
 
     function map (msg, seq) {
@@ -205,6 +209,66 @@ module.exports = {
 
     function isMyMsg (msg) {
       return getAuthor(msg) === myKey
+    }
+
+    function getPrivateMessages (authors, _opts = {}) {
+      if (!authors.includes(server.id)) authors.push(server.id)
+
+      const opts = clone(_opts)
+
+      const lt = opts.lt
+      delete opts.lt
+      const gt = opts.gt
+      delete opts.gt
+
+      const limit = opts.limit
+      delete opts.limit
+
+      return pull(
+        pullMerge(
+          authors.map(author => {
+            const finalOpts = Object.assign(clone(opts), {
+              query: [{
+                $filter: {
+                  timestamp: {
+                    $gt: typeof gt === 'number' ? gt : 0,
+                    $lt: typeof lt === 'number' ? lt : 1e20
+                  },
+                  value: {
+                    content: { type: 'post' },
+                    author
+                  }
+                }
+              }]
+            })
+            return server.private.read(finalOpts)
+          }),
+          Comparer(opts)
+        ),
+        pull.filter(Boolean),
+        pull.filter(msg => !msg.sync),
+        // pull.filter(msg => msg.value.content.type === 'post'),
+        pull.filter(msg => {
+          const recps = (msg.value.content.recps || [msg.value.content.recps])
+            .filter(Boolean)
+            .map(r => typeof r === 'string' ? r : r.link)
+            .filter(Boolean)
+
+          if (authors.length !== recps.length) return false
+          return authors.every(r => recps.includes(r))
+        }),
+        limit ? pull.take(limit) : true
+      )
+    }
+  }
+}
+
+function Comparer (opts) {
+  return (a, b) => {
+    if (opts.reverse) {
+      return a.timestamp > b.timestamp ? -1 : +1
+    } else {
+      return a.timestamp < b.timestamp ? -1 : +1
     }
   }
 }
