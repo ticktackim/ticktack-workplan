@@ -37,6 +37,7 @@ exports.create = (api) => {
 
     function createCreateStream (section) {
       return function (opts) {
+        // TODO - refactor with sbot.pull.stream
         const source = defer.source()
         var resolved = false
 

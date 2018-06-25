@@ -30,6 +30,9 @@ module.exports = {
     readLikes: 'source'
   },
   init: (server, config) => {
+    // NOTE - this could and should be refactored to use e.g. ssb-query
+    // because ssb-query I think can provide much of this functionality
+    // and then I can provide better stepping tools for pull-streams, like pull-next-query
     console.log('> initialising ticktack plugin')
     const myKey = server.keys.id
 

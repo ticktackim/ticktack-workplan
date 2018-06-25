@@ -6,7 +6,6 @@ exports.gives = nest({
 })
 
 exports.needs = nest({
-  // 'app.html.scroller': 'first',
   // 'about.html.avatar': 'first',
   // 'about.obs.name': 'first',
   // 'feed.pull.private': 'first',
