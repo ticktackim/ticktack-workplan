@@ -23,8 +23,6 @@ exports.create = (api) => {
     const strings = api.translations.sync.strings()
     const { channel } = location
 
-    const createStream = api.feed.pull.channel(channel)
-
     const prepend = [
       api.app.html.topNav(location),
       h('section.about', [
@@ -38,7 +36,7 @@ exports.create = (api) => {
     var channelPosts = api.app.html.scroller({
       classList: ['content'],
       prepend,
-      createStream,
+      createStream: api.feed.pull.channel(channel),
       filter: () => pull(
         pull.filter(api.blog.sync.isBlog),
         pull.filter(msg => !msg.value.content.root) // show only root messages

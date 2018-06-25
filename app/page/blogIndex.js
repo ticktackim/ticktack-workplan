@@ -3,10 +3,6 @@ const { h, Array: MutantArray, resolve, computed } = require('mutant')
 const Scroller = require('mutant-scroll')
 const pull = require('pull-stream')
 
-const Next = require('pull-next')
-const get = require('lodash/get')
-const clone = require('lodash/cloneDeep')
-
 exports.gives = nest('app.page.blogIndex')
 
 exports.needs = nest({
@@ -16,6 +12,7 @@ exports.needs = nest({
   'blog.sync.isBlog': 'first',
   'sbot.pull.stream': 'first',
   'sbot.obs.connection': 'first',
+  'feed.pull.public': 'first',
   'history.sync.push': 'first',
   'keys.sync.id': 'first',
   'contact.obs.followers': 'first',
@@ -38,7 +35,7 @@ exports.create = (api) => {
     var blogs = Scroller({
       classList: ['content'],
       prepend: [
-        api.app.html.topNav(location),
+        api.app.html.topNav(location)
         // Filters()
       ],
       streamToTop: Source({ reverse: false, live: true, old: false, limit: 20 }, api, filter),
@@ -79,19 +76,6 @@ exports.create = (api) => {
   })
 
   function Source (opts, api, filter) {
-    const commonOpts = {
-      query: [{
-        $filter: {
-          value: {
-            content: {
-              type: 'blog'
-            },
-            timestamp: { $gt: 0, $lt: undefined }
-          }
-        }
-      }]
-    }
-
     const myId = api.keys.sync.id()
     const { followers } = api.contact.obs
 
@@ -118,10 +102,7 @@ exports.create = (api) => {
     }
 
     return pull(
-      StepperStream(
-        (options) => api.sbot.pull.stream(sbot => sbot.query.read(options)),
-        Object.assign(commonOpts, opts)
-      ),
+      api.feed.pull.public(opts),
       pull.filter(api.blog.sync.isBlog), // isBlog or Plog?
       pull.filter(filterBySubscription),
       pull.filter(filterbyFriends),
@@ -163,51 +144,4 @@ function indexOf (array, fn) {
     }
   }
   return -1
-}
-
-// this is needed because muxrpc doesn't do back-pressure yet
-// this is a modified pull-next-step for ssb-query
-function StepperStream (createStream, _opts) {
-  var opts = clone(_opts)
-  var last = null
-  var count = -1
-
-  return Next(() => {
-    if (last) {
-      if (count === 0) return
-      // mix: not sure which case this ends stream for
-      //
-
-      var value = get(last, ['value', 'timestamp'])
-      if (value == null) return
-
-      if (opts.reverse) {
-        opts.query[0].$filter.value.timestamp.$lt = value
-      } else {
-        opts.query[0].$filter.value.timestamp.$gt = value
-      }
-      last = null
-    }
-
-    return pull(
-      createStream(clone(opts)),
-      pull.through(
-        (msg) => {
-          count++
-          if (!msg.sync) {
-            last = msg
-          }
-        },
-        (err) => {
-          // retry on errors...
-          if (err) {
-            count = -1
-            return count
-          }
-          // end stream if there were no results
-          if (last == null) last = {}
-        }
-      )
-    )
-  })
 }
