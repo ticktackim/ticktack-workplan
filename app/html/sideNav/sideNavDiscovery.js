@@ -260,10 +260,10 @@ exports.create = (api) => {
       return api.app.html.scroller({
         classList: [ 'level', '-two' ],
         prepend,
-        createStream: api.feed.pull.private,
+        createStream,
         filter: () => pull(
-          pull.filter(msg => !msg.value.content.root),
-          pull.filter(msg => msg.value.content.type === 'post'),
+          // pull.filter(msg => !msg.value.content.root),
+          // pull.filter(msg => msg.value.content.type === 'post'),
           pull.filter(msg => getParticipants(msg).key === participantsKey)
         ),
         store: userLastMsgCache,
@@ -271,6 +271,30 @@ exports.create = (api) => {
         updateBottom: updateLastMsgCache,
         render
       })
+
+      function createStream (opts) {
+        return pull.merge(
+          [myKey, ...participants].map(createUserStream),
+          Comparer(opts)
+        )
+
+        function createUserStream (feed) {
+          const _opts = merge({}, opts, {
+            query: [{
+              $filter: {
+                value: {
+                  author: feed,
+                  content: {
+                    type: 'post',
+                    root: {$is: 'undefined'}
+                  }
+                }
+              }
+            }]
+          })
+          return api.feed.pull.private(_opts)
+        }
+      }
 
       function render (rootMsgObs) {
         const rootMsg = resolve(rootMsgObs)
@@ -370,4 +394,14 @@ function isSideNavDiscovery (location) {
     return true
   }
   return false
+}
+
+function Comparer (opts) {
+  return (a, b) => {
+    if (opts.reverse) {
+      return a.value.timestamp > b.value.timestamp ? -1 : +1
+    } else {
+      return a.value.timestamp < b.value.timestamp ? -1 : +1
+    }
+  }
 }
