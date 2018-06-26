@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, computed, map, when, Dict, Array: MutantArray, Value, Set, resolve } = require('mutant')
+const { h, computed, map, when, Dict, Array: MutantArray, Value, resolve } = require('mutant')
 const pull = require('pull-stream')
 const get = require('lodash/get')
 const merge = require('lodash/merge')
@@ -7,8 +7,7 @@ const isEmpty = require('lodash/isEmpty')
 const path = require('path')
 
 exports.gives = nest({
-  'app.html.sideNav': true,
-  'unread.sync.markUnread': true
+  'app.html.sideNav': true
 })
 
 exports.needs = nest({
@@ -24,28 +23,17 @@ exports.needs = nest({
   'message.sync.getParticipants': 'first',
   'sbot.obs.localPeers': 'first',
   'translations.sync.strings': 'first',
-  'unread.sync.isUnread': 'first'
+  'unread.sync.isUnread': 'first',
+  'unread.obs.getUnreadMsgsCache': 'first'
 })
 
 exports.create = (api) => {
   var recentMsgCache = MutantArray()
   var usersLastMsgCache = Dict() // { id: [ msgs ] }
-  var unreadMsgsCache = Dict() // { id: [ msgs ] }
 
   return nest({
-    // intercept markUnread and remove them from the cache.
-    'unread.sync.markUnread': markUnread,
     'app.html.sideNav': sideNav
   })
-
-  function markUnread (msg) {
-    unreadMsgsCache.get(msg.value.content.root || msg.key)
-      .delete(msg.key)
-
-    const participants = api.message.sync.getParticipants(msg)
-    unreadMsgsCache.get(participants.key)
-      .delete(msg.key)
-  }
 
   function sideNav (location) {
     if (!isSideNavDiscovery(location)) return
@@ -54,31 +42,6 @@ exports.create = (api) => {
     var nearby = api.sbot.obs.localPeers()
     const getParticipants = api.message.sync.getParticipants
     const myKey = api.keys.sync.id()
-
-    // Unread message counts
-    function updateCache (cache, msg) {
-      if (api.unread.sync.isUnread(msg)) { cache.add(msg.key) } else { cache.delete(msg.key) }
-    }
-
-    function updateUnreadMsgsCache (msg) {
-      if (msg.value.author === myKey) return
-
-      const participantsKey = getParticipants(msg).key
-      updateCache(getUnreadMsgsCache(participantsKey), msg)
-
-      const rootKey = get(msg, 'value.content.root', msg.key)
-      updateCache(getUnreadMsgsCache(rootKey), msg)
-    }
-
-    // process messages for 'unreadness'
-    pull(
-      api.feed.pull.private(privateOpts({old: false, live: true})),
-      pull.drain(updateUnreadMsgsCache)
-    )
-    pull(
-      api.feed.pull.private(privateOpts({reverse: true, live: false})),
-      pull.drain(updateUnreadMsgsCache)
-    )
 
     return h('SideNav -discovery', [
       LevelOneSideNav(),
@@ -222,20 +185,11 @@ exports.create = (api) => {
       }
     }
 
-    function getUnreadMsgsCache (key) {
-      var cache = unreadMsgsCache.get(key)
-      if (!cache) {
-        cache = Set()
-        unreadMsgsCache.put(key, cache)
-      }
-      return cache
-    }
-
     function notifications (key) {
       key = typeof key === 'string'
         ? key
         : key.key // participants.key case
-      return computed(getUnreadMsgsCache(key), cache => cache.length)
+      return computed(api.unread.obs.getUnreadMsgsCache(key), cache => cache.length)
     }
 
     function LevelTwoSideNav () {
