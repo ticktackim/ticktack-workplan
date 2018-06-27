@@ -5,11 +5,11 @@ module.exports = {
   shares: 'Shares',
   themes: {
     light: 'Light',
-    dark: 'Dark'
+    dark: 'Dark (beta)'
   },
   editors: {
     rich: 'Rich',
-    markdown: 'Markdown'
+    markdown: 'Markdown (beta)'
   },
   splash: {
     about: [
@@ -86,8 +86,8 @@ module.exports = {
       language: 'Language',
       zoom: 'Zoom',
       version: 'Version',
-      theme: 'Theme (beta)',
-      editor: 'Editor (beta)'
+      theme: 'Theme',
+      editor: 'Editor'
     }
   },
   addressBook: {

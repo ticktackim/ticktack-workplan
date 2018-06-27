@@ -11,9 +11,11 @@ exports.create = function (api) {
   return nest('message.sync.getParticipants', getParticipants)
 
   function getParticipants (msg) {
-    const myKey = api.keys.sync.id()
+    const recps = get(msg, 'value.content.recps')
+    if (!recps) return
 
-    var participants = get(msg, 'value.content.recps')
+    const myKey = api.keys.sync.id()
+    var participants = recps
       .map(r => typeof r === 'string' ? r : r.link)
       .filter(r => r !== myKey)
       .sort()

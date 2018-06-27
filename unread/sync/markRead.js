@@ -28,8 +28,10 @@ exports.create = function (api) {
       .delete(msg.key)
 
     const participants = api.message.sync.getParticipants(msg)
-    getUnreadMsgsCache(participants.key)
-      .delete(msg.key)
+    if (participants) {
+      getUnreadMsgsCache(participants.key)
+        .delete(msg.key)
+    }
 
     if (msg && typeof msg.key === 'string') {
       // note: there is a quirk where some messages don't have a timestamp
