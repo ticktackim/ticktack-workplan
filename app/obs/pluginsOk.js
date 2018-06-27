@@ -21,8 +21,8 @@ exports.create = (api) => {
     onceTrue(
       api.sbot.obs.connection,
       sbot => {
-        if (!sbot.channel) console.log('> channel plugin missing!')
-        if (!sbot.tickack) console.log('> ticktack plugin missing!')
+        // if (!sbot.channel) console.log('> channel plugin missing!')
+        // if (!sbot.tickack) console.log('> ticktack plugin missing!')
 
         if (!sbot.channel || !sbot.ticktack) ok.set(false) // TODO could build a list of missing plugins + effects
         else ok.set(true)

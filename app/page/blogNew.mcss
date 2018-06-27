@@ -95,6 +95,10 @@ Page -blogNew {
         -channel {}
       }
 
+      div.warning {
+        display: none
+      }
+
       div.editor.Markdown {
         $markdownBlog
 
@@ -116,7 +120,59 @@ Page -blogNew {
         textarea {
           display: none
         }
+
+        section.actions {
+          input { display: none }
+          div.Button.-subtle { display: none }
+        }
       }
     }
   }
+}
+
+Page -blogNew -markdown {
+  div.content {
+    div.container {
+      div.field {
+        -summary {
+          margin-bottom: 2rem
+        }
+
+        -attachment {
+          input { display: none }
+        }
+      }
+
+      div.warning {
+        display: initial
+        font-weight: bold
+        margin: 1rem
+      }
+
+      div.editor.Markdown {
+        display: none
+      }
+
+      div.Compose {
+        textarea {
+          display: initial
+
+          background-color: #fff
+          min-height: 30rem
+
+          padding: 1rem
+          outline: none
+          border: none
+          border-radius: 0
+          margin-top: .5rem
+        }
+
+        section.actions {
+          input { display: initial }
+          div.Button { display: flex }
+        }
+      }
+    }
+  } 
+
 }

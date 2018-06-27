@@ -13,6 +13,7 @@ const getShareRoot = (msg) => get(msg, 'value.content.share.link')
 const getTimestamp = (msg) => get(msg, 'value.timestamp')
 
 const FLUME_VIEW_VERSION = 1
+const MIN_LENGTH_FOR_BLOG_POST = 2500 // note this defn duplicated in blog.sync.isBlog
 
 module.exports = {
   name: 'ticktack',
@@ -29,6 +30,9 @@ module.exports = {
     readLikes: 'source'
   },
   init: (server, config) => {
+    // NOTE - this could and should be refactored to use e.g. ssb-query
+    // because ssb-query I think can provide much of this functionality
+    // and then I can provide better stepping tools for pull-streams, like pull-next-query
     console.log('> initialising ticktack plugin')
     const myKey = server.keys.id
 
@@ -217,6 +221,6 @@ function getBlogKey (blog) {
 
 // a Plog is a Blog shaped Post!
 function isPlog (msg) {
-  // if (get(msg, 'value.content.text', '').length >= 2500) console.log(get(msg, 'value.content.text', '').length)
-  return get(msg, 'value.content.text', '').length >= 2500
+  // if (get(msg, 'value.content.text', '').length >= MIN_LENGTH_FOR_BLOG_POST) console.log(get(msg, 'value.content.text', '').length)
+  return get(msg, 'value.content.text', '').length >= MIN_LENGTH_FOR_BLOG_POST
 }

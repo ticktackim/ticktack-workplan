@@ -5,7 +5,11 @@ module.exports = {
   shares: 'Shares',
   themes: {
     light: 'Light',
-    dark: 'Dark'
+    dark: 'Dark (beta)'
+  },
+  editors: {
+    rich: 'Rich',
+    markdown: 'Markdown (beta)'
   },
   splash: {
     about: [
@@ -41,7 +45,8 @@ module.exports = {
       edit: 'Edit',
       preview: 'Preview',
       writeBlog: 'Write your blog here'
-    }
+    },
+    markdownWarning: 'Markdown editor: auto-saving of drafts is not currently supported. You can change your editor in settings'
   },
   channel: 'Channel',
   loading: 'Loading...',
@@ -81,7 +86,8 @@ module.exports = {
       language: 'Language',
       zoom: 'Zoom',
       version: 'Version',
-      theme: 'Theme (beta)'
+      theme: 'Theme',
+      editor: 'Editor'
     }
   },
   addressBook: {

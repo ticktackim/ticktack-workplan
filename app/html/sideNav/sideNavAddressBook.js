@@ -6,10 +6,8 @@ exports.gives = nest({
 })
 
 exports.needs = nest({
-  // 'app.html.scroller': 'first',
   // 'about.html.avatar': 'first',
   // 'about.obs.name': 'first',
-  // 'feed.pull.private': 'first',
   'history.sync.push': 'first',
   // 'message.html.subject': 'first',
   // 'sbot.obs.localPeers': 'first',

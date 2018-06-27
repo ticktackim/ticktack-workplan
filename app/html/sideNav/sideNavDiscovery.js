@@ -1,14 +1,13 @@
 const nest = require('depnest')
-const { h, computed, map, when, Dict, Array: MutantArray, Value, Set, resolve } = require('mutant')
+const { h, computed, map, when, Dict, Array: MutantArray, Value, resolve } = require('mutant')
 const pull = require('pull-stream')
-const next = require('pull-next-step')
 const get = require('lodash/get')
+const merge = require('lodash/merge')
 const isEmpty = require('lodash/isEmpty')
 const path = require('path')
 
 exports.gives = nest({
-  'app.html.sideNav': true,
-  'unread.sync.markUnread': true
+  'app.html.sideNav': true
 })
 
 exports.needs = nest({
@@ -24,28 +23,17 @@ exports.needs = nest({
   'message.sync.getParticipants': 'first',
   'sbot.obs.localPeers': 'first',
   'translations.sync.strings': 'first',
-  'unread.sync.isUnread': 'first'
+  'unread.sync.isUnread': 'first',
+  'unread.obs.getUnreadMsgsCache': 'first'
 })
 
 exports.create = (api) => {
   var recentMsgCache = MutantArray()
   var usersLastMsgCache = Dict() // { id: [ msgs ] }
-  var unreadMsgsCache = Dict() // { id: [ msgs ] }
 
   return nest({
-    // intercept markUnread and remove them from the cache.
-    'unread.sync.markUnread': markUnread,
     'app.html.sideNav': sideNav
   })
-
-  function markUnread (msg) {
-    unreadMsgsCache.get(msg.value.content.root || msg.key)
-      .delete(msg.key)
-
-    const participants = api.message.sync.getParticipants(msg)
-    unreadMsgsCache.get(participants.key)
-      .delete(msg.key)
-  }
 
   function sideNav (location) {
     if (!isSideNavDiscovery(location)) return
@@ -54,33 +42,6 @@ exports.create = (api) => {
     var nearby = api.sbot.obs.localPeers()
     const getParticipants = api.message.sync.getParticipants
     const myKey = api.keys.sync.id()
-
-    // Unread message counts
-    function updateCache (cache, msg) {
-      if (api.unread.sync.isUnread(msg)) { cache.add(msg.key) } else { cache.delete(msg.key) }
-    }
-
-    function updateUnreadMsgsCache (msg) {
-      if (msg.value.author === myKey) return
-
-      const participantsKey = getParticipants(msg).key
-      updateCache(getUnreadMsgsCache(participantsKey), msg)
-
-      const rootKey = get(msg, 'value.content.root', msg.key)
-      updateCache(getUnreadMsgsCache(rootKey), msg)
-    }
-
-    pull(
-      next(api.feed.pull.private, {reverse: true, limit: 1000, live: false, property: ['timestamp']}),
-      privateMsgFilter(),
-      pull.drain(updateUnreadMsgsCache)
-    )
-
-    pull(
-      next(api.feed.pull.private, {old: false, live: true, property: ['timestamp']}),
-      privateMsgFilter(),
-      pull.drain(updateUnreadMsgsCache)
-    )
 
     return h('SideNav -discovery', [
       LevelOneSideNav(),
@@ -156,8 +117,7 @@ exports.create = (api) => {
       return api.app.html.scroller({
         classList: [ 'level', '-one' ],
         prepend,
-        stream: api.feed.pull.private,
-        filter: privateMsgFilter,
+        createStream: (opts) => api.feed.pull.private(privateOpts(opts)),
         store: recentMsgCache,
         updateTop: updateRecentMsgCache,
         updateBottom: updateRecentMsgCache,
@@ -225,20 +185,11 @@ exports.create = (api) => {
       }
     }
 
-    function getUnreadMsgsCache (key) {
-      var cache = unreadMsgsCache.get(key)
-      if (!cache) {
-        cache = Set()
-        unreadMsgsCache.put(key, cache)
-      }
-      return cache
-    }
-
     function notifications (key) {
       key = typeof key === 'string'
         ? key
         : key.key // participants.key case
-      return computed(getUnreadMsgsCache(key), cache => cache.length)
+      return computed(api.unread.obs.getUnreadMsgsCache(key), cache => cache.length)
     }
 
     function LevelTwoSideNav () {
@@ -263,10 +214,10 @@ exports.create = (api) => {
       return api.app.html.scroller({
         classList: [ 'level', '-two' ],
         prepend,
-        stream: api.feed.pull.private,
+        createStream,
         filter: () => pull(
-          pull.filter(msg => !msg.value.content.root),
-          pull.filter(msg => msg.value.content.type === 'post'),
+          // pull.filter(msg => !msg.value.content.root),
+          // pull.filter(msg => msg.value.content.type === 'post'),
           pull.filter(msg => getParticipants(msg).key === participantsKey)
         ),
         store: userLastMsgCache,
@@ -274,6 +225,30 @@ exports.create = (api) => {
         updateBottom: updateLastMsgCache,
         render
       })
+
+      function createStream (opts) {
+        return pull.merge(
+          [myKey, ...participants].map(createUserStream),
+          Comparer(opts)
+        )
+
+        function createUserStream (feed) {
+          const _opts = merge({}, opts, {
+            query: [{
+              $filter: {
+                value: {
+                  author: feed,
+                  content: {
+                    type: 'post',
+                    root: {$is: 'undefined'}
+                  }
+                }
+              }
+            }]
+          })
+          return api.feed.pull.private(_opts)
+        }
+      }
 
       function render (rootMsgObs) {
         const rootMsg = resolve(rootMsgObs)
@@ -337,11 +312,18 @@ exports.create = (api) => {
       ])
     }
 
-    function privateMsgFilter () {
-      return pull(
-        pull.filter(msg => msg.value.content.type === 'post'),
-        pull.filter(msg => msg.value.content.recps)
-      )
+    function privateOpts (opts) {
+      const defaultOpts = {
+        query: [{
+          $filter: {
+            value: {
+              content: {type: 'post'}
+            }
+          }
+        }]
+      }
+
+      return merge({}, defaultOpts, opts)
     }
   }
 }
@@ -366,4 +348,14 @@ function isSideNavDiscovery (location) {
     return true
   }
   return false
+}
+
+function Comparer (opts) {
+  return (a, b) => {
+    if (opts.reverse) {
+      return a.value.timestamp > b.value.timestamp ? -1 : +1
+    } else {
+      return a.value.timestamp < b.value.timestamp ? -1 : +1
+    }
+  }
 }

@@ -13,10 +13,12 @@ exports.needs = nest({
 })
 
 exports.create = function (api) {
-  function fromPost (fn) {
+  function fromPost (fn, innerText = false) {
     return function (data) {
       if (data.value.content.type !== 'post') return
-      return api.message.html.markdown({text: fn(data.value.content)})
+
+      const md = api.message.html.markdown({text: fn(data.value.content)})
+      return innerText ? md.innerText : md
     }
   }
 
@@ -24,7 +26,7 @@ exports.create = function (api) {
     'blog.html.title': fromPost(content => {
       if (content.title) return content.title
       if (content.text) return marksum.title(content.text)
-    }),
+    }, true),
     'blog.html.summary': fromPost(content => {
       if (content.summary) return content.summary
       if (content.text) return marksum.summary(content.text)

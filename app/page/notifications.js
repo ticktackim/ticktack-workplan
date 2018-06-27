@@ -1,6 +1,5 @@
 const nest = require('depnest')
-const { h, onceTrue } = require('mutant')
-const defer = require('pull-defer')
+const { h } = require('mutant')
 
 exports.gives = nest('app.page.notifications')
 
@@ -9,7 +8,7 @@ exports.needs = nest({
   'app.html.sideNav': 'first',
   'message.html.comment': 'first',
   'message.html.notification': 'first',
-  'sbot.obs.connection': 'first',
+  'sbot.pull.stream': 'first',
   'translations.sync.strings': 'first'
 })
 
@@ -24,9 +23,14 @@ exports.create = (api) => {
     // location here can expected to be: { page: 'notifications', section: * }
     if (!Object.keys(SOURCES).includes(location.section)) return
 
+    const createStream = (opts) => api.sbot.pull.stream(server => {
+      const source = SOURCES[location.section]
+      return server.ticktack[source](opts)
+    })
+
     var scroller = api.app.html.scroller({
       classList: ['content'],
-      stream: createCreateStream(location.section),
+      createStream,
       render: createRender(location.section)
     })
 
@@ -34,22 +38,6 @@ exports.create = (api) => {
       api.app.html.sideNav(location),
       scroller
     ])
-
-    function createCreateStream (section) {
-      return function (opts) {
-        const source = defer.source()
-        var resolved = false
-
-        onceTrue(api.sbot.obs.connection, server => {
-          if (resolved) return
-
-          source.resolve(server.ticktack[SOURCES[section]](opts))
-          resolved = true
-        })
-
-        return source
-      }
-    }
 
     function createRender (section) {
       return function (msg) {

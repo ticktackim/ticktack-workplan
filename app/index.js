@@ -59,6 +59,7 @@ module.exports = {
       settings: require('./sync/initialize/settings'),
       styles: require('./sync/initialize/styles'),
       suggests: require('./sync/initialize/suggests'),
+      unreadCounters: require('./sync/initialize/unreadCounters'),
       zoomMemory: require('./sync/initialize/zoomMemory')
     }
   }

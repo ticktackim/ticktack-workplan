@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const { h, Struct, Value, when, resolve } = require('mutant')
+const { h, Struct, Value, when, resolve, computed } = require('mutant')
 const addSuggest = require('suggest-box')
 const pull = require('pull-stream')
 const marksum = require('markdown-summary')
@@ -23,7 +23,8 @@ exports.needs = nest({
   'history.sync.push': 'first',
   'message.html.compose': 'first',
   'translations.sync.strings': 'first',
-  'sbot.async.addBlob': 'first'
+  'sbot.async.addBlob': 'first',
+  'settings.obs.get': 'first'
 })
 
 exports.create = (api) => {
@@ -60,15 +61,17 @@ exports.create = (api) => {
       meta.title.set(e.target.innerText)
     }
 
-    var mediumComposer
-    mediumComposer = h('Markdown.editor', {
-    })
+    var mediumComposer = h('Markdown.editor')
     var filesById = {}
     const composer = initialiseDummyComposer({ filesById, meta, api })
     // NOTE we are bootstrapping off the message.html.compose logic
     //  - the mediumComposer feeds content into the composer, which the provides publishing
     //  - this works, but should be refactorer after more thought about generalised composer
     //    componentes have been done
+    // TODO refactor these composers
+    //  - don't bootstrap one composer off another
+    //  - make a modular system similar to prototype in patch-inbox
+    //  - support drafts
 
     const channelInput = h('input', {
       'ev-input': e => meta.channel.set(e.target.value),
@@ -76,7 +79,11 @@ exports.create = (api) => {
       placeholder: strings.channel
     })
 
-    var page = h('Page -blogNew', [
+    const className = computed(api.settings.obs.get('ticktack.editor'), editor => {
+      return editor === 'markdown' ? '-markdown' : '-rich'
+    })
+
+    var page = h('Page -blogNew', { className }, [
       api.app.html.sideNav(location),
       h('div.content', [
         h('div.container', { 'ev-input': throttledSaveDraft({ composer: mediumComposer, meta, api }) }, [
@@ -96,6 +103,7 @@ exports.create = (api) => {
               placeholder: strings.blogNew.field.summary
             })
           ]),
+          h('div.warning', strings.blogNew.markdownWarning),
           composer
         ])
       ])
@@ -131,6 +139,7 @@ function saveDraft ({ composer, meta, api }) {
   }
   api.drafts.sync.set(DRAFT_LOCATION, draft)
 }
+
 function throttledSaveDraft ({ composer, meta, api }) {
   return throttle(() => saveDraft({ composer, meta, api }), 2000)
 }
@@ -173,8 +182,8 @@ function initialiseDummyComposer ({ meta, api, filesById }) {
     {
       meta,
       shrink: false,
-      canAttach: false,
-      canPreview: false,
+      canAttach: true,
+      canPreview: true,
       publishString: strings.publishBlog,
       filesById,
       prepublish: function (content, cb) {
