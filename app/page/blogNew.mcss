@@ -95,6 +95,10 @@ Page -blogNew {
         -channel {}
       }
 
+      div.warning {
+        display: none
+      }
+
       div.editor.Markdown {
         $markdownBlog
 
@@ -130,9 +134,19 @@ Page -blogNew -markdown {
   div.content {
     div.container {
       div.field {
+        -summary {
+          margin-bottom: 2rem
+        }
+
         -attachment {
           input { display: none }
         }
+      }
+
+      div.warning {
+        display: initial
+        font-weight: bold
+        margin: 1rem
       }
 
       div.editor.Markdown {
@@ -163,6 +177,11 @@ Page -blogNew -markdown {
           border: none
           border-radius: 0
           margin-top: .5rem
+        }
+
+        section.actions {
+          input { display: initial }
+          div.Button { display: flex }
         }
       }
     }

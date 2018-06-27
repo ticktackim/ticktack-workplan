@@ -99,6 +99,7 @@ exports.create = (api) => {
               placeholder: strings.blogNew.field.summary
             })
           ]),
+          h('div.warning', strings.blogNew.markdownWarning),
           composer
         ])
       ])
@@ -134,6 +135,7 @@ function saveDraft ({ composer, meta, api }) {
   }
   api.drafts.sync.set(DRAFT_LOCATION, draft)
 }
+
 function throttledSaveDraft ({ composer, meta, api }) {
   return throttle(() => saveDraft({ composer, meta, api }), 2000)
 }

@@ -45,7 +45,8 @@ module.exports = {
       edit: 'Edit',
       preview: 'Preview',
       writeBlog: 'Write your blog here'
-    }
+    },
+    markdownWarning: 'Markdown editor: auto-saving of drafts is not currently supported. You can change your editor in settings'
   },
   channel: 'Channel',
   loading: 'Loading...',
