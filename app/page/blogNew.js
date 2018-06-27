@@ -68,6 +68,10 @@ exports.create = (api) => {
     //  - the mediumComposer feeds content into the composer, which the provides publishing
     //  - this works, but should be refactorer after more thought about generalised composer
     //    componentes have been done
+    // TODO refactor these composers
+    //  - don't bootstrap one composer off another
+    //  - make a modular system similar to prototype in patch-inbox
+    //  - support drafts
 
     const channelInput = h('input', {
       'ev-input': e => meta.channel.set(e.target.value),
