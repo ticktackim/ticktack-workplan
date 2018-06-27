@@ -205,6 +205,14 @@ function initialiseDummyComposer ({ meta, api, filesById }) {
       if (err) return api.history.sync.push(err)
 
       api.drafts.sync.remove(DRAFT_LOCATION)
+      // NOTE - should not need to clear blog meta after posting
+      // meta.set({
+      //   type: 'blog',
+      //   channel: Value(),
+      //   title: Value(),
+      //   summary: Value(),
+      //   text: Value('')
+      // })
       api.history.sync.push({ page: 'blogIndex' })
     }
   )
