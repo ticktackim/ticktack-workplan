@@ -29,24 +29,22 @@ Splash {
     flex-direction: column
     align-items: center
 
+    div.slogan {
+      color: #2f5ea1
+      font-size: 2.5rem
+      font-family: cursive, serif
+      font-style: italic
+      line-height: 1.2
+      margin-bottom: 2vw
+    }
 
     div.about {
       color: #666
       font-size: 1.5rem
       line-height: 1.5
 
-      max-width: 40vw
-      margin-bottom: 2vw
+      max-width: 60vw
     }
-
-    pre.slogan {
-      color: #2f5ea1
-      font-size: 2.5rem
-      font-family: cursive, serif
-      font-style: italic
-      line-height: 1.2
-    }
-
   }
 }
 

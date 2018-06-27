@@ -16,8 +16,6 @@ exports.create = (api) => {
 
     const strings = api.translations.sync.strings()
 
-    const svg = assetPath('splash.svg')
-
     const style = {
       'background': require('../../assets/splash-svg.js'),
       'background-repeat': 'no-repeat',
@@ -29,7 +27,7 @@ exports.create = (api) => {
         h('img.logoName', { src: assetPath('logo_and_name.png') })
       ]),
       h('div.bottom', { style }, [
-        h('pre.slogan', strings.splash.slogan),
+        h('div.slogan', strings.splash.slogan),
         h('div.about', random(strings.splash.about))
       ])
     ])
@@ -44,4 +42,3 @@ function random (arr) {
   const i = Math.floor(Math.random() * arr.length)
   return arr[i]
 }
-
