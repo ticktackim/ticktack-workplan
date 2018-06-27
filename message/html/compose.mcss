@@ -63,7 +63,7 @@ Compose {
 
   -expanded {
     textarea {
-      height: 200px
+      min-height: 200px
       transition: height .15s ease-out
     }
 

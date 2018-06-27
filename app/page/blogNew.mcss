@@ -116,7 +116,56 @@ Page -blogNew {
         textarea {
           display: none
         }
+
+        section.actions {
+          input { display: none }
+          div.Button.-subtle { display: none }
+        }
       }
     }
   }
+}
+
+Page -blogNew -markdown {
+  div.content {
+    div.container {
+      div.field {
+        -attachment {
+          input { display: none }
+        }
+      }
+
+      div.editor.Markdown {
+        display: none
+        /* $markdownBlog */
+
+        /* background-color: #fff */
+        /* padding: 1rem */
+        /* min-height: 30rem */
+        /* outline: none */
+
+        /* p, h2, h3 { */
+        /*   :first-child { */
+        /*     margin-top: 0 */
+        /*   } */
+        /* } */
+      }
+
+      div.Compose {
+        textarea {
+          display: initial
+
+          background-color: #fff
+          min-height: 30rem
+
+          padding: 1rem
+          outline: none
+          border: none
+          border-radius: 0
+          margin-top: .5rem
+        }
+      }
+    }
+  } 
+
 }

@@ -96,6 +96,14 @@ Button -language {
   margin-right: 1rem
 }
 
+Button -theme {
+  margin-right: 1rem
+}
+
+Button -editor {
+  margin-right: 1rem
+}
+
 
 Button -websharingmetrics {
   margin-right: 1rem

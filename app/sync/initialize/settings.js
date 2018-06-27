@@ -16,7 +16,8 @@ const defaults = {
     electron: {
       zoomFactor: 1
     },
-    theme: 'light'
+    theme: 'light',
+    editor: 'rich'
   }
 }
 

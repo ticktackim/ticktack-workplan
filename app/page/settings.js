@@ -4,7 +4,6 @@ const electron = require('electron')
 const path = require('path')
 const { version } = require('../../package.json')
 
-
 exports.gives = nest('app.page.settings')
 
 exports.needs = nest({
@@ -16,8 +15,8 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'message.html.markdown': 'first',
   'settings.sync.get': 'first',
-  'settings.sync.set': 'first',
   'settings.obs.get': 'first',
+  'settings.sync.set': 'first',
   'translations.sync.strings': 'first',
   'backup.html.exportIdentityButton': 'first'
 })
@@ -27,7 +26,7 @@ const LANGUAGES = ['zh', 'en']
 exports.create = (api) => {
   return nest('app.page.settings', settings)
 
-  function settings(location) {
+  function settings (location) {
     // RESET the app when the settings are changed
     api.settings.obs.get('language')(() => {
       console.log('language changed, resetting view')
@@ -88,6 +87,10 @@ exports.create = (api) => {
           h('div.left', strings.settingsPage.section.theme),
           h('div.right', ['light', 'dark'].map(Theme))
         ]),
+        h('section -editor', [
+          h('div.left', strings.settingsPage.section.editor),
+          h('div.right', ['rich', 'markdown'].map(Editor))
+        ]),
         h('section -sharing', [
           h('div.left', strings.share.settings.caption),
           h('div.right', [].concat(
@@ -110,7 +113,7 @@ exports.create = (api) => {
       ])
     ])
 
-    function Language(lang) {
+    function Language (lang) {
       const selectLang = () => api.settings.sync.set({ language: lang })
       const className = currentLanguage === lang ? '-strong' : ''
 
@@ -123,11 +126,11 @@ exports.create = (api) => {
       )
     }
 
-    function Theme(theme) {
+    function Theme (theme) {
       const currentTheme = api.settings.obs.get('ticktack.theme')
       const className = computed(currentTheme, t => t === theme ? '-strong' : '')
 
-      return h('Button -language',
+      return h('Button -theme',
         {
           'ev-click': () => currentTheme.set(theme),
           className
@@ -135,8 +138,20 @@ exports.create = (api) => {
         strings.themes[theme]
       )
     }
+    function Editor (editor) {
+      const currentEditor = api.settings.obs.get('ticktack.editor')
+      const className = computed(currentEditor, e => e === editor ? '-strong' : '')
 
-    function zoomButton(increment, symbol) {
+      return h('Button -editor',
+        {
+          'ev-click': () => currentEditor.set(editor),
+          className
+        },
+        strings.editors[editor]
+      )
+    }
+
+    function zoomButton (increment, symbol) {
       const { getCurrentWebContents } = electron.remote
       return h('Button -zoom',
         {
@@ -151,7 +166,7 @@ exports.create = (api) => {
       )
     }
 
-    function webSharingOption(v, label) {
+    function webSharingOption (v, label) {
       let myOption = computed(webSharingMetricsOption, opt => opt === v)
 
       const selectWebSharingOption = () => {

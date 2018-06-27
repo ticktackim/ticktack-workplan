@@ -7,6 +7,10 @@ module.exports = {
     light: 'Light',
     dark: 'Dark'
   },
+  editors: {
+    rich: 'Rich',
+    markdown: 'Markdown'
+  },
   splash: {
     about: [
       'A social network that values openness, equality, and freedom.',
@@ -81,7 +85,8 @@ module.exports = {
       language: 'Language',
       zoom: 'Zoom',
       version: 'Version',
-      theme: 'Theme (beta)'
+      theme: 'Theme (beta)',
+      editor: 'Editor (beta)'
     }
   },
   addressBook: {
