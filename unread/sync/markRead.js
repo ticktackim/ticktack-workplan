@@ -1,9 +1,6 @@
 var nest = require('depnest')
 
-exports.gives = nest({
-  'unread.sync.markRead': true
-})
-
+exports.gives = nest({'unread.sync.markRead': true})
 exports.needs = nest({
   'message.sync.getParticipants': 'first',
   'unread.sync.getStore': 'first',
@@ -12,12 +9,8 @@ exports.needs = nest({
   'unread.obs.getUnreadMsgsCache': 'first'
 })
 
-// load current state of unread messages.
-
 exports.create = function (api) {
-  return nest({
-    'unread.sync.markRead': markRead
-  })
+  return nest({ 'unread.sync.markRead': markRead })
 
   function markRead (msg) {
     const store = api.unread.sync.getStore()

@@ -11,6 +11,8 @@ exports.needs = nest({
   'sbot.pull.stream': 'first'
 })
 
+const MIN_LENGTH_FOR_BLOG_POST = 2500
+
 exports.create = function (api) {
   return nest('feed.pull.user', function (feed) {
     if (!isFeed(feed)) throw new Error('a feed name be specified')
@@ -37,7 +39,8 @@ exports.create = function (api) {
             timestamp: { $gt: 0 },
             content: {
               type: 'post',
-              root: { $is: 'undefined' }
+              root: { $is: 'undefined' },
+              text: { length: { $gte: MIN_LENGTH_FOR_BLOG_POST } }
             }
           }
         }

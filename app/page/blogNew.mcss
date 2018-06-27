@@ -151,18 +151,6 @@ Page -blogNew -markdown {
 
       div.editor.Markdown {
         display: none
-        /* $markdownBlog */
-
-        /* background-color: #fff */
-        /* padding: 1rem */
-        /* min-height: 30rem */
-        /* outline: none */
-
-        /* p, h2, h3 { */
-        /*   :first-child { */
-        /*     margin-top: 0 */
-        /*   } */
-        /* } */
       }
 
       div.Compose {

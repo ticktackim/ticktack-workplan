@@ -43,12 +43,11 @@ exports.create = function (api) {
     if (msg.value.author === api.keys.sync.id()) return
 
     const { getUnreadMsgsCache } = api.unread.obs
-    const { getParticipants } = api.message.sync
 
     const rootKey = get(msg, 'value.content.root', msg.key)
     updateCache(getUnreadMsgsCache(rootKey), msg)
 
-    const participants = getParticipants(msg)
+    const participants = api.message.sync.getParticipants(msg)
     if (participants) {
       updateCache(getUnreadMsgsCache(participants.key), msg)
     }
