@@ -16,19 +16,12 @@ exports.needs = nest({
   'app.page.channelSubscriptions': 'first',
   'app.page.channelShow': 'first',
   'app.page.notifications': 'first',
-  // 'app.page.channel': 'first',
-  // 'app.page.groupFind': 'first',
-  // 'app.page.groupIndex': 'first',
-  // 'app.page.groupNew': 'first',
-  // 'app.page.groupShow': 'first',
   'app.page.userEdit': 'first',
-  // 'app.page.userFind': 'first',
   'app.page.userShow': 'first',
   'app.page.splash': 'first',
   'app.page.statsShow': 'first',
   'app.page.threadNew': 'first',
   'app.page.threadShow': 'first',
-  // 'app.page.image': 'first',
   'blob.sync.url': 'first'
 })
 
@@ -74,13 +67,7 @@ exports.create = (api) => {
       [ location => location.page === 'userEdit' && isFeed(location.feed), pages.userEdit ],
       [ location => isFeed(location.feed), pages.userShow ],
 
-      // Group pages
-      // [ location => location.page === 'groupFind', pages.groupFind ],
-      // [ location => location.page === 'groupIndex', pages.groupIndex ],
-      // [ location => location.page === 'groupNew', pages.groupNew ],
-      // // [ location => location.type === 'groupShow' && isMsg(location.key), pages.groupShow ],
-      // [ location => location.channel , pages.channel ],
-
+      // Settings page
       [ location => location.page === 'settings', pages.settings ],
 
       // [ location => isBlob(location.blob), pages.image ],
