@@ -1,9 +1,0 @@
-Page -image {
-  div.content {
-    display: flex
-
-    img {
-      margin: 0 auto
-    }
-  }
-}
