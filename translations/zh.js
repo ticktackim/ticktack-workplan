@@ -12,6 +12,10 @@ module.exports = {
   'writeMessage': '发私信',
   'writeComment': '留言',
   'peopleNearby': '附件的朋友',
+  'editors': {
+    'rich': 'Rich编辑器',
+    'markdown': 'Markdown编辑器'
+  },
   'addressBook': {
     'heading': {
       'people': '用户'
@@ -43,7 +47,8 @@ module.exports = {
       'edit': '编辑',
       'preview': '预览',
       'writeBlog': '撰文'
-    }
+    },
+    'markdownWarning': 'Markdown目前暂不支持自动保存功能，您可以在设置页面选择编辑器'
   },
   'channelShow': {
     'action': {
@@ -74,6 +79,7 @@ module.exports = {
       'edit': '编辑'
     },
     'section': {
+      'editor': '编辑器',
       'language': '语言',
       'profile': '自我介绍',
       'name': '名称',
@@ -200,10 +206,10 @@ module.exports = {
     },
     'export': {
       'header': '导出身份私钥文件',
-      'message': {
-        '请谨慎备份并妥善保存好您的身份私钥文件，平台不会备份及保存您的个人资料。': true,
-        '一旦您的身份私钥文件被盗取，您的个人身份将有可能被第三方冒充，您的所有加密信息也会被第三方读取。': true
-      },
+      'message': [
+        '请谨慎备份并保存好您的身份私钥文件',
+        '如果您的身份私钥被盗取，您所有的私密信息将会被第三方读取，您网络中的身份也会被冒充。'
+      ],
       'passwordPlaceholder': '请输入密码以防止私钥被恶意导出。请务必记住并保管好密码，平台不会保存您的任何个人密码。',
       'cancelAction': '取消',
       'exportAction': '导出身份私钥文件',
@@ -220,6 +226,8 @@ module.exports = {
         'label': '导入身份私钥文件',
         'title': '导入身份私钥文件'
       },
+      'myFeedProgress': '进行中......',
+      'myFriendsProgress': '进行中......',
       'details': '重建您的身份需要一些时间。一旦您的身份与网络同步，Ticktack将正常启动，并需要一些时间来更新您的朋友圈数据，所以一些信息和博文将在稍后送达。您可以安全地关闭窗口退出程序，下次打开Ticktack时，Ticktack将恢复同步信息。'
     }
   }
