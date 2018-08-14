@@ -107,7 +107,16 @@ exports.create = function (api) {
     var { previewBtn, showPreview } = PreviewSetup(strings)
     var preview = computed(textRaw, text => api.message.html.markdown(text))
 
-    var publishBtn = h('Button -primary', { 'ev-click': () => publish({ filesById }) }, publishString)
+    var isPublishing = Value(false)
+    var publishBtn = when(isPublishing,
+      h('Button -primary',
+        h('i.fa.fa-spinner.fa-pulse')
+      ),
+      h('Button -primary',
+        { 'ev-click': () => publish({ filesById, isPublishing }) },
+        publishString
+      )
+    )
 
     var actions = h('section.actions', [
       canAttach ? fileInput : '',
@@ -133,13 +142,11 @@ exports.create = function (api) {
 
     // scoped
 
-    function publish ({ filesById }) {
-      if (publishBtn.disabled) return
+    function publish ({ filesById, isPublishing }) {
+      isPublishing.set(true)
 
       const text = resolve(textRaw)
       if (isEmpty(text)) return
-
-      publishBtn.disabled = true
 
       const mentions = ssbMentions(text).map(mention => {
         // merge markdown-detected mention with file info
@@ -171,17 +178,18 @@ exports.create = function (api) {
       }
 
       function done (err, msg) {
-        publishBtn.disabled = false
+        isPublishing.set(false)
+
         if (err) handleErr(err)
         else if (msg) {
           textRaw.set('')
           textArea.value = ''
+
+          if (cb) cb(null, msg)
         }
-        if (cb) cb(err, msg)
       }
 
       function handleErr (err) {
-        publishBtn.disabled = false
         if (cb) cb(err)
         else throw err
       }
