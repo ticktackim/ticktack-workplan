@@ -24,7 +24,7 @@ $ npm run rebuild
 
 ### App env
 
-To run a **embedded sbot** setup (recomended - this is how the installer will run):
+To run a **embedded sbot** setup (recommended - this is how the installer will run):
 
 1. run `npm start`
 2. to debug sbot from terminal, run `$ sbot whoami` or `$ sbot progress`
